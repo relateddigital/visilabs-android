@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Visilabs Android</string>
+    <string name="com_visilabs_android_notification_image">Image not displayed</string>
+    <string name="com_visilabs_android_close">Close</string>
+    <string name="com_visilabs_android_done">Done</string>
+</resources>
