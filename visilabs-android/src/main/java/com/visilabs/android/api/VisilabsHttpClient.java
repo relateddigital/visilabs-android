@@ -187,7 +187,7 @@ public class VisilabsHttpClient {
 
     static class FHJsonHttpResponseHandler extends JsonHttpResponseHandler {
 
-        private VisilabsTargetCallback callback = null;
+        private VisilabsTargetCallback callback;
 
         public FHJsonHttpResponseHandler(VisilabsTargetCallback pCallback) {
             super();

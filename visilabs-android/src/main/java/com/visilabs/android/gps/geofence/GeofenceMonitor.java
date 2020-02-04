@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
+
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -66,35 +67,6 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
             }
             this.gpsManager = Injector.INSTANCE.getGpsManager();
         }
-
-        /*
-
-        if(Visilabs.CallAPI() == null){
-            this.context = getApplicationContext();
-            Visilabs.CreateAPI(this.context);
-        }else{
-            this.context = Visilabs.CallAPI().getContext();
-        }
-
-
-
-        if(Injector.INSTANCE.getGpsManagerComponent() == null){
-            Injector.INSTANCE.initGpsManagerComponent(new GpsManager(this.context));
-        }
-        this.gpsManager = Injector.INSTANCE.getGpsManagerComponent().gpsManager();
-        */
-
-
-
-
-        //this.context = Visilabs.CallAPI().getContext();// Injector.INSTANCE.getAppContextComponent().applicationContext();
-
-        //TODO:bunu egemen ekledi
-//        mLocationRequest.setMaxWaitTime(900000);
-//        mLocationRequest.setInterval(900000);
-
-        //mLocationRequest.setMaxWaitTime(10000);
-        //mLocationRequest.setInterval(5000);
     }
 
     @Override
@@ -116,9 +88,6 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        //Log.e(TAG, "onStartCommand");
-        //createActivePolygonsList();
-        //startActivePolygonsTimer();
         connectGoogleApi();
         return START_STICKY;
     }
@@ -132,7 +101,6 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
     public void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "onDestroy");
-        //saveActivePolygons();
         cleanupService();
     }
 
@@ -140,7 +108,6 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         Log.e(TAG, "onTaskRemoved");
-        //saveActivePolygons();
         cleanupService();
     }
 
@@ -231,10 +198,6 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
                 geofences.add(newGf);
             }
 
-
-
-
-
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 final PendingIntent geoFenceIntent = GeoFencesUtils.getTransitionPendingIntent(context);
@@ -243,7 +206,7 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
                     @Override
                     public void onResult(Status status) {
                         if (status.isSuccess()) {
-
+                            Log.d("Registering geofence", String.valueOf(true));
                         } else {
                             Log.e(TAG, "Registering geofence failed: " + status.getStatusMessage() + " : " + status.getStatusCode());
                         }
@@ -255,25 +218,6 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
         } else {
             pulGeoFenceEntitiesList.addAll(geoFencesToAdd);
         }
-    }
-
-    public void setHighPowerGPS() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED)
-            return;
-        if (googleApiClient == null)
-            return;
-        if (GPS_POWER_LVL == 3)
-            return;
-        GPS_POWER_LVL = 3;
-        if (Looper.myLooper() == null)
-            Looper.prepare();
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                googleApiClient, mLocationRequest, this);
-        if (Looper.myLooper() == null)
-            Looper.loop();
     }
 
     public void setMediumPowerGPS() {
@@ -291,55 +235,6 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        //mLocationRequest.setInterval(10000);
-        //mLocationRequest.setFastestInterval(5000);
-        //mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-        //TODO:egemen değiştirdi.
-        //mLocationRequest.setMaxWaitTime(900000);
-        //mLocationRequest.setFastestInterval(900000);
-        //mLocationRequest.setInterval(900000);
-
-        //mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                googleApiClient, mLocationRequest, this);
-        if (Looper.myLooper() == null)
-            Looper.loop();
-    }
-
-    public void setLowPowerGPS() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED)
-            return;
-        if (googleApiClient == null)
-            return;
-        if (GPS_POWER_LVL == 1)
-            return;
-        GPS_POWER_LVL = 1;
-        if (Looper.myLooper() == null)
-            Looper.prepare();
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                googleApiClient, mLocationRequest, this);
-        if (Looper.myLooper() == null)
-            Looper.loop();
-    }
-
-    public void setNoPowerGPS() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED)
-            return;
-        if (googleApiClient == null || !googleApiClient.isConnected())
-            return;
-        if (GPS_POWER_LVL == 0)
-            return;
-        GPS_POWER_LVL = 0;
-        if (Looper.myLooper() == null)
-            Looper.prepare();
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_NO_POWER);
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 googleApiClient, mLocationRequest, this);
         if (Looper.myLooper() == null)
@@ -350,43 +245,5 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
     public void onLocationChanged(Location location) {
         Log.v(TAG, "onLocationChanged");
         gpsManager.setLastKnownLocation(location);
-        /*
-        checkPolygons(location);
-        */
     }
-
-    public Location getLastFusedLocation() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (googleApiClient == null)
-                return null;
-            return LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        }else{
-            return null;
-        }
-    }
-
-    /*
-    private void addPolygonToActiveList(VisilabsPolygonGeofenceEntity polygon) {
-        for (VisilabsActivePolygons activePolygon : activePolygons) {
-            if (activePolygon.guid.equals(polygon.guid)) {
-                activePolygon.time = 0;
-                return;
-            }
-        }
-
-        VisilabsActivePolygons activePolygon = new VisilabsActivePolygons(polygon.guid, 0);
-        activePolygons.add(activePolygon);
-        sendPolygonEnterEvent(polygon.guid);
-    }
-
-    private void checkPolygons(Location location) {
-        for (VisilabsPolygonGeofenceEntity polygon : pulPolygonGeofenceEntitiesList) {
-            boolean isInRegion = polygon.PointIsInRegion(location.getLatitude(), location.getLongitude());
-            if (isInRegion) {
-                addPolygonToActiveList(polygon);
-            }
-        }
-    }
-    */
 }

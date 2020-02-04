@@ -49,6 +49,7 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
 
     private double mLatitude;
     private double mLongitude;
+    private String mGeofenceID = "";
 
     public VisilabsGeofenceRequest(Context context) {
         super(context);
@@ -72,6 +73,10 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
 
     public void setActionID(String actionID) {
         mActionID = actionID;
+    }
+
+    public void setGeofenceID(String geofenceID) {
+        mGeofenceID = geofenceID;
     }
 
     public void setAction(String action) {
@@ -107,6 +112,7 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     public void executeAsync(VisilabsTargetCallback pCallback) throws Exception {
         try {
             String url = getURL();
+            VisilabsLog.v(LOG_TAG, "Geofence Request: " + url);
             switch (mMethod) {
                 case GET:
                     VisilabsHttpClient.get(url, buildHeaders(mHeaders), mArgs, pCallback, false, mTimeOutInSeconds);
@@ -198,6 +204,10 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
             if(mLongitude > 0){
                 String longitudeString = df.format(mLongitude);
                 uriBuilder.appendQueryParameter(VisilabsConfig.LONGITUDE_KEY, VisilabsEncoder.encode(longitudeString));
+            }
+
+            if(!StringUtils.isNullOrWhiteSpace(mGeofenceID)){
+                uriBuilder.appendQueryParameter(VisilabsConfig.GEO_ID_KEY, VisilabsEncoder.encode(mGeofenceID));
             }
 
 

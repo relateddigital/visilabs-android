@@ -11,37 +11,17 @@ public class VisilabsGeoFenceEntity {
     public int radius;
     public String type;
     public double distance;
+    public int geoid;
 
     public int durationInSeconds;
 
     public VisilabsGeoFenceEntity() {
     }
 
-    public VisilabsGeoFenceEntity(String guid, String lat, String lng, String name, int radius, String type, double distance, int durationInSeconds) {
-        this.guid = guid;
-        this.lat = lat;
-        this.lng = lng;
-        this.name = name;
-        this.radius = radius;
-        this.type = type;
-        this.distance = distance;
-        this.durationInSeconds = durationInSeconds;
-    }
 
     public Geofence toGeofence() {
         int mTransitionType;
-        //mTransitionType = Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT;
-        /*switch (type) {
-            case "enter":
-                mTransitionType = Geofence.GEOFENCE_TRANSITION_ENTER;
-                break;
-            case "exit":
-                mTransitionType = Geofence.GEOFENCE_TRANSITION_EXIT;
-                break;
-            default:
-                mTransitionType = Geofence.GEOFENCE_TRANSITION_DWELL;
-                break;
-        }*/
+
 
         switch (type) {
             case "OnEnter":

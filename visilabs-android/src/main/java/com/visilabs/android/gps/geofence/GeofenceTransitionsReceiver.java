@@ -16,21 +16,17 @@ import com.visilabs.android.gps.manager.GpsManager;
 import com.visilabs.android.json.JSONArray;
 
 public class GeofenceTransitionsReceiver extends BroadcastReceiver {
-    private static final String TAG = "GeofenTransitionReceive";
+    private static final String TAG = "GeoTransitionReceiver";
     private Context context;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-
         if(Visilabs.CallAPI() == null){
             Visilabs.CreateAPI(context.getApplicationContext());
         }
 
         Visilabs.CallAPI().startGpsManager();
         //TODO: Injector yerine kendim çalıştırdım.
-
-
 
         this.context = context;
         GeofencingEvent geoFenceEvent = GeofencingEvent.fromIntent(intent);
@@ -50,17 +46,17 @@ public class GeofenceTransitionsReceiver extends BroadcastReceiver {
     }
 
     private void geoFenceTriggered(String geofence_guid, int transition) {
-
         Log.i(TAG, geofence_guid);
-
         //TODO: burada geofence tetiklenme requesti atılacak. alttakileri sildim.
         VisilabsGeofenceRequest request = (VisilabsGeofenceRequest) new VisilabsGeofenceRequest(Visilabs.CallAPI().getContext());
         request.setAction("process");
         request.setApiVer("Android");
 
         String[] geofenceParts = geofence_guid.split("_");
-        if(geofenceParts != null && geofenceParts.length > 0){
+        if(geofenceParts != null && geofenceParts.length > 2){
             request.setActionID(geofenceParts[0]);
+            request.setGeofenceID(geofenceParts[2]);
+
             VisilabsTargetCallback callback = new VisilabsTargetCallback() {
                 @Override
                 public void success(VisilabsResponse response) {

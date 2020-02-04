@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-
 ext {
     bintrayRepo = 'maven'
     bintrayName = 'visilabs-android'
@@ -27,12 +26,14 @@ ext {
 android {
     compileSdkVersion 29
     buildToolsVersion '26.0.3'
+    android.useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 29
         versionCode 3
-        versionName "2.3.25"
+        versionName "2.3.3"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -43,9 +44,16 @@ android {
 }
 
 dependencies {
+
+    implementation 'com.google.android.gms:play-services-base:17.1.0'
+    implementation 'com.google.android.gms:play-services-ads:18.3.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'cz.msebera.android:httpclient:4.4.1.2'
+    implementation 'com.android.support:multidex:1.0.3'
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.13'
-    implementation 'cz.msebera.android:httpclient:4.4.1.2'
 
 
     //TODO:bunlar euromsg'nin
@@ -55,12 +63,6 @@ dependencies {
     //androidTestCompile 'org.robolectric:robolectric:2.+'
     //androidTestCompile 'junit:junit:4.+'
     //androidTestCompile 'org.mockito:mockito-core:1.9.5'
-
-    implementation 'com.google.android.gms:play-services-base:[3.1.0,)'
-    implementation 'com.google.android.gms:play-services-ads:[3.1.0,)'
-    implementation 'com.google.android.gms:play-services-location:[3.1.0,)'
-    implementation 'com.google.code.gson:gson:2.4'
-
     //compile group: 'com.google.dagger', name: 'dagger', version: '2.0'
     //apt 'com.squareup.dagger:dagger-compiler:1.2.0'
     //compile 'com.squareup.dagger:dagger:1.2.0'
@@ -72,6 +74,11 @@ dependencies {
     //compile 'com.google.firebase:firebase-messaging:[7.5.0,)'
 
 }
+//TEST
+
+
+//
+
 
 apply from: "https://raw.githubusercontent.com/sky-uk/gradle-maven-plugin/1.0.3/gradle-mavenizer.gradle"
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'

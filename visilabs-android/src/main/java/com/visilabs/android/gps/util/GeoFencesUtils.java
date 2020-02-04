@@ -4,8 +4,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.visilabs.android.gps.geofence.GeofenceIntentService;
-import com.visilabs.android.gps.geofence.GeofenceTransitionsReceiver;
 
 public class GeoFencesUtils {
     public static PendingIntent getTransitionPendingIntent(Context context) {
@@ -17,11 +15,6 @@ public class GeoFencesUtils {
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-/*
-        Intent intent = new Intent(context, GeofenceIntentService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        return pendingIntent;
-*/
 
     }
 

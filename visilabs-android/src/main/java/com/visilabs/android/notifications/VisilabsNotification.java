@@ -123,9 +123,6 @@ public class VisilabsNotification implements Parcelable  {
         return mDescription.toString();
     }
 
-
-
-
     public int getId() {
         return mId;
     }
@@ -192,8 +189,6 @@ public class VisilabsNotification implements Parcelable  {
                 return Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
             }
         }
-
-
     }
 
     public String getButtonText() {

@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.relateddigital.visilabs">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_visilabs"
@@ -12,6 +15,16 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/sample_ad_key"/>
+
+        <meta-data android:name="VisilabsOrganizationID" android:value="x" />
+        <meta-data android:name="VisilabsSiteID" android:value="x" />
+        <meta-data android:name="VisilabsSegmentURL" android:value="http://lgr.visilabs.net" />
+        <meta-data android:name="VisilabsDataSource" android:value="x" />
+        <meta-data android:name="VisilabsRealTimeURL" android:value="http://rt.visilabs.net" />
+        <meta-data android:name="VisilabsChannel" android:value="Android" />
+        <meta-data android:name="VisilabsGeofenceURL" android:value="http://s.visilabs.net/geojson" />
+        <meta-data android:name="VisilabsGeofenceEnabled" android:value="true" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,6 +32,37 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service android:name="com.visilabs.android.gps.geofence.GeofenceTransitionsIntentService"
+            android:enabled="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name="com.visilabs.android.gps.geofence.GeofenceMonitor"
+            android:enabled="true"
+            android:exported="true"/>
+
+        <receiver android:name="com.visilabs.android.gps.geofence.GeofenceTransitionsReceiver"
+            android:enabled="true" android:exported="true">
+            <intent-filter>
+                <action android:name="com.visilabs.android.gps.geofence.ACTION_RECEIVE_GEOFENCE" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.visilabs.android.gps.geofence.VisilabsAlarm" android:exported="false"/>
+
+        <receiver
+            android:name="com.visilabs.android.gps.geofence.GeofenceBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

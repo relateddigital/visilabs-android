@@ -184,35 +184,35 @@ public class VisilabsTargetRequest extends VisilabsRemote {
         Uri.Builder uriBuilder = Uri.parse(url).buildUpon();
         if(url != null && url.length() > 0){
 
-            if(Visilabs.CallAPI().getOrganizationID() != null && Visilabs.CallAPI().getOrganizationID() != "" ){
+            if(Visilabs.CallAPI().getOrganizationID() != null && !Visilabs.CallAPI().getOrganizationID().equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConfig.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
             }
-            if(Visilabs.CallAPI().getSiteID() != null && Visilabs.CallAPI().getSiteID() != "" ){
+            if(Visilabs.CallAPI().getSiteID() != null && !Visilabs.CallAPI().getSiteID().equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConfig.SITEID_KEY, Visilabs.CallAPI().getSiteID());
             }
 
-            if(Visilabs.CallAPI().getCookieID() != null && Visilabs.CallAPI().getCookieID() != "" ){
+            if(Visilabs.CallAPI().getCookieID() != null && !Visilabs.CallAPI().getCookieID().equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConfig.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
             }
-            if(Visilabs.CallAPI().getExVisitorID() != null && Visilabs.CallAPI().getExVisitorID() != "" ){
+            if(Visilabs.CallAPI().getExVisitorID() != null && !Visilabs.CallAPI().getExVisitorID().equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConfig.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
             }
 
-            if(Visilabs.CallAPI().getSysTokenID() != null && Visilabs.CallAPI().getSysTokenID() != "" ){
+            if(Visilabs.CallAPI().getSysTokenID() != null && !Visilabs.CallAPI().getSysTokenID().equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConfig.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
             }
-            if(Visilabs.CallAPI().getSysAppID() != null && Visilabs.CallAPI().getSysAppID() != "" ){
+            if(Visilabs.CallAPI().getSysAppID() != null && !Visilabs.CallAPI().getSysAppID().equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConfig.APPID_KEY, Visilabs.CallAPI().getSysAppID());
             }
 
-            if(mZoneID != null && mZoneID != ""){
+            if(mZoneID != null && !mZoneID.equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConfig.ZONE_ID_KEY, VisilabsEncoder.encode(mZoneID));
             }
-            if(mProductCode != null && mProductCode != ""){
+            if(mProductCode != null && !mProductCode.equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConfig.BODY_KEY, VisilabsEncoder.encode(mProductCode));
             }
 
-            if(mApiVer != null && mApiVer != ""){
+            if(mApiVer != null && !mApiVer.equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConfig.APIVER_KEY, mApiVer);
             }else{
                 uriBuilder.appendQueryParameter(VisilabsConfig.APIVER_KEY, "Android");

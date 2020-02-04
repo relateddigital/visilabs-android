@@ -90,7 +90,7 @@ public class VisilabsConfig {
 
 
 
-    public static final String VERSION = "2.3.24";
+    public static final String VERSION = "2.3.26";
 
     public static final int UI_FEATURES_MIN_API = 16;
 
@@ -141,6 +141,9 @@ public class VisilabsConfig {
     //geofence için
     public static final String ACT_ID_KEY = "actid";
     public static final String ACT_KEY = "act";
+
+    public static final String GEO_ID_KEY = "OM.locationid";
+
 
     public static final String TARGET_PREF_VOSS_STORE_KEY = "OM.voss";
     public static final String TARGET_PREF_VCNAME_STORE_KEY = "OM.vcname";
@@ -209,4 +212,6 @@ public class VisilabsConfig {
 
         return true;
     }
+
+
 }

@@ -41,7 +41,7 @@ public class PersistentTargetManager {
             String storeKey = visilabsParameter.getStoreKey();
             List<String> relatedKeys = visilabsParameter.getRelatedKeys();
             int count = visilabsParameter.getCount();
-            if(parameters.containsKey(key) && parameters.get(key) != null && parameters.get(key) != ""){
+            if(parameters.containsKey(key) && parameters.get(key) != null && !parameters.get(key).equals("")){
                 String parameterValue = parameters.get(key).trim();
                 if(count == 1){
                     if(relatedKeys != null && relatedKeys.size() > 0){

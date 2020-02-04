@@ -13,11 +13,9 @@ public class GpsFactory {
 
     public static GpsManager createManager(Context context) {
         if (gpsManager == null) {
-            //Logs.showLog(Logs.LOG_GPS_MANAGER, "Creating new GpsManager");
             gpsManager = new GpsManager(context);
             return gpsManager;
         }
-        //Logs.showLog(Logs.LOG_GPS_MANAGER, "Returning existing GpsManager");
         return gpsManager;
     }
 }

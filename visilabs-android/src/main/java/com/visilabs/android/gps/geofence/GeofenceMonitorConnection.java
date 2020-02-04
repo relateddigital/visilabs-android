@@ -19,8 +19,6 @@ public class GeofenceMonitorConnection implements ServiceConnection {
     public void onServiceConnected(ComponentName name, IBinder service) {
         //TODO: burada patlıyor. Cast hatası var. Buraya catch koy.
         try{
-            //throw new Exception();
-
             GeofenceMonitor geofenceMonitor = ((GeofenceMonitor.GeofenceMonitorBinder) service).getService();
             GpsManager gpsManager = Injector.INSTANCE.getGpsManager();
             if (gpsManager != null) {

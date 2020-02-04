@@ -64,18 +64,18 @@ public class VisilabsURLConnection
                     String cookieString = "";
 
                     if(loadBalanceCookieKey != null && loadBalanceCookieValue != null
-                            && loadBalanceCookieKey != "" && loadBalanceCookieValue != ""){
+                            && !loadBalanceCookieKey.equals("") && !loadBalanceCookieValue.equals("")){
                         cookieString = loadBalanceCookieKey + "=" + loadBalanceCookieValue;
                     }
-                    if(OM3rdCookieValue != null && OM3rdCookieValue != ""){
-                        if(cookieString != null && cookieString != ""){
+                    if(OM3rdCookieValue != null && !OM3rdCookieValue.equals("")){
+                        if(cookieString != null && !cookieString.equals("")){
                             cookieString = cookieString + ";";
                         }
                         cookieString = cookieString + VisilabsConfig.OM_3_KEY + "=" + OM3rdCookieValue;
                     }
 
 
-                    if(cookieString != null && cookieString != ""){
+                    if(cookieString != null && !cookieString.equals("")){
                         connection.setRequestProperty("Cookie", cookieString);
                     }
 
