@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
                             return;
                         }
 
-                        Visilabs.CreateAPI("676D325830564761676D453D", "356467332F6533766975593D", "http://lgr.visilabs.net",
-                                "visistore", "http://rt.visilabs.net", "Android", getApplicationContext());
+                        Visilabs.CreateAPI("x", "x", "http://lgr.visilabs.net",
+                                "x", "http://rt.visilabs.net", "Android", getApplicationContext());
 
                         // Get new Instance ID token
                         String token = task.getResult().getToken();
