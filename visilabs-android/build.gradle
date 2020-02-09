@@ -12,7 +12,7 @@ ext {
     siteUrl = 'http://visilabs.com/'
     gitUrl = 'http://visilabs.com/'
 
-    libraryVersion = '2.3.25'
+    libraryVersion = '3.0.3'
 
     developerId = 'visilabs'
     developerName = 'Visilabs'
@@ -26,14 +26,12 @@ ext {
 android {
     compileSdkVersion 29
     buildToolsVersion '26.0.3'
-    android.useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 29
         versionCode 3
-        versionName "2.3.3"
-        multiDexEnabled true
+        versionName "3.0.3"
     }
     buildTypes {
         release {
@@ -45,16 +43,13 @@ android {
 
 dependencies {
 
-    implementation 'com.google.android.gms:play-services-base:17.1.0'
-    implementation 'com.google.android.gms:play-services-ads:18.3.0'
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'cz.msebera.android:httpclient:4.4.1.2'
-    implementation 'com.android.support:multidex:1.0.3'
+    api 'com.google.android.gms:play-services-base:17.1.0'
+    api 'com.google.android.gms:play-services-ads:18.3.0'
+    api 'com.google.android.gms:play-services-location:17.0.0'
+    api 'cz.msebera.android:httpclient:4.4.1.2'
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.13'
-
 
     //TODO:bunlar euromsg'nin
     //compile 'com.squareup.retrofit2:retrofit:2.1.0'
@@ -74,11 +69,12 @@ dependencies {
     //compile 'com.google.firebase:firebase-messaging:[7.5.0,)'
 
 }
-//TEST
 
-
-//
-
+allprojects {
+    tasks.withType(Javadoc) {
+        enabled = false
+    }
+}
 
 apply from: "https://raw.githubusercontent.com/sky-uk/gradle-maven-plugin/1.0.3/gradle-mavenizer.gradle"
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'

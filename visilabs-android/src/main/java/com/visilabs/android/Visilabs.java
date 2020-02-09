@@ -14,12 +14,16 @@ import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient.Info;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.visilabs.android.api.VisilabsAction;
-import com.visilabs.android.api.VisilabsGeofenceRequest;
 import com.visilabs.android.api.VisilabsTargetCallback;
 import com.visilabs.android.api.VisilabsTargetFilter;
-import com.visilabs.android.gps.entities.VisilabsGeoFenceEntity;
+import com.visilabs.android.api.VisilabsTargetRequest;
+import com.visilabs.android.api.VisilabsUpdateDisplayState;
+import com.visilabs.android.exceptions.VisilabsNotReadyException;
 import com.visilabs.android.gps.factory.GpsFactory;
 import com.visilabs.android.gps.factory.GpsFactory2;
 import com.visilabs.android.gps.manager.GpsManager;
@@ -28,9 +32,6 @@ import com.visilabs.android.json.JSONArray;
 import com.visilabs.android.json.JSONObject;
 import com.visilabs.android.notifications.VisilabsNotification;
 import com.visilabs.android.notifications.VisilabsNotificationActivity;
-import com.visilabs.android.api.VisilabsTargetRequest;
-import com.visilabs.android.api.VisilabsUpdateDisplayState;
-import com.visilabs.android.exceptions.VisilabsNotReadyException;
 import com.visilabs.android.notifications.VisilabsNotificationActivity_2;
 import com.visilabs.android.notifications.VisilabsNotificationFragment;
 import com.visilabs.android.notifications.VisilabsNotificationRequest;
@@ -57,10 +58,7 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.google.android.gms.ads.identifier.AdvertisingIdClient;
-import com.google.android.gms.ads.identifier.AdvertisingIdClient.Info;
 //import com.google.android.gms.common.GooglePlayServicesAvailabilityException;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 
 /**
  * Class for interacting with Visilabs Analytics and Target modules.
@@ -1297,7 +1295,8 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 , VisilabsEncoder.encode(this._channel)
                 , VisilabsEncoder.encode("true"));
 
-        if(this.mIdentifierForAdvertising != null){
+        assert this.mIdentifierForAdvertising != null;
+        if(this.mIdentifierForAdvertising != null || this.mIdentifierForAdvertising.equals("cca-app-pub-3940256099942544~3347511713") ){
             query = String.format("%s&OM.m_adid=%s", query, VisilabsEncoder.encode(this.mIdentifierForAdvertising));
         }
 
