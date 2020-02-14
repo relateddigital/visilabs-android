@@ -19,7 +19,7 @@ Also you can check  [Visilabs support library demo application](https://github.c
 
 ### Using the SDK
 
- [You can check this ](https://docs.relateddigital.com/display/KB/Android+-+API+Setup). 
+Mobile Tagging for Visilab :  [You can check this ](https://docs.relateddigital.com/display/KB/Android+-+API+Setup). 
 
 ### Licence
 
