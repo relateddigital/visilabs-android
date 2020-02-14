@@ -1,4 +1,4 @@
-# Visilabs Android Sdk
+# Visilabs Android
 
 The Visilabs Android Sdk is a java implementation of an Android client for Visilabs.
 
