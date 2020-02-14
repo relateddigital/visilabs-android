@@ -8,11 +8,15 @@ You need to add  ``` implementation "com.visilabs.android:visilabs-android:3.0.3
 
 This version uses AndroidX
 
-Also you can check  [Visilabs library demo application](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3) for demo purpose
+Also you can check  [Visilabs Demo Application](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3) for demo purpose
 
 #### Note that: 
 
-If you do not use AndroidX, you may use  [Visilabs support library](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3-module-supportlibrary). But we will not contribute support library in the future. This is our last supported version. 
+If you do not use AndroidX, you may use  [Visilabs Module - Support library](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3-module-supportlibrary). But we will not contribute support library in the future. This is our last supported version. 
+
+For use this module, 
+Plese download first ; When your project is open File->New -> Import Module and select path where you locate to module. After that do not forget to link module adding  ```   implementation project(path: ':visilabs-android') ```to app level build.gradle
+
 
 Also you can check  [Visilabs support library demo application](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3-supportlib) for demo purpose. Also you can use its module. 
 
