@@ -12,9 +12,9 @@ Also you can check  [Visilabs library demo application](https://github.com/relat
 
 #### Note that: 
 
-If you do not use AndroidX, you may use  [Visilabs support library](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3-module-supportlibrary). But we will not contribute support library in the future. This is last support. 
+If you do not use AndroidX, you may use  [Visilabs support library](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3-module-supportlibrary). But we will not contribute support library in the future. This is our last supported version. 
 
-Also you can check  [Visilabs support library demo application](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3-supportlib) for demo application. Also you can use its module. 
+Also you can check  [Visilabs support library demo application](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3-supportlib) for demo purpose. Also you can use its module. 
 
 
 ### Using the SDK
