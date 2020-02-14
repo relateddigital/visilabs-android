@@ -24,4 +24,4 @@ Mobile Tagging for Visilab :  [You can check this ](https://docs.relateddigital.
 ### Licence
 
 
- [Related Digital ](https://www.relateddigital.com/). 
+ [Related Digital ](https://www.relateddigital.com/)
