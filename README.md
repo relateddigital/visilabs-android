@@ -21,7 +21,7 @@ For use this module,
 - Please do not forget to link visilabs module adding  ```   implementation project(path: ':visilabs-android') ```to your build.gradle
 
 
-Also you can check  [Visilabs support library demo application](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3-supportlib) for demo purpose. You can use its module too. 
+Also you can check  [Visilabs Demo Application- Support Library ](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3-supportlib) for demo purpose. You can use its module too. 
 
 
 ### Using the SDK
