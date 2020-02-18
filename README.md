@@ -8,7 +8,7 @@ You need to add  ``` implementation "com.visilabs.android:visilabs-android:3.0.3
 
 This version uses AndroidX
 
-Also you can check  [Visilabs Demo Application](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3) for demo purpose. Note that you may find demo application in master branch
+Also you can check  [Visilabs Demo Application](https://github.com/relateddigital/visilabs-android-sdk/releases/tag/3.0.3) for demo purpose. You may find demo application in master branch
 
 #### Note that: 
 
