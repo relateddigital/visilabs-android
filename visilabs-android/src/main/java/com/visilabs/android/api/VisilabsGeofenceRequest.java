@@ -17,9 +17,7 @@ import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
 
-/**
- * Created by visilabs on 14.07.2016.
- */
+
 public class VisilabsGeofenceRequest extends VisilabsRemote {
 
     public enum Methods {

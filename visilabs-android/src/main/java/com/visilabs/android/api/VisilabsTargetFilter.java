@@ -1,19 +1,11 @@
 package com.visilabs.android.api;
 
-import com.visilabs.android.util.StringUtils;
 
-/**
- * Created by visilabs on 15.12.2016.
- */
 public class VisilabsTargetFilter {
     private String mAttribute;
     private String mFilterType;
     private String mValue;
 
-
-    public VisilabsTargetFilter(){
-
-    }
 
     public VisilabsTargetFilter(String mAttribute, String mFilterType, String mValue) {
         this.mAttribute = mAttribute;

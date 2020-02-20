@@ -16,8 +16,6 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient.Info;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.visilabs.android.api.VisilabsAction;
 import com.visilabs.android.api.VisilabsTargetCallback;
 import com.visilabs.android.api.VisilabsTargetFilter;
@@ -32,7 +30,6 @@ import com.visilabs.android.json.JSONArray;
 import com.visilabs.android.json.JSONObject;
 import com.visilabs.android.notifications.VisilabsNotification;
 import com.visilabs.android.notifications.VisilabsNotificationActivity;
-import com.visilabs.android.notifications.VisilabsNotificationActivity_2;
 import com.visilabs.android.notifications.VisilabsNotificationFragment;
 import com.visilabs.android.notifications.VisilabsNotificationRequest;
 import com.visilabs.android.util.ActivityImageUtils;
@@ -46,7 +43,6 @@ import com.visilabs.android.util.VisilabsEncoder;
 import com.visilabs.android.util.VisilabsLog;
 import com.visilabs.android.util.VisilabsParameter;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -57,12 +53,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.locks.ReentrantLock;
-
-//import com.google.android.gms.common.GooglePlayServicesAvailabilityException;
-
-/**
- * Class for interacting with Visilabs Analytics and Target modules.
-*/
 
 public class Visilabs implements VisilabsURLConnectionCallbackInterface {
     private static final String LOG_TAG = "VisilabsAPI";
@@ -80,7 +70,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
     private String _segmentURL;
     private String _realTimeURL;
 
-
     private String _dataSource;
     private String _exVisitorID;
     private String _cookieID;
@@ -94,13 +83,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
     private String mVisitData = "";
     private String mVisitorData = "";
 
-    private String mLoggerCookieKey = "";
-    private String mLoggerCookieValue = "";
-    private String mRealTimeCookieKey = "";
-    private String mRealTimeCookieValue = "";
-
-    private String mLoggerOM3rdCookieValue = "";
-    private String mRealOM3rdTimeCookieValue = "";
+    private Cookie cookie;
 
     private Boolean mCheckForNotificationsOnLoggerRequest;
 
@@ -124,17 +107,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                     mIdentifierForAdvertising = adInfo.getId();
                     final boolean isLAT = adInfo.isLimitAdTrackingEnabled();
                 }
-                catch (IOException e) {
-                    // Unrecoverable error connecting to Google Play services (e.g.,
-                    // the old version of the service doesn't support getting AdvertisingId).
-
-                } catch (GooglePlayServicesRepairableException e) {
-                    // Encountered a recoverable error connecting to Google Play services.
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    // Google Play services is not available entirely.
-                }
-                catch (Exception e){
-
+                catch (Exception e) {
                 }
 
             }
@@ -145,54 +118,14 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         mCheckForNotificationsOnLoggerRequest = checkForNotificationsOnLoggerRequest;
     }
 
-    public String getLoggerCookieKey() {
-        return mLoggerCookieKey;
+
+    public Cookie getCookie() {
+        return cookie;
     }
 
-    public void setLoggerCookieKey(String loggerCookieKey) {
-        this.mLoggerCookieKey = loggerCookieKey;
+    public void setCookie(Cookie cookie) {
+        this.cookie = cookie;
     }
-
-    public String getLoggerCookieValue() {
-        return mLoggerCookieValue;
-    }
-
-    public void setLoggerCookieValue(String loggerCookieValue) {
-        this.mLoggerCookieValue = loggerCookieValue;
-    }
-
-    public String getRealTimeCookieKey() {
-        return mRealTimeCookieKey;
-    }
-
-    public void setRealTimeCookieKey(String realTimeCookieKey) {
-        this.mRealTimeCookieKey = realTimeCookieKey;
-    }
-
-    public String getRealTimeCookieValue() {
-        return mRealTimeCookieValue;
-    }
-
-    public void setRealTimeCookieValue(String realTimeCookieValue) {
-        this.mRealTimeCookieValue = realTimeCookieValue;
-    }
-
-    public String getLoggerOM3rdCookieValue(){
-        return this.mLoggerOM3rdCookieValue;
-    }
-
-    public void setLoggerOM3rdCookieValue(String loggerOM3rdCookieValue) {
-        this.mLoggerOM3rdCookieValue = loggerOM3rdCookieValue;
-    }
-
-    public String getRealOM3rdTimeCookieValue(){
-        return this.mRealOM3rdTimeCookieValue;
-    }
-
-    public void setRealOM3rdTimeCookieValue(String realOM3rdTimeCookieValue) {
-        this.mRealOM3rdTimeCookieValue = realOM3rdTimeCookieValue;
-    }
-
 
     /**
      * Tracks notification.
@@ -228,7 +161,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
 
 
-        if(this._realTimeURL != null && this._realTimeURL != "") {
+        if(this._realTimeURL != null && !this._realTimeURL.equals("")) {
             realURL = this._realTimeURL+ "/" + this._dataSource + "/om.gif?" + query;
         }
 
@@ -240,14 +173,14 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         synchronized (this) {
             addUrlToQueue(segURL);
-            if(this._realTimeURL != null && this._realTimeURL != "") {
+            if(this._realTimeURL != null && !this._realTimeURL.equals("")) {
                 addUrlToQueue(realURL);
             }
         }
 
         this.send();
 
-        if(this._realTimeURL != null && this._realTimeURL != "") {
+        if(this._realTimeURL != null && !this._realTimeURL.equals("")) {
             this.send();
         }
     }
@@ -268,7 +201,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
     }
 
     private void showNotification(String pageName, String type, int id, final Activity parent, HashMap<String,String> properties){
-        if(mActionURL == null || mActionURL == ""){
+        if(mActionURL == null || mActionURL.equals("")){
             Log.e(LOG_TAG, "Action URL is empty.");
         }
 
@@ -290,14 +223,15 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             request.executeAsync(getNotificationCallback(type, id, parent));
         }catch (Exception ex){
             if(VisilabsConfig.DEBUG){
-                Log.e(LOG_TAG, ex.getMessage());
+                Log.e(LOG_TAG, ex.toString());
             }
         }
 
     }
 
     private VisilabsTargetCallback getNotificationCallback(final String type, final int notificationID, final Activity parent){
-        VisilabsTargetCallback callback = new VisilabsTargetCallback() {
+
+        return new VisilabsTargetCallback() {
             @Override
             public void success(VisilabsResponse response) {
                 String rawResponse = response.getRawResponse();
@@ -356,139 +290,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 Log.e(LOG_TAG, response.getErrorMessage());
             }
         };
-
-        return callback;
     }
-
-
-
-    public void showGivenNotification_2_buttons(final Activity parent){
-        if (Build.VERSION.SDK_INT < VisilabsConfig.UI_FEATURES_MIN_API) {
-            if (VisilabsConfig.DEBUG) {
-                Log.v(LOG_TAG, "Android version is below necessary version.");
-            }
-            return;
-        }
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("actid", 5);
-        jsonObject.put("title", "Egemen-full");
-        jsonObject.put("actiontype", "InAppMessage");
-
-        JSONObject actiondata = new JSONObject();
-        actiondata.put("msg_title", "");
-        actiondata.put("msg_body", "");
-        actiondata.put("btn_text", "Full Button Text");
-        actiondata.put("ios_lnk", "https://app.visilabs.net/#Target/Target/TargetingActionsForm/?a=1525251988870&actionID=25");
-        actiondata.put("android_lnk", "https://app.visilabs.net/#Target/Target/TargetingActionsForm/?a=1525251988870&actionID=25");
-        actiondata.put("msg_type", "full");
-
-
-
-
-        //actiondata.put("img", "http://img.visilabs.net/in-app-message/uploaded_images/21_981_20180503141759328.jpg");
-        actiondata.put("img", "https://i.pinimg.com/736x/fc/2f/08/fc2f08ecb0a6f272119a705cfbe356dc.jpg");
-
-        actiondata.put("visitor_data", "");
-        actiondata.put("visit_data", "");
-        actiondata.put("qs", "");
-        actiondata.put("cid", "");
-        actiondata.put("courseofaction", "");
-        jsonObject.put("actiondata", actiondata);
-
-
-        final VisilabsNotification notifOrNull;
-        try {
-            notifOrNull = new VisilabsNotification(jsonObject, this._context);
-
-
-
-        parent.runOnUiThread(new Runnable() {
-            @Override
-            @TargetApi(VisilabsConfig.UI_FEATURES_MIN_API)
-            public void run() {
-                final ReentrantLock lock = VisilabsUpdateDisplayState.getLockObject();
-                lock.lock();
-                try{
-                    if (VisilabsUpdateDisplayState.hasCurrentProposal()) {
-                        if (VisilabsConfig.DEBUG) {
-                            Log.v(LOG_TAG, "DisplayState is locked, will not show notifications.");
-                        }
-                        return; // Already being used.
-                    }
-                    VisilabsNotification toShow = notifOrNull;
-                    if (null == toShow) {
-                        if (VisilabsConfig.DEBUG) {
-                            Log.v(LOG_TAG, "No notification available, will not show.");
-                        }
-                        return; // Nothing to show
-                    }
-
-                    final VisilabsNotification.Type inAppType = toShow.getType();
-                    if (inAppType == VisilabsNotification.Type.FULL &&
-                            ! VisilabsConfig.checkNotificationActivityAvailable(parent.getApplicationContext())) {
-                        if (VisilabsConfig.DEBUG) {
-                            Log.v(LOG_TAG, "Application is not configured to show full screen notifications, none will be shown.");
-                        }
-                        return; // Can't show due to config.
-                    }
-
-                    final int highlightColor = ActivityImageUtils.getHighlightColorFromBackground(parent);
-                    final VisilabsUpdateDisplayState.DisplayState.InAppNotificationState proposal =
-                            new VisilabsUpdateDisplayState.DisplayState.InAppNotificationState(toShow, highlightColor);
-                    final int intentId = VisilabsUpdateDisplayState.proposeDisplay(proposal, _cookieID, _dataSource);
-                    if (intentId <= 0) {
-                        Log.e(LOG_TAG, "DisplayState Lock in inconsistent state!");
-                        return;
-                    }
-
-                    switch (inAppType) {
-                        case FULL: {
-                            if (VisilabsConfig.DEBUG) {
-                                Log.v(LOG_TAG, "Intent for full notification.");
-                            }
-
-                            Log.v("TAG", toShow.getVisitData());
-                            Log.v("TAG", toShow.getVisitorData());
-
-                            if(toShow.getVisitData() != null && !toShow.getVisitData().equals("")){
-                                Log.v("mVisitData", mVisitData);
-                                mVisitData = toShow.getVisitData();
-                            }
-
-                            if(toShow.getVisitorData() != null && !toShow.getVisitorData().equals("")){
-                                mVisitorData = toShow.getVisitorData();
-                                Prefs.saveToPrefs(_context, VisilabsConfig.VISITOR_DATA_PREF, VisilabsConfig.VISITOR_DATA_PREF_KEY, mVisitorData);
-                                Log.v("mVisitorData", mVisitorData);
-                            }
-
-
-                            final Intent intent = new Intent(parent.getApplicationContext(), VisilabsNotificationActivity_2.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                            intent.putExtra(VisilabsNotificationActivity_2.INTENT_ID_KEY, intentId);
-                            parent.startActivity(intent);
-                        }
-                        break;
-                        default:
-                            Log.e(LOG_TAG, "Unrecognized notification type " + inAppType + " can't be shown");
-                    }
-
-
-                }catch (Exception ex){
-                    Log.e(LOG_TAG, ex.getMessage(), ex);
-                } finally {
-                    lock.unlock();
-                }
-            }
-        });
-
-        }catch (Exception e){
-            Log.e(LOG_TAG, e.getMessage(), e);
-            return;
-        }
-    }
-
 
     private void showGivenNotification(final VisilabsNotification notifOrNull, final Activity parent) {
         if (Build.VERSION.SDK_INT < VisilabsConfig.UI_FEATURES_MIN_API) {
@@ -572,8 +374,8 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                             if (VisilabsConfig.DEBUG) {
                                 Log.v(LOG_TAG, "Showing mini notification.");
                             }
+
                             final FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
-                            //transaction.setCustomAnimations(0, R.anim.com_visilabs_android_slide_down);
                             transaction.add(android.R.id.content, inapp);
                             transaction.commit();
                         }
@@ -619,11 +421,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         });
 
     }
-
-
-
-
-
 
     /**
      * Builds an instance of VisilabsTargetRequest to get recommendation data.
@@ -808,10 +605,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
         return _API;
     }
-
-
-
-
 
     /**
      * Initializes the application.
@@ -1104,7 +897,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             this.send();
         }
     }
-
 
     /**
      * Tracks user's custom events.
@@ -1406,8 +1198,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             mIsCreated = true;
             mReady = true;
         }
-
-
     }
 
     public void send() {
@@ -1423,22 +1213,20 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 return;
             }
 
-
             VisilabsURLConnection connector = VisilabsURLConnection.initializeConnector(this);
-
 
             String loadBalanceCookieKey = "";
             String loadBalanceCookieValue = "";
             String OM3rdCookieValue = "";
 
             if(nextAPICall.contains(VisilabsConfig.LOGGER_URL)){
-                loadBalanceCookieKey = this.getLoggerCookieKey();
-                loadBalanceCookieValue = this.getLoggerCookieValue();
-                OM3rdCookieValue = this.getLoggerOM3rdCookieValue();
+                loadBalanceCookieKey = this.cookie.getLoggerCookieKey();
+                loadBalanceCookieValue = this.cookie.getLoggerCookieValue();
+                OM3rdCookieValue = this.cookie.getLoggerOM3rdCookieValue();
             }else if(nextAPICall.contains(VisilabsConfig.REAL_TIME_URL)){
-                loadBalanceCookieKey = this.getRealTimeCookieKey();
-                loadBalanceCookieValue = this.getRealTimeCookieValue();
-                OM3rdCookieValue = this.getRealOM3rdTimeCookieValue();
+                loadBalanceCookieKey = this.cookie.getRealTimeCookieKey();
+                loadBalanceCookieValue = this.cookie.getRealTimeCookieValue();
+                OM3rdCookieValue = this.cookie.getRealOM3rdTimeCookieValue();
             }
 
             connector.connectURL(nextAPICall, this._userAgent, this._requestTimeoutSeconds, loadBalanceCookieKey
@@ -1588,13 +1376,11 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         if(content!= null && content.length()>0) {
             query += String.format("&utm_content=%s", VisilabsEncoder.encode(content));
         }
-        String pushURL = this._RESTURL+ "/"+ this._encryptedDataSource+ "/"+ this._dataSource + "/" + this._cookieID +"?"+query;
 
-        return pushURL;
+        return this._RESTURL+ "/"+ this._encryptedDataSource+ "/"+ this._dataSource + "/" + this._cookieID +"?"+query;
 
 
     }
-
 
     /**
      * Sets the log level for the library.

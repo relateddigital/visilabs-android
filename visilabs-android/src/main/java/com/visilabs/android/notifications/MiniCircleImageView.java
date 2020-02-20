@@ -61,4 +61,3 @@ public class MiniCircleImageView extends ImageView {
     private int mCanvasWidth;
     private int mCanvasHeight;
 }
-

@@ -1,7 +1,6 @@
 package com.relateddigital.visilabs;
 
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +13,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.visilabs.android.Cookie;
 import com.visilabs.android.Visilabs;
 
 import java.util.HashMap;
@@ -29,9 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         Visilabs.CreateAPI(getApplicationContext());
+        Cookie c = new Cookie();
+
+        Visilabs.CallAPI().setCookie(new Cookie());
 
         Button btnTestPageView = findViewById(R.id.btn_page_view);
-
         btnTestPageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

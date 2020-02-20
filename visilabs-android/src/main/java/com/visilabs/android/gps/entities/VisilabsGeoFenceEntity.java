@@ -18,7 +18,6 @@ public class VisilabsGeoFenceEntity {
     public VisilabsGeoFenceEntity() {
     }
 
-
     public Geofence toGeofence() {
         int mTransitionType;
 

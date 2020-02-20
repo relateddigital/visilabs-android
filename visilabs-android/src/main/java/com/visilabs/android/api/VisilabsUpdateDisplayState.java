@@ -1,11 +1,7 @@
 package com.visilabs.android.api;
 
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,14 +10,10 @@ import android.util.Log;
 import com.visilabs.android.notifications.VisilabsNotification;
 import com.visilabs.android.util.VisilabsConfig;
 
-import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 @TargetApi(VisilabsConfig.UI_FEATURES_MIN_API)
 public class VisilabsUpdateDisplayState implements Parcelable {
-
 
     public static abstract class DisplayState implements Parcelable {
 

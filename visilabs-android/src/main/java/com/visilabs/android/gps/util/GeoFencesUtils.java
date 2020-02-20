@@ -14,10 +14,7 @@ public class GeoFencesUtils {
                 0,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-
-
     }
-
 
     private static final double R = 6372.8; // In kilometers
     public static double haversine(double lat1, double lon1, double lat2, double lon2) {
@@ -30,10 +27,4 @@ public class GeoFencesUtils {
         double c = 2 * Math.asin(Math.sqrt(a));
         return R * c;
     }
-
 }
-
-
-
-
-

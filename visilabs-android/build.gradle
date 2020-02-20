@@ -46,28 +46,10 @@ dependencies {
     api 'com.google.android.gms:play-services-base:17.1.0'
     api 'com.google.android.gms:play-services-ads:18.3.0'
     api 'com.google.android.gms:play-services-location:17.0.0'
-    api 'cz.msebera.android:httpclient:4.4.1.2'
+    api 'com.loopj.android:android-async-http:1.4.9'
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.13'
-
-    //TODO:bunlar euromsg'nin
-    //compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    //compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    //compile 'com.squareup.picasso:picasso:2.5.2'
-    //androidTestCompile 'org.robolectric:robolectric:2.+'
-    //androidTestCompile 'junit:junit:4.+'
-    //androidTestCompile 'org.mockito:mockito-core:1.9.5'
-    //compile group: 'com.google.dagger', name: 'dagger', version: '2.0'
-    //apt 'com.squareup.dagger:dagger-compiler:1.2.0'
-    //compile 'com.squareup.dagger:dagger:1.2.0'
-
-
-    //TODO: play-services-gcm euromsg için eklendi.
-    //compile "com.google.android.gms:play-services-gcm:[7.5.0,)"
-    //compile 'com.google.firebase:firebase-core:[7.5.0F,)'
-    //compile 'com.google.firebase:firebase-messaging:[7.5.0,)'
-
 }
 
 allprojects {
@@ -76,7 +58,5 @@ allprojects {
     }
 }
 
-apply from: "https://raw.githubusercontent.com/sky-uk/gradle-maven-plugin/1.0.3/gradle-mavenizer.gradle"
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
-
+apply from: 'bintray-install.gradle'
+apply from: 'bintray-upload.gradle'
