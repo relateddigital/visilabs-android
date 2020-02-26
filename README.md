@@ -43,14 +43,13 @@ For use modules,
 
 ### Sample Applications 
 
-- [Visilabs Demo Application](https://github.com/relateddigital/visilabs-android/releases/tag/3.0.3) directly.
-
+- [Visilabs Demo Application](https://github.com/relateddigital/visilabs-android/releases/tag/3.0.3) (master branch)
 - [Visilabs Demo Application - (Support Library) ](https://github.com/relateddigital/visilabs-android/tree/support_library)      You can use its module. We will not contribute support library in the future. This is our last support.
 
 
 ### Using the SDK
 
-Mobile Tagging for Visilab and more information :  [Please check this](https://docs.relateddigital.com/display/KB/Android+-+API+Setup). 
+Mobile Tagging for Visilab and more information :  [Please check docs](https://docs.relateddigital.com/display/KB/Android+-+API+Setup). 
 
 ### Licence
 
