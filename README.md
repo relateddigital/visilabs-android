@@ -39,11 +39,10 @@ You may use  [Visilabs Module](https://github.com/relateddigital/visilabs-androi
 - Download the module
 - Open your project which you want to use Visilabs
 - Follow steps : Android Studio -> File -> New -> Import Module and select path where you want to locate module and rename it.
-- Please do not forget to link visilabs module adding  
+- Please do not forget to link visilabs module in app/build.gradle  
 ```java
 implementation project(path: ':visilabs-android') 
 ```
-to your build.gradle
 
 
 ### Sample Applications 
