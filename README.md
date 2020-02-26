@@ -12,7 +12,6 @@
 - [Latest Version](#latest-version)
 - [Visilabs Android](#visilabs-android)
   * [Installation](#installation)
-      - [Note that:](#note-that-)
     + [Sample Applications](#sample-applications)
     + [Using the SDK](#using-the-sdk)
     + [Licence](#licence)
