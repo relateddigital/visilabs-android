@@ -23,7 +23,7 @@ Also you can check  for demo purpose. You may find demo application in master br
 
 #### Note that: 
  
-You may use  [Visilabs Module (https://github.com/relateddigital/visilabs-android/tree/master/visilabs-android) directly.
+You may use  [Visilabs Module] (https://github.com/relateddigital/visilabs-android/tree/master/visilabs-android) directly.
 
 For use modules, 
 - Download the module
