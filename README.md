@@ -25,16 +25,13 @@ Add Visilabs to the ```dependencies``` in app/build.gradle.
 ```java
 implementation "com.visilabs.android:visilabs-android:3.0.3
 ```
-
 This version uses AndroidX
-
-Also you can check  for demo purpose. You may find demo application in master branch
 
 #### Note that: 
  
 You may use  [Visilabs Module](https://github.com/relateddigital/visilabs-android/tree/master/visilabs-android) directly.
 
-For use modules, 
+  For that, 
 - Download the module
 - Open your project which you want to use Visilabs
 - Follow steps : Android Studio -> File -> New -> Import Module and select path where you want to locate module and rename it.
