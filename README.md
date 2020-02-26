@@ -3,7 +3,16 @@
 
 ***February 10, 2020*** - [Visilabs v3.0.1](https://github.com/relateddigital/visilabs-android/releases) 
 
+# Table of Content
 
+- [Latest Version](#latest-version)
+- [Visilabs Android](#visilabs-android)
+  * [Installation](#installation)
+      - [Note that:](#note-that-)
+    + [Sample Applications](#sample-applications)
+    + [Using the SDK](#using-the-sdk)
+    + [Licence](#licence)
+    
 # Visilabs Android
 
 The Visilabs Android Sdk is a java implementation of an Android client for Visilabs.
@@ -23,7 +32,7 @@ Also you can check  for demo purpose. You may find demo application in master br
 
 #### Note that: 
  
-You may use  [Visilabs Module] (https://github.com/relateddigital/visilabs-android/tree/master/visilabs-android) directly.
+You may use  [Visilabs Module](https://github.com/relateddigital/visilabs-android/tree/master/visilabs-android) directly.
 
 For use modules, 
 - Download the module
