@@ -49,8 +49,8 @@ implementation project(path: ':visilabs-android')
 
 - [Visilabs Sample Application](https://github.com/relateddigital/visilabs-android/releases/tag/3.0.3) (master branch)
 - [Visilabs Sample Application - (Support Library) ](https://github.com/relateddigital/visilabs-android/tree/support_library)      
-You may use this module. We will not contribute support library in the future. This is our last support.
-
+#### Note 
+You may use the support library module but we will not contribute support library in the future. This is our last support.
 
 ### Using the SDK
 
