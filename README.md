@@ -27,7 +27,7 @@ implementation "com.visilabs.android:visilabs-android:3.0.3
 ```
 This version uses AndroidX
 
-#### Note that: 
+#### Note: 
  
 You may use  [Visilabs Module](https://github.com/relateddigital/visilabs-android/tree/master/visilabs-android) directly.
 
@@ -35,13 +35,17 @@ You may use  [Visilabs Module](https://github.com/relateddigital/visilabs-androi
 - Download the module
 - Open your project which you want to use Visilabs
 - Follow steps : Android Studio -> File -> New -> Import Module and select path where you want to locate module and rename it.
-- Please do not forget to link visilabs module adding  ```java   implementation project(path: ':visilabs-android') ```to your build.gradle
+- Please do not forget to link visilabs module adding  
+```java
+implementation project(path: ':visilabs-android') 
+```
+to your build.gradle
 
 
 ### Sample Applications 
 
 - [Visilabs Demo Application](https://github.com/relateddigital/visilabs-android/releases/tag/3.0.3) (master branch)
-- [Visilabs Demo Application - (Support Library) ](https://github.com/relateddigital/visilabs-android/tree/support_library)      You can use its module. We will not contribute support library in the future. This is our last support.
+- [Visilabs Demo Application - (Support Library) ](https://github.com/relateddigital/visilabs-android/tree/support_library)      You may use this module. We will not contribute support library in the future. This is our last support.
 
 
 ### Using the SDK
