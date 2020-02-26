@@ -58,4 +58,5 @@ Mobile Tagging for Visilab and more information :  [Please check docs](https://d
 ### Licence
 
 
- [Related Digital ](https://www.relateddigital.com/)
+ - [Related Digital ](https://www.relateddigital.com/)
+ - [Visilabs ](http://visilabs.com/)
