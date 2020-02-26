@@ -16,8 +16,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -26,9 +24,9 @@ import com.visilabs.android.VisilabsResponse;
 import com.visilabs.android.api.VisilabsGeofenceRequest;
 import com.visilabs.android.api.VisilabsTargetCallback;
 import com.visilabs.android.gps.entities.VisilabsGeoFenceEntity;
-import com.visilabs.android.gps.util.GeoFencesUtils;
 import com.visilabs.android.gps.geofence.GeofenceBroadcastReceiver;
 import com.visilabs.android.gps.geofence.VisilabsAlarm;
+import com.visilabs.android.gps.util.GeoFencesUtils;
 import com.visilabs.android.json.JSONArray;
 import com.visilabs.android.json.JSONObject;
 import com.visilabs.android.util.VisilabsLog;
@@ -55,9 +53,6 @@ public class GpsManager2 {
     private GeofencingClient mGeofencingClient;
     private FusedLocationProviderClient mFusedLocationClient;
     private PendingIntent mGeofencePendingIntent;
-    private LocationRequest mLocationRequest;
-    private LocationCallback mLocationCallback;
-
 
     public GpsManager2(Context context) {
         Injector.INSTANCE.initGpsManager(this);

@@ -31,7 +31,7 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        if(Visilabs.CallAPI() == null){
+        if (Visilabs.CallAPI() == null) {
             Visilabs.CreateAPI(getApplicationContext());
         }
         Visilabs.CallAPI().startGpsManager();
@@ -39,8 +39,8 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
 
     @Override
     protected void onHandleWork(Intent intent) {
-        Log.v(TAG,"onHandleWork");
-        if(Visilabs.CallAPI() == null){
+        Log.v(TAG, "onHandleWork");
+        if (Visilabs.CallAPI() == null) {
             Visilabs.CreateAPI(getApplicationContext());
         }
 
@@ -51,7 +51,7 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
             int errorCode = geoFenceEvent.getErrorCode();
             Log.e(TAG, "Location Services error: " + errorCode);
             return;
-        }else{
+        } else {
             GpsManager2 gpsManager = Injector.INSTANCE.getGpsManager2();
             if (gpsManager == null)
                 return;
@@ -63,7 +63,11 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
                 Runnable myRunnable = new Runnable() {
                     @Override
                     public void run() {
-                        geoFenceTriggered(geofence.getRequestId(), geoFenceEvent.getGeofenceTransition());
+                        try {
+                            geoFenceTriggered(geofence.getRequestId(), geoFenceEvent.getGeofenceTransition());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 };
                 mainHandler.post(myRunnable);
@@ -75,8 +79,7 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
         }
     }
 
-
-    private void geoFenceTriggered(String geofence_guid, int transition) {
+    private void geoFenceTriggered(String geofence_guid, int transition) throws Exception {
         Log.i(TAG, geofence_guid);
         //TODO: burada geofence tetiklenme requesti atılacak. alttakileri sildim.
         VisilabsGeofenceRequest request = (VisilabsGeofenceRequest) new VisilabsGeofenceRequest(Visilabs.CallAPI().getContext());
@@ -84,40 +87,23 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
         request.setApiVer("Android");
 
         String[] geofenceParts = geofence_guid.split("_");
-        if(geofenceParts != null && geofenceParts.length > 2){
+        if (geofenceParts != null && geofenceParts.length > 2) {
             request.setActionID(geofenceParts[0]);
             request.setGeofenceID(geofenceParts[2]);
             VisilabsTargetCallback callback = new VisilabsTargetCallback() {
                 @Override
                 public void success(VisilabsResponse response) {
                     String rawResponse = response.getRawResponse();
-                    try{
-
-                    }catch (Exception ex){
-                    }
                 }
 
                 @Override
                 public void fail(VisilabsResponse response) {
                     String rawResponse = response.getRawResponse();
-                    try{
-                        JSONArray array =  response.getArray();
-                    }catch (Exception ex){
-
-                    }
+                    JSONArray array = response.getArray();
                 }
             };
-            try {
-                request.executeAsync(callback);
-            }catch (Exception ex){
-
-            }
+            request.executeAsync(callback);
         }
-
     }
-
-
-
-
 }
 

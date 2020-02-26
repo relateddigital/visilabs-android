@@ -13,7 +13,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
 
-
         Log.e("token", s);
         SharedPreferences.Editor editor = getSharedPreferences("key", MODE_PRIVATE).edit();
         editor.putString("token", s);

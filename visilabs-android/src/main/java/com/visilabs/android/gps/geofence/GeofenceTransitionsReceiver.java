@@ -77,7 +77,6 @@ public class GeofenceTransitionsReceiver extends BroadcastReceiver {
                 }
             };
             request.executeAsync(callback);
-
         }
 
     }

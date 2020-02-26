@@ -9,7 +9,6 @@ import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,7 +33,6 @@ import com.visilabs.android.api.VisilabsUpdateDisplayState;
 import com.visilabs.android.util.VisilabsConfig;
 
 @TargetApi(VisilabsConfig.UI_FEATURES_MIN_API)
-@SuppressLint("ClickableViewAccessibility")
 public class VisilabsNotificationFragment extends Fragment {
 
 
@@ -265,6 +263,7 @@ public class VisilabsNotificationFragment extends Fragment {
         mCleanedUp = true;
     }
 
+    @SuppressLint("ResourceType")
     private void remove() {
         if (mParent != null && !mCleanedUp) {
             mHandler.removeCallbacks(mRemover);

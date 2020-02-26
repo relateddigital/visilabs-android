@@ -39,7 +39,7 @@ import java.util.TimerTask;
 
 public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private static final String TAG = "Visi GeoMonitor";
-    private com.visilabs.android.gps.manager.GpsManager gpsManager;
+    private GpsManager gpsManager;
     private final IBinder binder = new GeofenceMonitorBinder();
     private Context context;
     private GoogleApiClient googleApiClient;
@@ -182,7 +182,6 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
             }).start();
         }
     }
-
 
     private GeofencingRequest getAddGeofencingRequest(List<Geofence> geofences) {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
