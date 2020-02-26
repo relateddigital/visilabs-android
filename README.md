@@ -55,7 +55,7 @@ You may use the support library module in sample application but we will not con
 
 Mobile Tagging for Visilab and more information :  [Please check docs](https://docs.relateddigital.com/display/KB/Android+-+API+Setup). 
 
-### Licence
+### Licences
 
 
  - [Related Digital ](https://www.relateddigital.com/)
