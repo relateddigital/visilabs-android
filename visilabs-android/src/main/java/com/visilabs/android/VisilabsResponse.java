@@ -21,47 +21,22 @@ public class VisilabsResponse {
         mErrorMessage = pError;
     }
 
-    /**
-     * Gets the response data as a JSONObject.
-     *
-     * @return a JSONObject
-     */
     public JSONObject getJson() {
         return mResults;
     }
 
-    /**
-     * Gets the response data as a JSONArray.
-     *
-     * @return a JSONArray
-     */
     public JSONArray getArray() {
         return mResultArray;
     }
 
-    /**
-     * Gets the error.
-     *
-     * @return the error
-     */
     public Throwable getError() {
         return mError;
     }
 
-    /**
-     * Gets the error message.
-     *
-     * @return the error message
-     */
     public String getErrorMessage() {
         return mErrorMessage;
     }
 
-    /**
-     * Gets the raw response content.
-     *
-     * @return the raw response content
-     */
     public String getRawResponse() {
         if (mResults != null) {
             return mResults.toString();
