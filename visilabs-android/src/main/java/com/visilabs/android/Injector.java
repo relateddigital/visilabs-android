@@ -11,8 +11,7 @@ public enum Injector {
     private GpsManager2 gpsManager2;
     //private GeofenceForegroundServiceHandler geofenceForegroundServiceHandler;
 
-
-    private Injector(){
+    Injector(){
     }
 
     public void initGpsManager(GpsManager gpsManager) {
@@ -30,5 +29,4 @@ public enum Injector {
     public GpsManager2 getGpsManager2() {
         return gpsManager2;
     }
-
 }

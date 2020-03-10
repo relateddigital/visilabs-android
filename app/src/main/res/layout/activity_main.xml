@@ -2,13 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:gravity="center_horizontal"
+    android:background="@color/colorLight"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="20dp"
+        android:src="@mipmap/ic_visilabs" />
 
     <Button
         android:id="@+id/btn_page_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/page_view" />
+        android:layout_margin="20dp"
+        android:padding="10dp"
+        android:layout_below="@id/iv_logo"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorButton"
+        android:text="@string/page_view"
+        android:textColor="@color/colorLight" />
 
+
+    <TextView
+        android:id="@+id/tv_exvisitor_id"
+        android:layout_width="wrap_content"
+        android:textColor="@color/colorPrimary"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_token"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/colorPrimary"
+        android:padding="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
