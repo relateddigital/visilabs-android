@@ -37,8 +37,6 @@ import com.visilabs.android.Visilabs;
 import com.visilabs.android.api.VisilabsUpdateDisplayState;
 import com.visilabs.android.util.VisilabsConfig;
 
-import java.net.URL;
-
 
 /**
  * Activity used internally by Visilabs to display surveys and inapp full screen notifications.
@@ -62,7 +60,7 @@ public class VisilabsNotificationActivity extends Activity {
         }
 
         if (isShowingInApp()) {
-            onCreateInAppNotification(savedInstanceState);
+            onCreateInAppNotification();
         }
         else {
             finish();
@@ -115,12 +113,12 @@ public class VisilabsNotificationActivity extends Activity {
     }
 
 
-    private void onCreateInAppNotification(Bundle savedInstanceState) {
+    private void onCreateInAppNotification() {
 
         setContentView(R.layout.com_visilabs_android_activity_notification_full);
 
-        final ImageView backgroundImage = (ImageView) findViewById(R.id.com_visilabs_android_notification_gradient);
-        inAppImageView = (FadingImageView) findViewById(R.id.com_visilabs_android_notification_image);
+        final ImageView backgroundImage = findViewById(R.id.com_visilabs_android_notification_gradient);
+        inAppImageView = findViewById(R.id.com_visilabs_android_notification_image);
         final TextView titleView = (TextView) findViewById(R.id.com_visilabs_android_notification_title);
         final TextView subtextView = (TextView) findViewById(R.id.com_visilabs_android_notification_subtext);
         final Button ctaButton = (Button) findViewById(R.id.com_visilabs_android_notification_button);
