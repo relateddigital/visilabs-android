@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.relateddigital.visilabs">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -40,17 +41,17 @@
         </service>
 
         <service
-            android:name="com.visilabs.android.gps.geofence.GeofenceTransitionsIntentService"
+            android:name="com.visilabs.gps.geofence.GeofenceTransitionsIntentService"
             android:enabled="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <service
-            android:name="com.visilabs.android.gps.geofence.GeofenceMonitor"
+            android:name="com.visilabs.gps.geofence.GeofenceMonitor"
             android:enabled="true"
             android:exported="true" />
 
         <receiver
-            android:name="com.visilabs.android.gps.geofence.GeofenceTransitionsReceiver"
+            android:name="com.visilabs.gps.geofence.GeofenceTransitionsReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -59,12 +60,13 @@
         </receiver>
 
         <receiver
-            android:name="com.visilabs.android.gps.geofence.VisilabsAlarm"
+            android:name="com.visilabs.gps.geofence.VisilabsAlarm"
             android:exported="false" />
 
-        <activity android:name="com.visilabs.android.notifications.VisilabsNotificationActivity" />
+        <activity android:name= "com.visilabs.notifications.VisilabsNotificationActivity" android:theme="@style/com_visilabs_android_VisilabsNotificationActivityTheme"/>
+
         <receiver
-            android:name="com.visilabs.android.gps.geofence.GeofenceBroadcastReceiver"
+            android:name="com.visilabs.gps.geofence.GeofenceBroadcastReceiver"
             android:enabled="true"
             android:exported="true" />
     </application>

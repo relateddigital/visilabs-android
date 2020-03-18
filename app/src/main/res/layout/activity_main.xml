@@ -13,6 +13,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_margin="20dp"
+        android:visibility="gone"
         android:src="@mipmap/ic_visilabs" />
 
     <Button
@@ -21,8 +22,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:padding="10dp"
-        android:layout_below="@id/iv_logo"
-        android:layout_centerHorizontal="true"
         android:background="@color/colorButton"
         android:text="@string/page_view"
         android:textColor="@color/colorLight" />

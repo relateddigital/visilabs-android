@@ -1,0 +1,34 @@
+<layout>
+
+    <data>
+
+        <variable
+            name="fragment"
+            type="com.visilabs.notifications.VisilabsNotificationFragment" />
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:layout_gravity="bottom"
+    android:orientation="horizontal"
+    android:visibility="gone">
+
+    <com.visilabs.notifications.MiniCircleImageView
+        android:id="@+id/iv_in_app_image_mini"
+        android:layout_width="75dp"
+        android:layout_height="match_parent"
+        android:scaleType="centerInside"
+        android:contentDescription="@string/com_visilabs_android_notification_image" />
+    <TextView
+        android:id="@+id/tv_in_app_title_mini"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="100"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:gravity="center_vertical"
+        android:textSize="20sp"
+        android:textColor="#ffffff" />
+
+</LinearLayout>
+</layout>

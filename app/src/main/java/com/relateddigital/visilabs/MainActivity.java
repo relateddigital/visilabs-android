@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +14,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.visilabs.android.Cookie;
-import com.visilabs.android.Visilabs;
+import com.visilabs.Cookie;
+import com.visilabs.Visilabs;
 
 import java.util.HashMap;
 
@@ -29,10 +28,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+       // Visilabs.CreateAPI("53444A2B4B5071322F50303D", "786E434138376539414D513D", "http://lgr.visilabs.net",
+         //       "vldemoen", "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000);
+
         Visilabs.CreateAPI("676D325830564761676D453D", "356467332F6533766975593D", "http://lgr.visilabs.net",
                 "visistore", "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000);
 
-          Visilabs.CreateAPI(getApplicationContext());
         Visilabs.CallAPI().setCookie(new Cookie());
 
         Button btnTestPageView = findViewById(R.id.btn_page_view);
@@ -43,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 testPageView();
-
                 //Toast.makeText(getApplicationContext(), "Event will be sent to RMC", Toast.LENGTH_LONG).show();
             }
         });
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                             tvToken.setText("Token Alınamadı");
                             return;
                         }
-                          // Get new Instance ID token
+                          // Get new Instance ID token değeri ne
                         String token = task.getResult().getToken();
 
                         tvToken.setText("Token :  " + token);
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                         HashMap<String, String> parameters = new HashMap<>();
                         parameters.put("OM.exVisitorID", exVisitorId);
                         parameters.put("OM.sys.TokenID", token);
-                        parameters.put("OM.sys.AppID", "visilabs-android");
+                        parameters.put("OM.sys.AppID", "visilabs-android-test"); // şunlar falan önemli mi önemli ama şuan ihtiyacımız yok onlara
                         Visilabs.CallAPI().customEvent("android-visilab-test", parameters, MainActivity.this);                        // Log and toast
                     }
                 });
