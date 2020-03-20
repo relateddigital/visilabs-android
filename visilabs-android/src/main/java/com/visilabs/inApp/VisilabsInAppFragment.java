@@ -1,7 +1,6 @@
-package com.visilabs.notifications;
+package com.visilabs.inApp;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -11,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -23,24 +21,23 @@ import android.view.ViewGroup;
 
 import androidx.databinding.DataBindingUtil;
 
+import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
 import com.visilabs.Visilabs;
-import com.visilabs.android.databinding.ActivityNotificationMiniBinding;
+import com.visilabs.android.databinding.FragmentInAppMiniBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
-import com.visilabs.util.VisilabsConfig;
+import com.visilabs.util.AnimationManager;
 
-@TargetApi(VisilabsConfig.UI_FEATURES_MIN_API)
-public class VisilabsNotificationFragment extends Fragment {
+public class VisilabsInAppFragment extends Fragment {
 
-    ActivityNotificationMiniBinding mBinding;
+    FragmentInAppMiniBinding mBinding;
 
     private Activity mParent;
     private GestureDetector mDetector;
     private Handler mHandler;
-    private int mDisplayStateId;
-    private VisilabsUpdateDisplayState.DisplayState.InAppNotificationState mDisplayState;
+    private int mInAppStateId;
+    private InAppNotificationState inAppNotificationState;
     private Runnable mRemover, mDisplayMini;
-
     private boolean mCleanedUp;
 
     private static final String LOG_TAG = "VisilabsFragment";
@@ -56,22 +53,37 @@ public class VisilabsNotificationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if (null == mDisplayState) {
-            cleanUp();
-        } else {
+        if(inAppNotificationState != null) {
 
-            mBinding = DataBindingUtil.inflate(inflater, R.layout.activity_notification_mini, container, false);
+            mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_in_app_mini, container, false);
 
-            VisilabsNotification inApp = mDisplayState.getInAppNotification();
+            InAppMessage inApp = inAppNotificationState.getInAppMessage();
 
             mBinding.tvInAppTitleMini.setText(inApp.getTitle());
-            new RetrieveImageTask().execute(inApp);
-            //inAppImageView.setImageBitmap(inApp.getImage());
+
+            setInAppImage(inApp);
 
             mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
+
+        } else {
+            cleanUp();
         }
 
         return mBinding.getRoot();
+    }
+
+    public void setInAppState(int stateId, InAppNotificationState inAppState) {
+        this.mInAppStateId = stateId;
+        this.inAppNotificationState = inAppState;
+    }
+
+    private void setInAppImage(InAppMessage inApp) {
+        new RetrieveImageTask(new AsyncResponse() {
+            @Override
+            public void processFinish(Bitmap output) {
+                mBinding.ivInAppImageMini.setImageBitmap(output);
+            }
+        }).execute(inApp);
     }
 
     @Override
@@ -95,81 +107,46 @@ public class VisilabsNotificationFragment extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
-
-    class RetrieveImageTask extends AsyncTask<VisilabsNotification, Void, Bitmap> {
-
-
-        protected Bitmap doInBackground(VisilabsNotification... notifications) {
-            try {
-                if (notifications != null && notifications.length > 0) {
-                    VisilabsNotification notification = notifications[0];
-                    return notification.getImage();
-                }
-                return null;
-
-            } catch (Exception e) {
-                Log.e(LOG_TAG, "Can not get image.", e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(Bitmap inAppImage) {
-            if (inAppImage == null) {
-                return;
-            }
-            mBinding.ivInAppImageMini.setImageBitmap(inAppImage);
-        }
-    }
-
-
-    public void setDisplayState(final int stateId, final VisilabsUpdateDisplayState.DisplayState.InAppNotificationState displayState) {
-        mDisplayStateId = stateId;
-        mDisplayState = displayState;
-    }
-
-    // It's safe to use onAttach(Activity) in API 23 as its implementation has not been changed.
-    // Bypass the Lint check for now.
-    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         mParent = activity;
-        if (null == mDisplayState) {
+        if (inAppNotificationState == null) {
             cleanUp();
             return;
         }
 
-        // We have to manually clear these Runnables in onStop in case they exist, since they
-        // do illegal operations when onSaveInstanceState has been called already.
-
         mHandler = new Handler();
         mRemover = new Runnable() {
             public void run() {
-                VisilabsNotificationFragment.this.remove();
+                VisilabsInAppFragment.this.remove();
             }
         };
+
+        displayMiniInApp();
+
+        setGestureDetector(getActivity());
+    }
+
+    private void displayMiniInApp() {
         mDisplayMini = new Runnable() {
             @Override
             public void run() {
                 mBinding.getRoot().setVisibility(View.VISIBLE);
-                mBinding.getRoot().setBackgroundColor(mDisplayState.getHighlightColor());
+                mBinding.getRoot().setBackgroundColor(inAppNotificationState.getHighlightColor());
                 mBinding.getRoot().setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View view, MotionEvent event) {
-                        return VisilabsNotificationFragment.this.mDetector.onTouchEvent(event);
+                        return VisilabsInAppFragment.this.mDetector.onTouchEvent(event);
                     }
                 });
-                //inAppImageView.setImageBitmap(mDisplayState.getInAppNotification().getImage());
-
 
                 mBinding.getRoot().startAnimation(AnimationManager.getMiniTranslateAnimation(getActivity()));
 
                 mBinding.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
             }
         };
-
-        setGestureDetector(getActivity());
     }
 
     private void setGestureDetector(Context activity) {
@@ -205,7 +182,7 @@ public class VisilabsNotificationFragment extends Fragment {
 
             @Override
             public boolean onSingleTapUp(MotionEvent event) {
-                final VisilabsNotification inApp = mDisplayState.getInAppNotification();
+                final InAppMessage inApp = inAppNotificationState.getInAppMessage();
 
                 final String uriString = inApp.getButtonURL();
                 if (uriString != null && uriString.length() > 0) {
@@ -218,7 +195,7 @@ public class VisilabsNotificationFragment extends Fragment {
                     }
 
                     try {
-                        Visilabs.CallAPI().trackNotificationClick(inApp);
+                        Visilabs.CallAPI().trackInAppMessageClick(inApp);
 
 
                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
@@ -246,7 +223,7 @@ public class VisilabsNotificationFragment extends Fragment {
         if (!mCleanedUp) {
             mHandler.removeCallbacks(mRemover);
             mHandler.removeCallbacks(mDisplayMini);
-            VisilabsUpdateDisplayState.releaseDisplayState(mDisplayStateId);
+            VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
 
             try {
                 if (!mParent.isFinishing()) {
@@ -262,6 +239,7 @@ public class VisilabsNotificationFragment extends Fragment {
         mCleanedUp = true;
     }
 
+    @SuppressLint("ResourceType")
     private void remove() {
         if (mParent != null && !mCleanedUp) {
             mHandler.removeCallbacks(mRemover);
@@ -269,12 +247,10 @@ public class VisilabsNotificationFragment extends Fragment {
 
             final FragmentManager fragmentManager = mParent.getFragmentManager();
 
-            // setCustomAnimations works on a per transaction level, so the animations set
-            // when this fragment was created do not apply
             try {
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(0, R.anim.anim_slide_down).remove(this).commitAllowingStateLoss();
-                VisilabsUpdateDisplayState.releaseDisplayState(mDisplayStateId);
+                VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
                 mCleanedUp = true;
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Fragment can not be removed.", e);

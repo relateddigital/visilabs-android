@@ -4,7 +4,7 @@
 
         <variable
             name="activity"
-            type="com.visilabs.notifications.VisilabsNotificationActivity" />
+            type="com.visilabs.inApp.VisilabsInAppActivity" />
     </data>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -91,7 +91,7 @@
             android:orientation="horizontal"
             android:paddingBottom="100dp">
 
-            <com.visilabs.notifications.FadingImageView
+            <com.visilabs.view.FadingImageView
                 android:id="@+id/fiv_in_app_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

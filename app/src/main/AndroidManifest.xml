@@ -33,7 +33,7 @@
         </activity>
 
         <service
-            android:name=".MyFirebaseMessagingService"
+            android:name=".VisilabsFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -63,7 +63,7 @@
             android:name="com.visilabs.gps.geofence.VisilabsAlarm"
             android:exported="false" />
 
-        <activity android:name= "com.visilabs.notifications.VisilabsNotificationActivity" android:theme="@style/com_visilabs_android_VisilabsNotificationActivityTheme"/>
+        <activity android:name= "com.visilabs.inApp.VisilabsInAppActivity" android:theme="@style/com_visilabs_android_VisilabsNotificationActivityTheme"/>
 
         <receiver
             android:name="com.visilabs.gps.geofence.GeofenceBroadcastReceiver"

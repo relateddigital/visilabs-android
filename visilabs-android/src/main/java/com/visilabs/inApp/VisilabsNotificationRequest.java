@@ -1,4 +1,4 @@
-package com.visilabs.notifications;
+package com.visilabs.inApp;
 
 import android.content.Context;
 import android.net.Uri;

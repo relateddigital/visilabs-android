@@ -4,7 +4,7 @@
 
         <variable
             name="fragment"
-            type="com.visilabs.notifications.VisilabsNotificationFragment" />
+            type="com.visilabs.inApp.VisilabsInAppFragment" />
     </data>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -13,7 +13,7 @@
     android:orientation="horizontal"
     android:visibility="gone">
 
-    <com.visilabs.notifications.MiniCircleImageView
+    <com.visilabs.view.MiniCircleImageView
         android:id="@+id/iv_in_app_image_mini"
         android:layout_width="75dp"
         android:layout_height="match_parent"

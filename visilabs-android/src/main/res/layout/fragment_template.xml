@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="fragment"
+            type="com.visilabs.inApp.InAppTemplateFragment" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_square_dropshadow"
+        android:layout_marginBottom="10dp"
+
+        android:gravity="center">
+
+        <RelativeLayout
+            android:id="@+id/rl_iv_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp">
+
+            <ImageButton
+                android:id="@+id/ib_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:background="@android:color/transparent"
+                android:padding="10dp"
+                android:src="@drawable/ic_close"
+                android:tint="#000" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/rl_in_app_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rl_iv_container"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="#fff"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <ImageView
+                android:id="@+id/iv_template"
+                android:layout_width="match_parent"
+                android:layout_height="2000dp"
+                android:layout_weight="5"
+                android:padding="20dp"
+                android:src="@android:drawable/star_big_off" />
+
+            <TextView
+                android:id="@+id/tv_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:text="@string/test_header"
+                android:padding="10dp"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_header"
+                android:ellipsize="end"
+                android:padding="10dp"
+                android:text="@string/test_title"></TextView>
+
+            <Button
+                android:id="@+id/btn_template"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_title"
+                android:layout_marginBottom="20dp"
+                android:text="OK" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>

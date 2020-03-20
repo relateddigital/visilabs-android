@@ -1,4 +1,4 @@
-package com.visilabs.notifications;
+package com.visilabs.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.media.Image;
 import android.os.Build;
 import android.util.TypedValue;
 import android.view.Display;
@@ -19,7 +18,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 

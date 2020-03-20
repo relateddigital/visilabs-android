@@ -9,7 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.visilabs.notifications.VisilabsNotificationActivity;
+import com.visilabs.inApp.VisilabsInAppActivity;
 
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
@@ -198,14 +198,14 @@ public class VisilabsConfig {
             return false;
         }
 
-        final Intent notificationIntent = new Intent(context, VisilabsNotificationActivity.class);
+        final Intent notificationIntent = new Intent(context, VisilabsInAppActivity.class);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
         final PackageManager packageManager = context.getPackageManager();
         final List<ResolveInfo> intentActivities = packageManager.queryIntentActivities(notificationIntent, 0);
         if (intentActivities.size() == 0) {
-            Log.w(LOG_TAG, VisilabsNotificationActivity.class.getName() + " is not registered as an activity in your application, so notifications can't be shown.");
+            Log.w(LOG_TAG, VisilabsInAppActivity.class.getName() + " is not registered as an activity in your application, so notifications can't be shown.");
             Log.i(LOG_TAG, "Please add the child tag <activity android:name=\"com.visilabs.notifications.VisilabsNotificationActivity\" /> to your <application> tag.");
             return false;
         }

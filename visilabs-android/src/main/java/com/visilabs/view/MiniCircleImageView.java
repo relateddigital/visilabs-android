@@ -1,4 +1,4 @@
-package com.visilabs.notifications;
+package com.visilabs.view;
 
 import android.content.Context;
 import android.content.res.Resources;

@@ -1,47 +1,42 @@
-package com.visilabs.notifications;
+package com.visilabs.inApp;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Point;
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-import android.view.Display;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import com.visilabs.exceptions.VisilabsNotificationException;
 import com.visilabs.json.JSONObject;
 import com.visilabs.json.JSONException;
 import com.visilabs.util.ImageStore;
-import com.visilabs.util.RemoteService;
+import com.visilabs.util.SizeUtil;
 
-public class VisilabsNotification implements Parcelable  {
+public class InAppMessage implements Parcelable {
 
-    public enum Type {
-        UNKNOWN {
-            @Override
-            public String toString() {
-                return "unknown";
-            }
-        },
-        MINI {
-            @Override
-            public String toString() {
-                return "mini";
-            }
-        },
-        FULL {
-            @Override
-            public String toString() {
-                return "full";
-            }
-        };
-    }
+    private Bitmap mImage;
 
-    public VisilabsNotification(Parcel in) {
+    private final JSONObject mDescription;
+    private final int mId;
+    private final String mType;
+    private final String mTitle;
+    private final String mBody;
+    private final String mImageUrl;
+    private final String mButtonText;
+    private final String mButtonURL;
+    private final String mVisitorData;
+    private final String mVisitData;
+    private final String mQueryString;
+
+    private final Context mContext;
+
+    private static final String LOG_TAG = "VisilabsNotification";
+    private static final Pattern FILE_EXTENSION_PATTERN = Pattern.compile("(\\.[^./]+$)");
+
+    public InAppMessage(Parcel in) {
         JSONObject temp = new JSONObject();
         try {
             temp = new JSONObject(in.readString());
@@ -64,7 +59,7 @@ public class VisilabsNotification implements Parcelable  {
         mContext = null;
     }
 
-    public VisilabsNotification(JSONObject description, Context context) throws VisilabsNotificationException {
+    public InAppMessage(JSONObject description, Context context) throws VisilabsNotificationException {
         try {
             mDescription = description;
             mId = description.getInt("actid");
@@ -89,36 +84,6 @@ public class VisilabsNotification implements Parcelable  {
         }
     }
 
-    private Bitmap getNotificationImage(Context context)
-            throws RemoteService.ServiceUnavailableException {
-        String url = getImageUrl();
-        try {
-            return createImageStore(context).getImage(url);
-        } catch (ImageStore.CantGetImageException e) {
-            Log.v(LOG_TAG, "Can't load image " + url + " for a notification", e);
-        }
-        return null;
-    }
-
-
-
-    protected ImageStore createImageStore(final Context context) {
-        return new ImageStore(context, "DecideChecker");
-    }
-
-    @SuppressWarnings("deprecation")
-    @SuppressLint("NewApi")
-    private static int getDisplayWidth(final Display display) {
-        if (Build.VERSION.SDK_INT < 13) {
-            return display.getWidth();
-        } else {
-            final Point displaySize = new Point();
-            display.getSize(displaySize);
-            return displaySize.x;
-        }
-    }
-
-
     String toJSON() {
         return mDescription.toString();
     }
@@ -127,17 +92,20 @@ public class VisilabsNotification implements Parcelable  {
         return mId;
     }
 
-    public Type getType() {
-        if(mType == null){
-            return Type.UNKNOWN;
+    public InAppActionType getType() {
+        if (mType == null) {
+            return InAppActionType.UNKNOWN;
         }
-        if (Type.MINI.toString().equals(mType.toLowerCase())) {
-            return Type.MINI;
+        if (InAppActionType.MINI.toString().equals(mType.toLowerCase())) {
+            return InAppActionType.MINI;
         }
-        if (Type.FULL.toString().equals(mType.toLowerCase())) {
-            return Type.FULL;
+        if (InAppActionType.FULL.toString().equals(mType.toLowerCase())) {
+            return InAppActionType.FULL;
         }
-        return Type.UNKNOWN;
+        if (InAppActionType.IMAGE_TEXT_BUTTON.toString().equals(mType.toLowerCase())){
+            return InAppActionType.IMAGE_TEXT_BUTTON;
+        }
+        return InAppActionType.UNKNOWN;
     }
 
     public String getTitle() {
@@ -148,22 +116,37 @@ public class VisilabsNotification implements Parcelable  {
         return mBody;
     }
 
-    public String getImageUrl() {
-        if(getType() == Type.MINI){
-            return sizeSuffixUrl(mImageUrl, "@1x");
-        }
 
+    private Bitmap getNotificationImage(Context context) {
+        String url = getImageUrl();
+        try {
+            return createImageStore(context).getImage(url);
+        } catch (ImageStore.CantGetImageException e) {
+            Log.v(LOG_TAG, "Can't load image " + url + " for a notification", e);
+        }
+        return null;
+    }
+
+
+    protected ImageStore createImageStore(final Context context) {
+        return new ImageStore(context, "DecideChecker");
+    }
+
+    public String getImageUrl() {
+
+        if (getType() == InAppActionType.MINI) {
+            return SizeUtil.sizeSuffixUrl(mImageUrl, "@1x");
+        }
         return mImageUrl;
     }
 
-
     //TODO:bunlara bak bir gerek var mı?
     public String getImage2xUrl() {
-        return sizeSuffixUrl(mImageUrl, "@2x");
+        return SizeUtil.sizeSuffixUrl(mImageUrl, "@2x");
     }
 
     public String getImage4xUrl() {
-        return sizeSuffixUrl(mImageUrl, "@4x");
+        return SizeUtil.sizeSuffixUrl(mImageUrl, "@4x");
     }
 
     void setImage(final Bitmap image) {
@@ -171,9 +154,9 @@ public class VisilabsNotification implements Parcelable  {
     }
 
     public Bitmap getImage() {
-        if(mImage != null){
+        if (mImage != null) {
             return mImage;
-        }else{
+        } else {
             try {
                 final Bitmap image = getNotificationImage(mContext);
                 if (null == image) {
@@ -184,8 +167,8 @@ public class VisilabsNotification implements Parcelable  {
                     mImage = image;
                     return mImage;
                 }
-            }catch (Exception ex){
-                Log.e(LOG_TAG, "Can not create image from URL.", ex );
+            } catch (Exception ex) {
+                Log.e(LOG_TAG, "Can not create image from URL.", ex);
                 return Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
             }
         }
@@ -212,7 +195,6 @@ public class VisilabsNotification implements Parcelable  {
     }
 
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -234,44 +216,16 @@ public class VisilabsNotification implements Parcelable  {
         dest.writeParcelable(mImage, flags);
     }
 
-    public static final Parcelable.Creator<VisilabsNotification> CREATOR = new Parcelable.Creator<VisilabsNotification>() {
+    public static final Parcelable.Creator<InAppMessage> CREATOR = new Parcelable.Creator<InAppMessage>() {
 
         @Override
-        public VisilabsNotification createFromParcel(Parcel source) {
-            return new VisilabsNotification(source);
+        public InAppMessage createFromParcel(Parcel source) {
+            return new InAppMessage(source);
         }
 
         @Override
-        public VisilabsNotification[] newArray(int size) {
-            return new VisilabsNotification[size];
+        public InAppMessage[] newArray(int size) {
+            return new InAppMessage[size];
         }
     };
-
-    static String sizeSuffixUrl(String url, String sizeSuffix) {
-        final Matcher matcher = FILE_EXTENSION_PATTERN.matcher(url);
-        if (matcher.find()) {
-            return matcher.replaceFirst(sizeSuffix + "$1");
-        } else {
-            return url;
-        }
-    }
-
-    private Bitmap mImage;
-
-    private final JSONObject mDescription;
-    private final int mId;
-    private final String mType;
-    private final String mTitle;
-    private final String mBody;
-    private final String mImageUrl;
-    private final String mButtonText;
-    private final String mButtonURL;
-    private final String mVisitorData;
-    private final String mVisitData;
-    private final String mQueryString;
-
-    private final Context mContext;
-
-    private static final String LOG_TAG = "VisilabsNotification";
-    private static final Pattern FILE_EXTENSION_PATTERN = Pattern.compile("(\\.[^./]+$)");
 }
