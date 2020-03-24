@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.visilabs.InAppNotificationState;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.ActivityImageUtils;
@@ -22,7 +24,7 @@ public class InAppMessageManager {
     private String LOG_TAG = "InAppManager";
 
 
-    public InAppMessageManager(String cookieID, String dataSource){
+    public InAppMessageManager(String cookieID, String dataSource) {
         this._cookieID = cookieID;
         this._dataSource = dataSource;
     }
@@ -51,12 +53,21 @@ public class InAppMessageManager {
                         showDebugMessage("No in app available, will not show.");
                     }
 
-                    if (inAppMessage.getType()  == InAppActionType.FULL && !VisilabsConfig.checkNotificationActivityAvailable(parent.getApplicationContext())) {
+                    if (inAppMessage.getType() == InAppActionType.FULL && !VisilabsConfig.checkNotificationActivityAvailable(parent.getApplicationContext())) {
                         showDebugMessage("Application is not configured to show full screen in app, none will be shown.");
                     }
 
+                    AppCompatActivity context = (AppCompatActivity) parent;
+                    Intent intent = new Intent(context, TemplateActivity.class);
 
                     switch (inAppMessage.getType()) {
+
+
+                        case UNKNOWN:
+
+                            openInAppActivity(parent, getStateId(parent, inAppMessage));
+
+                            break;
 
                         case MINI:
 
@@ -65,24 +76,89 @@ public class InAppMessageManager {
                             if (visilabsUpdateDisplayState == null) {
                                 showDebugMessage("Notification's display proposal was already consumed, no notification will be shown.");
                             }
+
                             openInAppMiniFragment(getStateId(parent, inAppMessage), parent, visilabsUpdateDisplayState);
-
-                        break;
-
-                        case IMAGE_TEXT_BUTTON:
-
-                            openInAppActivity(parent, getStateId(parent, inAppMessage));
 
                             break;
 
                         case FULL:
 
-                            visilabsUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(getStateId(parent, inAppMessage));
+                            openInAppActivity(parent, getStateId(parent, inAppMessage));
+
+                            break;
+
+                        case FULL_IMAGE:
+
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+                            inAppMessage.setmType("full_image");
+                            inAppMessage.background = "#B979B2";
+
+                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
+
+                            context.startActivity(intent);
+
+                            break;
+
+                        case NPS:
+
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+                            inAppMessage.setmType("nps");
+                            inAppMessage.background = "#B979B2";
+                            inAppMessage.titleColor = "#161616";
+                            inAppMessage.font = "default";
+                            inAppMessage.bodyColor = "#cccccc";
+                            inAppMessage.titleSize = "20";
+                            inAppMessage.bodySize = "18";
+                            inAppMessage.buttonColor = "#21522A";
+                            inAppMessage.buttonTextColor = "#efefef";
+                            inAppMessage.closeButton = "Black";
+
+                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
+
+                            context.startActivity(intent);
+
+                            break;
+
+                        case IMAGE_TEXT_BUTTON:
 
 
-                            openInAppTemplateFragment(getStateId(parent, inAppMessage), parent, visilabsUpdateDisplayState );
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
-                        break;
+                            inAppMessage.setmType("image_text_button");
+                            inAppMessage.titleColor = "#21522A";
+                            inAppMessage.font = "monospace";
+                            inAppMessage.bodyColor = "#161616";
+                            inAppMessage.titleSize = "20";
+                            inAppMessage.bodySize = "18";
+                            inAppMessage.buttonColor = "#21522A";
+                            inAppMessage.buttonTextColor = "#efefef";
+
+                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
+
+                            context.startActivity(intent);
+
+                            break;
+
+
+                        case IMAGE_BUTTON:
+
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+                            inAppMessage.setmType("image_button");
+                            inAppMessage.buttonColor = "#52214C";
+                            inAppMessage.buttonTextColor = "#efefef";
+
+                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
+
+                            context.startActivity(intent);
+
+                            break;
 
                         default:
                             Log.e(LOG_TAG, "Unrecognized notification type " + inAppMessage.getType() + " can't be shown");
@@ -126,24 +202,12 @@ public class InAppMessageManager {
         transaction.commit();
     }
 
-    private void openInAppTemplateFragment(int stateID, Activity parent, VisilabsUpdateDisplayState visilabsUpdateDisplayState) {
-
-        InAppTemplateFragment inAppTemplateFragment = new InAppTemplateFragment();
-        inAppTemplateFragment.setInAppState(stateID, (InAppNotificationState) visilabsUpdateDisplayState.getDisplayState());
-        inAppTemplateFragment.setRetainInstance(true);
-
-        FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
-        transaction.add(android.R.id.content, inAppTemplateFragment);
-        transaction.commit();
-    }
-
-
-    private void openInAppActivity(Activity parent, int intentId) {
+    private void openInAppActivity(Activity parent, int inAppData) {
 
         Intent intent = new Intent(parent.getApplicationContext(), VisilabsInAppActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, intentId);
+        intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, inAppData);
         parent.startActivity(intent);
     }
 

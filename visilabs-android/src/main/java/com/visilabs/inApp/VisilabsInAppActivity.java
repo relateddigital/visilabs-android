@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.visilabs.InAppNotificationState;
@@ -22,7 +24,7 @@ import com.visilabs.util.AnimationManager;
 import com.visilabs.util.StringUtils;
 
 
-public class VisilabsInAppActivity extends Activity implements IVisilabs {
+public class VisilabsInAppActivity extends AppCompatActivity implements IVisilabs {
 
     ActivityInAppFullBinding mainBinding;
 
@@ -39,6 +41,7 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
 
         mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
         mUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(mIntentId);
@@ -60,6 +63,12 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
     @Override
     public void setUpView() {
 
+
+        InAppNotificationState inAppNotificationState =
+                (InAppNotificationState) mUpdateDisplayState.getDisplayState();
+
+        inApp = inAppNotificationState.getInAppMessage();
+
         mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_in_app_full);
 
    //     AnimationManager.setBackgroundGradient(mainBinding.ivNotDisplay, AnimationManager.getGradient(mainBinding.llClose, this));
@@ -74,11 +83,6 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
     }
 
     private void setInAppData() {
-
-        InAppNotificationState inAppNotificationState =
-                (InAppNotificationState) mUpdateDisplayState.getDisplayState();
-
-        inApp = inAppNotificationState.getInAppMessage();
 
         mainBinding.tvInAppTitle.setText(inApp.getTitle());
         mainBinding.tvInAppSubtitle.setText(inApp.getBody());

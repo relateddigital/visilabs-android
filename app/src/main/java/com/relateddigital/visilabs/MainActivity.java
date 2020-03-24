@@ -32,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
          //       "vldemoen", "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000);
 
         Visilabs.CreateAPI("676D325830564761676D453D", "356467332F6533766975593D", "http://lgr.visilabs.net",
-                "visistore", "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000);
+                "visistore", "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000, "http://s.visilabs.net/geojson", true);
+
 
         Visilabs.CallAPI().setCookie(new Cookie());
 
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                         HashMap<String, String> parameters = new HashMap<>();
                         parameters.put("OM.exVisitorID", exVisitorId);
                         parameters.put("OM.sys.TokenID", token);
-                        parameters.put("OM.sys.AppID", "visilabs-android-test"); // şunlar falan önemli mi önemli ama şuan ihtiyacımız yok onlara
+                        parameters.put("OM.sys.AppID", "visilabs-android-sdk"); // şunlar falan önemli mi önemli ama şuan ihtiyacımız yok onlara
                         Visilabs.CallAPI().customEvent("android-visilab-test", parameters, MainActivity.this);                        // Log and toast
                     }
                 });

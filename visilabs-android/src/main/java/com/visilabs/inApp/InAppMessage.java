@@ -2,11 +2,11 @@ package com.visilabs.inApp;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.visilabs.exceptions.VisilabsNotificationException;
@@ -19,17 +19,31 @@ public class InAppMessage implements Parcelable {
 
     private Bitmap mImage;
 
-    private final JSONObject mDescription;
-    private final int mId;
-    private final String mType;
-    private final String mTitle;
-    private final String mBody;
-    private final String mImageUrl;
-    private final String mButtonText;
-    private final String mButtonURL;
-    private final String mVisitorData;
-    private final String mVisitData;
-    private final String mQueryString;
+    private JSONObject mDescription;
+    private int mId;
+    private String mType;
+    private String mTitle;
+    private String mBody;
+    private String mImageUrl;
+    private String mButtonText;
+    private String mButtonURL;
+    private String mVisitorData;
+    private String mVisitData;
+    private String mQueryString;
+
+     String font;
+     String overLay;
+     String background;
+     String closeButton;
+
+     String buttonColor;
+     String buttonTextColor;
+
+     String titleColor;
+     String titleSize;
+
+     String bodyColor;
+     String bodySize;
 
     private final Context mContext;
 
@@ -92,6 +106,10 @@ public class InAppMessage implements Parcelable {
         return mId;
     }
 
+    public void setmType(String mType) {
+        this.mType = mType;
+    }
+
     public InAppActionType getType() {
         if (mType == null) {
             return InAppActionType.UNKNOWN;
@@ -104,6 +122,18 @@ public class InAppMessage implements Parcelable {
         }
         if (InAppActionType.IMAGE_TEXT_BUTTON.toString().equals(mType.toLowerCase())){
             return InAppActionType.IMAGE_TEXT_BUTTON;
+        }
+
+        if (InAppActionType.FULL_IMAGE.toString().equals(mType.toLowerCase())) {
+            return InAppActionType.FULL_IMAGE;
+        }
+
+        if (InAppActionType.NPS.toString().equals(mType.toLowerCase())) {
+            return InAppActionType.NPS;
+        }
+
+        if (InAppActionType.IMAGE_BUTTON.toString().equals(mType.toLowerCase())) {
+            return InAppActionType.IMAGE_BUTTON;
         }
         return InAppActionType.UNKNOWN;
     }
@@ -194,6 +224,61 @@ public class InAppMessage implements Parcelable {
         return mQueryString;
     }
 
+    //
+
+
+    public Typeface getFont() {
+        if (font == null) {
+            return Typeface.DEFAULT;
+        }
+        if (FontFamily.Monospace.toString().equals(font.toLowerCase())) {
+            return Typeface.MONOSPACE;
+        }
+        if (FontFamily.SansaSerif.toString().equals(font.toLowerCase())) {
+            return Typeface.SANS_SERIF;
+        }
+        if (FontFamily.Serif.toString().equals(font.toLowerCase())){
+            return Typeface.SERIF;
+        }
+
+        if (FontFamily.Default.toString().equals(font.toLowerCase())) {
+        return Typeface.DEFAULT;
+        }
+
+        return Typeface.DEFAULT;
+    }
+
+    public String getOverLay() {
+        return overLay;
+    }
+
+    public String getBackground() {
+        return background;
+    }
+
+    public String getButtonColor() {
+        return buttonColor;
+    }
+
+    public String getButtonTextColor() {
+        return buttonTextColor;
+    }
+
+    public String getTitleColor() {
+        return titleColor;
+    }
+
+    public String getTitleSize() {
+        return titleSize;
+    }
+
+    public String getBodyColor() {
+        return bodyColor;
+    }
+
+    public String getBodySize() {
+        return bodySize;
+    }
 
     @Override
     public int describeContents() {
@@ -228,4 +313,8 @@ public class InAppMessage implements Parcelable {
             return new InAppMessage[size];
         }
     };
+
+    public String getCloseButton() {
+        return closeButton;
+    }
 }
