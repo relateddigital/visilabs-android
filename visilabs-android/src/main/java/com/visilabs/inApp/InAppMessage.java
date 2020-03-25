@@ -106,7 +106,7 @@ public class InAppMessage implements Parcelable {
         return mId;
     }
 
-    public void setmType(String mType) {
+    public void setType(String mType) {
         this.mType = mType;
     }
 
@@ -134,6 +134,10 @@ public class InAppMessage implements Parcelable {
 
         if (InAppActionType.IMAGE_BUTTON.toString().equals(mType.toLowerCase())) {
             return InAppActionType.IMAGE_BUTTON;
+        }
+
+        if (InAppActionType.SMILE_RATING.toString().equals(mType.toLowerCase())) {
+            return InAppActionType.SMILE_RATING;
         }
         return InAppActionType.UNKNOWN;
     }

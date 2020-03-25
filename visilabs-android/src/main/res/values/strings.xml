@@ -4,4 +4,18 @@
 
     <string name="test_title">Zamanın eli değdi bize çoktan değişti herşey aynı değiliz ikimizde </string>
 
+
+    <string name="smile_rating_terrible">Berbat</string>
+    <string name="smile_rating_bad">Kötü</string>
+    <string name="smile_rating_okay">Normal</string>
+    <string name="smile_rating_good">İyi</string>
+    <string name="smile_rating_great">Harika</string>
+
+    <string-array name="names">
+        <item>@string/smile_rating_terrible</item>
+        <item>@string/smile_rating_bad</item>
+        <item>@string/smile_rating_okay</item>
+        <item>@string/smile_rating_good</item>
+        <item>@string/smile_rating_great</item>
+    </string-array>
 </resources>

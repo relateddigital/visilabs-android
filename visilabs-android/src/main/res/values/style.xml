@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Light" parent="Base.Theme.AppCompat.Light.Dialog.Alert"/>
+
+
+    <style name="light" parent="Base.Theme.AppCompat.Light.Dialog.Alert"/>
+    <style name="dark" parent="Base.Theme.AppCompat.Dialog.Alert"/>
+
+    <declare-styleable name="SmileRating">
+        <attr name="angryColor" format="color" />
+        <attr name="normalColor" format="color" />
+        <attr name="drawingColor" format="color" />
+        <attr name="showLine" format="boolean" />
+        <attr name="placeHolderSmileColor" format="color" />
+        <attr name="placeHolderBackgroundColor" format="color" />
+        <attr name="textSelectionColor" format="color" />
+        <attr name="textNonSelectionColor" format="color" />
+        <attr name="isIndicator" format="boolean" />
+    </declare-styleable>
 </resources>

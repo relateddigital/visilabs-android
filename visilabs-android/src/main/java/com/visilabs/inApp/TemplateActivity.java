@@ -19,8 +19,10 @@ import com.visilabs.android.R;
 import com.visilabs.android.databinding.ActivityTemplateBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.StringUtils;
+import com.visilabs.view.BaseRating;
+import com.visilabs.view.SmileRating;
 
-public class TemplateActivity extends AppCompatActivity {
+public class TemplateActivity extends AppCompatActivity implements SmileRating.OnSmileySelectionListener, SmileRating.OnRatingSelectedListener {
 
 
     ActivityTemplateBinding mBinding;
@@ -33,18 +35,15 @@ public class TemplateActivity extends AppCompatActivity {
 
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTheme(R.style.Light);
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_template);
-
         mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
         mUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(mIntentId);
+
+        InAppNotificationState inAppNotificationState =
+                (InAppNotificationState) mUpdateDisplayState.getDisplayState();
 
         if (mUpdateDisplayState == null) {
 
@@ -52,6 +51,16 @@ public class TemplateActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        inApp = inAppNotificationState.getInAppMessage();
+
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_template);
+
+        mBinding.sr.setOnSmileySelectionListener(this);
+        mBinding.sr.setOnRatingSelectedListener(this);
+
 
         if (isShowingInApp()) {
             setUpView();
@@ -62,32 +71,26 @@ public class TemplateActivity extends AppCompatActivity {
 
     private void setUpView() {
 
-        InAppNotificationState inAppNotificationState =
-                (InAppNotificationState) mUpdateDisplayState.getDisplayState();
-
-        inApp = inAppNotificationState.getInAppMessage();
-
-        setUI();
+        setTemplate();
 
         mBinding.btnTemplate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (inApp.getButtonURL() != null && inApp.getButtonURL().length() > 0) {
+            @Override
+            public void onClick(View v) {
+                if (inApp.getButtonURL() != null && inApp.getButtonURL().length() > 0) {
 
-                        try {
-                            Visilabs.CallAPI().trackInAppMessageClick(inApp);
-                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(inApp.getButtonURL()));
-                            startActivity(viewIntent);
+                    try {
+                        Visilabs.CallAPI().trackInAppMessageClick(inApp);
+                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(inApp.getButtonURL()));
+                        startActivity(viewIntent);
 
-                        } catch (final ActivityNotFoundException e) {
-                            Log.i("Visilabs", "User doesn't have an activity for notification URI");
-                        }
+                    } catch (final ActivityNotFoundException e) {
+                        Log.i("Visilabs", "User doesn't have an activity for notification URI");
                     }
-                    finish();
-                    VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                 }
-            });
-
+                finish();
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+            }
+        });
 
         mBinding.ibClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,20 +99,6 @@ public class TemplateActivity extends AppCompatActivity {
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             }
         });
-
-    }
-
-    private void setUI() {
-
-        setTemplate();
-
-       mBinding.rlOverlay.setBackgroundColor(Color.parseColor(inApp.getBackground()));
-
-
-       mBinding.ibClose.setBackgroundResource(getCloseIcon());
-
-        mBinding.ibClose.setColorFilter(ContextCompat.getColor(this, android.R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
-
     }
 
     private int getCloseIcon() {
@@ -132,11 +121,7 @@ public class TemplateActivity extends AppCompatActivity {
         mBinding.tvTitle.setText(inApp.getTitle());
         mBinding.tvTitle.setTextColor(Color.parseColor(inApp.getTitleColor()));
         mBinding.tvTitle.setTextSize(Float.parseFloat(inApp.getTitleSize()));
-       // mBinding.tvTitle.setTypeface(Typeface.MONOSPACE);
-//        mBinding.tvTitle.setTypeface(Typeface.createFromFile(inApp.getFont()));
-  //      mBinding.tvBody.setTypeface(Typeface.createFromFile(inApp.getFont()));
     }
-
 
     private void setBody() {
         mBinding.tvBody.setText(inApp.getBody());
@@ -147,10 +132,14 @@ public class TemplateActivity extends AppCompatActivity {
     }
 
     void showNps() {
-        mBinding.ratingBar.setVisibility(View.VISIBLE);
+        mBinding.rb.setVisibility(View.VISIBLE);
     }
 
-    private void setButton(){
+    void showSmileRating() {
+        mBinding.sr.setVisibility(View.VISIBLE);
+    }
+
+    private void setButton() {
 
         mBinding.btnTemplate.setTypeface(inApp.getFont());
         mBinding.btnTemplate.setVisibility(View.VISIBLE);
@@ -159,27 +148,19 @@ public class TemplateActivity extends AppCompatActivity {
         mBinding.btnTemplate.setBackgroundColor(Color.parseColor(inApp.getButtonColor()));
     }
 
-    private void hideContentWrapper(){
-        mBinding.llContainer.setVisibility(View.GONE);
-    }
-
     private void setTemplate() {
 
-        switch (inApp.getType()){
+        mBinding.llOverlay.setBackgroundColor(Color.parseColor(inApp.getBackground()));
+        mBinding.ibClose.setBackgroundResource(getCloseIcon());
 
-            case FULL:
-
-                mBinding.tvTitle.setText(inApp.getTitle());
-                mBinding.tvBody.setText(inApp.getBody());
-
-                break;
+        switch (inApp.getType()) {
 
             case IMAGE_TEXT_BUTTON:
 
                 setText();
                 setBody();
                 setButton();
-                mBinding.ratingBar.setVisibility(View.GONE);
+                mBinding.sr.setVisibility(View.GONE);
 
                 break;
 
@@ -187,14 +168,14 @@ public class TemplateActivity extends AppCompatActivity {
 
                 mBinding.tvBody.setVisibility(View.GONE);
                 mBinding.tvTitle.setVisibility(View.GONE);
-                mBinding.ratingBar.setVisibility(View.GONE);
+                mBinding.sr.setVisibility(View.GONE);
                 mBinding.btnTemplate.setVisibility(View.GONE);
 
                 break;
 
             case IMAGE_BUTTON:
 
-                mBinding.ratingBar.setVisibility(View.GONE);
+                mBinding.sr.setVisibility(View.GONE);
                 mBinding.llTextContainer.setVisibility(View.GONE);
                 setButton();
 
@@ -208,27 +189,16 @@ public class TemplateActivity extends AppCompatActivity {
                 showNps();
 
                 break;
-        }
-    }
 
-    private int getOverlay(String overLay) {
+            case SMILE_RATING:
 
-        int background = 0;
-
-        switch (overLay) {
-
-            case "dark":
-                background = R.drawable.bg_square_dropshadow;
-
-                break;
-
-            case "light":
-                background = R.drawable.common_google_signin_btn_icon_dark_normal_background;
+                setBody();
+                setText();
+                setButton();
+                showSmileRating();
 
                 break;
         }
-
-        return background;
     }
 
     private boolean isShowingInApp() {
@@ -240,4 +210,33 @@ public class TemplateActivity extends AppCompatActivity {
         );
     }
 
+
+    @Override
+    public void onSmileySelected(@BaseRating.Smiley int smiley, boolean reselected) {
+        switch (smiley) {
+            case SmileRating.BAD:
+                Log.i("TAG", "Bad");
+                break;
+            case SmileRating.GOOD:
+                Log.i("TAG", "Good");
+                break;
+            case SmileRating.GREAT:
+                Log.i("TAG", "Great");
+                break;
+            case SmileRating.OKAY:
+                Log.i("TAG", "Okay");
+                break;
+            case SmileRating.TERRIBLE:
+                Log.i("TAG", "Terrible");
+                break;
+            case SmileRating.NONE:
+                Log.i("TAG", "None");
+                break;
+        }
+    }
+
+    @Override
+    public void onRatingSelected(int level, boolean reselected) {
+        Log.i("TAG", "Rated as: " + level + " - " + reselected);
+    }
 }

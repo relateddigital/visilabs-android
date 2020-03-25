@@ -92,8 +92,32 @@ public class InAppMessageManager {
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
-                            inAppMessage.setmType("full_image");
+                            inAppMessage.setType("full_image");
                             inAppMessage.background = "#B979B2";
+                            inAppMessage.closeButton = "Black";
+
+                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
+
+                            context.startActivity(intent);
+
+                            break;
+
+                        case SMILE_RATING:
+
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+                            inAppMessage.setType("smile_rating");
+
+                            inAppMessage.background = "#efefef";
+                            inAppMessage.titleColor = "#161616";
+                            inAppMessage.font = "default";
+                            inAppMessage.bodyColor = "#cccccc";
+                            inAppMessage.titleSize = "20";
+                            inAppMessage.bodySize = "18";
+                            inAppMessage.buttonColor = "#21522A";
+                            inAppMessage.buttonTextColor = "#efefef";
+                            inAppMessage.closeButton = "Black";
 
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
@@ -106,8 +130,8 @@ public class InAppMessageManager {
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
-                            inAppMessage.setmType("nps");
-                            inAppMessage.background = "#B979B2";
+                            inAppMessage.setType("nps");
+                            inAppMessage.background = "#efefef";
                             inAppMessage.titleColor = "#161616";
                             inAppMessage.font = "default";
                             inAppMessage.bodyColor = "#cccccc";
@@ -129,13 +153,15 @@ public class InAppMessageManager {
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
-                            inAppMessage.setmType("image_text_button");
+                            inAppMessage.setType("image_text_button");
+                            inAppMessage.background = "#efefef";
                             inAppMessage.titleColor = "#21522A";
                             inAppMessage.font = "monospace";
                             inAppMessage.bodyColor = "#161616";
                             inAppMessage.titleSize = "20";
                             inAppMessage.bodySize = "18";
                             inAppMessage.buttonColor = "#21522A";
+                            inAppMessage.closeButton = "Black";
                             inAppMessage.buttonTextColor = "#efefef";
 
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
@@ -150,9 +176,11 @@ public class InAppMessageManager {
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
-                            inAppMessage.setmType("image_button");
+                            inAppMessage.background = "#efefef";
+                            inAppMessage.setType("image_button");
                             inAppMessage.buttonColor = "#52214C";
                             inAppMessage.buttonTextColor = "#efefef";
+                            inAppMessage.closeButton = "Black";
 
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 

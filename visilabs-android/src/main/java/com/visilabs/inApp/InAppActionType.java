@@ -22,6 +22,15 @@ public enum InAppActionType {
             return "full";
         }
     },
+
+    SMILE_RATING {
+        @NonNull
+        @Override
+        public String toString() {
+            return "smile_rating";
+        }
+    },
+
     IMAGE_TEXT_BUTTON {
         public String toString() {
             return "image_text_button";
