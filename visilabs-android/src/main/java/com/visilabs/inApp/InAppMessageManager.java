@@ -58,7 +58,10 @@ public class InAppMessageManager {
                     }
 
                     AppCompatActivity context = (AppCompatActivity) parent;
+
                     Intent intent = new Intent(context, TemplateActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
                     switch (inAppMessage.getType()) {
 
@@ -89,23 +92,17 @@ public class InAppMessageManager {
 
                         case FULL_IMAGE:
 
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-
                             inAppMessage.setType("full_image");
                             inAppMessage.background = "#B979B2";
                             inAppMessage.closeButton = "Black";
 
-                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
+                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, inAppMessage);
 
                             context.startActivity(intent);
 
                             break;
 
                         case SMILE_RATING:
-
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
                             inAppMessage.setType("smile_rating");
 
@@ -127,9 +124,6 @@ public class InAppMessageManager {
 
                         case NPS:
 
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-
                             inAppMessage.setType("nps");
                             inAppMessage.background = "#efefef";
                             inAppMessage.titleColor = "#161616";
@@ -148,10 +142,6 @@ public class InAppMessageManager {
                             break;
 
                         case IMAGE_TEXT_BUTTON:
-
-
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
                             inAppMessage.setType("image_text_button");
                             inAppMessage.background = "#efefef";
