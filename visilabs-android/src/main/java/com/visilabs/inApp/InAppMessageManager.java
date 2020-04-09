@@ -9,6 +9,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.ActivityImageUtils;
@@ -22,7 +23,6 @@ public class InAppMessageManager {
     private String _dataSource;
 
     private String LOG_TAG = "InAppManager";
-
 
     public InAppMessageManager(String cookieID, String dataSource) {
         this._cookieID = cookieID;
@@ -84,37 +84,22 @@ public class InAppMessageManager {
 
                             break;
 
-                        case FULL:
 
+                        case FULL:
+                            
                             openInAppActivity(parent, getStateId(parent, inAppMessage));
 
                             break;
 
                         case FULL_IMAGE:
 
-                            inAppMessage.setType("full_image");
-                            inAppMessage.background = "#B979B2";
-                            inAppMessage.closeButton = "Black";
-
-                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, inAppMessage);
+                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
                             context.startActivity(intent);
 
                             break;
 
                         case SMILE_RATING:
-
-                            inAppMessage.setType("smile_rating");
-
-                            inAppMessage.background = "#efefef";
-                            inAppMessage.titleColor = "#161616";
-                            inAppMessage.font = "default";
-                            inAppMessage.bodyColor = "#cccccc";
-                            inAppMessage.titleSize = "20";
-                            inAppMessage.bodySize = "18";
-                            inAppMessage.buttonColor = "#21522A";
-                            inAppMessage.buttonTextColor = "#efefef";
-                            inAppMessage.closeButton = "Black";
 
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
@@ -124,17 +109,6 @@ public class InAppMessageManager {
 
                         case NPS:
 
-                            inAppMessage.setType("nps");
-                            inAppMessage.background = "#efefef";
-                            inAppMessage.titleColor = "#161616";
-                            inAppMessage.font = "default";
-                            inAppMessage.bodyColor = "#cccccc";
-                            inAppMessage.titleSize = "20";
-                            inAppMessage.bodySize = "18";
-                            inAppMessage.buttonColor = "#21522A";
-                            inAppMessage.buttonTextColor = "#efefef";
-                            inAppMessage.closeButton = "Black";
-
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
                             context.startActivity(intent);
@@ -142,17 +116,6 @@ public class InAppMessageManager {
                             break;
 
                         case IMAGE_TEXT_BUTTON:
-
-                            inAppMessage.setType("image_text_button");
-                            inAppMessage.background = "#efefef";
-                            inAppMessage.titleColor = "#21522A";
-                            inAppMessage.font = "monospace";
-                            inAppMessage.bodyColor = "#161616";
-                            inAppMessage.titleSize = "20";
-                            inAppMessage.bodySize = "18";
-                            inAppMessage.buttonColor = "#21522A";
-                            inAppMessage.closeButton = "Black";
-                            inAppMessage.buttonTextColor = "#efefef";
 
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
@@ -165,13 +128,6 @@ public class InAppMessageManager {
 
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-
-                            inAppMessage.background = "#efefef";
-                            inAppMessage.setType("image_button");
-                            inAppMessage.buttonColor = "#52214C";
-                            inAppMessage.buttonTextColor = "#efefef";
-                            inAppMessage.closeButton = "Black";
-
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
                             context.startActivity(intent);

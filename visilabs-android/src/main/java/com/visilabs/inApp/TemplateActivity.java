@@ -130,27 +130,27 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     private void setTitle() {
 
         mBinding.tvTitle.setVisibility(View.VISIBLE);
-        mBinding.tvTitle.setTypeface(inAppMessage.getFont(), Typeface.BOLD);
+        mBinding.tvTitle.setTypeface(inAppMessage.getFont_family(), Typeface.BOLD);
         mBinding.tvTitle.setText(inAppMessage.getTitle());
-        mBinding.tvTitle.setTextColor(Color.parseColor(inAppMessage.getTitleColor()));
-        mBinding.tvTitle.setTextSize(Float.parseFloat(inAppMessage.getTitleSize()));
+        mBinding.tvTitle.setTextColor(Color.parseColor(inAppMessage.getMsg_title_color()));
+        mBinding.tvTitle.setTextSize(Float.parseFloat(inAppMessage.getMsg_body_textsize())+12);
     }
 
     private void setBody() {
         mBinding.tvBody.setText(inAppMessage.getBody());
-        mBinding.tvBody.setTypeface(inAppMessage.getFont());
+        mBinding.tvBody.setTypeface(inAppMessage.getFont_family());
         mBinding.tvBody.setVisibility(View.VISIBLE);
-        mBinding.tvBody.setTextColor(Color.parseColor(inAppMessage.getBodyColor()));
-        mBinding.tvBody.setTextSize(Float.parseFloat(inAppMessage.getBodySize()));
+        mBinding.tvBody.setTextColor(Color.parseColor(inAppMessage.getMsg_body_color()));
+        mBinding.tvBody.setTextSize(Float.parseFloat(inAppMessage.getMsg_body_textsize())+8);
     }
 
     private void setButton() {
 
-        mBinding.btnTemplate.setTypeface(inAppMessage.getFont());
+        mBinding.btnTemplate.setTypeface(inAppMessage.getFont_family());
         mBinding.btnTemplate.setVisibility(View.VISIBLE);
         mBinding.btnTemplate.setText(inAppMessage.getButtonText());
-        mBinding.btnTemplate.setTextColor(Color.parseColor(inAppMessage.getButtonTextColor()));
-        mBinding.btnTemplate.setBackgroundColor(Color.parseColor(inAppMessage.getButtonColor()));
+        mBinding.btnTemplate.setTextColor(Color.parseColor(inAppMessage.getButton_text_color()));
+        mBinding.btnTemplate.setBackgroundColor(Color.parseColor(inAppMessage.getButton_color()));
 
         mBinding.btnTemplate.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -98,8 +98,7 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/com_visilabs_android_notification_image"
                 android:scaleType="fitCenter"
-                android:background="@android:color/black"
-                android:src="@drawable/ic_logo" />
+                android:background="@android:color/black" />
         </LinearLayout>
     </RelativeLayout>
 </layout>

@@ -49,15 +49,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
-                android:padding="20dp"
-                android:src="@drawable/reklamlar" />
+                android:padding="10dp"
+                android:src="@drawable/placeholderimage" />
 
             <LinearLayout
                 android:id="@+id/ll_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
 
                 <LinearLayout
                     android:id="@+id/ll_text_container"
@@ -71,8 +70,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:padding="10dp"
-                        android:text="@string/test_header"
+                        android:padding="5dp"
                         android:textColor="#fff"
                         android:textSize="15dp"
                         android:textStyle="bold" />
@@ -81,16 +79,15 @@
                         android:id="@+id/tv_body"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/tv_title"
                         android:ellipsize="end"
-                        android:padding="10dp"
-                        android:text="@string/test_title"></TextView>
+                        android:padding="5dp" />
                 </LinearLayout>
 
                 <com.visilabs.view.SmileRating
                     android:id="@+id/smileRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="20dp"
                     android:visibility="gone"
                     app:isIndicator="false" />
@@ -98,18 +95,21 @@
                 <RatingBar
                     android:id="@+id/rb"
                     android:layout_width="wrap_content"
-                    android:numStars="5"
-                    android:visibility="gone"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:layout_gravity="center"
-                    android:layout_height="wrap_content" />
+                    android:numStars="5"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </LinearLayout>
 
         <Button
             android:id="@+id/btn_template"
+            android:textAllCaps="false"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:padding="10dp"
+            android:layout_height="60dp"
             android:layout_weight="1"
             android:text="OK" />
 

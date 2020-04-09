@@ -71,11 +71,11 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
 
         mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_in_app_full);
 
-   //     AnimationManager.setBackgroundGradient(mainBinding.ivNotDisplay, AnimationManager.getGradient(mainBinding.llClose, this));
+    //   AnimationManager.setBackgroundGradient(mainBinding.ivNotDisplay, AnimationManager.getGradient(mainBinding.llClose, this));
 
-        mainBinding.fivInAppImage.setBackgroundResource(R.drawable.bg_square_dropshadow);
+    //    mainBinding.fivInAppImage.setBackgroundResource(R.drawable.bg_square_dropshadow);
 
-        setAnimationToViews();
+      //  setAnimationToViews();
 
         setInAppData();
 
@@ -100,7 +100,7 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
             public void processFinish(Bitmap output) {
                 if (output.getWidth() < SHADOW_SIZE_THRESHOLD_PX || output.getHeight() < SHADOW_SIZE_THRESHOLD_PX) { mainBinding.fivInAppImage.setBackgroundResource(R.drawable.bg_square_nodropshadow);
                 } else {
-                    AnimationManager.setNoDropShadowBackgroundToView(mainBinding.fivInAppImage, output);
+                   // AnimationManager.setNoDropShadowBackgroundToView(mainBinding.fivInAppImage, output);
 
                     ImageView iv = (ImageView) mainBinding.fivInAppImage;
                     iv.setImageBitmap(output);
@@ -109,15 +109,6 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
 
     }
 
-    private void setAnimationToViews() {
-
-        mainBinding.fivInAppImage.startAnimation(AnimationManager.getScaleAnimation());
-        mainBinding.tvInAppTitle.startAnimation(AnimationManager.getTranslateAnimation());
-        mainBinding.tvInAppSubtitle.startAnimation(AnimationManager.getTranslateAnimation());
-        mainBinding.btnInApp.startAnimation(AnimationManager.getTranslateAnimation());
-        mainBinding.llClose.startAnimation(AnimationManager.getFadeInAnimation(this));
-
-    }
 
     @SuppressLint("ClickableViewAccessibility")
     private void clickEvents() {

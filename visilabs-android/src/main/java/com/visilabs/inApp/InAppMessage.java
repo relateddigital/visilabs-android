@@ -21,29 +21,27 @@ public class InAppMessage implements Parcelable {
 
     private JSONObject mDescription;
     private int mId;
-    private String mType;
-    private String mTitle;
-    private String mBody;
-    private String mImageUrl;
-    private String mButtonText;
+    private String msg_type;
+    private String img;
+    private String visitor_data;
+    private String visit_data;
+    private String qs;
+
+    String font_family;
+    String background;
+
+    private String btn_text;
     private String mButtonURL;
-    private String mVisitorData;
-    private String mVisitData;
-    private String mQueryString;
+    String button_color;
+    String button_text_color;
 
-     String font;
-     String overLay;
-     String background;
-     String closeButton;
+    private String msg_title;
+    private String msg_title_color;
 
-     String buttonColor;
-     String buttonTextColor;
-
-     String titleColor;
-     String titleSize;
-
-     String bodyColor;
-     String bodySize;
+    private String msg_body;
+    private String msg_body_color;
+    private String msg_body_textsize;
+    String close_button_color;
 
     private final Context mContext;
 
@@ -59,16 +57,25 @@ public class InAppMessage implements Parcelable {
         }
         mDescription = temp;
         mId = in.readInt();
-        mType = in.readString();
-        mTitle = in.readString();
-        mBody = in.readString();
-        mImageUrl = in.readString();
-        mButtonText = in.readString();
+        msg_type = in.readString();
+        msg_title = in.readString();
+        msg_body = in.readString();
+        img = in.readString();
+        btn_text = in.readString();
         mButtonURL = in.readString();
-        mVisitorData = in.readString();
-        mVisitData = in.readString();
-        mQueryString = in.readString();
+        visitor_data = in.readString();
+        visit_data = in.readString();
+        qs = in.readString();
         mImage = in.readParcelable(Bitmap.class.getClassLoader());
+
+        msg_title_color = in.readString();
+        msg_body_color = in.readString();
+        msg_body_textsize = in.readString();
+        font_family = in.readString();
+        background = in.readString();
+        button_text_color = in.readString();
+        button_color = in.readString();
+        close_button_color = in.readString();
 
         mContext = null;
     }
@@ -80,15 +87,26 @@ public class InAppMessage implements Parcelable {
 
             JSONObject actionData = description.getJSONObject("actiondata");
 
-            mType = actionData.getString("msg_type");
-            mTitle = actionData.getString("msg_title");
-            mBody = actionData.getString("msg_body");
-            mImageUrl = actionData.getString("img");
-            mButtonText = actionData.getString("btn_text");
+            msg_type = actionData.getString("msg_type");
+            msg_title = actionData.getString("msg_title");
+            msg_body = actionData.getString("msg_body");
+            img = actionData.getString("img");
+            btn_text = actionData.getString("btn_text");
             mButtonURL = actionData.getString("android_lnk");
-            mVisitorData = actionData.getString("visitor_data");
-            mVisitData = actionData.getString("visit_data");
-            mQueryString = actionData.getString("qs");
+            visitor_data = actionData.getString("visitor_data");
+            visit_data = actionData.getString("visit_data");
+            qs = actionData.getString("qs");
+
+
+            msg_title_color = actionData.getString("msg_title_color");
+           // msg_title_textsize = actionData.getString("msg_title_textsize");
+            msg_body_color = actionData.getString("msg_body_color");
+            msg_body_textsize = actionData.getString("msg_body_textsize");
+            font_family = actionData.getString("font_family");
+            background = actionData.getString("background");
+            close_button_color = actionData.getString("close_button_color");
+            button_text_color = actionData.getString("button_text_color");
+            button_color = actionData.getString("button_color");
 
             mContext = context;
 
@@ -107,47 +125,47 @@ public class InAppMessage implements Parcelable {
     }
 
     public void setType(String mType) {
-        this.mType = mType;
+        this.msg_type = mType;
     }
 
     public InAppActionType getType() {
-        if (mType == null) {
+        if (msg_type == null) {
             return InAppActionType.UNKNOWN;
         }
-        if (InAppActionType.MINI.toString().equals(mType.toLowerCase())) {
+        if (InAppActionType.MINI.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.MINI;
         }
-        if (InAppActionType.FULL.toString().equals(mType.toLowerCase())) {
+        if (InAppActionType.FULL.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.FULL;
         }
-        if (InAppActionType.IMAGE_TEXT_BUTTON.toString().equals(mType.toLowerCase())){
+        if (InAppActionType.IMAGE_TEXT_BUTTON.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.IMAGE_TEXT_BUTTON;
         }
 
-        if (InAppActionType.FULL_IMAGE.toString().equals(mType.toLowerCase())) {
+        if (InAppActionType.FULL_IMAGE.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.FULL_IMAGE;
         }
 
-        if (InAppActionType.NPS.toString().equals(mType.toLowerCase())) {
+        if (InAppActionType.NPS.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.NPS;
         }
 
-        if (InAppActionType.IMAGE_BUTTON.toString().equals(mType.toLowerCase())) {
+        if (InAppActionType.IMAGE_BUTTON.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.IMAGE_BUTTON;
         }
 
-        if (InAppActionType.SMILE_RATING.toString().equals(mType.toLowerCase())) {
+        if (InAppActionType.SMILE_RATING.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.SMILE_RATING;
         }
         return InAppActionType.UNKNOWN;
     }
 
     public String getTitle() {
-        return mTitle;
+        return msg_title;
     }
 
     public String getBody() {
-        return mBody;
+        return msg_body;
     }
 
 
@@ -169,18 +187,18 @@ public class InAppMessage implements Parcelable {
     public String getImageUrl() {
 
         if (getType() == InAppActionType.MINI) {
-            return SizeUtil.sizeSuffixUrl(mImageUrl, "@1x");
+            return SizeUtil.sizeSuffixUrl(img, "@1x");
         }
-        return mImageUrl;
+        return img;
     }
 
     //TODO:bunlara bak bir gerek var mı?
     public String getImage2xUrl() {
-        return SizeUtil.sizeSuffixUrl(mImageUrl, "@2x");
+        return SizeUtil.sizeSuffixUrl(img, "@2x");
     }
 
     public String getImage4xUrl() {
-        return SizeUtil.sizeSuffixUrl(mImageUrl, "@4x");
+        return SizeUtil.sizeSuffixUrl(img, "@4x");
     }
 
     void setImage(final Bitmap image) {
@@ -209,7 +227,7 @@ public class InAppMessage implements Parcelable {
     }
 
     public String getButtonText() {
-        return mButtonText;
+        return btn_text;
     }
 
     public String getButtonURL() {
@@ -217,71 +235,63 @@ public class InAppMessage implements Parcelable {
     }
 
     public String getVisitorData() {
-        return mVisitorData;
+        return visitor_data;
     }
 
     public String getVisitData() {
-        return mVisitData;
+        return visit_data;
     }
 
     public String getQueryString() {
-        return mQueryString;
+        return qs;
     }
 
     //
 
 
-    public Typeface getFont() {
-        if (font == null) {
+    public Typeface getFont_family() {
+        if (font_family == null) {
             return Typeface.DEFAULT;
         }
-        if (FontFamily.Monospace.toString().equals(font.toLowerCase())) {
+        if (FontFamily.Monospace.toString().equals(font_family.toLowerCase())) {
             return Typeface.MONOSPACE;
         }
-        if (FontFamily.SansaSerif.toString().equals(font.toLowerCase())) {
+        if (FontFamily.SansaSerif.toString().equals(font_family.toLowerCase())) {
             return Typeface.SANS_SERIF;
         }
-        if (FontFamily.Serif.toString().equals(font.toLowerCase())){
+        if (FontFamily.Serif.toString().equals(font_family.toLowerCase())) {
             return Typeface.SERIF;
         }
 
-        if (FontFamily.Default.toString().equals(font.toLowerCase())) {
-        return Typeface.DEFAULT;
+        if (FontFamily.Default.toString().equals(font_family.toLowerCase())) {
+            return Typeface.DEFAULT;
         }
 
         return Typeface.DEFAULT;
-    }
-
-    public String getOverLay() {
-        return overLay;
     }
 
     public String getBackground() {
         return background;
     }
 
-    public String getButtonColor() {
-        return buttonColor;
+    public String getButton_color() {
+        return button_color;
     }
 
-    public String getButtonTextColor() {
-        return buttonTextColor;
+    public String getButton_text_color() {
+        return button_text_color;
     }
 
-    public String getTitleColor() {
-        return titleColor;
+    public String getMsg_title_color() {
+        return msg_title_color;
     }
 
-    public String getTitleSize() {
-        return titleSize;
+    public String getMsg_body_color() {
+        return msg_body_color;
     }
 
-    public String getBodyColor() {
-        return bodyColor;
-    }
-
-    public String getBodySize() {
-        return bodySize;
+    public String getMsg_body_textsize() {
+        return msg_body_textsize;
     }
 
     @Override
@@ -293,16 +303,25 @@ public class InAppMessage implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mDescription.toString());
         dest.writeInt(mId);
-        dest.writeString(mType);
-        dest.writeString(mTitle);
-        dest.writeString(mBody);
-        dest.writeString(mImageUrl);
-        dest.writeString(mButtonText);
+        dest.writeString(msg_type);
+        dest.writeString(msg_title);
+        dest.writeString(msg_body);
+        dest.writeString(img);
+        dest.writeString(btn_text);
         dest.writeString(mButtonURL);
-        dest.writeString(mVisitorData);
-        dest.writeString(mVisitData);
-        dest.writeString(mQueryString);
+        dest.writeString(visitor_data);
+        dest.writeString(visit_data);
+        dest.writeString(qs);
         dest.writeParcelable(mImage, flags);
+        dest.writeString(msg_body_color);
+        dest.writeString(msg_body_textsize);
+        dest.writeString(msg_title_color);
+        dest.writeString(background);
+        dest.writeString(font_family);
+        dest.writeString(button_text_color);
+        dest.writeString(button_color);
+        dest.writeString(close_button_color);
+
     }
 
     public static final Parcelable.Creator<InAppMessage> CREATOR = new Parcelable.Creator<InAppMessage>() {
@@ -319,6 +338,6 @@ public class InAppMessage implements Parcelable {
     };
 
     public String getCloseButton() {
-        return closeButton;
+        return close_button_color;
     }
 }
