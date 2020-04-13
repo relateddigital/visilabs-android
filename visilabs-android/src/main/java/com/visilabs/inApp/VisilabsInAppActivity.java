@@ -120,7 +120,7 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
                 if (inApp.getButtonURL() != null && inApp.getButtonURL().length() > 0) {
 
                     try {
-                        Visilabs.CallAPI().trackInAppMessageClick(inApp);
+                        Visilabs.CallAPI().trackInAppMessageClick(inApp, null );
                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(inApp.getButtonURL()));
                         VisilabsInAppActivity.this.startActivity(viewIntent);
 

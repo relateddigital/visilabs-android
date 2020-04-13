@@ -25,7 +25,7 @@ public class InAppMessage implements Parcelable {
     private String img;
     private String visitor_data;
     private String visit_data;
-    private String qs;
+    public String qs;
 
     String font_family;
     String background;
@@ -98,13 +98,14 @@ public class InAppMessage implements Parcelable {
             qs = actionData.getString("qs");
 
 
-            msg_title_color = actionData.getString("msg_title_color");
+           msg_title_color = actionData.getString("msg_title_color");
            // msg_title_textsize = actionData.getString("msg_title_textsize");
             msg_body_color = actionData.getString("msg_body_color");
             msg_body_textsize = actionData.getString("msg_body_textsize");
             font_family = actionData.getString("font_family");
             background = actionData.getString("background");
-            close_button_color = actionData.getString("close_button_color");
+            close_button_color = "White";
+        //    close_button_color = actionData.getString("close_button_color");
             button_text_color = actionData.getString("button_text_color");
             button_color = actionData.getString("button_color");
 

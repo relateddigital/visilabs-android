@@ -195,7 +195,7 @@ public class VisilabsInAppFragment extends Fragment {
                     }
 
                     try {
-                        Visilabs.CallAPI().trackInAppMessageClick(inApp);
+                        Visilabs.CallAPI().trackInAppMessageClick(inApp, null );
 
 
                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);

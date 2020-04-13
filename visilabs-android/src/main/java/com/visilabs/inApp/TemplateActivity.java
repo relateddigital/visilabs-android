@@ -21,6 +21,8 @@ import com.visilabs.util.StringUtils;
 import com.visilabs.view.BaseRating;
 import com.visilabs.view.SmileRating;
 
+import java.util.HashMap;
+
 public class TemplateActivity extends AppCompatActivity implements SmileRating.OnSmileySelectionListener, SmileRating.OnRatingSelectedListener {
 
     ActivityTemplateBinding mBinding;
@@ -158,7 +160,8 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
                 if (inAppMessage.getButtonURL() != null && inAppMessage.getButtonURL().length() > 0) {
 
                     try {
-                        Visilabs.CallAPI().trackInAppMessageClick(inAppMessage);
+
+                        Visilabs.CallAPI().trackInAppMessageClick(inAppMessage, getRate());
                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(inAppMessage.getButtonURL()));
                         startActivity(viewIntent);
 
@@ -170,6 +173,18 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
                 finish();
             }
         });
+    }
+
+    private String getRate() {
+        switch (inAppMessage.getType()) {
+            case SMILE_RATING:
+               return "&OM.smile=" + mBinding.smileRating.getRating();
+
+            case NPS:
+                return "&OM.nps=" + mBinding.rb.getRating();
+        }
+
+        return "";
     }
 
 

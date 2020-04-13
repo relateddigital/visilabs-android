@@ -86,7 +86,7 @@ public class InAppMessageManager {
 
 
                         case FULL:
-                            
+
                             openInAppActivity(parent, getStateId(parent, inAppMessage));
 
                             break;
@@ -108,6 +108,7 @@ public class InAppMessageManager {
                             break;
 
                         case NPS:
+
 
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
