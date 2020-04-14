@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                             tvToken.setText("Token Alınamadı");
                             return;
                         }
-                          // Get new Instance ID token değeri ne
+
                         String token = task.getResult().getToken();
 
                         tvToken.setText("Token :  " + token);
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                         parameters.put("OM.exVisitorID", exVisitorId);
                         parameters.put("OM.sys.TokenID", token);
                         parameters.put("OM.sys.AppID", "visilabs-android-sdk"); //
-                        Visilabs.CallAPI().customEvent("android-visilab", parameters, MainActivity.this);                        // Log and toast
+                         Visilabs.CallAPI().customEvent("android-visilab", parameters, MainActivity.this);                        // Log and toast
                     }
                 });
 

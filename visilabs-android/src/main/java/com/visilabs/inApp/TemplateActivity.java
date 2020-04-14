@@ -2,16 +2,20 @@ package com.visilabs.inApp;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
@@ -20,8 +24,6 @@ import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.StringUtils;
 import com.visilabs.view.BaseRating;
 import com.visilabs.view.SmileRating;
-
-import java.util.HashMap;
 
 public class TemplateActivity extends AppCompatActivity implements SmileRating.OnSmileySelectionListener, SmileRating.OnRatingSelectedListener {
 
@@ -38,12 +40,13 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        inAppMessage = getInAppMessage();
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_template);
 
-        inAppMessage = getInAppMessage();
+        Picasso.get().load(inAppMessage.getImageUrl()).into(mBinding.ivTemplate);
+
 
         if (isShowingInApp()) {
             setUpView();
@@ -178,10 +181,10 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     private String getRate() {
         switch (inAppMessage.getType()) {
             case SMILE_RATING:
-               return "&OM.smile=" + mBinding.smileRating.getRating();
+               return "&OM.s_point=" + mBinding.smileRating.getRating()+ "&OM.s_cat="+ inAppMessage.getType()+"&OM.s_page="+ inAppMessage.getId();
 
             case NPS:
-                return "&OM.nps=" + mBinding.rb.getRating();
+                return "&OM.s_point=" + mBinding.rb.getRating() + "&OM.s_cat=" + inAppMessage.getType()+ "&OM.s_page="+ inAppMessage.getId();
         }
 
         return "";
@@ -212,10 +215,10 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
 
         switch (inAppMessage.getCloseButton()) {
 
-            case "White":
+            case "white":
                 return R.drawable.ic_close_white_24dp;
 
-            case "Black":
+            case "black":
                 return R.drawable.ic_close_black_24dp;
         }
         return R.drawable.ic_close_black_24dp;

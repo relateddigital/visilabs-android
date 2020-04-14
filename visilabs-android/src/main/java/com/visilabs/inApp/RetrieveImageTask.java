@@ -17,7 +17,7 @@ public class RetrieveImageTask extends AsyncTask<InAppMessage, Void, Bitmap> {
         try {
             if (notifications != null && notifications.length > 0) {
                 InAppMessage notification = notifications[0];
-                return notification.getImage();
+                return notification.getImageBitmap();
             }
             return null;
 

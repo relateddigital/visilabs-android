@@ -25,15 +25,15 @@ public class InAppMessage implements Parcelable {
     private String img;
     private String visitor_data;
     private String visit_data;
-    public String qs;
+    private String qs;
 
-    String font_family;
-    String background;
+    private String font_family;
+    private String background;
 
     private String btn_text;
     private String mButtonURL;
-    String button_color;
-    String button_text_color;
+    private String button_color;
+    private String button_text_color;
 
     private String msg_title;
     private String msg_title_color;
@@ -41,9 +41,11 @@ public class InAppMessage implements Parcelable {
     private String msg_body;
     private String msg_body_color;
     private String msg_body_textsize;
-    String close_button_color;
+    private String close_button_color;
 
     private final Context mContext;
+
+    private String pageName;
 
     private static final String LOG_TAG = "VisilabsNotification";
     private static final Pattern FILE_EXTENSION_PATTERN = Pattern.compile("(\\.[^./]+$)");
@@ -91,6 +93,7 @@ public class InAppMessage implements Parcelable {
             msg_title = actionData.getString("msg_title");
             msg_body = actionData.getString("msg_body");
             img = actionData.getString("img");
+          //  img = "https://www.wpexplorer.com/wp-content/uploads/wordpress-image-optimization-guide.jpg";
             btn_text = actionData.getString("btn_text");
             mButtonURL = actionData.getString("android_lnk");
             visitor_data = actionData.getString("visitor_data");
@@ -98,14 +101,13 @@ public class InAppMessage implements Parcelable {
             qs = actionData.getString("qs");
 
 
-           msg_title_color = actionData.getString("msg_title_color");
-           // msg_title_textsize = actionData.getString("msg_title_textsize");
+            msg_title_color = actionData.getString("msg_title_color");
             msg_body_color = actionData.getString("msg_body_color");
             msg_body_textsize = actionData.getString("msg_body_textsize");
             font_family = actionData.getString("font_family");
             background = actionData.getString("background");
-            close_button_color = "White";
-        //    close_button_color = actionData.getString("close_button_color");
+            close_button_color = "white";
+           // close_button_color = actionData.getString("close_button_color");
             button_text_color = actionData.getString("button_text_color");
             button_color = actionData.getString("button_color");
 
@@ -206,7 +208,7 @@ public class InAppMessage implements Parcelable {
         mImage = image;
     }
 
-    public Bitmap getImage() {
+    public Bitmap getImageBitmap() {
         if (mImage != null) {
             return mImage;
         } else {

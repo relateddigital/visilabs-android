@@ -36,6 +36,8 @@ public class InAppMessageManager {
             showDebugMessage("Android version is below necessary version");
         }
 
+        inAppMessage.setType("smile_rating");
+
         parent.runOnUiThread(new Runnable() {
             @Override
             @TargetApi(VisilabsConfig.UI_FEATURES_MIN_API)

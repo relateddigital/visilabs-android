@@ -22,6 +22,7 @@ import com.visilabs.gps.factory.GpsFactory;
 import com.visilabs.gps.factory.GpsFactory2;
 import com.visilabs.gps.manager.GpsManager;
 import com.visilabs.gps.manager.GpsManager2;
+import com.visilabs.inApp.InAppActionType;
 import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
@@ -411,49 +412,16 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
     private VisilabsTargetCallback getInAppMessageCallback(final String type, final int notificationID, final Activity parent) {
 
-
-        final String inAppJson = "[{\n" +
-                "\"actid\":129,\n" +
-                "\"title\":\"YENİ In-App-Message, template: image_text_button\",\n" +
-                "\"actiontype\":\"InAppMessage\",\n" +
-                "\"actiondata\":{\n" +
-                "\"msg_title\":\"erhg erhser serhe r\",\n" +
-                "\"msg_body\":\"ty rt jrtsh h ste jdykdytr trtjerst jter jtr krsk srt ktry kxrt kjrtx \",\n" +
-                "\"btn_text\":\"YOLLA\",\n" +
-                "\"ios_lnk\":\"\",\n" +
-                "\"android_lnk\":\"http://relateddigital.com\",\n" +
-                "\"msg_type\":\"image_text_button\",\n" +
-                "\"img\":\"http://localhost/VisilabsManager/img/in-app-message/uploaded_images/112_885_20200406200552257.jpg\",\n" +
-                "\"visitor_data\":\"{\\\"data\\\":{\\\"0\\\":{\\\"ts\\\":\\\"\\\\/Date(1586269619073+0300)\\\\/\\\",\\\"im\\\":1}}}\",\n" +
-                "\"visit_data\":\"\",\n" +
-                "\"qs\":\"OM.zn=acttype-13&OM.zpc=act-129\",\n" +
-                "\"cid\":\"\",\n" +
-                "\"courseofaction\":\"null\",\n" +
-                "\"msg_title_color\":\"#d90eb8\",\n" +
-                "\"close_button_color\":\"black\",\n" +
-                "\"msg_body_textsize\":\"3\",\n" +
-                "\"msg_body_color\":\"#22222a\",\n" +
-                "\"button_text_color\":\"#efefef\",\n" +
-                "\"button_color\":\"#0063cb\",\n" +
-                "\"font_family\":\"default\",\n" +
-                "\"background\":\"#ffffff\"\n" +
-                "}\n" +
-                "}]";
-
-
         return new VisilabsTargetCallback() {
             @Override
             public void success(VisilabsResponse response) {
                 String rawResponse = response.getRawResponse();
-
-               // rawResponse = inAppJson;
 
                 if (VisilabsConfig.DEBUG) {
                     Log.d(LOG_TAG, rawResponse);
                 }
                 try {
 
-                    //JSONArray array = new JSONArray(rawResponse);
                     JSONArray array = response.getArray();
                     if (array != null) {
                         ArrayList<InAppMessage> inAppMessageList = new ArrayList<>();
