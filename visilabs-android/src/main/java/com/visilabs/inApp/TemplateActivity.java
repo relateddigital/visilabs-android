@@ -2,15 +2,12 @@ package com.visilabs.inApp;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -164,7 +161,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
 
                     try {
 
-                        Visilabs.CallAPI().trackInAppMessageClick(inAppMessage, getRate());
+                        Visilabs.CallAPI().trackInAppMessageClick(inAppMessage, getRateReport());
                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(inAppMessage.getButtonURL()));
                         startActivity(viewIntent);
 
@@ -178,13 +175,13 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
         });
     }
 
-    private String getRate() {
+    private String getRateReport() {
         switch (inAppMessage.getType()) {
             case SMILE_RATING:
-               return "&OM.s_point=" + mBinding.smileRating.getRating()+ "&OM.s_cat="+ inAppMessage.getType()+"&OM.s_page="+ inAppMessage.getId();
+               return "&OM.s_point=" + mBinding.smileRating.getRating()+ "&OM.s_cat="+ inAppMessage.getType()+"&OM.s_page=act-"+ inAppMessage.getId();
 
             case NPS:
-                return "&OM.s_point=" + mBinding.rb.getRating() + "&OM.s_cat=" + inAppMessage.getType()+ "&OM.s_page="+ inAppMessage.getId();
+                return "&OM.s_point=" + mBinding.rb.getRating() + "&OM.s_cat=" + inAppMessage.getType()+ "&OM.s_page=act-"+ inAppMessage.getId();
         }
 
         return "";
