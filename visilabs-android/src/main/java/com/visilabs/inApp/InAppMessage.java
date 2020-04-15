@@ -45,8 +45,6 @@ public class InAppMessage implements Parcelable {
 
     private final Context mContext;
 
-    private String pageName;
-
     private static final String LOG_TAG = "VisilabsNotification";
     private static final Pattern FILE_EXTENSION_PATTERN = Pattern.compile("(\\.[^./]+$)");
 
@@ -93,7 +91,6 @@ public class InAppMessage implements Parcelable {
             msg_title = actionData.getString("msg_title");
             msg_body = actionData.getString("msg_body");
             img = actionData.getString("img");
-          //  img = "https://www.wpexplorer.com/wp-content/uploads/wordpress-image-optimization-guide.jpg";
             btn_text = actionData.getString("btn_text");
             mButtonURL = actionData.getString("android_lnk");
             visitor_data = actionData.getString("visitor_data");
