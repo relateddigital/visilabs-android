@@ -103,8 +103,7 @@ public class InAppMessage implements Parcelable {
             msg_body_textsize = actionData.getString("msg_body_textsize");
             font_family = actionData.getString("font_family");
             background = actionData.getString("background");
-            close_button_color = "white";
-           // close_button_color = actionData.getString("close_button_color");
+            close_button_color = actionData.getString("close_button_color");
             button_text_color = actionData.getString("button_text_color");
             button_color = actionData.getString("button_color");
 
@@ -291,6 +290,9 @@ public class InAppMessage implements Parcelable {
     }
 
     public String getMsg_body_textsize() {
+        if (msg_body_textsize.equals("")) {
+            msg_body_textsize = "1";
+        }
         return msg_body_textsize;
     }
 

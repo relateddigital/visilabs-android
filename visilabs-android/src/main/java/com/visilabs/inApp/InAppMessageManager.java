@@ -35,7 +35,7 @@ public class InAppMessageManager {
 
             showDebugMessage("Android version is below necessary version");
         }
-        
+
         parent.runOnUiThread(new Runnable() {
             @Override
             @TargetApi(VisilabsConfig.UI_FEATURES_MIN_API)
@@ -78,9 +78,10 @@ public class InAppMessageManager {
 
                             if (visilabsUpdateDisplayState == null) {
                                 showDebugMessage("Notification's display proposal was already consumed, no notification will be shown.");
-                            }
+                            } else {
 
-                            openInAppMiniFragment(getStateId(parent, inAppMessage), parent, visilabsUpdateDisplayState);
+                                openInAppMiniFragment(getStateId(parent, inAppMessage), parent, visilabsUpdateDisplayState);
+                            }
 
                             break;
 
@@ -167,14 +168,15 @@ public class InAppMessageManager {
     private void openInAppMiniFragment(int stateID, Activity parent, VisilabsUpdateDisplayState visilabsUpdateDisplayState) {
 
         VisilabsInAppFragment visilabsInAppFragment = new VisilabsInAppFragment();
+        if (visilabsUpdateDisplayState.getDisplayState() != null) {
+            visilabsInAppFragment.setInAppState(stateID, (InAppNotificationState) visilabsUpdateDisplayState.getDisplayState());
 
-        visilabsInAppFragment.setInAppState(stateID, (InAppNotificationState) visilabsUpdateDisplayState.getDisplayState());
+            visilabsInAppFragment.setRetainInstance(true);
 
-        visilabsInAppFragment.setRetainInstance(true);
-
-        FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
-        transaction.add(android.R.id.content, visilabsInAppFragment);
-        transaction.commit();
+            FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
+            transaction.add(android.R.id.content, visilabsInAppFragment);
+            transaction.commit();
+        }
     }
 
     private void openInAppActivity(Activity parent, int inAppData) {

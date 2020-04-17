@@ -88,6 +88,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
                 setTitle();
                 setBody();
                 setButton();
+                mBinding.rb.setVisibility(View.GONE);
                 mBinding.smileRating.setVisibility(View.GONE);
 
                 break;
@@ -169,6 +170,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
                         Log.i("Visilabs", "User doesn't have an activity for notification URI");
                     }
                 }
+
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                 finish();
             }
