@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -92,7 +91,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
                 setTitle();
                 setBody();
                 setButton();
-                mBinding.rb.setVisibility(View.GONE);
+                mBinding.ratingBar.setVisibility(View.GONE);
                 mBinding.smileRating.setVisibility(View.GONE);
 
                 break;
@@ -187,7 +186,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
                 return "&OM.s_point=" + mBinding.smileRating.getRating() + "&OM.s_cat=" + inAppMessage.getType() + "&OM.s_page=act-" + inAppMessage.getId();
 
             case NPS:
-                return "&OM.s_point=" + mBinding.rb.getRating() + "&OM.s_cat=" + inAppMessage.getType() + "&OM.s_page=act-" + inAppMessage.getId();
+                return "&OM.s_point=" + mBinding.ratingBar.getRating() + "&OM.s_cat=" + inAppMessage.getType() + "&OM.s_page=act-" + inAppMessage.getId();
         }
 
         return "";
@@ -207,7 +206,16 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     }
 
     void showNps() {
-        mBinding.rb.setVisibility(View.VISIBLE);
+        mBinding.ratingBar.setVisibility(View.VISIBLE);
+
+        LayerDrawable stars = (LayerDrawable) mBinding.ratingBar.getProgressDrawable();
+
+        if (inAppMessage.getCloseButton().equals("white")) {
+            stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+            stars.getDrawable(0).setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            stars.getDrawable(1).setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        }
+
     }
 
     void showSmileRating() {
