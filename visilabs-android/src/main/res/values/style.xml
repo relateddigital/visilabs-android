@@ -16,4 +16,5 @@
         <attr name="textNonSelectionColor" format="color" />
         <attr name="isIndicator" format="boolean" />
     </declare-styleable>
+
 </resources>

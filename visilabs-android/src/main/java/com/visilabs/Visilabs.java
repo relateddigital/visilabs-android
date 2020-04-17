@@ -10,9 +10,6 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
-
-import com.google.android.gms.ads.identifier.AdvertisingIdClient;
-import com.google.android.gms.ads.identifier.AdvertisingIdClient.Info;
 import com.visilabs.api.VisilabsAction;
 import com.visilabs.api.VisilabsTargetCallback;
 import com.visilabs.api.VisilabsTargetFilter;
@@ -101,7 +98,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         this.mCheckForNotificationsOnLoggerRequest = true;
         this._context = context;
-        getIdThread(context);
 
         if (requestTimeoutSeconds > 0) {
             this._requestTimeoutSeconds = requestTimeoutSeconds;
@@ -284,19 +280,12 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         return visilabs;
     }
 
-    public void getIdThread(final Context context) {
-        new Thread(new Runnable() {
-            public void run() {
-                Info adInfo = null;
-                try {
-                    adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
-                    mIdentifierForAdvertising = adInfo.getId();
-                    boolean isLAT = adInfo.isLimitAdTrackingEnabled();
-                } catch (Exception e) {
-                }
+    public void setmIdentifierForAdvertising(String mIdentifierForAdvertising) {
+        this.mIdentifierForAdvertising = mIdentifierForAdvertising;
+    }
 
-            }
-        }).start();
+    public String getmIdentifierForAdvertising() {
+        return mIdentifierForAdvertising;
     }
 
     public void setCheckForNotificationsOnLoggerRequest(Boolean checkForNotificationsOnLoggerRequest) {
@@ -854,8 +843,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 , VisilabsEncoder.encode(this._channel)
                 , VisilabsEncoder.encode("true"));
 
-        assert this.mIdentifierForAdvertising != null;
-        if (this.mIdentifierForAdvertising != null || this.mIdentifierForAdvertising.equals("cca-app-pub-3940256099942544~3347511713")) {
+        if (this.mIdentifierForAdvertising != null) {
             query = String.format("%s&OM.m_adid=%s", query, VisilabsEncoder.encode(this.mIdentifierForAdvertising));
         }
 

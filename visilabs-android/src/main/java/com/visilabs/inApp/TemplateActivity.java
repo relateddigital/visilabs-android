@@ -3,7 +3,10 @@ package com.visilabs.inApp;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +41,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
         inAppMessage = getInAppMessage();
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_template);
@@ -52,18 +56,18 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
 
     private InAppMessage getInAppMessage() {
 
+        InAppNotificationState inAppNotificationState = null;
         mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
         mUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(mIntentId);
 
-        InAppNotificationState inAppNotificationState =
-                (InAppNotificationState) mUpdateDisplayState.getDisplayState();
-
         if (mUpdateDisplayState == null) {
             Log.e("Visilabs", "VisilabsNotificationActivity intent received, but nothing was found to show.");
-
         }
+        inAppNotificationState =
+                (InAppNotificationState) mUpdateDisplayState.getDisplayState();
 
-       return inAppNotificationState.getInAppMessage();
+
+        return inAppNotificationState.getInAppMessage();
     }
 
     private void setUpView() {
@@ -136,7 +140,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
         mBinding.tvTitle.setTypeface(inAppMessage.getFont_family(), Typeface.BOLD);
         mBinding.tvTitle.setText(inAppMessage.getTitle());
         mBinding.tvTitle.setTextColor(Color.parseColor(inAppMessage.getMsg_title_color()));
-        mBinding.tvTitle.setTextSize(Float.parseFloat(inAppMessage.getMsg_body_textsize())+12);
+        mBinding.tvTitle.setTextSize(Float.parseFloat(inAppMessage.getMsg_body_textsize()) + 12);
     }
 
     private void setBody() {
@@ -144,7 +148,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
         mBinding.tvBody.setTypeface(inAppMessage.getFont_family());
         mBinding.tvBody.setVisibility(View.VISIBLE);
         mBinding.tvBody.setTextColor(Color.parseColor(inAppMessage.getMsg_body_color()));
-        mBinding.tvBody.setTextSize(Float.parseFloat(inAppMessage.getMsg_body_textsize())+8);
+        mBinding.tvBody.setTextSize(Float.parseFloat(inAppMessage.getMsg_body_textsize()) + 8);
     }
 
     private void setButton() {
@@ -180,10 +184,10 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     private String getRateReport() {
         switch (inAppMessage.getType()) {
             case SMILE_RATING:
-               return "&OM.s_point=" + mBinding.smileRating.getRating()+ "&OM.s_cat="+ inAppMessage.getType()+"&OM.s_page=act-"+ inAppMessage.getId();
+                return "&OM.s_point=" + mBinding.smileRating.getRating() + "&OM.s_cat=" + inAppMessage.getType() + "&OM.s_page=act-" + inAppMessage.getId();
 
             case NPS:
-                return "&OM.s_point=" + mBinding.rb.getRating() + "&OM.s_cat=" + inAppMessage.getType()+ "&OM.s_page=act-"+ inAppMessage.getId();
+                return "&OM.s_point=" + mBinding.rb.getRating() + "&OM.s_cat=" + inAppMessage.getType() + "&OM.s_page=act-" + inAppMessage.getId();
         }
 
         return "";

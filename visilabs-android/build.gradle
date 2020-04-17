@@ -48,7 +48,6 @@ android {
 dependencies {
 
     api 'com.google.android.gms:play-services-base:17.1.0'
-    api 'com.google.android.gms:play-services-ads:18.3.0'
     api 'com.google.android.gms:play-services-location:17.0.0'
     api 'com.loopj.android:android-async-http:1.4.9'
     api 'com.google.code.gson:gson:2.8.6'
