@@ -96,9 +96,12 @@
                     android:id="@+id/ratingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    style="@style/RatingBarStyle"
+                    android:isIndicator="false"
                     android:numStars="5"
+                    android:stepSize="0.5"
                     android:visibility="gone" />
             </LinearLayout>
 
@@ -106,12 +109,12 @@
 
         <Button
             android:id="@+id/btn_template"
-            android:textAllCaps="false"
             android:layout_width="match_parent"
-            android:padding="10dp"
             android:layout_height="60dp"
             android:layout_weight="1"
-            android:text="OK" />
+            android:padding="10dp"
+            android:text="OK"
+            android:textAllCaps="false" />
 
     </LinearLayout>
 </layout>
