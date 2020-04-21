@@ -56,6 +56,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
 
         inAppMessage = getInAppMessage();
 
@@ -71,31 +72,35 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
         llTextContainer = findViewById(R.id.ll_text_container);
         ibClose = findViewById(R.id.ib_close);
 
-        Picasso.get().load(inAppMessage.getImageUrl()).into(ivTemplate);
 
 
-        if (isShowingInApp()) {
+        if (isShowingInApp() && inAppMessage != null) {
             setUpView();
+        } else {
+
+            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+            finish();
         }
     }
 
     private InAppMessage getInAppMessage() {
 
         InAppNotificationState inAppNotificationState = null;
-        mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
         mUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(mIntentId);
-
-        if (mUpdateDisplayState == null) {
+        if (mUpdateDisplayState == null || mUpdateDisplayState.getDisplayState() == null) {
             Log.e("Visilabs", "VisilabsNotificationActivity intent received, but nothing was found to show.");
+
+            return null;
+        } else {
+            inAppNotificationState =
+                    (InAppNotificationState) mUpdateDisplayState.getDisplayState();
+            return inAppNotificationState.getInAppMessage();
+
         }
-        inAppNotificationState =
-                (InAppNotificationState) mUpdateDisplayState.getDisplayState();
-
-
-        return inAppNotificationState.getInAppMessage();
     }
 
     private void setUpView() {
+        Picasso.get().load(inAppMessage.getImageUrl()).into(ivTemplate);
 
         smileRating.setOnSmileySelectionListener(this);
         smileRating.setOnRatingSelectedListener(this);
