@@ -1,5 +1,6 @@
 package com.visilabs.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -42,7 +43,7 @@ public class VisilabsConfig {
         String packageName = appContext.getPackageName();
 
         try {
-            ApplicationInfo e = appContext.getPackageManager().getApplicationInfo(packageName, 128);
+            @SuppressLint("WrongConstant") ApplicationInfo e = appContext.getPackageManager().getApplicationInfo(packageName, 128);
             Bundle configBundle = e.metaData;
             if(null == configBundle) {
                 configBundle = new Bundle();

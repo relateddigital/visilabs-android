@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 
 import com.visilabs.android.R;
 
-public class FadingImageView extends ImageView {
+public class FadingImageView extends androidx.appcompat.widget.AppCompatImageView {
     public FadingImageView(final Context context) {
         super(context);
         initFadingImageView();

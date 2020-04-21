@@ -9,7 +9,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.ImageView;
 
-public class MiniCircleImageView extends ImageView {
+public class MiniCircleImageView extends androidx.appcompat.widget.AppCompatImageView {
     public MiniCircleImageView(Context context) {
         super(context);
         init();
