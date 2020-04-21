@@ -31,9 +31,6 @@ public class MainActivity extends AppCompatActivity {
         Visilabs.CreateAPI("676D325830564761676D453D", "356467332F6533766975593D", "http://lgr.visilabs.net",
                 "visistore", "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000, "http://s.visilabs.net/geojson", true);
 
-
-        Visilabs.CallAPI().setCookie(new Cookie());
-
         Button btnTestPageView = findViewById(R.id.btn_page_view);
          exvisitorIdTv = findViewById(R.id.tv_exvisitor_id);
          tvToken = findViewById(R.id.tv_token);

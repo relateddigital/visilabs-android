@@ -230,7 +230,6 @@ public class VisilabsNotificationRequest extends VisilabsRemote {
             }
         }
 
-
         String finalURI = uriBuilder.build().toString();
 
         if(VisilabsConfig.DEBUG){

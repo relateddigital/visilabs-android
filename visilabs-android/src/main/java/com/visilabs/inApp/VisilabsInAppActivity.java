@@ -10,30 +10,37 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
 import com.visilabs.Visilabs;
-import com.visilabs.android.databinding.ActivityInAppFullBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.AnimationManager;
 import com.visilabs.util.StringUtils;
+import com.visilabs.view.FadingImageView;
 
 
 public class VisilabsInAppActivity extends AppCompatActivity implements IVisilabs {
 
-    ActivityInAppFullBinding mainBinding;
+    //ActivityInAppFullBinding mainBinding;
 
     InAppMessage inApp;
 
     private VisilabsUpdateDisplayState mUpdateDisplayState;
 
+    TextView tvInAppSubtitle, tvInAppTitle;
     private int mIntentId = -1;
 
+    Button btnInApp;
+    FadingImageView fivInAppImage;
+
+    LinearLayout llClose;
     private static final int SHADOW_SIZE_THRESHOLD_PX = 100;
 
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
@@ -43,8 +50,15 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
 
+        tvInAppSubtitle = findViewById(R.id.tv_in_app_subtitle);
+        tvInAppTitle = findViewById(R.id.tv_in_app_title);
+        btnInApp = findViewById(R.id.btn_in_app);
+        fivInAppImage = findViewById(R.id.fiv_in_app_image);
+        llClose = findViewById(R.id.ll_close);
+
         mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
         mUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(mIntentId);
+
 
         if (null == mUpdateDisplayState) {
 
@@ -69,14 +83,9 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
 
         inApp = inAppNotificationState.getInAppMessage();
 
-        mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_in_app_full);
+      //  mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_in_app_full);
 
-    //   AnimationManager.setBackgroundGradient(mainBinding.ivNotDisplay, AnimationManager.getGradient(mainBinding.llClose, this));
-
-    //    mainBinding.fivInAppImage.setBackgroundResource(R.drawable.bg_square_dropshadow);
-
-      //  setAnimationToViews();
-
+        setContentView(R.layout.activity_in_app_full);
         setInAppData();
 
         clickEvents();
@@ -84,11 +93,12 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
 
     private void setInAppData() {
 
-        mainBinding.tvInAppTitle.setText(inApp.getTitle());
-        mainBinding.tvInAppSubtitle.setText(inApp.getBody());
+        
+        tvInAppTitle.setText(inApp.getTitle());
+        tvInAppSubtitle.setText(inApp.getBody());
 
         if (inApp.getButtonText() != null && inApp.getButtonText().length() > 0) {
-            mainBinding.btnInApp.setText(inApp.getButtonText());
+            btnInApp.setText(inApp.getButtonText());
         }
         setInAppImage();
       }
@@ -98,11 +108,11 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
         new RetrieveImageTask(new AsyncResponse() {
             @Override
             public void processFinish(Bitmap output) {
-                if (output.getWidth() < SHADOW_SIZE_THRESHOLD_PX || output.getHeight() < SHADOW_SIZE_THRESHOLD_PX) { mainBinding.fivInAppImage.setBackgroundResource(R.drawable.bg_square_nodropshadow);
+                if (output.getWidth() < SHADOW_SIZE_THRESHOLD_PX || output.getHeight() < SHADOW_SIZE_THRESHOLD_PX) { fivInAppImage.setBackgroundResource(R.drawable.bg_square_nodropshadow);
                 } else {
-                   // AnimationManager.setNoDropShadowBackgroundToView(mainBinding.fivInAppImage, output);
+                   // AnimationManager.setNoDropShadowBackgroundToView(fivInAppImage, output);
 
-                    ImageView iv = (ImageView) mainBinding.fivInAppImage;
+                    ImageView iv = (ImageView) fivInAppImage;
                     iv.setImageBitmap(output);
                 }            }
         }).execute(inApp);
@@ -113,7 +123,7 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
     @SuppressLint("ClickableViewAccessibility")
     private void clickEvents() {
 
-        mainBinding.btnInApp.setOnClickListener(new View.OnClickListener() {
+        btnInApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -134,7 +144,7 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
         });
 
 
-        mainBinding.btnInApp.setOnTouchListener(new View.OnTouchListener() {
+        btnInApp.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -146,7 +156,7 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
             }
         });
 
-        mainBinding.llClose.setOnClickListener(new View.OnClickListener() {
+        llClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();

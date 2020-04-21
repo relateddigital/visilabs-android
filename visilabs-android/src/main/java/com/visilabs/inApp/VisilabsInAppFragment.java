@@ -18,19 +18,17 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import androidx.databinding.DataBindingUtil;
 
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
 import com.visilabs.Visilabs;
-import com.visilabs.android.databinding.FragmentInAppMiniBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.AnimationManager;
 
 public class VisilabsInAppFragment extends Fragment {
-
-    FragmentInAppMiniBinding mBinding;
 
     private Activity mParent;
     private GestureDetector mDetector;
@@ -42,6 +40,11 @@ public class VisilabsInAppFragment extends Fragment {
 
     private static final String LOG_TAG = "VisilabsFragment";
     private static final int MINI_REMOVE_TIME = 10000;
+
+    TextView tvInAppTitleMini;
+    ImageView ivInAppImageMini;
+
+    View rootView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,11 +58,11 @@ public class VisilabsInAppFragment extends Fragment {
 
         if(inAppNotificationState != null) {
 
-            mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_in_app_mini, container, false);
+             rootView = inflater.inflate(R.layout.fragment_in_app_mini, container, false);
 
             InAppMessage inApp = inAppNotificationState.getInAppMessage();
 
-            mBinding.tvInAppTitleMini.setText(inApp.getTitle());
+            tvInAppTitleMini.setText(inApp.getTitle());
 
             setInAppImage(inApp);
 
@@ -69,7 +72,7 @@ public class VisilabsInAppFragment extends Fragment {
             cleanUp();
         }
 
-        return mBinding.getRoot();
+        return rootView;
     }
 
     public void setInAppState(int stateId, InAppNotificationState inAppState) {
@@ -81,7 +84,7 @@ public class VisilabsInAppFragment extends Fragment {
         new RetrieveImageTask(new AsyncResponse() {
             @Override
             public void processFinish(Bitmap output) {
-                mBinding.ivInAppImageMini.setImageBitmap(output);
+                ivInAppImageMini.setImageBitmap(output);
             }
         }).execute(inApp);
     }
@@ -133,18 +136,18 @@ public class VisilabsInAppFragment extends Fragment {
         mDisplayMini = new Runnable() {
             @Override
             public void run() {
-                mBinding.getRoot().setVisibility(View.VISIBLE);
-                mBinding.getRoot().setBackgroundColor(inAppNotificationState.getHighlightColor());
-                mBinding.getRoot().setOnTouchListener(new View.OnTouchListener() {
+                getView().setVisibility(View.VISIBLE);
+                getView().setBackgroundColor(inAppNotificationState.getHighlightColor());
+                getView().setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View view, MotionEvent event) {
                         return VisilabsInAppFragment.this.mDetector.onTouchEvent(event);
                     }
                 });
 
-                mBinding.getRoot().startAnimation(AnimationManager.getMiniTranslateAnimation(getActivity()));
+                getView().startAnimation(AnimationManager.getMiniTranslateAnimation(getActivity()));
 
-                mBinding.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
+                ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
             }
         };
     }
@@ -257,6 +260,5 @@ public class VisilabsInAppFragment extends Fragment {
             }
         }
     }
-
 }
 

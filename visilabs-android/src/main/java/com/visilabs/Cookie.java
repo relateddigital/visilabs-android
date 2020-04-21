@@ -2,12 +2,12 @@ package com.visilabs;
 
 public class Cookie {
 
-    private String loggerCookieKey;
-    private String loggerCookieValue;
-    private String realTimeCookieKey ;
-    private String realTimeCookieValue;
-    private String loggerOM3rdCookieValue;
-    private String realOM3rdTimeCookieValue;
+    private String loggerCookieKey = "";
+    private String loggerCookieValue = "";
+    private String realTimeCookieKey = "";
+    private String realTimeCookieValue = "";
+    private String loggerOM3rdCookieValue = "";
+    private String realOM3rdTimeCookieValue = "";
 
     public String getLoggerCookieKey() {
         return loggerCookieKey;

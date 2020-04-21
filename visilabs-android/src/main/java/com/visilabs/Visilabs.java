@@ -920,11 +920,11 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             String loadBalanceCookieValue = "";
             String OM3rdCookieValue = "";
 
-            if (nextAPICall.contains(VisilabsConfig.LOGGER_URL)) {
+            if (nextAPICall.contains(VisilabsConfig.LOGGER_URL) && this.cookie != null) {
                 loadBalanceCookieKey = this.cookie.getLoggerCookieKey();
                 loadBalanceCookieValue = this.cookie.getLoggerCookieValue();
                 OM3rdCookieValue = this.cookie.getLoggerOM3rdCookieValue();
-            } else if (nextAPICall.contains(VisilabsConfig.REAL_TIME_URL)) {
+            } else if (nextAPICall.contains(VisilabsConfig.REAL_TIME_URL) && this.cookie != null) {
                 loadBalanceCookieKey = this.cookie.getRealTimeCookieKey();
                 loadBalanceCookieValue = this.cookie.getRealTimeCookieValue();
                 OM3rdCookieValue = this.cookie.getRealOM3rdTimeCookieValue();
