@@ -102,27 +102,26 @@ public class VisilabsURLConnection
                                         String cookieKey = cookieKeyValue[0];
                                         String cookieValue = cookieKeyValue[1];
 
-                                        if(requestURL.contains(VisilabsConfig.LOGGER_URL)){
+                                        if(requestURL.contains(VisilabsConfig.LOGGER_URL) && Visilabs.CallAPI().getCookie() != null){
                                             Visilabs.CallAPI().getCookie().setLoggerCookieKey(cookieKey);
                                             Visilabs.CallAPI().getCookie().setLoggerCookieValue(cookieValue);
 
-                                        }else if(requestURL.contains(VisilabsConfig.REAL_TIME_URL)){
+                                        }else if(requestURL.contains(VisilabsConfig.REAL_TIME_URL) && Visilabs.CallAPI().getCookie() != null){
                                             Visilabs.CallAPI().getCookie().setRealTimeCookieKey(cookieKey);
                                             Visilabs.CallAPI().getCookie().setRealTimeCookieValue(cookieValue);
                                         }
                                     }
                                 }
 
-
                                 if(fields[0].toLowerCase().contains(VisilabsConfig.OM_3_KEY.toLowerCase())){
                                     String[] cookieKeyValue = fields[0].split("=");
-                                    if(cookieKeyValue.length > 1){
+                                    if(cookieKeyValue.length > 1 ||  Visilabs.CallAPI().getCookie() != null){
                                         String cookieKey = cookieKeyValue[0];
                                         String cookieValue = cookieKeyValue[1];
 
-                                        if(requestURL.contains(VisilabsConfig.LOGGER_URL)){
+                                        if(requestURL.contains(VisilabsConfig.LOGGER_URL) && Visilabs.CallAPI().getCookie() != null){
                                             Visilabs.CallAPI().getCookie().setLoggerOM3rdCookieValue(cookieValue);
-                                        }else if(requestURL.contains(VisilabsConfig.REAL_TIME_URL)){
+                                        }else if(requestURL.contains(VisilabsConfig.REAL_TIME_URL) && Visilabs.CallAPI().getCookie() != null){
                                             Visilabs.CallAPI().getCookie().setRealOM3rdTimeCookieValue(cookieValue);
                                         }
                                     }
@@ -138,7 +137,7 @@ public class VisilabsURLConnection
                 {
                     if(_apiContext.getSendQueue() != null && _apiContext.getSendQueue().size() >0)
                         _apiContext.getSendQueue().remove(0);
-                    Log.w("VisilabsAPI", "Failed to connect URL: " + requestURL);
+                    Log.w("VisilabsAPI",  requestURL+" "+ e.toString());
                 }
                 finally
                 {
