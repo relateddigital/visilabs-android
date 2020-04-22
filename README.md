@@ -35,7 +35,7 @@ This version uses AndroidX
 
  ```java 
  Visilabs.CreateAPI(organizationID, siteID, "http://lgr.visilabs.net",
-                "visistore", "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000);
+                datasource, "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000);
 ```
 
 You need to add code below to show inApp
