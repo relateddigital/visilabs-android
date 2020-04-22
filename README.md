@@ -52,7 +52,7 @@ After that please add code below to show in app message.
 
 ### Sample Applications 
 
-- [Visilabs Sample Application **NEW REPO ](https://github.com/relateddigital/sample_visilabs_android) (master branch)
+- [Visilabs Sample Application **NEW REPO ](https://github.com/relateddigital/sample_visilabs_android) 
 
 #### Note : 
 You may use the support library module in sample application but we will not contribute support library in the future. This is our last support.
