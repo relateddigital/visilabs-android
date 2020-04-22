@@ -37,8 +37,14 @@ This version uses AndroidX
  Visilabs.CreateAPI(organizationID, siteID, "http://lgr.visilabs.net",
                 datasource, "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000);
 ```
+You need to get the three paramaters from RMC web panel.
 
-You need to add code below to show inApp
+organizationID
+siteID
+datasource
+
+To show in app message, you need to create an active in app target action on RMC web panel.
+After that please add code below to show in app message.
 
     HashMap<String, String> parameters = new HashMap<>();
                 parameters.put("OM.exVisitorID", exVisitorId);
@@ -46,8 +52,8 @@ You need to add code below to show inApp
 
 ### Sample Applications 
 
-- [Visilabs Sample Application](https://github.com/relateddigital/visilabs-android/releases/tag/3.0.3) (master branch)
-- [Visilabs Sample Application - (Support Library) ](https://github.com/relateddigital/visilabs-android/tree/support_library)      
+- [Visilabs Sample Application **NEW REPO ](https://github.com/relateddigital/sample_visilabs_android) (master branch)
+
 #### Note : 
 You may use the support library module in sample application but we will not contribute support library in the future. This is our last support.
 
