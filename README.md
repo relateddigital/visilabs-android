@@ -44,20 +44,6 @@ You need to add code below to show inApp
                 parameters.put("OM.exVisitorID", exVisitorId);
                 Visilabs.CallAPI().customEvent("android-visilab", parameters, MainActivity.this);                      
 
-
-#### Note: 
- 
-You may use  [Visilabs Module](https://github.com/relateddigital/visilabs-android/tree/master/visilabs-android) directly.
-
-  For that, 
-- Download the module
-- Open your project which you want to use Visilabs
-- Follow steps : Android Studio -> File -> New -> Import Module and select path where you want to locate module and rename it.
-- Please do not forget to link visilabs module in app/build.gradle  
-```java
-implementation project(path: ':visilabs-android') 
-```
-
 ### Sample Applications 
 
 - [Visilabs Sample Application](https://github.com/relateddigital/visilabs-android/releases/tag/3.0.3) (master branch)
