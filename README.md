@@ -30,6 +30,9 @@ implementation "com.visilabs.android:visilabs-android:3.1.2
 ```
 This version uses AndroidX
 
+### Visilabs SDK Set Up
+
+Mobile Tagging for Visilab and more information :  [Please check docs](https://docs.relateddigital.com/display/KB/Android+-+API+Setup) 
 
 ### In App Set Up
 
@@ -57,9 +60,6 @@ After that please add code below to show in app message.
 #### Note : 
 You may use the support library module in sample application but we will not contribute support library in the future. This is our last support.
 
-### Using the SDK
-
-Mobile Tagging for Visilab and more information :  [Please check docs](https://docs.relateddigital.com/display/KB/Android+-+API+Setup). 
 
 ### Licences
 
