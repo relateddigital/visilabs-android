@@ -43,6 +43,18 @@ You may use  [Visilabs Module](https://github.com/relateddigital/visilabs-androi
 implementation project(path: ':visilabs-android') 
 ```
 
+### In App Set Up
+
+ ```java Visilabs.CreateAPI(organizationID, siteID, "http://lgr.visilabs.net",
+                "visistore", "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000);
+```
+
+You need to add code below to show inApp
+
+     ```HashMap<String, String> parameters = new HashMap<>();
+                parameters.put("OM.exVisitorID", exVisitorId);
+                Visilabs.CallAPI().customEvent("android-visilab", parameters, MainActivity.this);```                        
+
 
 ### Sample Applications 
 
