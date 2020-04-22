@@ -53,6 +53,9 @@ After that please add code below to show in app message.
                 parameters.put("OM.exVisitorID", exVisitorId);
                 Visilabs.CallAPI().customEvent("android-visilab", parameters, MainActivity.this);                      
 
+
+<img src="x" alt="Euromessage Android Library" width="300" style="max-width:100%;">
+
 ### Sample Applications 
 
 - [Visilabs Sample Application **NEW REPO ](https://github.com/relateddigital/sample_visilabs_android) 
