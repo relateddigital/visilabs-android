@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
 import com.visilabs.Visilabs;
@@ -85,8 +86,6 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
 
         inApp = inAppNotificationState.getInAppMessage();
 
-      //  mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_in_app_full);
-
         setInAppData();
 
         clickEvents();
@@ -94,32 +93,15 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
 
     private void setInAppData() {
 
-        
+
         tvInAppTitle.setText(inApp.getTitle());
         tvInAppSubtitle.setText(inApp.getBody());
 
         if (inApp.getButtonText() != null && inApp.getButtonText().length() > 0) {
             btnInApp.setText(inApp.getButtonText());
         }
-        setInAppImage();
-      }
-
-    private void setInAppImage() {
-
-        new RetrieveImageTask(new AsyncResponse() {
-            @Override
-            public void processFinish(Bitmap output) {
-                if (output.getWidth() < SHADOW_SIZE_THRESHOLD_PX || output.getHeight() < SHADOW_SIZE_THRESHOLD_PX) { fivInAppImage.setBackgroundResource(R.drawable.bg_square_nodropshadow);
-                } else {
-                   // AnimationManager.setNoDropShadowBackgroundToView(fivInAppImage, output);
-
-                    ImageView iv = (ImageView) fivInAppImage;
-                    iv.setImageBitmap(output);
-                }            }
-        }).execute(inApp);
-
+        Picasso.get().load(inApp.getImageUrl()).into(fivInAppImage);
     }
-
 
     @SuppressLint("ClickableViewAccessibility")
     private void clickEvents() {
@@ -131,7 +113,7 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
                 if (inApp.getButtonURL() != null && inApp.getButtonURL().length() > 0) {
 
                     try {
-                        Visilabs.CallAPI().trackInAppMessageClick(inApp, null );
+                        Visilabs.CallAPI().trackInAppMessageClick(inApp, null);
                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(inApp.getButtonURL()));
                         VisilabsInAppActivity.this.startActivity(viewIntent);
 

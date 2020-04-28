@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
 import com.visilabs.Visilabs;
@@ -64,7 +65,7 @@ public class VisilabsInAppFragment extends Fragment {
 
             tvInAppTitleMini.setText(inApp.getTitle());
 
-            setInAppImage(inApp);
+            Picasso.get().load(inApp.getImageUrl()).into(ivInAppImageMini);
 
             mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
 
@@ -78,15 +79,6 @@ public class VisilabsInAppFragment extends Fragment {
     public void setInAppState(int stateId, InAppNotificationState inAppState) {
         this.mInAppStateId = stateId;
         this.inAppNotificationState = inAppState;
-    }
-
-    private void setInAppImage(InAppMessage inApp) {
-        new RetrieveImageTask(new AsyncResponse() {
-            @Override
-            public void processFinish(Bitmap output) {
-                ivInAppImageMini.setImageBitmap(output);
-            }
-        }).execute(inApp);
     }
 
     @Override
