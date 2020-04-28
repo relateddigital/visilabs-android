@@ -50,6 +50,8 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
 
+        setContentView(R.layout.activity_in_app_full);
+
         tvInAppSubtitle = findViewById(R.id.tv_in_app_subtitle);
         tvInAppTitle = findViewById(R.id.tv_in_app_title);
         btnInApp = findViewById(R.id.btn_in_app);
@@ -85,7 +87,6 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
 
       //  mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_in_app_full);
 
-        setContentView(R.layout.activity_in_app_full);
         setInAppData();
 
         clickEvents();
