@@ -57,10 +57,12 @@ public class VisilabsInAppFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if(inAppNotificationState != null) {
+        if (inAppNotificationState != null) {
 
-             rootView = inflater.inflate(R.layout.fragment_in_app_mini, container, false);
+            rootView = inflater.inflate(R.layout.fragment_in_app_mini, container, false);
 
+            tvInAppTitleMini = rootView.findViewById(R.id.tv_in_app_title_mini);
+            ivInAppImageMini = rootView.findViewById(R.id.iv_in_app_image_mini);
             InAppMessage inApp = inAppNotificationState.getInAppMessage();
 
             tvInAppTitleMini.setText(inApp.getTitle());
@@ -190,7 +192,7 @@ public class VisilabsInAppFragment extends Fragment {
                     }
 
                     try {
-                        Visilabs.CallAPI().trackInAppMessageClick(inApp, null );
+                        Visilabs.CallAPI().trackInAppMessageClick(inApp, null);
 
 
                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
