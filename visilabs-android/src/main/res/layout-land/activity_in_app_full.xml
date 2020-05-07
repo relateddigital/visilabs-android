@@ -42,8 +42,7 @@
                 android:contentDescription="@string/com_visilabs_android_notification_image"
                 android:scaleType="fitCenter"
                 android:layout_centerInParent="true"
-                android:adjustViewBounds="true"
-                android:src="@drawable/ic_logo" />
+                android:adjustViewBounds="true" />
         </RelativeLayout>
 
         <RelativeLayout

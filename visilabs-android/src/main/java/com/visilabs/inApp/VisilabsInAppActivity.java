@@ -29,8 +29,6 @@ import com.visilabs.view.FadingImageView;
 
 public class VisilabsInAppActivity extends AppCompatActivity implements IVisilabs {
 
-    //ActivityInAppFullBinding mainBinding;
-
     InAppMessage inApp;
 
     private VisilabsUpdateDisplayState mUpdateDisplayState;
@@ -39,10 +37,10 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
     private int mIntentId = -1;
 
     Button btnInApp;
+
     FadingImageView fivInAppImage;
 
     LinearLayout llClose;
-    private static final int SHADOW_SIZE_THRESHOLD_PX = 100;
 
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
 

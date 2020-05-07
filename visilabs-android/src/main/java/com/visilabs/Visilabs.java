@@ -97,6 +97,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         this.mGeofenceEnabled = geofenceEnabled;
 
         this.mCheckForNotificationsOnLoggerRequest = true;
+
         this._context = context;
 
         if (requestTimeoutSeconds > 0) {
@@ -213,7 +214,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             String actionURL = null;
             String geofenceURL = null;
             boolean geofenceEnabled = false;
-
 
             try {
                 ApplicationInfo ai = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);

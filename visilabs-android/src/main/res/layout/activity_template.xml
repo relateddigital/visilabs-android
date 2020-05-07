@@ -63,7 +63,7 @@
                     android:ellipsize="end"
                     android:padding="5dp"
                     android:textColor="#fff"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView

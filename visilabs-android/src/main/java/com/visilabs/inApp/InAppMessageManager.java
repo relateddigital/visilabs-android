@@ -68,8 +68,6 @@ public class InAppMessageManager {
 
                         case UNKNOWN:
 
-                            openInAppActivity(parent, getStateId(parent, inAppMessage));
-
                             break;
 
                         case MINI:
