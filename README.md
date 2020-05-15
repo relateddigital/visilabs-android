@@ -34,7 +34,7 @@ This version uses AndroidX
 
 ### Visilabs SDK Set Up
 
-Mobile Tagging for Visilab and more information :  [Please check docs](https://docs.relateddigital.com/display/KB/Android+-+API+Setup) 
+Mobile Tagging for Visilab and more information :  [Please check docs](https://relateddigital.atlassian.net/wiki/spaces/RMCKBT/pages/428802408/Android+-+API+Setup) 
 
 ### In App Set Up
 
