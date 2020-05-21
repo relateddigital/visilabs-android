@@ -11,7 +11,7 @@ import com.visilabs.api.VisilabsTargetCallback;
 import com.visilabs.json.JSONObject;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
-import com.visilabs.util.VisilabsConfig;
+import com.visilabs.util.VisilabsConstant;
 import com.visilabs.util.VisilabsLog;
 
 import java.util.HashMap;
@@ -159,24 +159,24 @@ public class VisilabsNotificationRequest extends VisilabsRemote {
         if(url != null && url.length() > 0){
 
             if(Visilabs.CallAPI().getOrganizationID() != null && Visilabs.CallAPI().getOrganizationID() != "" ){
-                uriBuilder.appendQueryParameter(VisilabsConfig.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
             }
             if(Visilabs.CallAPI().getSiteID() != null && Visilabs.CallAPI().getSiteID() != "" ){
-                uriBuilder.appendQueryParameter(VisilabsConfig.SITEID_KEY, Visilabs.CallAPI().getSiteID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.SITEID_KEY, Visilabs.CallAPI().getSiteID());
             }
 
             if(Visilabs.CallAPI().getCookieID() != null && Visilabs.CallAPI().getCookieID() != "" ){
-                uriBuilder.appendQueryParameter(VisilabsConfig.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
             }
             if(Visilabs.CallAPI().getExVisitorID() != null && Visilabs.CallAPI().getExVisitorID() != "" ){
-                uriBuilder.appendQueryParameter(VisilabsConfig.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
             }
 
             if(Visilabs.CallAPI().getSysTokenID() != null && Visilabs.CallAPI().getSysTokenID() != "" ){
-                uriBuilder.appendQueryParameter(VisilabsConfig.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
             }
             if(Visilabs.CallAPI().getSysAppID() != null && Visilabs.CallAPI().getSysAppID() != "" ){
-                uriBuilder.appendQueryParameter(VisilabsConfig.APPID_KEY, Visilabs.CallAPI().getSysAppID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
             }
 
             if(mApiVer != null && mApiVer != ""){
@@ -198,7 +198,6 @@ public class VisilabsNotificationRequest extends VisilabsRemote {
             if(mVisitData != null && mVisitData != ""){
                 uriBuilder.appendQueryParameter("OM.vcap", mVisitData);
             }
-
         }
 
         HashMap<String, String> parameters = PersistentTargetManager.with(mContext).getParameters();
@@ -217,9 +216,9 @@ public class VisilabsNotificationRequest extends VisilabsRemote {
             for (Map.Entry<String, String> entry : mProperties.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                if(key == VisilabsConfig.COOKIEID_KEY || key == "OM.siteID" || key == "OM.oid" || key == "OM.apiver"
-                        || key == "OM.uri" || key == VisilabsConfig.EXVISITORID_KEY
-                        || key == VisilabsConfig.APPID_KEY || key == VisilabsConfig.TOKENID_KEY){
+                if(key == VisilabsConstant.COOKIEID_KEY || key == "OM.siteID" || key == "OM.oid" || key == "OM.apiver"
+                        || key == "OM.uri" || key == VisilabsConstant.EXVISITORID_KEY
+                        || key == VisilabsConstant.APPID_KEY || key == VisilabsConstant.TOKENID_KEY){
                     continue;
                 }
 
@@ -232,7 +231,7 @@ public class VisilabsNotificationRequest extends VisilabsRemote {
 
         String finalURI = uriBuilder.build().toString();
 
-        if(VisilabsConfig.DEBUG){
+        if(VisilabsConstant.DEBUG){
             Log.v(LOG_TAG, finalURI);
         }
 

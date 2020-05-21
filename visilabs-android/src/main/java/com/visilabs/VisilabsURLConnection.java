@@ -2,7 +2,7 @@ package com.visilabs;
 
 import android.util.Log;
 
-import com.visilabs.util.VisilabsConfig;
+import com.visilabs.util.VisilabsConstant;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -71,7 +71,7 @@ public class VisilabsURLConnection
                         if(cookieString != null && !cookieString.equals("")){
                             cookieString = cookieString + ";";
                         }
-                        cookieString = cookieString + VisilabsConfig.OM_3_KEY + "=" + OM3rdCookieValue;
+                        cookieString = cookieString + VisilabsConstant.OM_3_KEY + "=" + OM3rdCookieValue;
                     }
 
 
@@ -96,32 +96,32 @@ public class VisilabsURLConnection
                             for (String cookie : cookies)
                             {
                                 String[] fields = cookie.split(";");
-                                if(fields[0].toLowerCase().contains(VisilabsConfig.LOAD_BALANCE_PREFIX.toLowerCase())){
+                                if(fields[0].toLowerCase().contains(VisilabsConstant.LOAD_BALANCE_PREFIX.toLowerCase())){
                                     String[] cookieKeyValue = fields[0].split("=");
                                     if(cookieKeyValue.length > 1){
                                         String cookieKey = cookieKeyValue[0];
                                         String cookieValue = cookieKeyValue[1];
 
-                                        if(requestURL.contains(VisilabsConfig.LOGGER_URL) && Visilabs.CallAPI().getCookie() != null){
+                                        if(requestURL.contains(VisilabsConstant.LOGGER_URL) && Visilabs.CallAPI().getCookie() != null){
                                             Visilabs.CallAPI().getCookie().setLoggerCookieKey(cookieKey);
                                             Visilabs.CallAPI().getCookie().setLoggerCookieValue(cookieValue);
 
-                                        }else if(requestURL.contains(VisilabsConfig.REAL_TIME_URL) && Visilabs.CallAPI().getCookie() != null){
+                                        }else if(requestURL.contains(VisilabsConstant.REAL_TIME_URL) && Visilabs.CallAPI().getCookie() != null){
                                             Visilabs.CallAPI().getCookie().setRealTimeCookieKey(cookieKey);
                                             Visilabs.CallAPI().getCookie().setRealTimeCookieValue(cookieValue);
                                         }
                                     }
                                 }
 
-                                if(fields[0].toLowerCase().contains(VisilabsConfig.OM_3_KEY.toLowerCase())){
+                                if(fields[0].toLowerCase().contains(VisilabsConstant.OM_3_KEY.toLowerCase())){
                                     String[] cookieKeyValue = fields[0].split("=");
                                     if(cookieKeyValue.length > 1 ||  Visilabs.CallAPI().getCookie() != null){
                                         String cookieKey = cookieKeyValue[0];
                                         String cookieValue = cookieKeyValue[1];
 
-                                        if(requestURL.contains(VisilabsConfig.LOGGER_URL) && Visilabs.CallAPI().getCookie() != null){
+                                        if(requestURL.contains(VisilabsConstant.LOGGER_URL) && Visilabs.CallAPI().getCookie() != null){
                                             Visilabs.CallAPI().getCookie().setLoggerOM3rdCookieValue(cookieValue);
-                                        }else if(requestURL.contains(VisilabsConfig.REAL_TIME_URL) && Visilabs.CallAPI().getCookie() != null){
+                                        }else if(requestURL.contains(VisilabsConstant.REAL_TIME_URL) && Visilabs.CallAPI().getCookie() != null){
                                             Visilabs.CallAPI().getCookie().setRealOM3rdTimeCookieValue(cookieValue);
                                         }
                                     }
@@ -146,11 +146,13 @@ public class VisilabsURLConnection
 
                 if (statusCode == 200 || statusCode == 304)
                 {
+                    Log.d("Visilabs Logging", requestURL);
                     if(_apiContext.getSendQueue() != null && _apiContext.getSendQueue().size() >0)
                         _apiContext.getSendQueue().remove(0);
                 }
                 else if (statusCode >= 400 && statusCode <= 500)
                 {
+                    Log.d("Visilabs Logging", requestURL);
                     //String failedURL = _apiContext.getSendQueue().get(0);
                     if(_apiContext.getSendQueue() != null && _apiContext.getSendQueue().size() >0)
                         _apiContext.getSendQueue().remove(0);

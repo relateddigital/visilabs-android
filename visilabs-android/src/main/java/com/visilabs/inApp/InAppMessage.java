@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 import com.visilabs.exceptions.VisilabsNotificationException;
 import com.visilabs.json.JSONObject;
 import com.visilabs.json.JSONException;
-import com.visilabs.util.ImageStore;
 import com.visilabs.util.SizeUtil;
 
 public class InAppMessage implements Parcelable {
@@ -168,21 +167,6 @@ public class InAppMessage implements Parcelable {
     }
 
 
-    private Bitmap getNotificationImage(Context context) {
-        String url = getImageUrl();
-        try {
-            return createImageStore(context).getImage(url);
-        } catch (ImageStore.CantGetImageException e) {
-            Log.v(LOG_TAG, "Can't load image " + url + " for a notification", e);
-        }
-        return null;
-    }
-
-
-    protected ImageStore createImageStore(final Context context) {
-        return new ImageStore(context, "DecideChecker");
-    }
-
     public String getImageUrl() {
 
         if (getType() == InAppActionType.MINI) {
@@ -202,27 +186,6 @@ public class InAppMessage implements Parcelable {
 
     void setImage(final Bitmap image) {
         mImage = image;
-    }
-
-    public Bitmap getImageBitmap() {
-        if (mImage != null) {
-            return mImage;
-        } else {
-            try {
-                final Bitmap image = getNotificationImage(mContext);
-                if (null == image) {
-                    Log.i(LOG_TAG, "Could not retrieve image for notification " + getId() +
-                            ", will not show the notification.");
-                    return Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
-                } else {
-                    mImage = image;
-                    return mImage;
-                }
-            } catch (Exception ex) {
-                Log.e(LOG_TAG, "Can not create image from URL.", ex);
-                return Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
-            }
-        }
     }
 
     public String getButtonText() {

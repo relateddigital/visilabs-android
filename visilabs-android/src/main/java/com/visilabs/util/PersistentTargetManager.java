@@ -36,7 +36,7 @@ public class PersistentTargetManager {
      */
     public synchronized void saveParameters(final HashMap<String, String> parameters) {
         Date now = new Date();
-        for (VisilabsParameter visilabsParameter:VisilabsConfig.VISILABS_PARAMETERS){
+        for (VisilabsParameter visilabsParameter: VisilabsConstant.VISILABS_PARAMETERS){
             String key = visilabsParameter.getKey();
             String storeKey = visilabsParameter.getStoreKey();
             List<String> relatedKeys = visilabsParameter.getRelatedKeys();
@@ -55,13 +55,13 @@ public class PersistentTargetManager {
                         }
                         parameterValueToStore = parameterValueToStore + "|" + sdf.format(now);
                         //Prefs.saveToPrefs(mContext, VisilabsConfig.TARGET_PREF , storeKey, VisilabsEncoder.encode(parameterValueToStore));
-                        Prefs.saveToPrefs(mContext, VisilabsConfig.TARGET_PREF , storeKey, parameterValueToStore);
+                        Prefs.saveToPrefs(mContext, VisilabsConstant.TARGET_PREF , storeKey, parameterValueToStore);
                     }else{
                         //Prefs.saveToPrefs(mContext, VisilabsConfig.TARGET_PREF , storeKey, VisilabsEncoder.encode(parameterValue));
-                        Prefs.saveToPrefs(mContext, VisilabsConfig.TARGET_PREF , storeKey, parameterValue);
+                        Prefs.saveToPrefs(mContext, VisilabsConstant.TARGET_PREF , storeKey, parameterValue);
                     }
                 }else if(count > 1){
-                    String previousParameterValue = Prefs.getFromPrefs(mContext, VisilabsConfig.TARGET_PREF, storeKey, null);
+                    String previousParameterValue = Prefs.getFromPrefs(mContext, VisilabsConstant.TARGET_PREF, storeKey, null);
                     String parameterValueToStore = parameterValue + "|" + sdf.format(now);
                     if(previousParameterValue != null && previousParameterValue.length() > 0) {
                         //String decodedPreviousParameterValue = VisilabsEncoder.decode(previousParameterValue);
@@ -78,7 +78,7 @@ public class PersistentTargetManager {
                         }
                     }
                     //Prefs.saveToPrefs(mContext, VisilabsConfig.TARGET_PREF , storeKey, VisilabsEncoder.encode(parameterValueToStore));
-                    Prefs.saveToPrefs(mContext, VisilabsConfig.TARGET_PREF , storeKey, parameterValueToStore);
+                    Prefs.saveToPrefs(mContext, VisilabsConstant.TARGET_PREF , storeKey, parameterValueToStore);
                 }
             }
         }
@@ -87,9 +87,9 @@ public class PersistentTargetManager {
 
     public HashMap<String, String> getParameters() {
         HashMap<String, String> parameters = new HashMap<>();
-        for (VisilabsParameter visilabsParameter:VisilabsConfig.VISILABS_PARAMETERS) {
+        for (VisilabsParameter visilabsParameter: VisilabsConstant.VISILABS_PARAMETERS) {
             String storeKey = visilabsParameter.getStoreKey();
-            String value = Prefs.getFromPrefs(mContext, VisilabsConfig.TARGET_PREF, storeKey, null);
+            String value = Prefs.getFromPrefs(mContext, VisilabsConstant.TARGET_PREF, storeKey, null);
             if(value != null && value != ""){
                 parameters.put(storeKey, value);
             }
@@ -98,8 +98,8 @@ public class PersistentTargetManager {
     }
 
     public void clearParameters(){
-        for (VisilabsParameter visilabsParameter:VisilabsConfig.VISILABS_PARAMETERS) {
-            Prefs.removeFromPrefs(mContext, VisilabsConfig.TARGET_PREF, visilabsParameter.getStoreKey());
+        for (VisilabsParameter visilabsParameter: VisilabsConstant.VISILABS_PARAMETERS) {
+            Prefs.removeFromPrefs(mContext, VisilabsConstant.TARGET_PREF, visilabsParameter.getStoreKey());
         }
         VisilabsLog.i(LOG_TAG, "Parameters cleared.");
     }

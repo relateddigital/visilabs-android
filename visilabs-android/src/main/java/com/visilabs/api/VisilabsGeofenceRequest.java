@@ -7,7 +7,7 @@ import com.visilabs.Visilabs;
 import com.visilabs.json.JSONObject;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
-import com.visilabs.util.VisilabsConfig;
+import com.visilabs.util.VisilabsConstant;
 import com.visilabs.util.VisilabsEncoder;
 import com.visilabs.util.VisilabsLog;
 
@@ -162,50 +162,50 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
         if(url != null && url.length() > 0){
 
             if(Visilabs.CallAPI().getOrganizationID() != null && Visilabs.CallAPI().getOrganizationID() != "" ){
-                uriBuilder.appendQueryParameter(VisilabsConfig.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
             }
             if(Visilabs.CallAPI().getSiteID() != null && Visilabs.CallAPI().getSiteID() != "" ){
-                uriBuilder.appendQueryParameter(VisilabsConfig.SITEID_KEY, Visilabs.CallAPI().getSiteID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.SITEID_KEY, Visilabs.CallAPI().getSiteID());
             }
 
             if(Visilabs.CallAPI().getCookieID() != null && Visilabs.CallAPI().getCookieID() != "" ){
-                uriBuilder.appendQueryParameter(VisilabsConfig.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
             }
             if(Visilabs.CallAPI().getExVisitorID() != null && Visilabs.CallAPI().getExVisitorID() != "" ){
-                uriBuilder.appendQueryParameter(VisilabsConfig.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
             }
 
             if(Visilabs.CallAPI().getSysTokenID() != null && Visilabs.CallAPI().getSysTokenID() != "" ){
-                uriBuilder.appendQueryParameter(VisilabsConfig.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
             }
             if(Visilabs.CallAPI().getSysAppID() != null && Visilabs.CallAPI().getSysAppID() != "" ){
-                uriBuilder.appendQueryParameter(VisilabsConfig.APPID_KEY, Visilabs.CallAPI().getSysAppID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
             }
 
 
 
 
             if(mActionID != null && mActionID != ""){
-                uriBuilder.appendQueryParameter(VisilabsConfig.ACT_ID_KEY, VisilabsEncoder.encode(mActionID));
+                uriBuilder.appendQueryParameter(VisilabsConstant.ACT_ID_KEY, VisilabsEncoder.encode(mActionID));
             }
             if(mAction != null && mAction != ""){
-                uriBuilder.appendQueryParameter(VisilabsConfig.ACT_KEY, VisilabsEncoder.encode(mAction));
+                uriBuilder.appendQueryParameter(VisilabsConstant.ACT_KEY, VisilabsEncoder.encode(mAction));
             }
 
             DecimalFormat df = new DecimalFormat("0.0000000000000");
 
             if(mLatitude > 0){
                 String latitudeString = df.format(mLatitude);
-                uriBuilder.appendQueryParameter(VisilabsConfig.LATITUDE_KEY, VisilabsEncoder.encode(latitudeString));
+                uriBuilder.appendQueryParameter(VisilabsConstant.LATITUDE_KEY, VisilabsEncoder.encode(latitudeString));
             }
 
             if(mLongitude > 0){
                 String longitudeString = df.format(mLongitude);
-                uriBuilder.appendQueryParameter(VisilabsConfig.LONGITUDE_KEY, VisilabsEncoder.encode(longitudeString));
+                uriBuilder.appendQueryParameter(VisilabsConstant.LONGITUDE_KEY, VisilabsEncoder.encode(longitudeString));
             }
 
             if(!StringUtils.isNullOrWhiteSpace(mGeofenceID)){
-                uriBuilder.appendQueryParameter(VisilabsConfig.GEO_ID_KEY, VisilabsEncoder.encode(mGeofenceID));
+                uriBuilder.appendQueryParameter(VisilabsConstant.GEO_ID_KEY, VisilabsEncoder.encode(mGeofenceID));
             }
 
 

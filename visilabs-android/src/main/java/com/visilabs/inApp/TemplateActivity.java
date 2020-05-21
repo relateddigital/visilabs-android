@@ -73,11 +73,9 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
         ibClose = findViewById(R.id.ib_close);
 
 
-
         if (isShowingInApp() && inAppMessage != null) {
             setUpView();
         } else {
-
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             finish();
         }
@@ -85,8 +83,10 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
 
     private InAppMessage getInAppMessage() {
 
-        InAppNotificationState inAppNotificationState = null;
+        InAppNotificationState inAppNotificationState;
+
         mUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(mIntentId);
+
         if (mUpdateDisplayState == null || mUpdateDisplayState.getDisplayState() == null) {
             Log.e("Visilabs", "VisilabsNotificationActivity intent received, but nothing was found to show.");
 

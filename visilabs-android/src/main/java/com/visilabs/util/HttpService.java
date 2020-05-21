@@ -33,12 +33,12 @@ public class HttpService implements RemoteService {
                     (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             final NetworkInfo netInfo = cm.getActiveNetworkInfo();
             isOnline = netInfo != null && netInfo.isConnectedOrConnecting();
-            if (VisilabsConfig.DEBUG) {
+            if (VisilabsConstant.DEBUG) {
                 Log.v(LOGTAG, "ConnectivityManager says we " + (isOnline ? "are" : "are not") + " online");
             }
         } catch (final SecurityException e) {
             isOnline = true;
-            if (VisilabsConfig.DEBUG) {
+            if (VisilabsConstant.DEBUG) {
                 Log.v(LOGTAG, "Don't have permission to check connectivity, will assume we are online");
             }
         }
@@ -47,7 +47,7 @@ public class HttpService implements RemoteService {
 
     @Override
     public byte[] performRequest(String endpointUrl, Map<String, Object> params, SSLSocketFactory socketFactory) throws ServiceUnavailableException, IOException {
-        if (VisilabsConfig.DEBUG) {
+        if (VisilabsConstant.DEBUG) {
             Log.v(LOGTAG, "Attempting request to " + endpointUrl);
         }
         byte[] response = null;
@@ -98,7 +98,7 @@ public class HttpService implements RemoteService {
                 in = null;
                 succeeded = true;
             } catch (final EOFException e) {
-                if (VisilabsConfig.DEBUG) {
+                if (VisilabsConstant.DEBUG) {
                     Log.d(LOGTAG, "Failure to connect, likely caused by a known issue with Android lib. Retrying.");
                 }
                 retries = retries + 1;
@@ -120,7 +120,7 @@ public class HttpService implements RemoteService {
                     connection.disconnect();
             }
         }
-        if (VisilabsConfig.DEBUG) {
+        if (VisilabsConstant.DEBUG) {
             if (retries >= 3) {
                 Log.v(LOGTAG, "Could not connect to Visilabs service after three retries.");
             }

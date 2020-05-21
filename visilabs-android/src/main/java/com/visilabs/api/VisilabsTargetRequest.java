@@ -9,7 +9,7 @@ import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
-import com.visilabs.util.VisilabsConfig;
+import com.visilabs.util.VisilabsConstant;
 import com.visilabs.util.VisilabsEncoder;
 import com.visilabs.util.VisilabsLog;
 
@@ -164,9 +164,9 @@ public class VisilabsTargetRequest extends VisilabsRemote {
         if(this.mProperties != null && this.mProperties.size() > 0){
             for (String key : this.mProperties.keySet()) {
                 if(!StringUtils.isNullOrWhiteSpace(key)){
-                    if(key != VisilabsConfig.ORGANIZATIONID_KEY && key != VisilabsConfig.SITEID_KEY && key != VisilabsConfig.EXVISITORID_KEY && key != VisilabsConfig.COOKIEID_KEY
-                            && key != VisilabsConfig.ZONE_ID_KEY && key != VisilabsConfig.BODY_KEY && key != VisilabsConfig.TOKENID_KEY && key != VisilabsConfig.APPID_KEY
-                            && key != VisilabsConfig.APIVER_KEY && key != VisilabsConfig.FILTER_KEY){
+                    if(key != VisilabsConstant.ORGANIZATIONID_KEY && key != VisilabsConstant.SITEID_KEY && key != VisilabsConstant.EXVISITORID_KEY && key != VisilabsConstant.COOKIEID_KEY
+                            && key != VisilabsConstant.ZONE_ID_KEY && key != VisilabsConstant.BODY_KEY && key != VisilabsConstant.TOKENID_KEY && key != VisilabsConstant.APPID_KEY
+                            && key != VisilabsConstant.APIVER_KEY && key != VisilabsConstant.FILTER_KEY){
                         continue;
                     }
                     else{
@@ -185,37 +185,37 @@ public class VisilabsTargetRequest extends VisilabsRemote {
         if(url != null && url.length() > 0){
 
             if(Visilabs.CallAPI().getOrganizationID() != null && !Visilabs.CallAPI().getOrganizationID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConfig.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
             }
             if(Visilabs.CallAPI().getSiteID() != null && !Visilabs.CallAPI().getSiteID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConfig.SITEID_KEY, Visilabs.CallAPI().getSiteID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.SITEID_KEY, Visilabs.CallAPI().getSiteID());
             }
 
             if(Visilabs.CallAPI().getCookieID() != null && !Visilabs.CallAPI().getCookieID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConfig.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
             }
             if(Visilabs.CallAPI().getExVisitorID() != null && !Visilabs.CallAPI().getExVisitorID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConfig.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
             }
 
             if(Visilabs.CallAPI().getSysTokenID() != null && !Visilabs.CallAPI().getSysTokenID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConfig.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
             }
             if(Visilabs.CallAPI().getSysAppID() != null && !Visilabs.CallAPI().getSysAppID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConfig.APPID_KEY, Visilabs.CallAPI().getSysAppID());
+                uriBuilder.appendQueryParameter(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
             }
 
             if(mZoneID != null && !mZoneID.equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConfig.ZONE_ID_KEY, VisilabsEncoder.encode(mZoneID));
+                uriBuilder.appendQueryParameter(VisilabsConstant.ZONE_ID_KEY, VisilabsEncoder.encode(mZoneID));
             }
             if(mProductCode != null && !mProductCode.equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConfig.BODY_KEY, VisilabsEncoder.encode(mProductCode));
+                uriBuilder.appendQueryParameter(VisilabsConstant.BODY_KEY, VisilabsEncoder.encode(mProductCode));
             }
 
             if(mApiVer != null && !mApiVer.equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConfig.APIVER_KEY, mApiVer);
+                uriBuilder.appendQueryParameter(VisilabsConstant.APIVER_KEY, mApiVer);
             }else{
-                uriBuilder.appendQueryParameter(VisilabsConfig.APIVER_KEY, "Android");
+                uriBuilder.appendQueryParameter(VisilabsConstant.APIVER_KEY, "Android");
             }
 
             this.cleanParameters();
@@ -244,7 +244,7 @@ public class VisilabsTargetRequest extends VisilabsRemote {
                     }
                     String jsonString =  jsonArray.toString();
                     //TODO: kontrol et
-                    uriBuilder.appendQueryParameter(VisilabsConfig.FILTER_KEY, jsonString);
+                    uriBuilder.appendQueryParameter(VisilabsConstant.FILTER_KEY, jsonString);
                 }
             }
             catch (Exception e){

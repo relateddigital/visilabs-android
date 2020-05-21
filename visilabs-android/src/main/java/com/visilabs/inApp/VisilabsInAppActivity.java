@@ -78,7 +78,6 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
     @Override
     public void setUpView() {
 
-
         InAppNotificationState inAppNotificationState =
                 (InAppNotificationState) mUpdateDisplayState.getDisplayState();
 

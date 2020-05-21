@@ -9,11 +9,10 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.gson.Gson;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.ActivityImageUtils;
-import com.visilabs.util.VisilabsConfig;
+import com.visilabs.util.VisilabsConstant;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -31,14 +30,14 @@ public class InAppMessageManager {
 
     public void showInAppMessage(final InAppMessage inAppMessage, final Activity parent) {
 
-        if (Build.VERSION.SDK_INT < VisilabsConfig.UI_FEATURES_MIN_API) {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
 
             showDebugMessage("Android version is below necessary version");
         }
 
         parent.runOnUiThread(new Runnable() {
             @Override
-            @TargetApi(VisilabsConfig.UI_FEATURES_MIN_API)
+            @TargetApi(VisilabsConstant.UI_FEATURES_MIN_API)
             public void run() {
 
                 ReentrantLock lock = VisilabsUpdateDisplayState.getLockObject();
@@ -53,7 +52,7 @@ public class InAppMessageManager {
                         showDebugMessage("No in app available, will not show.");
                     }
 
-                    if (inAppMessage.getType() == InAppActionType.FULL && !VisilabsConfig.checkNotificationActivityAvailable(parent.getApplicationContext())) {
+                    if (inAppMessage.getType() == InAppActionType.FULL && !VisilabsConstant.checkNotificationActivityAvailable(parent.getApplicationContext())) {
                         showDebugMessage("Application is not configured to show full screen in app, none will be shown.");
                     }
 
@@ -187,7 +186,7 @@ public class InAppMessageManager {
     }
 
     private void showDebugMessage(String message) {
-        if (VisilabsConfig.DEBUG) {
+        if (VisilabsConstant.DEBUG) {
             Log.v(LOG_TAG, message);
         }
     }

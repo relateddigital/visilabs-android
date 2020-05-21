@@ -12,67 +12,9 @@ import android.util.Log;
 
 import com.visilabs.inApp.VisilabsInAppActivity;
 
-import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
 import java.util.List;
 
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-
-public class VisilabsConfig {
-
-    private static final Object sInstanceLock = new Object();
-    private static VisilabsConfig sInstance;
-    private SSLSocketFactory mSSLSocketFactory;
-
-    public static VisilabsConfig getInstance(Context context) {
-        Object var1 = sInstanceLock;
-        synchronized(sInstanceLock) {
-            if(null == sInstance) {
-                Context appContext = context.getApplicationContext();
-                sInstance = readConfig(appContext);
-            }
-        }
-
-        return sInstance;
-    }
-
-    static VisilabsConfig readConfig(Context appContext) {
-        String packageName = appContext.getPackageName();
-
-        try {
-            @SuppressLint("WrongConstant") ApplicationInfo e = appContext.getPackageManager().getApplicationInfo(packageName, 128);
-            Bundle configBundle = e.metaData;
-            if(null == configBundle) {
-                configBundle = new Bundle();
-            }
-
-            return new VisilabsConfig(configBundle, appContext);
-        } catch (PackageManager.NameNotFoundException var4) {
-            throw new RuntimeException("Can\'t configure Visilabs with package name " + packageName, var4);
-        }
-    }
-
-    VisilabsConfig(Bundle metaData, Context context) {
-        SSLSocketFactory foundSSLFactory;
-        try {
-            SSLContext surveysAutoCheck = SSLContext.getInstance("TLS");
-            surveysAutoCheck.init((KeyManager[]) null, (TrustManager[]) null, (SecureRandom) null);
-            foundSSLFactory = surveysAutoCheck.getSocketFactory();
-        } catch (GeneralSecurityException var14) {
-            Log.i("VisilabsAPI.Conf", "System has no SSL support.", var14);
-            foundSSLFactory = null;
-        }
-
-        this.mSSLSocketFactory = foundSSLFactory;
-    }
-
-    public synchronized SSLSocketFactory getSSLSocketFactory() {
-        return this.mSSLSocketFactory;
-    }
-
+public class VisilabsConstant {
 
     public static final String VISILABS_ORGANIZATION_ID = "VisilabsOrganizationID";
     public static final String VISILABS_SITE_ID = "VisilabsSiteID";
@@ -89,21 +31,14 @@ public class VisilabsConfig {
     public static final String VISILABS_GEOFENCE_URL = "VisilabsGeofenceURL";
     public static final String VISILABS_GEOFENCE_ENABLED = "VisilabsGeofenceEnabled";
 
-
-
-    public static final String VERSION = "2.3.26";
-
     public static final int UI_FEATURES_MIN_API = 16;
 
     public static boolean DEBUG = false;
-
 
     public static final String LOGGER_URL = "lgr.visilabs.net";
     public static final String REAL_TIME_URL = "rt.visilabs.net";
     public static final String LOAD_BALANCE_PREFIX = "NSC";
     public static final String OM_3_KEY = "OM.3rd";
-
-
     public static final String COOKIEID_PREF = "VisilabsCookieIDPreferences";
     public static final String EXVISITORID_PREF = "VisilabsExVisitorIDPreferences";
     public static final String TOKENID_PREF = "VisilabsTokenIDPreferences";
@@ -213,6 +148,4 @@ public class VisilabsConfig {
 
         return true;
     }
-
-
 }

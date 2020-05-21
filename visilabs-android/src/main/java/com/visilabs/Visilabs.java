@@ -19,7 +19,6 @@ import com.visilabs.gps.factory.GpsFactory;
 import com.visilabs.gps.factory.GpsFactory2;
 import com.visilabs.gps.manager.GpsManager;
 import com.visilabs.gps.manager.GpsManager2;
-import com.visilabs.inApp.InAppActionType;
 import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
@@ -30,7 +29,7 @@ import com.visilabs.util.NetworkManager;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.Prefs;
 import com.visilabs.util.StringUtils;
-import com.visilabs.util.VisilabsConfig;
+import com.visilabs.util.VisilabsConstant;
 import com.visilabs.util.VisilabsEncoder;
 import com.visilabs.util.VisilabsLog;
 import com.visilabs.util.VisilabsParameter;
@@ -47,7 +46,7 @@ import java.util.UUID;
 
 public class Visilabs implements VisilabsURLConnectionCallbackInterface {
     private static final String LOG_TAG = "VisilabsAPI";
-    private static int mLogLevel = VisilabsConfig.LOG_LEVEL_VERBOSE;
+    private static int mLogLevel = VisilabsConstant.LOG_LEVEL_VERBOSE;
     private static boolean mIsCreated = false;
     private static boolean mReady = false;
     private static String mDeviceUserAgent;
@@ -119,14 +118,14 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         mTargetURL = targetURL;
         mActionURL = actionURL;
 
-        this._exVisitorID = Prefs.getFromPrefs(this._context, VisilabsConfig.EXVISITORID_PREF, VisilabsConfig.EXVISITORID_PREF_KEY, null);
-        this._cookieID = Prefs.getFromPrefs(this._context, VisilabsConfig.COOKIEID_PREF, VisilabsConfig.COOKIEID_PREF_KEY, null);
+        this._exVisitorID = Prefs.getFromPrefs(this._context, VisilabsConstant.EXVISITORID_PREF, VisilabsConstant.EXVISITORID_PREF_KEY, null);
+        this._cookieID = Prefs.getFromPrefs(this._context, VisilabsConstant.COOKIEID_PREF, VisilabsConstant.COOKIEID_PREF_KEY, null);
 
-        this.mSysTokenID = Prefs.getFromPrefs(this._context, VisilabsConfig.TOKENID_PREF, VisilabsConfig.TOKENID_PREF_KEY, null);
-        this.mSysAppID = Prefs.getFromPrefs(this._context, VisilabsConfig.APPID_PREF, VisilabsConfig.APPID_PREF_KEY, null);
+        this.mSysTokenID = Prefs.getFromPrefs(this._context, VisilabsConstant.TOKENID_PREF, VisilabsConstant.TOKENID_PREF_KEY, null);
+        this.mSysAppID = Prefs.getFromPrefs(this._context, VisilabsConstant.APPID_PREF, VisilabsConstant.APPID_PREF_KEY, null);
 
 
-        this.mVisitorData = Prefs.getFromPrefs(this._context, VisilabsConfig.VISITOR_DATA_PREF, VisilabsConfig.VISITOR_DATA_PREF_KEY, null);
+        this.mVisitorData = Prefs.getFromPrefs(this._context, VisilabsConstant.VISITOR_DATA_PREF, VisilabsConstant.VISITOR_DATA_PREF_KEY, null);
 
         if (this._cookieID == null) {
             this.setCookieID(null);
@@ -217,45 +216,45 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
             try {
                 ApplicationInfo ai = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-                organizationID = ai.metaData.getString(VisilabsConfig.VISILABS_ORGANIZATION_ID);
-                siteID = ai.metaData.getString(VisilabsConfig.VISILABS_SITE_ID);
-                segmentURL = ai.metaData.getString(VisilabsConfig.VISILABS_SEGMENT_URL);
-                dataSource = ai.metaData.getString(VisilabsConfig.VISILABS_DATA_SOURCE);
-                realTimeURL = ai.metaData.getString(VisilabsConfig.VISILABS_REAL_TIME_URL);
-                channel = ai.metaData.getString(VisilabsConfig.VISILABS_CHANNEL);
+                organizationID = ai.metaData.getString(VisilabsConstant.VISILABS_ORGANIZATION_ID);
+                siteID = ai.metaData.getString(VisilabsConstant.VISILABS_SITE_ID);
+                segmentURL = ai.metaData.getString(VisilabsConstant.VISILABS_SEGMENT_URL);
+                dataSource = ai.metaData.getString(VisilabsConstant.VISILABS_DATA_SOURCE);
+                realTimeURL = ai.metaData.getString(VisilabsConstant.VISILABS_REAL_TIME_URL);
+                channel = ai.metaData.getString(VisilabsConstant.VISILABS_CHANNEL);
 
                 try {
-                    requestTimeoutSeconds = ai.metaData.getInt(VisilabsConfig.VISILABS_REQUEST_TIMEOUT_IN_SECONDS, 30);
+                    requestTimeoutSeconds = ai.metaData.getInt(VisilabsConstant.VISILABS_REQUEST_TIMEOUT_IN_SECONDS, 30);
                 } catch (Exception ex) {
                     Log.d("CreateApi", ex.toString());
                 }
                 try {
-                    RESTURL = ai.metaData.getString(VisilabsConfig.VISILABS_REST_URL);
+                    RESTURL = ai.metaData.getString(VisilabsConstant.VISILABS_REST_URL);
                 } catch (Exception ex) {
                     Log.d("CreateApi", ex.toString());
                 }
                 try {
-                    encryptedDataSource = ai.metaData.getString(VisilabsConfig.VISILABS_ENCRYPTED_DATA_SOURCE);
+                    encryptedDataSource = ai.metaData.getString(VisilabsConstant.VISILABS_ENCRYPTED_DATA_SOURCE);
                 } catch (Exception ex) {
                     Log.d("CreateApi", ex.toString());
                 }
                 try {
-                    targetURL = ai.metaData.getString(VisilabsConfig.VISILABS_TARGET_URL);
+                    targetURL = ai.metaData.getString(VisilabsConstant.VISILABS_TARGET_URL);
                 } catch (Exception ex) {
                     Log.d("CreateApi", ex.toString());
                 }
                 try {
-                    actionURL = ai.metaData.getString(VisilabsConfig.VISILABS_ACTION_URL);
+                    actionURL = ai.metaData.getString(VisilabsConstant.VISILABS_ACTION_URL);
                 } catch (Exception ex) {
                     Log.d("CreateApi", ex.toString());
                 }
                 try {
-                    geofenceURL = ai.metaData.getString(VisilabsConfig.VISILABS_GEOFENCE_URL);
+                    geofenceURL = ai.metaData.getString(VisilabsConstant.VISILABS_GEOFENCE_URL);
                 } catch (Exception ex) {
                     Log.d("CreateApi", ex.toString());
                 }
                 try {
-                    geofenceEnabled = ai.metaData.getBoolean(VisilabsConfig.VISILABS_GEOFENCE_ENABLED, false);
+                    geofenceEnabled = ai.metaData.getBoolean(VisilabsConstant.VISILABS_GEOFENCE_ENABLED, false);
                 } catch (Exception ex) {
                     Log.d("CreateApi", ex.toString());
                 }
@@ -336,7 +335,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
 
-        if (VisilabsConfig.DEBUG) {
+        if (VisilabsConstant.DEBUG) {
             Log.v(LOG_TAG, String.format("Notification button tapped %s", segURL));
         }
 
@@ -357,14 +356,14 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
 
     public void showNotification(String pageName, Activity parent) {
-        if (Build.VERSION.SDK_INT < VisilabsConfig.UI_FEATURES_MIN_API) {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
             return;
         }
         showNotification(pageName, null, 0, parent, null);
     }
 
     public void showNotification(String pageName, Activity parent, HashMap<String, String> properties) {
-        if (Build.VERSION.SDK_INT < VisilabsConfig.UI_FEATURES_MIN_API) {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
             return;
         }
         showNotification(pageName, null, 0, parent, properties);
@@ -392,21 +391,21 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         try {
             request.executeAsync(getInAppMessageCallback(type, id, parent));
         } catch (Exception ex) {
-            if (VisilabsConfig.DEBUG) {
+            if (VisilabsConstant.DEBUG) {
                 Log.e(LOG_TAG, ex.toString());
             }
         }
 
     }
 
-    private VisilabsTargetCallback getInAppMessageCallback(final String type, final int notificationID, final Activity parent) {
+    private VisilabsTargetCallback getInAppMessageCallback(final String type, final int actId, final Activity parent) {
 
         return new VisilabsTargetCallback() {
             @Override
             public void success(VisilabsResponse response) {
                 String rawResponse = response.getRawResponse();
 
-                if (VisilabsConfig.DEBUG) {
+                if (VisilabsConstant.DEBUG) {
                     Log.d(LOG_TAG, rawResponse);
                 }
                 try {
@@ -423,9 +422,9 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                         }
 
                         InAppMessage inAppMessage = null;
-                        if (notificationID > 0) {
+                        if (actId > 0) {
                             for (int i = 0; i < inAppMessageList.size(); i++) {
-                                if (inAppMessageList.get(i) != null && inAppMessageList.get(i).getId() == notificationID) {
+                                if (inAppMessageList.get(i) != null && inAppMessageList.get(i).getId() == actId) {
                                     inAppMessage = inAppMessageList.get(i);
                                     break;
                                 }
@@ -454,11 +453,11 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                             }
 
                             if (inAppMessage.getVisitorData() != null && inAppMessage.getVisitorData() != "") {
-                                Prefs.saveToPrefs(parent, VisilabsConfig.VISITOR_DATA_PREF, VisilabsConfig.VISITOR_DATA_PREF_KEY, inAppMessage.getVisitorData());
+                                Prefs.saveToPrefs(parent, VisilabsConstant.VISITOR_DATA_PREF, VisilabsConstant.VISITOR_DATA_PREF_KEY, inAppMessage.getVisitorData());
                                 Log.v("mVisitorData", inAppMessage.getVisitData());
                             }
                         } else {
-                            if (VisilabsConfig.DEBUG) {
+                            if (VisilabsConstant.DEBUG) {
                                 Log.d(LOG_TAG, "There is no notification for your criteria");
                             }
                         }
@@ -803,7 +802,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 this._exVisitorID = properties.get("OM.exVisitorID");
                 this.setExVisitorID(this._exVisitorID);
                 properties.remove("OM.exVisitorID");
-            } // yeniliyelim uygulamayı tamam  he tamamdır burayı salla ya dur bakalım okuyalım nereye koyalım
+            }
             if (properties.containsKey("OM.vchannel")) {
                 if (properties.get("OM.vchannel") != null) {
                     this._channel = properties.get("OM.vchannel");
@@ -920,11 +919,11 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             String loadBalanceCookieValue = "";
             String OM3rdCookieValue = "";
 
-            if (nextAPICall.contains(VisilabsConfig.LOGGER_URL) && this.cookie != null) {
+            if (nextAPICall.contains(VisilabsConstant.LOGGER_URL) && this.cookie != null) {
                 loadBalanceCookieKey = this.cookie.getLoggerCookieKey();
                 loadBalanceCookieValue = this.cookie.getLoggerCookieValue();
                 OM3rdCookieValue = this.cookie.getLoggerOM3rdCookieValue();
-            } else if (nextAPICall.contains(VisilabsConfig.REAL_TIME_URL) && this.cookie != null) {
+            } else if (nextAPICall.contains(VisilabsConstant.REAL_TIME_URL) && this.cookie != null) {
                 loadBalanceCookieKey = this.cookie.getRealTimeCookieKey();
                 loadBalanceCookieValue = this.cookie.getRealTimeCookieValue();
                 OM3rdCookieValue = this.cookie.getRealOM3rdTimeCookieValue();
@@ -937,43 +936,43 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
     synchronized private void setCookieID(String _cookieID) {
         String cookieID = _cookieID;
-        if (cookieID == null || cookieID == "") {
+        if (cookieID == null || cookieID.equals("")) {
             cookieID = UUID.randomUUID().toString();
         }
         this._cookieID = cookieID;
 
-        String previousCookieID = Prefs.getFromPrefs(this._context, VisilabsConfig.COOKIEID_PREF, VisilabsConfig.COOKIEID_PREF_KEY, null);
+        String previousCookieID = Prefs.getFromPrefs(this._context, VisilabsConstant.COOKIEID_PREF, VisilabsConstant.COOKIEID_PREF_KEY, null);
         if (previousCookieID != null && previousCookieID.equals(cookieID)) {
             PersistentTargetManager.with(this._context).clearParameters();
         }
 
-        Prefs.saveToPrefs(this._context, VisilabsConfig.COOKIEID_PREF, VisilabsConfig.COOKIEID_PREF_KEY, this._cookieID);
+        Prefs.saveToPrefs(this._context, VisilabsConstant.COOKIEID_PREF, VisilabsConstant.COOKIEID_PREF_KEY, this._cookieID);
     }
 
     synchronized private void setExVisitorID(String exVisitorID) {
         this._exVisitorID = exVisitorID;
 
-        String previousExVisitorID = Prefs.getFromPrefs(this._context, VisilabsConfig.EXVISITORID_PREF, VisilabsConfig.EXVISITORID_PREF_KEY, null);
+        String previousExVisitorID = Prefs.getFromPrefs(this._context, VisilabsConstant.EXVISITORID_PREF, VisilabsConstant.EXVISITORID_PREF_KEY, null);
         if (previousExVisitorID != null && !previousExVisitorID.equals(exVisitorID)) {
             PersistentTargetManager.with(this._context).clearParameters();
         }
 
-        Prefs.saveToPrefs(this._context, VisilabsConfig.EXVISITORID_PREF, VisilabsConfig.EXVISITORID_PREF_KEY, this._exVisitorID);
+        Prefs.saveToPrefs(this._context, VisilabsConstant.EXVISITORID_PREF, VisilabsConstant.EXVISITORID_PREF_KEY, this._exVisitorID);
     }
 
     synchronized private void setTokenID(String tokenID) {
         this.mSysTokenID = tokenID;
-        String previousTokenID = Prefs.getFromPrefs(this._context, VisilabsConfig.TOKENID_PREF, VisilabsConfig.TOKENID_PREF_KEY, null);
+        String previousTokenID = Prefs.getFromPrefs(this._context, VisilabsConstant.TOKENID_PREF, VisilabsConstant.TOKENID_PREF_KEY, null);
         if (previousTokenID == null || !previousTokenID.equals(tokenID)) {
-            Prefs.saveToPrefs(this._context, VisilabsConfig.TOKENID_PREF, VisilabsConfig.TOKENID_PREF_KEY, this.mSysTokenID);
+            Prefs.saveToPrefs(this._context, VisilabsConstant.TOKENID_PREF, VisilabsConstant.TOKENID_PREF_KEY, this.mSysTokenID);
         }
     }
 
     synchronized private void setAppID(String appID) {
         this.mSysAppID = appID;
-        String previousAppID = Prefs.getFromPrefs(this._context, VisilabsConfig.APPID_PREF, VisilabsConfig.APPID_PREF_KEY, null);
+        String previousAppID = Prefs.getFromPrefs(this._context, VisilabsConstant.APPID_PREF, VisilabsConstant.APPID_PREF_KEY, null);
         if (previousAppID == null || !previousAppID.equals(appID)) {
-            Prefs.saveToPrefs(this._context, VisilabsConfig.APPID_PREF, VisilabsConfig.APPID_PREF_KEY, this.mSysAppID);
+            Prefs.saveToPrefs(this._context, VisilabsConstant.APPID_PREF, VisilabsConstant.APPID_PREF_KEY, this.mSysAppID);
         }
     }
 
@@ -1081,16 +1080,16 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
     /**
      * Sets the log level for the library.
-     * The default level is {@link VisilabsConfig#LOG_LEVEL_ERROR}. Please make sure this is set to {@link VisilabsConfig#LOG_LEVEL_ERROR}
-     * or {@link VisilabsConfig#LOG_LEVEL_NONE} before releasing the application.
+     * The default level is {@link VisilabsConstant#LOG_LEVEL_ERROR}. Please make sure this is set to {@link VisilabsConstant#LOG_LEVEL_ERROR}
+     * or {@link VisilabsConstant#LOG_LEVEL_NONE} before releasing the application.
      * The log level can be one of
      * <ul>
-     * <li>{@link VisilabsConfig#LOG_LEVEL_VERBOSE}</li>
-     * <li>{@link VisilabsConfig#LOG_LEVEL_DEBUG}</li>
-     * <li>{@link VisilabsConfig#LOG_LEVEL_INFO}</li>
-     * <li>{@link VisilabsConfig#LOG_LEVEL_WARNING}</li>
-     * <li>{@link VisilabsConfig#LOG_LEVEL_ERROR}</li>
-     * <li>{@link VisilabsConfig#LOG_LEVEL_NONE}</li>
+     * <li>{@link VisilabsConstant#LOG_LEVEL_VERBOSE}</li>
+     * <li>{@link VisilabsConstant#LOG_LEVEL_DEBUG}</li>
+     * <li>{@link VisilabsConstant#LOG_LEVEL_INFO}</li>
+     * <li>{@link VisilabsConstant#LOG_LEVEL_WARNING}</li>
+     * <li>{@link VisilabsConstant#LOG_LEVEL_ERROR}</li>
+     * <li>{@link VisilabsConstant#LOG_LEVEL_NONE}</li>
      * </ul>
      *
      * @param logLevel The level of logging for the Visilabs library
@@ -1163,27 +1162,27 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
     private void initVisilabsParameters() {
         List<VisilabsParameter> visilabsParameters = new ArrayList<VisilabsParameter>();
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_VOSS_KEY, VisilabsConfig.TARGET_PREF_VOSS_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_VCNAME_KEY, VisilabsConfig.TARGET_PREF_VCNAME_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_VCMEDIUM_KEY, VisilabsConfig.TARGET_PREF_VCMEDIUM_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_VCSOURCE_KEY, VisilabsConfig.TARGET_PREF_VCSOURCE_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_VSEG1_KEY, VisilabsConfig.TARGET_PREF_VSEG1_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_VSEG2_KEY, VisilabsConfig.TARGET_PREF_VSEG2_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_VSEG3_KEY, VisilabsConfig.TARGET_PREF_VSEG3_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_VSEG4_KEY, VisilabsConfig.TARGET_PREF_VSEG4_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_VSEG5_KEY, VisilabsConfig.TARGET_PREF_VSEG5_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_BD_KEY, VisilabsConfig.TARGET_PREF_BD_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_GN_KEY, VisilabsConfig.TARGET_PREF_GN_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_LOC_KEY, VisilabsConfig.TARGET_PREF_LOC_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_VPV_KEY, VisilabsConfig.TARGET_PREF_VPV_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_LPVS_KEY, VisilabsConfig.TARGET_PREF_LPVS_STORE_KEY, 10, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_LPP_KEY, VisilabsConfig.TARGET_PREF_LPP_STORE_KEY,
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_VOSS_KEY, VisilabsConstant.TARGET_PREF_VOSS_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_VCNAME_KEY, VisilabsConstant.TARGET_PREF_VCNAME_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_VCMEDIUM_KEY, VisilabsConstant.TARGET_PREF_VCMEDIUM_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_VCSOURCE_KEY, VisilabsConstant.TARGET_PREF_VCSOURCE_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_VSEG1_KEY, VisilabsConstant.TARGET_PREF_VSEG1_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_VSEG2_KEY, VisilabsConstant.TARGET_PREF_VSEG2_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_VSEG3_KEY, VisilabsConstant.TARGET_PREF_VSEG3_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_VSEG4_KEY, VisilabsConstant.TARGET_PREF_VSEG4_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_VSEG5_KEY, VisilabsConstant.TARGET_PREF_VSEG5_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_BD_KEY, VisilabsConstant.TARGET_PREF_BD_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_GN_KEY, VisilabsConstant.TARGET_PREF_GN_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_LOC_KEY, VisilabsConstant.TARGET_PREF_LOC_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_VPV_KEY, VisilabsConstant.TARGET_PREF_VPV_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_LPVS_KEY, VisilabsConstant.TARGET_PREF_LPVS_STORE_KEY, 10, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_LPP_KEY, VisilabsConstant.TARGET_PREF_LPP_STORE_KEY,
                 1, new ArrayList<String>() {{
-            add(VisilabsConfig.TARGET_PREF_PPR_KEY);
+            add(VisilabsConstant.TARGET_PREF_PPR_KEY);
         }}));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_VQ_KEY, VisilabsConfig.TARGET_PREF_VQ_STORE_KEY, 1, null));
-        visilabsParameters.add(new VisilabsParameter(VisilabsConfig.TARGET_PREF_VRDOMAIN_KEY, VisilabsConfig.TARGET_PREF_VRDOMAIN_STORE_KEY, 1, null));
-        VisilabsConfig.VISILABS_PARAMETERS = visilabsParameters;
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_VQ_KEY, VisilabsConstant.TARGET_PREF_VQ_STORE_KEY, 1, null));
+        visilabsParameters.add(new VisilabsParameter(VisilabsConstant.TARGET_PREF_VRDOMAIN_KEY, VisilabsConstant.TARGET_PREF_VRDOMAIN_STORE_KEY, 1, null));
+        VisilabsConstant.VISILABS_PARAMETERS = visilabsParameters;
     }
 
 

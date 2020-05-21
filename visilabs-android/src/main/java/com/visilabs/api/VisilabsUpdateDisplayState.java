@@ -8,12 +8,11 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import com.visilabs.DisplayState;
-import com.visilabs.inApp.InAppMessage;
-import com.visilabs.util.VisilabsConfig;
+import com.visilabs.util.VisilabsConstant;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-@TargetApi(VisilabsConfig.UI_FEATURES_MIN_API)
+@TargetApi(VisilabsConstant.UI_FEATURES_MIN_API)
 public class VisilabsUpdateDisplayState implements Parcelable {
 
 
