@@ -395,7 +395,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 Log.e(LOG_TAG, ex.toString());
             }
         }
-
     }
 
     private VisilabsTargetCallback getInAppMessageCallback(final String type, final int actId, final Activity parent) {
@@ -454,7 +453,10 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
                             if (inAppMessage.getVisitorData() != null && inAppMessage.getVisitorData() != "") {
                                 Prefs.saveToPrefs(parent, VisilabsConstant.VISITOR_DATA_PREF, VisilabsConstant.VISITOR_DATA_PREF_KEY, inAppMessage.getVisitorData());
-                                Log.v("mVisitorData", inAppMessage.getVisitData());
+
+                                mVisitorData = inAppMessage.getVisitorData();
+
+                                Log.v("mVisitorData", inAppMessage.getVisitorData());
                             }
                         } else {
                             if (VisilabsConstant.DEBUG) {

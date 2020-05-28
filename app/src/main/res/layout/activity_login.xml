@@ -1,36 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:gravity="center"
     android:background="@color/colorLight"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/iv_logo"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_margin="20dp"
-        android:visibility="visible"
-        android:src="@mipmap/ic_visilabs" />
-
-    <TextView
+    <EditText
+        android:id="@+id/tv_exvisitor_id"
         android:layout_width="match_parent"
-        android:text="Welcome to Visilabs Demo"
         android:gravity="center"
+        android:text="test@test.com"
         android:textColor="@color/colorPrimary"
         android:layout_height="wrap_content"/>
 
     <Button
-        android:id="@+id/btn_go_to_login"
+        android:id="@+id/btn_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:padding="10dp"
         android:background="@color/colorButton"
-        android:text="Go To Login Page"
+        android:text="Login"
+        android:textColor="@color/colorLight" />
+
+
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:padding="10dp"
+        android:background="@color/colorButton"
+        android:text="Logout"
         android:textColor="@color/colorLight" />
 
 </LinearLayout>

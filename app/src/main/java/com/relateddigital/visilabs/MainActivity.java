@@ -1,80 +1,39 @@
 package com.relateddigital.visilabs;
 
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.visilabs.Cookie;
 import com.visilabs.Visilabs;
-import com.visilabs.inApp.VisilabsInAppActivity;
 
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static String ORGANIZATION_ID = "676D325830564761676D453D";
-    public static String SITE_ID = "356467332F6533766975593D";
-    public static String DATASOURCE = "visistore";
-
-    String exVisitorId = "testUser@test.com";
-
-    TextView tvToken, exvisitorIdTv;
-    Button btnTestPageView;
+    Button btnGoToLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnTestPageView = findViewById(R.id.btn_page_view);
-        exvisitorIdTv = findViewById(R.id.tv_exvisitor_id);
-        tvToken = findViewById(R.id.tv_token);
+        btnGoToLogin = findViewById(R.id.btn_go_to_login);
 
-        Visilabs.CreateAPI(ORGANIZATION_ID, SITE_ID, "http://lgr.visilabs.net",
-                DATASOURCE, "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000, "http://s.visilabs.net/geojson", true);
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("OM.sys.AppID", "visilabs-android-sdk"); //
+        Visilabs.CallAPI().customEvent("android-visilab", parameters);
 
-        btnTestPageView.setOnClickListener(new View.OnClickListener() {
+        btnGoToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                testPageView();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
             }
         });
-    }
-
-    public void testPageView() {
-
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("token", "getInstanceId failed", task.getException());
-
-                            tvToken.setText("Token Alınamadı");
-                            return;
-                        }
-
-                        String token = task.getResult().getToken();
-
-                        tvToken.setText("Token :  " + token);
-                        exvisitorIdTv.setText("Exvisitor Id : " + exVisitorId);
-
-                        HashMap<String, String> parameters = new HashMap<>();
-                        parameters.put("OM.exVisitorID", exVisitorId);
-                        parameters.put("OM.sys.TokenID", token);
-                        parameters.put("OM.sys.AppID", "visilabs-android-sdk"); //
-                         Visilabs.CallAPI().customEvent("android-visilab", parameters, MainActivity.this);                        // Log and toast
-                    }
-                });
     }
 }
