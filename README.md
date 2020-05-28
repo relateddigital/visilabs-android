@@ -5,7 +5,7 @@
 
 # Latest Version 
 
-***May 7, 2020*** - [Visilabs v3.1.4](https://github.com/relateddigital/visilabs-android/releases) 
+***May 28, 2020*** - [Visilabs v3.1.5](https://github.com/relateddigital/visilabs-android/releases) 
 
 # Latest Version [![Build Status](https://travis-ci.com/relateddigital/visilabs-android.svg?branch=master)](https://travis-ci.com/relateddigital/visilabs-android)
 
@@ -28,7 +28,7 @@ The Visilabs Android Sdk is a java implementation of an Android client for Visil
 Add Visilabs to the ```dependencies``` in app/build.gradle.
 
 ```java
-implementation "com.visilabs.android:visilabs-android:3.1.4
+implementation "com.visilabs.android:visilabs-android:3.1.5
 ```
 This version uses AndroidX
 
