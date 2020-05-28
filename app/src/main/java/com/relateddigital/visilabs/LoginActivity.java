@@ -1,5 +1,6 @@
 package com.relateddigital.visilabs;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -53,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                                 HashMap<String, String> parameters = new HashMap<>();
                                 parameters.put("OM.exVisitorID", exvisitorIdEt.getText().toString());
                                 parameters.put("OM.sys.TokenID", token);
-                                parameters.put("OM.sys.AppID", "visilabs-android-sdk"); //
+                                parameters.put("OM.sys.AppID", "visilabs-login"); //
                                 Visilabs.CallAPI().customEvent("android-visilab", parameters, LoginActivity.this);
 
                                 Toast.makeText(getApplicationContext(), "Login", Toast.LENGTH_LONG).show();
@@ -68,8 +69,11 @@ public class LoginActivity extends AppCompatActivity {
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().clear().apply();
 
                 HashMap<String, String> parameters = new HashMap<>();
-                parameters.put("OM.sys.AppID", "visilabs-android-sdk");
+                parameters.put("OM.sys.AppID", "visilabs-logout");
                 Visilabs.CallAPI().customEvent("Logout", parameters);
+
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
 
                 Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_LONG).show();
 
