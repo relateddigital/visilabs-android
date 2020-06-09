@@ -20,10 +20,13 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.visilabs.Visilabs;
 
 import java.util.HashMap;
+import java.util.Random;
 
 public class LoginActivity extends AppCompatActivity {
 
     EditText exvisitorIdEt;
+
+    String exVisitor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,6 +38,9 @@ public class LoginActivity extends AppCompatActivity {
         Button btnLogout = findViewById(R.id.btn_logout);
 
          exvisitorIdEt = findViewById(R.id.tv_exvisitor_id);
+
+         exVisitor = Math.random() +"test@gmail.com";
+         exvisitorIdEt.setText(exVisitor);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                                 String token = task.getResult().getToken();
 
                                 HashMap<String, String> parameters = new HashMap<>();
-                                parameters.put("OM.exVisitorID", exvisitorIdEt.getText().toString());
+                                parameters.put("OM.exVisitorID", exVisitor);
                                 parameters.put("OM.sys.TokenID", token);
                                 parameters.put("OM.sys.AppID", "visilabs-login"); //
                                 Visilabs.CallAPI().customEvent("android-visilab", parameters, LoginActivity.this);
@@ -71,7 +77,6 @@ public class LoginActivity extends AppCompatActivity {
                 HashMap<String, String> parameters = new HashMap<>();
                 parameters.put("OM.sys.AppID", "visilabs-logout");
                 Visilabs.CallAPI().customEvent("Logout", parameters);
-
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
 

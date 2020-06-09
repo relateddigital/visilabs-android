@@ -61,6 +61,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
         inAppMessage = getInAppMessage();
 
         setContentView( R.layout.activity_template);
+        this.setFinishOnTouchOutside(false);
 
         ratingBar = findViewById(R.id.ratingBar);
         tvBody = findViewById(R.id.tv_body);
@@ -279,28 +280,28 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     public void onSmileySelected(@BaseRating.Smiley int smiley, boolean reselected) {
         switch (smiley) {
             case SmileRating.BAD:
-                Log.i("TAG", "Bad");
+                Log.i("VL", "Bad");
                 break;
             case SmileRating.GOOD:
-                Log.i("TAG", "Good");
+                Log.i("VL", "Good");
                 break;
             case SmileRating.GREAT:
-                Log.i("TAG", "Great");
+                Log.i("VL", "Great");
                 break;
             case SmileRating.OKAY:
-                Log.i("TAG", "Okay");
+                Log.i("VL", "Okay");
                 break;
             case SmileRating.TERRIBLE:
-                Log.i("TAG", "Terrible");
+                Log.i("VL", "Terrible");
                 break;
             case SmileRating.NONE:
-                Log.i("TAG", "None");
+                Log.i("VL", "None");
                 break;
         }
     }
 
     @Override
     public void onRatingSelected(int level, boolean reselected) {
-        Log.i("TAG", "Rated as: " + level + " - " + reselected);
+        Log.i("VL", "Rated as: " + level + " - " + reselected);
     }
 }

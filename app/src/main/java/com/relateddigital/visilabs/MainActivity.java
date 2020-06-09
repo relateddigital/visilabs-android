@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         btnGoToLogin = findViewById(R.id.btn_go_to_login);
 
         HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("OM.sys.AppID", "visilabs-android-sdk"); //
+        parameters.put("OM.sys.AppID", "visilabs-android-sdk");
         Visilabs.CallAPI().customEvent("android-visilab", parameters);
 
         btnGoToLogin.setOnClickListener(new View.OnClickListener() {
