@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
 
          exvisitorIdEt = findViewById(R.id.tv_exvisitor_id);
 
-         exVisitor = Math.random() +"test@gmail.com";
+         exVisitor = Math.random() + "test@gmail.com";
          exvisitorIdEt.setText(exVisitor);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {

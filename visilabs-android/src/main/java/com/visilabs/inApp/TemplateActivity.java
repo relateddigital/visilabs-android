@@ -2,10 +2,13 @@ package com.visilabs.inApp;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +20,10 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
@@ -42,7 +48,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
 
     SmileRating smileRating;
 
-    LinearLayout llOverlay, llTextContainer;
+    LinearLayout llTextContainer;
 
     ImageButton ibClose;
 
@@ -69,7 +75,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
         btnTemplate = findViewById(R.id.btn_template);
         smileRating = findViewById(R.id.smileRating);
         ivTemplate = findViewById(R.id.iv_template);
-        llOverlay = findViewById(R.id.ll_overlay);
+     //   llOverlay = findViewById(R.id.ll_overlay);
         llTextContainer = findViewById(R.id.ll_text_container);
         ibClose = findViewById(R.id.ib_close);
 
@@ -113,7 +119,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
 
     private void setTemplate() {
 
-        llOverlay.setBackgroundColor(Color.parseColor(inAppMessage.getBackground()));
+       // llOverlay.setBackgroundColor(Color.parseColor(inAppMessage.getBackground()));
         ibClose.setBackgroundResource(getCloseIcon());
 
         switch (inAppMessage.getType()) {
@@ -134,6 +140,29 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
                 tvTitle.setVisibility(View.GONE);
                 smileRating.setVisibility(View.GONE);
                 btnTemplate.setVisibility(View.GONE);
+
+                ivTemplate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (inAppMessage.getButtonURL() != null && inAppMessage.getButtonURL().length() > 0) {
+
+                            try {
+
+                                Visilabs.CallAPI().trackInAppMessageClick(inAppMessage, getRateReport());
+                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(inAppMessage.getButtonURL()));
+                                startActivity(viewIntent);
+
+                            } catch (final ActivityNotFoundException e) {
+                                Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                            }
+                        } else {
+                            Visilabs.CallAPI().trackInAppMessageClick(inAppMessage, getRateReport());
+                        }
+
+                        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                        finish();
+                    }
+                });
 
                 break;
 
@@ -204,6 +233,8 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
                     } catch (final ActivityNotFoundException e) {
                         Log.i("Visilabs", "User doesn't have an activity for notification URI");
                     }
+                } else {
+                    Visilabs.CallAPI().trackInAppMessageClick(inAppMessage, getRateReport());
                 }
 
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
@@ -238,16 +269,11 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     }
 
     void showNps() {
+
         ratingBar.setVisibility(View.VISIBLE);
-
-        LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
-
-        if (inAppMessage.getCloseButton().equals("white")) {
-            stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
-            stars.getDrawable(0).setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-            stars.getDrawable(1).setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ratingBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(getApplicationContext(), R.color.yellow)));
         }
-
     }
 
     void showSmileRating() {
@@ -303,5 +329,13 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     @Override
     public void onRatingSelected(int level, boolean reselected) {
         Log.i("VL", "Rated as: " + level + " - " + reselected);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+        finish();
     }
 }
