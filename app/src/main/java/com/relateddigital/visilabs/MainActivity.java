@@ -45,12 +45,10 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
-
             visilabsActionRequest.executeAsyncAction(getVisilabsCallback());
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public VisilabsCallback getVisilabsCallback() {
