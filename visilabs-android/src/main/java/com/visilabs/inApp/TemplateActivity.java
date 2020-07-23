@@ -75,7 +75,6 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
         btnTemplate = findViewById(R.id.btn_template);
         smileRating = findViewById(R.id.smileRating);
         ivTemplate = findViewById(R.id.iv_template);
-     //   llOverlay = findViewById(R.id.ll_overlay);
         llTextContainer = findViewById(R.id.ll_text_container);
         ibClose = findViewById(R.id.ib_close);
 
