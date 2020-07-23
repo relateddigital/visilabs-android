@@ -6,7 +6,7 @@ import com.visilabs.VisilabsResponse;
  * An VisilabsTargetCallback will be used to execute code after a Visilabs API request finishes running on a background thread.
  *
  * */
-public interface VisilabsTargetCallback {
+public interface VisilabsCallback {
     /**
      * Will be run if the target call is successful
      *

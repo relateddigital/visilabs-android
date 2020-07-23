@@ -128,6 +128,7 @@ public class VisilabsConstant {
     public static final int LOG_LEVEL_NONE = Integer.MAX_VALUE;
 
     private static final String LOG_TAG = "VisilabsConfig";
+    public static final String FavoriteAttributeAction = "FavoriteAttributeAction";
 
     public static boolean checkNotificationActivityAvailable(Context context) {
         if (Build.VERSION.SDK_INT < UI_FEATURES_MIN_API) {

@@ -12,7 +12,7 @@ import android.util.Log;
 import androidx.core.content.ContextCompat;
 
 import com.visilabs.api.VisilabsAction;
-import com.visilabs.api.VisilabsTargetCallback;
+import com.visilabs.api.VisilabsCallback;
 import com.visilabs.api.VisilabsTargetFilter;
 import com.visilabs.api.VisilabsTargetRequest;
 import com.visilabs.exceptions.VisilabsNotReadyException;
@@ -24,7 +24,7 @@ import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
 import com.visilabs.inApp.InAppMessage;
-import com.visilabs.inApp.VisilabsNotificationRequest;
+import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.util.Device;
 import com.visilabs.util.NetworkManager;
 import com.visilabs.util.PersistentTargetManager;
@@ -375,12 +375,12 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             Log.e(LOG_TAG, "Action URL is empty.");
         }
 
-        VisilabsNotificationRequest request = new VisilabsNotificationRequest(_context);
+        VisilabsActionRequest request = new VisilabsActionRequest(_context);
         request.setApiVer("Android");
         request.setPageName(pageName);
         request.setPath(null);
         request.setHeaders(null);
-        request.setMethod(VisilabsNotificationRequest.Methods.GET);
+        request.setMethod(VisilabsActionRequest.Methods.GET);
         request.setRequestArgs(null);
         request.setTimeOutInSeconds(this._requestTimeoutSeconds);
 
@@ -398,9 +398,9 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
     }
 
-    private VisilabsTargetCallback getInAppMessageCallback(final String type, final int actId, final Activity parent) {
+    private VisilabsCallback getInAppMessageCallback(final String type, final int actId, final Activity parent) {
 
-        return new VisilabsTargetCallback() {
+        return new VisilabsCallback() {
             @Override
             public void success(VisilabsResponse response) {
                 String rawResponse = response.getRawResponse();
@@ -509,6 +509,55 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         return request;
     }
 
+    public VisilabsActionRequest requestActionType(String actionType) throws Exception {
+
+        VisilabsActionRequest request = new VisilabsActionRequest(_context);
+        request.setApiVer("Android");
+        request.setPath(null);
+        request.setHeaders(null);
+        request.setMethod(VisilabsActionRequest.Methods.GET);
+        request.setRequestArgs(null);
+        request.setTimeOutInSeconds(this._requestTimeoutSeconds);
+        request.setActionType(actionType);
+
+        request.setVisitorData(this.mVisitorData);
+        request.setVisitData(this.mVisitData);
+
+        return request;
+    }
+
+    public VisilabsActionRequest requestActionId(String actionId) throws Exception {
+
+        VisilabsActionRequest request = new VisilabsActionRequest(_context);
+        request.setApiVer("Android");
+        request.setPath(null);
+        request.setHeaders(null);
+        request.setMethod(VisilabsActionRequest.Methods.GET);
+        request.setRequestArgs(null);
+        request.setTimeOutInSeconds(this._requestTimeoutSeconds);
+        request.setActionId(actionId);
+        request.setVisitorData(this.mVisitorData);
+        request.setVisitData(this.mVisitData);
+
+        return request;
+    }
+
+    public VisilabsActionRequest requestAction(String actionType) throws Exception {
+
+        VisilabsActionRequest request = new VisilabsActionRequest(_context);
+        request.setApiVer("Android");
+        request.setPath(null);
+        request.setHeaders(null);
+        request.setMethod(VisilabsActionRequest.Methods.GET);
+        request.setRequestArgs(null);
+        request.setTimeOutInSeconds(this._requestTimeoutSeconds);
+        request.setActionType(actionType);
+
+        request.setVisitorData(this.mVisitorData);
+        request.setVisitData(this.mVisitData);
+
+        return request;
+    }
 
     private VisilabsAction buildAction() throws VisilabsNotReadyException {
         if (!mIsCreated) {
@@ -715,7 +764,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 }
                 properties.remove("OM.sys.AppID");
             }
-
 
             try {
                 PersistentTargetManager.with(context).saveParameters(properties);

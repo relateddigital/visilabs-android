@@ -15,7 +15,7 @@ public abstract class VisilabsRemote implements VisilabsAction {
 
     protected static String LOG_TAG = "VisilabsRemote";
 
-    protected VisilabsTargetCallback mCallback;
+    protected VisilabsCallback mCallback;
     protected Context mContext;
 
     public VisilabsRemote(Context context) {
@@ -28,7 +28,7 @@ public abstract class VisilabsRemote implements VisilabsAction {
     }
 
     @Override
-    public void executeAsync(VisilabsTargetCallback pCallback) throws Exception {
+    public void executeAsync(VisilabsCallback pCallback) throws Exception {
         try {
             VisilabsHttpClient.post(getApiURL(), buildHeaders(null), getRequestArgs(), pCallback, false, 10);
         } catch (Exception e) {
@@ -38,7 +38,7 @@ public abstract class VisilabsRemote implements VisilabsAction {
     }
 
     @Override
-    public void execute(VisilabsTargetCallback pCallback) throws Exception {
+    public void execute(VisilabsCallback pCallback) throws Exception {
         try {
             VisilabsHttpClient.post(getApiURL(), buildHeaders(null), getRequestArgs(), pCallback, true, 10);
         } catch (Exception e) {
@@ -47,7 +47,17 @@ public abstract class VisilabsRemote implements VisilabsAction {
         }
     }
 
-    public void setCallback(VisilabsTargetCallback pCallback) {
+    @Override
+    public void executeAsyncAction(VisilabsCallback pCallback) throws Exception {
+        try {
+            VisilabsHttpClient.post(getApiURL(), buildHeaders(null), getRequestArgs(), pCallback, false, 10);
+        } catch (Exception e) {
+            VisilabsLog.e(LOG_TAG, e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public void setCallback(VisilabsCallback pCallback) {
         mCallback = pCallback;
     }
 

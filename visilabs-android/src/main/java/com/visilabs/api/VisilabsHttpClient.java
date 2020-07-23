@@ -28,7 +28,7 @@ public class VisilabsHttpClient {
             String pUrl,
             Header[] pHeaders,
             JSONObject pParams,
-            VisilabsTargetCallback pCallback,
+            VisilabsCallback pCallback,
             boolean pUseSync,
             int pTimeOutInSeconds)
             throws Exception {
@@ -68,7 +68,7 @@ public class VisilabsHttpClient {
             String pUrl,
             Header[] pHeaders,
             JSONObject pParams,
-            VisilabsTargetCallback pCallback,
+            VisilabsCallback pCallback,
             boolean pUseSync,
             int pTimeOutInSeconds)
             throws Exception {
@@ -102,7 +102,7 @@ public class VisilabsHttpClient {
             String pUrl,
             Header[] pHeaders,
             JSONObject pParams,
-            VisilabsTargetCallback pCallback,
+            VisilabsCallback pCallback,
             boolean pUseSync,
             int pTimeOutInSeconds)
             throws Exception {
@@ -143,7 +143,7 @@ public class VisilabsHttpClient {
             String pUrl,
             Header[] pHeaders,
             JSONObject pParams,
-            VisilabsTargetCallback pCallback,
+            VisilabsCallback pCallback,
             boolean pUseSync,
             int pTimeOutInSeconds)
             throws Exception {
@@ -187,9 +187,9 @@ public class VisilabsHttpClient {
 
     static class FHJsonHttpResponseHandler extends JsonHttpResponseHandler {
 
-        private VisilabsTargetCallback callback;
+        private VisilabsCallback callback;
 
-        public FHJsonHttpResponseHandler(VisilabsTargetCallback pCallback) {
+        public FHJsonHttpResponseHandler(VisilabsCallback pCallback) {
             super();
             callback = pCallback;
         }

@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -22,7 +23,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.visilabs.Injector;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsGeofenceRequest;
-import com.visilabs.api.VisilabsTargetCallback;
+import com.visilabs.api.VisilabsCallback;
 import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
 import com.visilabs.gps.geofence.GeofenceBroadcastReceiver;
 import com.visilabs.gps.geofence.VisilabsAlarm;
@@ -167,7 +168,7 @@ public class GpsManager2 {
 
         request.setAction("getlist");
         request.setApiVer("Android");
-        final VisilabsTargetCallback callback = new VisilabsTargetCallback() {
+        final VisilabsCallback callback = new VisilabsCallback() {
             @Override
             public void success(VisilabsResponse response) {
                 String rawResponse = response.getRawResponse();
@@ -206,7 +207,7 @@ public class GpsManager2 {
                     }
 
                 } catch (Exception ex) {
-
+                    Log.e("VL", ex.toString());
                 }
             }
 
@@ -216,7 +217,7 @@ public class GpsManager2 {
                 try {
                     JSONArray array = response.getArray();
                 } catch (Exception ex) {
-
+                    Log.e("VL", ex.toString());
                 }
             }
         };
@@ -230,7 +231,7 @@ public class GpsManager2 {
                     try {
                         request.executeAsync(callback);
                     } catch (Exception e) {
-
+                        Log.e("VL", e.toString());
                     }
                 }
             };
@@ -375,7 +376,7 @@ public class GpsManager2 {
     private class DistanceComparator implements Comparator<VisilabsGeoFenceEntity> {
         @Override
         public int compare(VisilabsGeoFenceEntity object1, VisilabsGeoFenceEntity object2) {
-            double position1 = 0, position2 = 0;
+            double position1, position2;
             position1 = object1.distance;
             position2 = object2.distance;
             return Double.compare(position1, position2);

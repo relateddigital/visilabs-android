@@ -18,30 +18,13 @@ public interface VisilabsAction {
      *
      * @param pCallback the callback function
      */
-    void setCallback(VisilabsTargetCallback pCallback);
+    void setCallback(VisilabsCallback pCallback);
 
-    /**
-     * Executes the request asynchronously.
-     * Executes the callback function set by {@link #setCallback(VisilabsTargetCallback pCallback)} when the request finishes.
-     *
-     * @throws Exception this method is allowed to throw an exception
-     */
     void executeAsync() throws Exception;
 
-    /**
-     * Executes the request asynchronously.
-     * Executes the pCallback function when it finishes.
-     *
-     * @param pCallback the callback function
-     * @throws Exception this method is allowed to throw an exception
-     */
-    void executeAsync(VisilabsTargetCallback pCallback) throws Exception;
+    void executeAsync(VisilabsCallback pCallback) throws Exception;
 
-    /**
-     * Executes the request synchronously.
-     *
-     * @param pCallback the callback function
-     * @throws Exception this method is allowed to throw an exception
-     */
-    void execute(VisilabsTargetCallback pCallback) throws Exception;
+    void executeAsyncAction(VisilabsCallback pCallback) throws Exception;
+
+    void execute(VisilabsCallback pCallback) throws Exception;
 }

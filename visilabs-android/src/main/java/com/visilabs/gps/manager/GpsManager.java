@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsGeofenceRequest;
-import com.visilabs.api.VisilabsTargetCallback;
+import com.visilabs.api.VisilabsCallback;
 import com.visilabs.Injector;
 import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
 import com.visilabs.gps.geofence.GeofenceMonitor;
@@ -149,7 +149,7 @@ public class GpsManager {
 
         request.setAction("getlist");
         request.setApiVer("Android");
-        VisilabsTargetCallback callback = new VisilabsTargetCallback() {
+        VisilabsCallback callback = new VisilabsCallback() {
             @Override
             public void success(VisilabsResponse response) {
                 String rawResponse = response.getRawResponse();

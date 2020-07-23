@@ -107,7 +107,7 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     }
 
     @Override
-    public void executeAsync(VisilabsTargetCallback pCallback) throws Exception {
+    public void executeAsync(VisilabsCallback pCallback) throws Exception {
         try {
             String url = getURL();
             VisilabsLog.v(LOG_TAG, "Geofence Request: " + url);
@@ -134,7 +134,7 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     }
 
     @Override
-    public void execute(VisilabsTargetCallback pCallback) throws Exception {
+    public void execute(VisilabsCallback pCallback) throws Exception {
         try {
             switch (mMethod) {
                 case GET:

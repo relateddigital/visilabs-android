@@ -113,7 +113,7 @@ public class VisilabsTargetRequest extends VisilabsRemote {
     }
 
     @Override
-    public void executeAsync(VisilabsTargetCallback pCallback) throws Exception {
+    public void executeAsync(VisilabsCallback pCallback) throws Exception {
         try {
             switch (mMethod) {
                 case GET:
@@ -138,7 +138,7 @@ public class VisilabsTargetRequest extends VisilabsRemote {
     }
 
     @Override
-    public void execute(VisilabsTargetCallback pCallback) throws Exception {
+    public void execute(VisilabsCallback pCallback) throws Exception {
         try {
             switch (mMethod) {
                 case GET:

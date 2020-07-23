@@ -14,7 +14,7 @@ import com.visilabs.Injector;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsGeofenceRequest;
-import com.visilabs.api.VisilabsTargetCallback;
+import com.visilabs.api.VisilabsCallback;
 import com.visilabs.gps.manager.GpsManager2;
 import com.visilabs.json.JSONArray;
 
@@ -90,7 +90,7 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
         if (geofenceParts != null && geofenceParts.length > 2) {
             request.setActionID(geofenceParts[0]);
             request.setGeofenceID(geofenceParts[2]);
-            VisilabsTargetCallback callback = new VisilabsTargetCallback() {
+            VisilabsCallback callback = new VisilabsCallback() {
                 @Override
                 public void success(VisilabsResponse response) {
                     String rawResponse = response.getRawResponse();
