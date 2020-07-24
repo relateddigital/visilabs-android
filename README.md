@@ -56,7 +56,7 @@ After that please add code below to show in app message.
                 Visilabs.CallAPI().customEvent("android-visilab", parameters, MainActivity.this);                      
 
 
-<img src="https://github.com/relateddigital/visilabs-android/blob/master/inapp.gif" alt="Euromessage Android Library" width="300" style="max-width:100%;">
+<img src="https://github.com/relateddigital/visilabs-android/blob/master/inappnew.gif" alt="Euromessage Android Library" width="300" style="max-width:100%;">
 
 
 ### Favorites Attributes 
