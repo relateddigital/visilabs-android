@@ -58,6 +58,44 @@ After that please add code below to show in app message.
 
 <img src="https://github.com/relateddigital/visilabs-android/blob/master/inapp.gif" alt="Euromessage Android Library" width="300" style="max-width:100%;">
 
+
+### Favorites Attributes 
+
+
+        try {
+            VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
+            visilabsActionRequest.executeAsyncAction(getVisilabsCallback());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        
+        
+    public VisilabsCallback getVisilabsCallback() {
+
+        return new VisilabsCallback() {
+            @Override
+            public void success(VisilabsResponse response) {
+                try {
+
+                    FavsResponse favsResponse = new Gson().fromJson(response.getRawResponse(), FavsResponse.class);
+
+                    String favBrands = favsResponse.getFavoriteAttributeAction()[0].getActiondata().getFavorites().getBrand()[0];
+                    Log.i("Favs 1.Brand", favBrands);
+
+                } catch (Exception ex) {
+                    Log.e("Error", ex.getMessage(), ex);
+                }
+            }
+
+            @Override
+            public void fail(VisilabsResponse response) {
+                Log.d("Error", response.getRawResponse());
+            }
+        };
+    }
+        
+        
 ### Sample Applications 
 
 - [Visilabs Sample Application **NEW REPO ](https://github.com/relateddigital/sample_visilabs_android) 
