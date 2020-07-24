@@ -66,6 +66,7 @@ After that please add code below to show in app message.
         super.onCreate(savedInstanceState);
     
     
+    //requestAction() or requestActionId()
       try {
             VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
             visilabsActionRequest.executeAsyncAction(getVisilabsCallback());
