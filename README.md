@@ -73,8 +73,8 @@ After that please add code below to show in app message.
         } catch (Exception e) {
             e.printStackTrace();
         }
-   }
-        
+        }
+Later;         
         
     public VisilabsCallback getVisilabsCallback() {
 
