@@ -8,13 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.visilabs.android.R;
+import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.VisilabsStoryResponse;
+import com.visilabs.util.VisilabsConstant;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -24,8 +26,11 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
 
     VisilabsStoryResponse visilabsStoryResponse;
 
-    public VisilabsStoryAdapter(Context context) {
+    StoryItemClickListener storyItemClickListener;
+
+    public VisilabsStoryAdapter(Context context, StoryItemClickListener storyItemClickListener) {
         this.context = context;
+        this.storyItemClickListener = storyItemClickListener;
     }
 
     @Override
@@ -37,11 +42,35 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
     }
 
     @Override
-    public void onBindViewHolder(StoryHolder storyHolder, int position) {
+    public void onBindViewHolder(StoryHolder storyHolder, final int position) {
         String getName = visilabsStoryResponse.getStory()[0].getTitle();
         storyHolder.tvStoryName.setText(getName);
         storyHolder.tvStoryName.setTextColor(Color.parseColor(visilabsStoryResponse.getExtendedProps().getStorylb_label_color()));
 
+        storyHolder.rlStory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                storyItemClickListener.storyItemClicked(visilabsStoryResponse.getStory()[0].getLink() + " test");
+            }
+        });
+
+        String borderRadius = visilabsStoryResponse.getExtendedProps().getStorylb_img_borderRadius();
+
+        switch (borderRadius) {
+            case VisilabsConstant.STORY_CIRCLE:
+                storyHolder.setCircleViewProperties();
+                break;
+
+            case VisilabsConstant.STORY_ROUNDED_RECTANGLE:
+                float[] roundedRectangleBorderRadius = new float[]{15, 15, 15, 15, 15, 15, 15, 15};
+                storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius);
+                break;
+
+            case VisilabsConstant.STORY_RECTANGLE:
+                float[] rectangleBorderRadius = new float[]{0, 0, 0, 0, 0, 0, 0, 0};
+                storyHolder.setRectangleViewProperties(rectangleBorderRadius);
+                break;
+        }
     }
 
     @Override
@@ -55,57 +84,33 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
 
     public class StoryHolder extends RecyclerView.ViewHolder {
         public TextView tvStoryName;
-        public CircleImageView circleImageView;
-        public ImageView imageView;
+        public CircleImageView civStory;
+        public ImageView ivStory;
+        public RelativeLayout rlStory;
 
         public StoryHolder(final View itemView) {
             super(itemView);
 
             tvStoryName = itemView.findViewById(R.id.tv_story_name);
-            circleImageView = itemView.findViewById(R.id.civ_story);
-            imageView = itemView.findViewById(R.id.iv_story);
-
-            int borderRadius = Integer.parseInt(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderRadius());
-
-            switch (borderRadius) {
-                case 0:
-                    setCircleView();
-                    break;
-                case 1:
-                    float[] radii = new float[]{15, 15, 15, 15, 15, 15, 15, 15};
-                    setImageView(radii);
-                    break;
-
-                case 2:
-                    float[] radius = new float[]{0, 0, 0, 0, 0, 0, 0, 0};
-                    setImageView(radius);
-                    break;
-            }
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(itemView.getContext(), "item clicked", Toast.LENGTH_LONG).show();
-                }
-            });
+            civStory = itemView.findViewById(R.id.civ_story);
+            ivStory = itemView.findViewById(R.id.iv_story);
+            rlStory = itemView.findViewById(R.id.rl_story);
         }
 
-        private void setImageView(float[] radii) {
-            int borderWidth = Integer.parseInt(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderWidth());
-            imageView.setVisibility(View.VISIBLE);
+        private void setRectangleViewProperties(float[] borderRadius) {
+            ivStory.setVisibility(View.VISIBLE);
+
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
-            shape.setCornerRadii(radii);
-            shape.setStroke(borderWidth, Color.parseColor(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderColor()));
-            imageView.setBackground(shape);
+            shape.setCornerRadii(borderRadius);
+            shape.setStroke( Integer.parseInt(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderWidth()), Color.parseColor(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderColor()));
+            ivStory.setBackground(shape);
         }
 
-        private void setCircleView() {
-            int borderWidth = Integer.parseInt(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderWidth());
-
-            circleImageView.setVisibility(View.VISIBLE);
-            circleImageView.setBorderColor(Color.parseColor(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderColor()));
-            circleImageView.setBorderWidth(borderWidth);
+        private void setCircleViewProperties() {
+            civStory.setVisibility(View.VISIBLE);
+            civStory.setBorderColor(Color.parseColor(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderColor()));
+            civStory.setBorderWidth(Integer.parseInt(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderWidth()));
         }
     }
 }

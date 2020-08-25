@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,12 +16,14 @@ import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.VisilabsActionRequest;
+import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.VisilabsRecyclerView;
 import com.visilabs.util.VisilabsConstant;
 
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
+
 
     Button btnGoToLogin;
 
@@ -34,7 +37,15 @@ public class MainActivity extends AppCompatActivity {
         btnGoToLogin = findViewById(R.id.btn_go_to_login);
 
         visilabsRecyclerView = findViewById(R.id.vrv_story);
+
         visilabsRecyclerView.setStoryAction(getApplicationContext(), 1);
+
+        visilabsRecyclerView.setOnStoryItemClickListener(new StoryItemClickListener() {
+            @Override
+            public void storyItemClicked(String storyLink) {
+                Toast.makeText(getApplicationContext(), storyLink, Toast.LENGTH_LONG).show();
+            }
+        });
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-sdk");
