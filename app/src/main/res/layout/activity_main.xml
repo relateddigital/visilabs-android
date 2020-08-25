@@ -8,6 +8,11 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <com.visilabs.story.VisilabsRecyclerView
+        android:id="@+id/vrv_story"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <ImageView
         android:id="@+id/iv_logo"
         android:layout_width="150dp"

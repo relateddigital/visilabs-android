@@ -15,6 +15,7 @@ import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.VisilabsActionRequest;
+import com.visilabs.story.VisilabsRecyclerView;
 import com.visilabs.util.VisilabsConstant;
 
 import java.util.HashMap;
@@ -23,12 +24,17 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnGoToLogin;
 
+    VisilabsRecyclerView visilabsRecyclerView ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         btnGoToLogin = findViewById(R.id.btn_go_to_login);
+
+        visilabsRecyclerView = findViewById(R.id.vrv_story);
+        visilabsRecyclerView.setStoryAction(getApplicationContext(), 1);
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-sdk");
@@ -60,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
                     FavsResponse favsResponse = new Gson().fromJson(response.getRawResponse(), FavsResponse.class);
 
-                    String favBrands = favsResponse.getFavoriteAttributeAction()[0].getActiondata().getFavorites().getBrand()[0];
-                    Log.i("Favs 1.Brand", favBrands);
+//                    String favBrands = favsResponse.getFavoriteAttributeAction()[0].getActiondata().getFavorites().getBrand()[0];
+                 //   Log.i("Favs 1.Brand", favBrands);
 
                 } catch (Exception ex) {
                     Log.e("Error", ex.getMessage(), ex);

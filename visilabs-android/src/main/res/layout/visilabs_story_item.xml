@@ -2,16 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginRight="-5dp"
-    android:background="#fff"
-    android:layout_marginEnd="-5dp">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#fff">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/civ_story"
         android:layout_width="96dp"
         android:layout_height="96dp"
+        android:layout_margin="5dp"
+        android:visibility="gone"
         android:adjustViewBounds="false"
         android:cropToPadding="false"
         android:elevation="2dp"
@@ -21,26 +21,28 @@
         app:civ_border_width="2dp"
         tools:targetApi="lollipop" />
 
-
     <TextView
         android:id="@+id/tv_story_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/civ_story"
         android:layout_centerInParent="true"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textColor="#000000" />
 
     <ImageView
-        android:layout_below="@+id/tv_story_name"
         android:id="@+id/iv_story"
         android:layout_width="96dp"
         android:layout_height="96dp"
+        android:layout_below="@+id/tv_story_name"
+        android:layout_margin="5dp"
         android:adjustViewBounds="false"
+        android:background="@drawable/bg_story_radius"
         android:cropToPadding="false"
         android:elevation="2dp"
         android:padding="13dp"
-        android:background="@drawable/bg_story_radius"
         android:src="@android:mipmap/sym_def_app_icon"
+        android:visibility="gone"
 
         tools:targetApi="lollipop" />
 
