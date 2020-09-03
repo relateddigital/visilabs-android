@@ -36,7 +36,7 @@ public class Favorites {
 
     @Override
     public String toString() {
-        return "ClassPojo [category = " + Arrays.toString(category) + ", title = " + Arrays.toString(title) + ", brand = " + Arrays.toString(brand) + "]";
+        return "Favorites [category = " + Arrays.toString(category) + ", title = " + Arrays.toString(title) + ", brand = " + Arrays.toString(brand) + "]";
     }
 }
 

@@ -127,9 +127,9 @@ public class VisilabsConstant {
     public static final int LOG_LEVEL_ERROR = 5;
     public static final int LOG_LEVEL_NONE = Integer.MAX_VALUE;
 
-    public static final String STORY_CIRCLE = "0";
-    public static final String STORY_ROUNDED_RECTANGLE = "1";
-    public static final String STORY_RECTANGLE = "2";
+    public static final String STORY_CIRCLE = "50%";
+    public static final String STORY_ROUNDED_RECTANGLE = "10%";
+    public static final String STORY_RECTANGLE = "";
 
     private static final String LOG_TAG = "VisilabsConfig";
     public static final String FavoriteAttributeAction = "FavoriteAttributeAction";

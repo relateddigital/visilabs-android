@@ -3,29 +3,47 @@ package com.visilabs.story.model;
 import com.visilabs.story.model.ExtendedProps;
 import com.visilabs.story.model.Story;
 
+import java.util.List;
+
 public class VisilabsStoryResponse {
-    private com.visilabs.story.model.ExtendedProps ExtendedProps;
+    private String capping;
 
-    private Story[] story;
+    private int VERSION;
 
-    public ExtendedProps getExtendedProps() {
-        return ExtendedProps;
+    private List<String> FavoriteAttributeAction;
+
+    private List<Story> Story;
+
+    public void setCapping(String capping) {
+        this.capping = capping;
     }
 
-    public void setExtendedProps(ExtendedProps ExtendedProps) {
-        this.ExtendedProps = ExtendedProps;
+    public String getCapping() {
+        return this.capping;
     }
 
-    public Story[] getStory() {
-        return story;
+    public void setVERSION(int VERSION) {
+        this.VERSION = VERSION;
     }
 
-    public void setStory(Story[] story) {
-        this.story = story;
+    public int getVERSION() {
+        return this.VERSION;
     }
 
-    @Override
-    public String toString() {
-        return "VisilabsStoryResponse [ExtendedProps = " + ExtendedProps + ", story = " + story + "]";
+    public void setFavoriteAttributeAction(List<String> FavoriteAttributeAction) {
+        this.FavoriteAttributeAction = FavoriteAttributeAction;
+    }
+
+    public List<String> getFavoriteAttributeAction() {
+        return this.FavoriteAttributeAction;
+    }
+
+    public void setStory(List<Story> Story) {
+        this.Story = Story;
+    }
+
+    public List<Story> getStory() {
+        return this.Story;
     }
 }
+

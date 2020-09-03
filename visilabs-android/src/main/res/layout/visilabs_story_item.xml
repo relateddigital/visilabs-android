@@ -1,50 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_story"
     android:layout_width="wrap_content"
-    android:id="@+id/rl_story"
+    android:layout_margin="10dp"
     android:layout_height="wrap_content"
-    android:background="#fff">
+    android:orientation="vertical">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/civ_story"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_margin="5dp"
+    <FrameLayout
+        android:id="@+id/fl"
         android:visibility="gone"
-        android:adjustViewBounds="false"
-        android:cropToPadding="false"
-        android:elevation="2dp"
-        android:padding="13dp"
-        android:src="@android:mipmap/sym_def_app_icon"
-        app:civ_border_color="#161616"
-        app:civ_border_width="2dp"
-        tools:targetApi="lollipop" />
-
-    <TextView
-        android:id="@+id/tv_story_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/civ_story"
-        android:layout_centerInParent="true"
-        android:text="TextView"
-        android:textColor="#000000" />
+        android:background="@drawable/bg_circle">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/civ_story"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_margin="2dp"
+            android:adjustViewBounds="false"
+            android:cropToPadding="false"
+            android:elevation="2dp"
+            android:thicknessRatio="2"
+            android:visibility="gone"
+            app:civ_border_color="#ffffff"
+            app:civ_border_width="2dp"
+            tools:targetApi="lollipop" />
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/iv_story"
         android:layout_width="96dp"
         android:layout_height="96dp"
-        android:layout_below="@+id/tv_story_name"
-        android:layout_margin="5dp"
+        android:layout_margin="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="5dp"
         android:adjustViewBounds="false"
         android:background="@drawable/bg_story_radius"
         android:cropToPadding="false"
         android:elevation="2dp"
-        android:padding="13dp"
+        android:padding="5dp"
         android:src="@android:mipmap/sym_def_app_icon"
         android:visibility="gone"
 
         tools:targetApi="lollipop" />
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/tv_story_name"
+        android:layout_width="96dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="TextView"
+        android:textColor="#000000" />
+</LinearLayout>

@@ -1,41 +1,37 @@
 package com.visilabs.story.model;
 
-public class Story {
+public class Story
+{
+    private String actid;
 
-    public String title;
-    public String smallImg;
-    public String link;
-    public String linkOriginal;
+    private String title;
 
-    public String getTitle() {
-        return title;
+    private String actiontype;
+
+    private Actiondata actiondata;
+
+    public void setActid(String actid){
+        this.actid = actid;
     }
-
-    public void setTitle(String title) {
+    public String getActid(){
+        return this.actid;
+    }
+    public void setTitle(String title){
         this.title = title;
     }
-
-    public String getSmallImg() {
-        return smallImg;
+    public String getTitle(){
+        return this.title;
     }
-
-    public void setSmallImg(String smallImg) {
-        this.smallImg = smallImg;
+    public void setActiontype(String actiontype){
+        this.actiontype = actiontype;
     }
-
-    public String getLink() {
-        return link;
+    public String getActiontype(){
+        return this.actiontype;
     }
-
-    public void setLink(String link) {
-        this.link = link;
+    public void setActiondata(Actiondata actiondata){
+        this.actiondata = actiondata;
     }
-
-    public String getLinkOriginal() {
-        return linkOriginal;
-    }
-
-    public void setLinkOriginal(String linkOriginal) {
-        this.linkOriginal = linkOriginal;
+    public Actiondata getActiondata(){
+        return this.actiondata;
     }
 }

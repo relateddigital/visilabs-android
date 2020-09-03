@@ -7,16 +7,22 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 import com.visilabs.android.R;
+import com.visilabs.story.model.ExtendedProps;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.VisilabsStoryResponse;
 import com.visilabs.util.VisilabsConstant;
+
+import java.net.URISyntaxException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -43,39 +49,47 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
 
     @Override
     public void onBindViewHolder(StoryHolder storyHolder, final int position) {
-        String getName = visilabsStoryResponse.getStory()[0].getTitle();
+        String getName = position +" " + visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getTitle();
         storyHolder.tvStoryName.setText(getName);
-        storyHolder.tvStoryName.setTextColor(Color.parseColor(visilabsStoryResponse.getExtendedProps().getStorylb_label_color()));
+        Picasso.get().load(visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getSmallImg()).into(storyHolder.ivStory);
+        Picasso.get().load(visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getSmallImg()).into(storyHolder.civStory);
+        storyHolder.frameLayout.setVisibility(View.VISIBLE);
 
-        storyHolder.rlStory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                storyItemClickListener.storyItemClicked(visilabsStoryResponse.getStory()[0].getLink() + " test");
+        String extendedPropsEncoded = visilabsStoryResponse.getStory().get(0).getActiondata().getExtendedProps();
+        ExtendedProps extendedProps = null;
+
+        try {
+             extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
+
+        String borderRadius = extendedProps != null ? extendedProps.getStorylb_img_borderRadius() : null;
+
+        if (borderRadius != null) {
+            switch (borderRadius) {
+                case VisilabsConstant.STORY_CIRCLE:
+                    storyHolder.setCircleViewProperties();
+                    break;
+
+                case VisilabsConstant.STORY_ROUNDED_RECTANGLE:
+                    float[] roundedRectangleBorderRadius = new float[]{15, 15, 15, 15, 15, 15, 15, 15};
+                    storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius);
+                    break;
+
+                case VisilabsConstant.STORY_RECTANGLE:
+                    float[] rectangleBorderRadius = new float[]{0, 0, 0, 0, 0, 0, 0, 0};
+                    storyHolder.setRectangleViewProperties(rectangleBorderRadius);
+                    break;
             }
-        });
-
-        String borderRadius = visilabsStoryResponse.getExtendedProps().getStorylb_img_borderRadius();
-
-        switch (borderRadius) {
-            case VisilabsConstant.STORY_CIRCLE:
-                storyHolder.setCircleViewProperties();
-                break;
-
-            case VisilabsConstant.STORY_ROUNDED_RECTANGLE:
-                float[] roundedRectangleBorderRadius = new float[]{15, 15, 15, 15, 15, 15, 15, 15};
-                storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius);
-                break;
-
-            case VisilabsConstant.STORY_RECTANGLE:
-                float[] rectangleBorderRadius = new float[]{0, 0, 0, 0, 0, 0, 0, 0};
-                storyHolder.setRectangleViewProperties(rectangleBorderRadius);
-                break;
         }
     }
 
     @Override
     public int getItemCount() {
-        return 6;
+        return visilabsStoryResponse.getStory().get(0).getActiondata().getStories().size()-1;
     }
 
     public void setStoryItem(VisilabsStoryResponse story) {
@@ -86,7 +100,9 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
         public TextView tvStoryName;
         public CircleImageView civStory;
         public ImageView ivStory;
-        public RelativeLayout rlStory;
+        public LinearLayout llStory;
+        ExtendedProps extendedProps;
+        FrameLayout frameLayout;
 
         public StoryHolder(final View itemView) {
             super(itemView);
@@ -94,7 +110,23 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
             tvStoryName = itemView.findViewById(R.id.tv_story_name);
             civStory = itemView.findViewById(R.id.civ_story);
             ivStory = itemView.findViewById(R.id.iv_story);
-            rlStory = itemView.findViewById(R.id.rl_story);
+            llStory = itemView.findViewById(R.id.ll_story);
+            frameLayout = itemView.findViewById(R.id.fl);
+
+            llStory.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    storyItemClickListener.storyItemClicked(" test");
+                }
+            });
+
+            String extendedPropsEncoded = visilabsStoryResponse.getStory().get(0).getActiondata().getExtendedProps();
+
+            try {
+                extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
         }
 
         private void setRectangleViewProperties(float[] borderRadius) {
@@ -103,14 +135,14 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setCornerRadii(borderRadius);
-            shape.setStroke( Integer.parseInt(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderWidth()), Color.parseColor(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderColor()));
+            shape.setStroke( Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 5, Color.parseColor(extendedProps.getStorylb_img_borderColor()));
             ivStory.setBackground(shape);
         }
 
         private void setCircleViewProperties() {
             civStory.setVisibility(View.VISIBLE);
-            civStory.setBorderColor(Color.parseColor(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderColor()));
-            civStory.setBorderWidth(Integer.parseInt(visilabsStoryResponse.getExtendedProps().getStorylb_img_borderWidth()));
+            civStory.setBorderColor(Color.parseColor(extendedProps.getStorylb_img_borderColor()));
+            civStory.setBorderWidth(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()));
         }
     }
 }

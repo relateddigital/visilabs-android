@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     VisilabsRecyclerView visilabsRecyclerView ;
 
+    StoryItemClickListener storyItemClickListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,14 +40,16 @@ public class MainActivity extends AppCompatActivity {
 
         visilabsRecyclerView = findViewById(R.id.vrv_story);
 
-        visilabsRecyclerView.setStoryAction(getApplicationContext(), 1);
-
-        visilabsRecyclerView.setOnStoryItemClickListener(new StoryItemClickListener() {
+        storyItemClickListener = new StoryItemClickListener() {
             @Override
             public void storyItemClicked(String storyLink) {
                 Toast.makeText(getApplicationContext(), storyLink, Toast.LENGTH_LONG).show();
+
             }
-        });
+        };
+
+        visilabsRecyclerView.setStoryAction(getApplicationContext(), 1, storyItemClickListener);
+
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-sdk");
@@ -80,7 +84,8 @@ public class MainActivity extends AppCompatActivity {
 //                    String favBrands = favsResponse.getFavoriteAttributeAction()[0].getActiondata().getFavorites().getBrand()[0];
                  //   Log.i("Favs 1.Brand", favBrands);
 
-                } catch (Exception ex) {
+                } catch (Exception ex)
+                {
                     Log.e("Error", ex.getMessage(), ex);
                 }
             }
