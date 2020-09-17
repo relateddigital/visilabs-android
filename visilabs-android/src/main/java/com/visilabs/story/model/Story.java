@@ -28,7 +28,7 @@ public class Story
     public String getActiontype(){
         return this.actiontype;
     }
-    public void setActiondata(Actiondata actiondata){
+    public void setActiondata(Actiondata Actiondata){
         this.actiondata = actiondata;
     }
     public Actiondata getActiondata(){
