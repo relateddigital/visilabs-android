@@ -1,4 +1,4 @@
-package com.visilabs.story.model;
+package com.visilabs.story.model.storylookingbanner;
 
 public class Stories {
     private String title;

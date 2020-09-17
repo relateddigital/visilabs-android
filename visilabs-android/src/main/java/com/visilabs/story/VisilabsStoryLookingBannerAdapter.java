@@ -18,6 +18,9 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
+import com.visilabs.story.model.storylookingbanner.StoryLookingBanner;
+import com.visilabs.story.model.storylookingbanner.StoryLookingBanner;
+
 import com.visilabs.story.model.ExtendedProps;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.VisilabsStoryResponse;
@@ -36,6 +39,10 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
     StoryItemClickListener storyItemClickListener;
 
+    StoryLookingBanner storyLookingBanner;
+
+    String extendsProps;
+
     public VisilabsStoryLookingBannerAdapter(Context context, StoryItemClickListener storyItemClickListener) {
         this.context = context;
         this.storyItemClickListener = storyItemClickListener;
@@ -51,13 +58,13 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
     @Override
     public void onBindViewHolder(StoryHolder storyHolder, final int position) {
-
-        String storyName = visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getTitle();
-        String storyImage = visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getSmallImg();
-        String extendedPropsEncoded = visilabsStoryResponse.getStory().get(0).getActiondata().getExtendedProps();
+        String storyName = storyLookingBanner.getStories().get(position).getTitle();
+        String storyImage = storyLookingBanner.getStories().get(position).getSmallImg();
         storyHolder.tvStoryName.setText(storyName);
         Picasso.get().load(storyImage).into(storyHolder.ivStory);
         Picasso.get().load(storyImage).into(storyHolder.civStory);
+
+        String extendedPropsEncoded = extendsProps;
 
         storyHolder.llStoryContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,19 +72,26 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
                 String storyLink = visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getLink();
                 Visilabs.CallAPI().trackStoryClick(visilabsStoryResponse.getStory().get(0).getActiondata().getReport().getClick());
-
                 if (storyItemClickListener != null) {
-                    storyItemClickListener.storyItemClicked(storyLink);
-                }
+
+                    storyItemClickListener.storyItemClicked(storyLink); }
             }
         });
 
         ExtendedProps extendedProps = null;
 
         try {
-            extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
+             extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
         } catch (URISyntaxException e) {
             e.printStackTrace();
+        }
+
+        storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
+
+        if (extendedProps.getStorylb_img_boxShadow().equals("")){
+            storyHolder.frameLayout.setVisibility(View.VISIBLE);
+        } else {
+
         }
 
         storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
@@ -105,11 +119,12 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
     @Override
     public int getItemCount() {
-        return visilabsStoryResponse.getStory().get(0).getActiondata().getStories().size();
+        return storyLookingBanner.getStories().size();
     }
 
-    public void setStoryItem(VisilabsStoryResponse story) {
-        this.visilabsStoryResponse = story;
+    public void setStoryList(StoryLookingBanner storyLookingBanner, String extendsProps) {
+        this.extendsProps = extendsProps;
+        this.storyLookingBanner = storyLookingBanner;
     }
 
     public class StoryHolder extends RecyclerView.ViewHolder {
@@ -131,7 +146,7 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
             flCircleShadow = itemView.findViewById(R.id.fl_circle);
             flRectangleShadow = itemView.findViewById(R.id.fl_rect);
 
-            String extendedPropsEncoded = visilabsStoryResponse.getStory().get(0).getActiondata().getExtendedProps();
+            String extendedPropsEncoded = extendsProps;
 
             try {
                 extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
@@ -141,18 +156,17 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         }
 
         private void setRectangleViewProperties(float[] borderRadius) {
+            ivStory.setVisibility(View.VISIBLE);
 
             if (extendedProps.getStorylb_img_boxShadow().equals("")) {
                 flRectangleShadow.setBackground(null);
             }
-
             ivStory.setVisibility(View.VISIBLE);
 
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setCornerRadii(borderRadius);
-            shape.setStroke(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2, Color.parseColor(extendedProps.getStorylb_img_borderColor()));
-
+            shape.setStroke( Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2, Color.parseColor(extendedProps.getStorylb_img_borderColor()));
             ivStory.setBackground(shape);
         }
 
