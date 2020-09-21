@@ -1,12 +1,10 @@
-package com.visilabs.story.model;
+package com.visilabs.story.model.skinbased;
 
 
-import com.visilabs.story.model.ExtendedProps;
-import com.visilabs.story.model.Story;
 
 import java.util.List;
 
-public class VisilabsStory {
+public class VisilabsSkinBased {
     private String capping;
 
     private int VERSION;

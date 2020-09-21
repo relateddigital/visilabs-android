@@ -1,9 +1,10 @@
-package com.visilabs.story.model;
+package com.visilabs.story.model.storylookingbanner;
 
+import com.visilabs.story.model.storylookingbanner.Story;
 
 import java.util.List;
 
-public class VisilabsStoryResponse {
+public class VisilabsStoryLookingBanner {
     private String capping;
 
     private int VERSION;

@@ -1,8 +1,6 @@
 package com.visilabs.story.model.skinbased;
 
 
-import com.visilabs.story.model.Items;
-
 public class Stories
 {
     private String thumbnail;

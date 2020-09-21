@@ -1,4 +1,4 @@
-package com.visilabs.story.model;
+package com.visilabs.story.model.skinbased;
 
 import java.util.List;
 
@@ -8,8 +8,6 @@ public class Actiondata {
     private String taTemplate;
 
     private String ExtendedProps;
-
-    private Report report;
 
     public void setStories(List<Stories> stories) {
         this.stories = stories;
@@ -33,8 +31,5 @@ public class Actiondata {
 
     public String getExtendedProps() {
         return this.ExtendedProps;
-    }
-
-    public Report getReport() {return this.report;
     }
 }
