@@ -1,4 +1,4 @@
-package com.visilabs.story.model;
+package com.visilabs.story.model.skinbased;
 
 public class Story
 {

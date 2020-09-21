@@ -19,12 +19,11 @@ import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.story.model.storylookingbanner.StoryLookingBanner;
-import com.visilabs.story.model.storylookingbanner.StoryLookingBanner;
 
 import com.visilabs.story.model.ExtendedProps;
 import com.visilabs.story.model.StoryItemClickListener;
-import com.visilabs.story.model.VisilabsStoryResponse;
 import com.visilabs.util.StringUtils;
+import com.visilabs.story.model.storylookingbanner.VisilabsStoryLookingBanner;
 import com.visilabs.util.VisilabsConstant;
 
 import java.net.URISyntaxException;
@@ -34,12 +33,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<VisilabsStoryLookingBannerAdapter.StoryHolder> {
 
     Context context;
-
     VisilabsStoryResponse visilabsStoryResponse;
 
     StoryItemClickListener storyItemClickListener;
 
-    StoryLookingBanner storyLookingBanner;
+    VisilabsStoryLookingBanner storyLookingBanner;
 
     String extendsProps;
 
@@ -58,8 +56,8 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
     @Override
     public void onBindViewHolder(StoryHolder storyHolder, final int position) {
-        String storyName = storyLookingBanner.getStories().get(position).getTitle();
-        String storyImage = storyLookingBanner.getStories().get(position).getSmallImg();
+        String storyName = storyLookingBanner.getStory().get(0).getActiondata().getStories().get(position).getTitle();
+        String storyImage = storyLookingBanner.getStory().get(0).getActiondata().getStories().get(position).getSmallImg();
         storyHolder.tvStoryName.setText(storyName);
         Picasso.get().load(storyImage).into(storyHolder.ivStory);
         Picasso.get().load(storyImage).into(storyHolder.civStory);
@@ -119,10 +117,10 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
     @Override
     public int getItemCount() {
-        return storyLookingBanner.getStories().size();
+        return storyLookingBanner.getStory().get(0).getActiondata().getStories().size();
     }
 
-    public void setStoryList(StoryLookingBanner storyLookingBanner, String extendsProps) {
+    public void setStoryList(VisilabsStoryLookingBanner storyLookingBanner, String extendsProps) {
         this.extendsProps = extendsProps;
         this.storyLookingBanner = storyLookingBanner;
     }

@@ -10,9 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
-import com.visilabs.story.model.Actiondata;
-import com.visilabs.story.model.VisilabsStory;
-import com.visilabs.story.model.VisilabsStory;
+import com.visilabs.story.model.skinbased.VisilabsSkinBased;
+import com.visilabs.story.model.storylookingbanner.Actiondata;
 import com.visilabs.story.model.skinbased.SkinBased;
 import com.visilabs.story.model.storylookingbanner.StoryLookingBanner;
 import com.visilabs.util.VisilabsConstant;
@@ -20,12 +19,65 @@ import com.visilabs.util.VisilabsConstant;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.story.model.StoryItemClickListener;
-import com.visilabs.story.model.VisilabsStoryResponse;
+import com.visilabs.story.model.storylookingbanner.VisilabsStoryLookingBanner;
 
 public class VisilabsRecyclerView extends RecyclerView {
 
     Context context;
     StoryItemClickListener storyItemClickListener;
+
+    String skin_bassed = "{\n" +
+            "  \"capping\": \"{\\\"data\\\":{}}\",\n" +
+            "  \"VERSION\": 2,\n" +
+            "  \"FavoriteAttributeAction\": [\n" +
+            "  ],\n" +
+            "  \"Story\": [\n" +
+            "    {\n" +
+            "      \"actid\": \"int action id\",\n" +
+            "      \"title\": \"string action name\",\n" +
+            "      \"actiontype\": \"Story\",\n" +
+            "      \"actiondata\": {\n" +
+            "        \"stories\": [\n" +
+            "          {\n" +
+            "            \"title\": \"Ramon\",\n" +
+            "            \"thumbnail\": \"https://cdn.jpegmini.com/user/images/slider_puffin_jpegmini_mobile.jpg\",\n" +
+            "            \"items\": [\n" +
+            "              {\n" +
+            "                \"fileSrc\": \"http://testapp.relateddigital.com/cdnpath/img/Story/stories1.jpg\",\n" +
+            "                \"filePreview\": \"\",\n" +
+            "                \"buttonText\": \"Visit my Portfolio\",\n" +
+            "                \"buttonTextColor\": \"#7d1212\",\n" +
+            "                \"buttonColor\": \"#998686\",\n" +
+            "                \"fileType\": \"photo\",\n" +
+            "                \"displayTime\": 3,\n" +
+            "                \"targetUrl\": \"http://visilabs.com/?title=Ramon&OM.zn=acttype-32&OM.zpc=act-160\",\n" +
+            "                \"targetUrlOriginal\": \"http://visilabs.com/?title=Ramon\"\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"fileSrc\": \"http://testapp.relateddigital.com/cdnpath/img/Story/stories2.mp4\",\n" +
+            "                \"filePreview\": \"\",\n" +
+            "                \"buttonText\": \"\",\n" +
+            "                \"fileType\": \"video\",\n" +
+            "                \"displayTime\": 0,\n" +
+            "                \"targetUrl\": \"\",\n" +
+            "                \"targetUrlOriginal\": \"\"\n" +
+            "              }\n" +
+            "            ]\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"title\": \"Rivers Cuomo\",\n" +
+            "            \"thumbnail\": \"https://cdn.jpegmini.com/user/images/slider_puffin_jpegmini_mobile.jpg\",\n" +
+            "            \"items\": [\n" +
+            "              {\n" +
+            "              }]\n" +
+            "          }\n" +
+            "        ],\n" +
+            "        \"taTemplate\": \"skin_based\",\n" +
+            "        \"ExtendedProps\": \"%7B%22storylb_img_borderWidth%22%3A%223%22%2C%22storylb_img_borderColor%22%3A%22%23ebc70b%22%2C%22storylb_img_borderRadius%22%3A%2250%25%22%2C%22storylb_img_boxShadow%22%3A%22rgba(0%2C0%2C0%2C0.4)%205px%205px%2010px%22%2C%22storylb_label_color%22%3A%22%23ff34ae%22%7D\"\n" +
+            "      }\n" +
+            "    }]\n" +
+            "}\n" +
+            " ";
 
     public VisilabsRecyclerView(Context context) {
         super(context);
@@ -50,62 +102,9 @@ public class VisilabsRecyclerView extends RecyclerView {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        String skin_bassed = "{\n" +
-                "  \"capping\": \"{\\\"data\\\":{}}\",\n" +
-                "  \"VERSION\": 2,\n" +
-                "  \"FavoriteAttributeAction\": [\n" +
-                "  ],\n" +
-                "  \"Story\": [\n" +
-                "    {\n" +
-                "      \"actid\": \"int action id\",\n" +
-                "      \"title\": \"string action name\",\n" +
-                "      \"actiontype\": \"Story\",\n" +
-                "      \"actiondata\": {\n" +
-                "        \"stories\": [\n" +
-                "          {\n" +
-                "            \"title\": \"Ramon\",\n" +
-                "            \"thumbnail\": \"http://testapp.relateddigital.com/cdnpath/img/Story/users1.jpg\",\n" +
-                "            \"items\": [\n" +
-                "              {\n" +
-                "                \"fileSrc\": \"http://testapp.relateddigital.com/cdnpath/img/Story/stories1.jpg\",\n" +
-                "                \"filePreview\": \"\",\n" +
-                "                \"buttonText\": \"Visit my Portfolio\",\n" +
-                "                \"buttonTextColor\": \"#7d1212\",\n" +
-                "                \"buttonColor\": \"#998686\",\n" +
-                "                \"fileType\": \"photo\",\n" +
-                "                \"displayTime\": 3,\n" +
-                "                \"targetUrl\": \"http://visilabs.com/?title=Ramon&OM.zn=acttype-32&OM.zpc=act-160\",\n" +
-                "                \"targetUrlOriginal\": \"http://visilabs.com/?title=Ramon\"\n" +
-                "              },\n" +
-                "              {\n" +
-                "                \"fileSrc\": \"http://testapp.relateddigital.com/cdnpath/img/Story/stories2.mp4\",\n" +
-                "                \"filePreview\": \"\",\n" +
-                "                \"buttonText\": \"\",\n" +
-                "                \"fileType\": \"video\",\n" +
-                "                \"displayTime\": 0,\n" +
-                "                \"targetUrl\": \"\",\n" +
-                "                \"targetUrlOriginal\": \"\"\n" +
-                "              }\n" +
-                "            ]\n" +
-                "          },\n" +
-                "          {\n" +
-                "            \"title\": \"Rivers Cuomo\",\n" +
-                "            \"thumbnail\": \"http://testapp.relateddigital.com/cdnpath/img/Story/users5.jpg\",\n" +
-                "            \"items\": [\n" +
-                "              {\n" +
-                "              }]\n" +
-                "          }\n" +
-                "        ],\n" +
-                "        \"taTemplate\": \"skin_based\",\n" +
-                "        \"ExtendedProps\": \"encoding string\"\n" +
-                "      }\n" +
-                "    }]\n" +
-                "}\n" +
-                " ";
     }
 
-    public void setStoryActionId(Context context, String actionId,StoryItemClickListener storyItemClickListener) {
+    public void setStoryActionId(Context context, String actionId, StoryItemClickListener storyItemClickListener) {
         this.storyItemClickListener = storyItemClickListener;
         VisilabsActionRequest visilabsActionRequest;
         try {
@@ -124,8 +123,31 @@ public class VisilabsRecyclerView extends RecyclerView {
             @Override
             public void success(VisilabsResponse response) {
                 try {
-                    VisilabsStoryResponse visilabsStoryResponse = new Gson().fromJson(response.getRawResponse(), VisilabsStoryResponse.class);
-                    setStoryItemAdapter(context, visilabsStoryResponse.getStory().get(0).getActiondata());
+                    VisilabsStoryLookingBanner visilabsStoryLookingBanner = new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBanner.class);
+
+                    if (visilabsStoryLookingBanner.getStory().get(0).getActiondata().getTaTemplate().equals("story_lookinxg_banners")) {
+
+                        VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter = new VisilabsStoryLookingBannerAdapter(context, storyItemClickListener);
+
+                        visilabsStoryLookingBannerAdapter.setStoryList(visilabsStoryLookingBanner, visilabsStoryLookingBanner.getStory().get(0).getActiondata().getExtendedProps());
+
+                        setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                        setHasFixedSize(true);
+
+                        setAdapter(visilabsStoryLookingBannerAdapter);
+
+                    } else {
+                        VisilabsSkinBased skinBased = new Gson().fromJson(skin_bassed, VisilabsSkinBased.class);
+
+                        VisilabsSkinBasedAdapter visilabsSkinBasedAdapter = new VisilabsSkinBasedAdapter(context, storyItemClickListener);
+
+                        visilabsSkinBasedAdapter.setStoryList(skinBased, skinBased.getStory().get(0).getActiondata().getExtendedProps());
+
+                        setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                        setHasFixedSize(true);
+
+                        setAdapter(visilabsSkinBasedAdapter);
+                    }
 
                 } catch (Exception ex) {
                     Log.e("Error", ex.getMessage(), ex);
