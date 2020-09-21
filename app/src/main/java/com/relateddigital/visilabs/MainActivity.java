@@ -44,12 +44,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void storyItemClicked(String storyLink) {
                 Toast.makeText(getApplicationContext(), storyLink, Toast.LENGTH_LONG).show();
-
             }
         };
 
-        visilabsRecyclerView.setStoryAction(getApplicationContext(), 1, storyItemClickListener);
-
+        visilabsRecyclerView.setStoryAction(getApplicationContext(), storyItemClickListener);
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-sdk");

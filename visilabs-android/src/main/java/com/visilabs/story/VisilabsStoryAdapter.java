@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.story.model.ExtendedProps;
 import com.visilabs.story.model.StoryItemClickListener;
@@ -49,19 +50,36 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
 
     @Override
     public void onBindViewHolder(StoryHolder storyHolder, final int position) {
-        String getName = position +" " + visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getTitle();
-        storyHolder.tvStoryName.setText(getName);
-        Picasso.get().load(visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getSmallImg()).into(storyHolder.ivStory);
-        Picasso.get().load(visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getSmallImg()).into(storyHolder.civStory);
-        storyHolder.frameLayout.setVisibility(View.VISIBLE);
 
+        String storyName = visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getTitle();
+        String storyImage = visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getSmallImg();
         String extendedPropsEncoded = visilabsStoryResponse.getStory().get(0).getActiondata().getExtendedProps();
+        storyHolder.tvStoryName.setText(storyName);
+        Picasso.get().load(storyImage).into(storyHolder.ivStory);
+        Picasso.get().load(storyImage).into(storyHolder.civStory);
+
+        storyHolder.llStoryContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String storyLink = visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getLink();
+                Visilabs.CallAPI().trackStoryClick(visilabsStoryResponse.getStory().get(0).getActid());
+                storyItemClickListener.storyItemClicked(storyLink);
+            }
+        });
+
         ExtendedProps extendedProps = null;
 
         try {
              extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
         } catch (URISyntaxException e) {
             e.printStackTrace();
+        }
+
+        if (extendedProps.getStorylb_img_boxShadow().equals("")){
+            storyHolder.frameLayout.setVisibility(View.VISIBLE);
+        } else {
+
         }
 
         storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
@@ -97,10 +115,11 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
     }
 
     public class StoryHolder extends RecyclerView.ViewHolder {
+
         public TextView tvStoryName;
         public CircleImageView civStory;
         public ImageView ivStory;
-        public LinearLayout llStory;
+        public LinearLayout llStoryContainer;
         ExtendedProps extendedProps;
         FrameLayout frameLayout;
 
@@ -110,15 +129,8 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
             tvStoryName = itemView.findViewById(R.id.tv_story_name);
             civStory = itemView.findViewById(R.id.civ_story);
             ivStory = itemView.findViewById(R.id.iv_story);
-            llStory = itemView.findViewById(R.id.ll_story);
+            llStoryContainer = itemView.findViewById(R.id.ll_story);
             frameLayout = itemView.findViewById(R.id.fl);
-
-            llStory.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    storyItemClickListener.storyItemClicked(" test");
-                }
-            });
 
             String extendedPropsEncoded = visilabsStoryResponse.getStory().get(0).getActiondata().getExtendedProps();
 
@@ -132,6 +144,9 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
         private void setRectangleViewProperties(float[] borderRadius) {
             ivStory.setVisibility(View.VISIBLE);
 
+            if (extendedProps.getStorylb_img_boxShadow().equals("")){
+                frameLayout.setBackground(null);
+            }
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setCornerRadii(borderRadius);
@@ -140,6 +155,10 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
         }
 
         private void setCircleViewProperties() {
+            if (extendedProps.getStorylb_img_boxShadow().equals("")){
+                frameLayout.setBackground(null);
+            }
+
             civStory.setVisibility(View.VISIBLE);
             civStory.setBorderColor(Color.parseColor(extendedProps.getStorylb_img_borderColor()));
             civStory.setBorderWidth(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()));

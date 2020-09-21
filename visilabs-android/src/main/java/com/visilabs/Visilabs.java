@@ -355,6 +355,56 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
     }
 
+    public void trackStoryClick(String actionId) {
+
+
+        long timeOfEvent = System.currentTimeMillis() / 1000;
+        String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.uri=%s&OM.cookieID=%s&OM.vchannel=%s&OM.domain=%s"
+                , VisilabsEncoder.encode(this._organizationID)
+                , VisilabsEncoder.encode(this._siteID)
+                , timeOfEvent
+                , VisilabsEncoder.encode("/OM_evt.gif")
+                , VisilabsEncoder.encode(this._cookieID)
+                , VisilabsEncoder.encode(this._channel)
+                , VisilabsEncoder.encode(this._dataSource + "_Android"));
+
+
+        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        }
+
+        query += String.format("&OM.zn=%s", "acttype-32");
+        query += String.format("&OM.zpc=%s", "act-" + actionId);
+
+
+        String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;
+        String realURL = "";
+
+
+        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            realURL = this._realTimeURL + "/" + this._dataSource + "/om.gif?" + query;
+        }
+
+
+        if (VisilabsConstant.DEBUG) {
+            Log.v(LOG_TAG, String.format("Notification button tapped %s", segURL));
+        }
+
+
+        synchronized (this) {
+            addUrlToQueue(segURL);
+            if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+                addUrlToQueue(realURL);
+            }
+        }
+
+        this.send();
+
+        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            this.send();
+        }
+    }
+
 
     public void showNotification(String pageName, Activity parent) {
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
