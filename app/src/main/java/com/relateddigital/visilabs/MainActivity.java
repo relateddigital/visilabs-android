@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         storyItemClickListener = new StoryItemClickListener() {
             @Override
             public void storyItemClicked(String storyLink) {
-                Toast.makeText(getApplicationContext(), storyLink, Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), storyLink, Toast.LENGTH_LONG).show();
             }
         };
 

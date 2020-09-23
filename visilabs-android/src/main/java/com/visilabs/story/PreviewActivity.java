@@ -1,5 +1,6 @@
 package com.visilabs.story;
 
+import android.animation.ObjectAnimator;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -9,6 +10,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -84,32 +87,6 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
             }
         });
 
-
-        swipeListener = new OnSwipeTouchListener(
-                getApplicationContext()
-        ) {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        pressTime = System.currentTimeMillis();
-                        storiesProgressView.pause();
-                        return false;
-                    case MotionEvent.ACTION_UP:
-                        long now = System.currentTimeMillis();
-                        storiesProgressView.resume();
-                        return limit < now - pressTime;
-                }
-                return false;
-            }
-
-            @Override
-            public void onSwipeLeft() {
-                super.onSwipeLeft();
-                Toast.makeText(getApplicationContext(), "left", Toast.LENGTH_LONG).show();
-            }
-        };
-
         setStoryView();
         bindReverseView();
         bindSkipView();
@@ -127,14 +104,13 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
         btnStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "clicke", Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private void setStoryView() {
 
-        storiesProgressView = (StoriesProgressView) findViewById(R.id.stories);
+        storiesProgressView = findViewById(R.id.stories);
         storiesProgressView.setStoriesCount(PROGRESS_COUNT);
         storiesProgressView.setStoryDuration(3000L);
         // or
@@ -144,8 +120,28 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
         counter = 0;
         storiesProgressView.startStories(counter);
 
+        storiesProgressView.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+            public void onSwipeTop() {
+                Toast.makeText(getApplicationContext(), "top", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeRight() {
+                Toast.makeText(getApplicationContext(), "right", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeLeft() {
+                Toast.makeText(getApplicationContext(), "left", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeBottom() {
+                Toast.makeText(getApplicationContext(), "bottom", Toast.LENGTH_SHORT).show();
+            }
+
+            public boolean onTouch(View v, MotionEvent event) {
+                return gestureDetector.onTouchEvent(event);
+            }
+        });
+
         ivStory = findViewById(R.id.iv_story);
         ivStory.setImageResource(resources[counter]);
+
 
     }
 
