@@ -38,6 +38,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+
     private static final String TAG = "Visi GeoMonitor";
     private GpsManager gpsManager;
     private final IBinder binder = new GeofenceMonitorBinder();

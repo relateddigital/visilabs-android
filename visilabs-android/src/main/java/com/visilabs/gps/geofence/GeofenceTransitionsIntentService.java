@@ -15,7 +15,7 @@ import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsGeofenceRequest;
 import com.visilabs.api.VisilabsCallback;
-import com.visilabs.gps.manager.GpsManager2;
+import com.visilabs.gps.manager.GpsManagerMoreThanOreo;
 import com.visilabs.json.JSONArray;
 
 import java.util.List;
@@ -52,7 +52,7 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
             Log.e(TAG, "Location Services error: " + errorCode);
             return;
         } else {
-            GpsManager2 gpsManager = Injector.INSTANCE.getGpsManager2();
+            GpsManagerMoreThanOreo gpsManager = Injector.INSTANCE.getGpsManagerMoreThanOreo();
             if (gpsManager == null)
                 return;
             List<Geofence> triggerList = geoFenceEvent.getTriggeringGeofences();
@@ -81,8 +81,8 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
 
     private void geoFenceTriggered(String geofence_guid, int transition) throws Exception {
         Log.i(TAG, geofence_guid);
-        //TODO: burada geofence tetiklenme requesti atılacak. alttakileri sildim.
-        VisilabsGeofenceRequest request = (VisilabsGeofenceRequest) new VisilabsGeofenceRequest(Visilabs.CallAPI().getContext());
+
+        VisilabsGeofenceRequest request = new VisilabsGeofenceRequest(Visilabs.CallAPI().getContext());
         request.setAction("process");
         request.setApiVer("Android");
 
@@ -94,6 +94,7 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
                 @Override
                 public void success(VisilabsResponse response) {
                     String rawResponse = response.getRawResponse();
+
                 }
 
                 @Override

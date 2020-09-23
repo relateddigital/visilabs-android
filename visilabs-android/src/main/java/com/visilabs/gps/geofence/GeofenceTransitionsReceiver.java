@@ -54,7 +54,7 @@ public class GeofenceTransitionsReceiver extends BroadcastReceiver {
 
     private void geoFenceTriggered(String geofence_guid, int transition) throws Exception {
         Log.i(TAG, geofence_guid);
-        //TODO: burada geofence tetiklenme requesti atılacak. alttakileri sildim.
+
         VisilabsGeofenceRequest request = new VisilabsGeofenceRequest(Visilabs.CallAPI().getContext());
         request.setAction("process");
         request.setApiVer("Android");
@@ -68,12 +68,14 @@ public class GeofenceTransitionsReceiver extends BroadcastReceiver {
                 @Override
                 public void success(VisilabsResponse response) {
                     String rawResponse = response.getRawResponse();
+                    Log.i("Geofence Response", rawResponse);
                 }
 
                 @Override
                 public void fail(VisilabsResponse response) {
                     String rawResponse = response.getRawResponse();
                     JSONArray array = response.getArray();
+
                 }
             };
             request.executeAsync(callback);
