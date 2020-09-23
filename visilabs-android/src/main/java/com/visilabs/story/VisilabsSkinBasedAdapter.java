@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,9 +59,10 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         String storyImage = visilabsSkinBased.getStory().get(0).getActiondata().getStories().get(position).getThumbnail();
         storyHolder.tvStoryName.setText(storyName);
 
-        Picasso.get().isLoggingEnabled();
         Picasso.get().load(storyImage).into(storyHolder.ivStory);
-        Picasso.get().load(storyImage).into(storyHolder.civStory);
+  //      Picasso.get().load(storyImage).into(storyHolder.civStory);
+
+
 
         String extendedPropsEncoded = extendsProps;
 
@@ -81,6 +83,19 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
                 context.startActivity(intent);
             }
         });
+
+        storyHolder.ivStory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                storyItemClickListener.storyItemClicked("");
+                Intent intent = new Intent(context, PreviewActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("item", visilabsSkinBased.getStory().get(0).getActiondata().getStories().get(position).getItems());
+                context.startActivity(intent);
+            }
+        });
+
         storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
 
         String borderRadius = extendedProps != null ? extendedProps.getStorylb_img_borderRadius() : null;
