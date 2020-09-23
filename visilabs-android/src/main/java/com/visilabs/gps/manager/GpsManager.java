@@ -137,10 +137,8 @@ public class GpsManager {
         }
     }
 
-
-
     private void setupGeofences() {
-        VisilabsGeofenceRequest request = (VisilabsGeofenceRequest) new VisilabsGeofenceRequest(this.application);
+        VisilabsGeofenceRequest request = new VisilabsGeofenceRequest(this.application);
         double lat = lastKnownLocation.getLatitude();
         double lon = lastKnownLocation.getLongitude();
 

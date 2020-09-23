@@ -12,13 +12,13 @@ import android.os.PowerManager;
 
 import com.visilabs.Injector;
 import com.visilabs.Visilabs;
-import com.visilabs.gps.manager.GpsManager2;
+import com.visilabs.gps.manager.GpsManagerMoreThanOreo;
 
 
-public class VisilabsAlarm extends BroadcastReceiver {
-    static VisilabsAlarm alarm = new VisilabsAlarm();
+public class VisilabsGeofenceTriggerAlarm extends BroadcastReceiver {
+    static VisilabsGeofenceTriggerAlarm alarm = new VisilabsGeofenceTriggerAlarm();
 
-    public static VisilabsAlarm getSingleton() {
+    public static VisilabsGeofenceTriggerAlarm getSingleton() {
         return alarm;
     }
 
@@ -29,23 +29,22 @@ public class VisilabsAlarm extends BroadcastReceiver {
         @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
         wl.acquire(10000);
 
-        GpsManager2 gpsManager2 = Injector.INSTANCE.getGpsManager2();
-        if(gpsManager2 == null){
+        GpsManagerMoreThanOreo gpsManagerMoreThanOreo = Injector.INSTANCE.getGpsManagerMoreThanOreo();
+        if(gpsManagerMoreThanOreo == null){
             if(Visilabs.CallAPI() == null){
                 Visilabs.CreateAPI(context.getApplicationContext());
             }
             Visilabs.CallAPI().startGpsManager();
         }else{
-            gpsManager2.startGpsService();
+            gpsManagerMoreThanOreo.startGpsService();
         }
         wl.release();
 
     }
 
-
     public void setAlarmCheckIn(final Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(context, VisilabsAlarm.class);
+        Intent i = new Intent(context, VisilabsGeofenceTriggerAlarm.class);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -53,6 +52,4 @@ public class VisilabsAlarm extends BroadcastReceiver {
             alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0,fifteenMinutes, pi);
             }
     }
-
-
 }

@@ -26,7 +26,7 @@ import com.visilabs.api.VisilabsGeofenceRequest;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
 import com.visilabs.gps.geofence.GeofenceBroadcastReceiver;
-import com.visilabs.gps.geofence.VisilabsAlarm;
+import com.visilabs.gps.geofence.VisilabsGeofenceTriggerAlarm;
 import com.visilabs.gps.util.GeoFencesUtils;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
@@ -39,7 +39,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-public class GpsManager2 {
+public class GpsManagerMoreThanOreo {
+
     private final String TAG = "Visilabs GpsManager2";
     public final List<VisilabsGeoFenceEntity> activeGeoFenceEntityList = new ArrayList<>();
     private final List<VisilabsGeoFenceEntity> allGeoFenceEntityList = new ArrayList<>();
@@ -55,7 +56,7 @@ public class GpsManager2 {
     private FusedLocationProviderClient mFusedLocationClient;
     private PendingIntent mGeofencePendingIntent;
 
-    public GpsManager2(Context context) {
+    public GpsManagerMoreThanOreo(Context context) {
         Injector.INSTANCE.initGpsManager(this);
         this.application = context;
     }
@@ -67,7 +68,7 @@ public class GpsManager2 {
         isManagerStarting = true;
         initGpsService();
         startGpsService();
-        VisilabsAlarm.getSingleton().setAlarmCheckIn(this.application);
+        VisilabsGeofenceTriggerAlarm.getSingleton().setAlarmCheckIn(this.application);
 
     }
 
@@ -78,10 +79,8 @@ public class GpsManager2 {
 
     public void startGpsService() {
 
-
         boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(this.application, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         boolean accessCoarseLocationPermission = ContextCompat.checkSelfPermission(this.application, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-
 
         if (accessFineLocationPermission || accessCoarseLocationPermission) {
 
@@ -132,7 +131,6 @@ public class GpsManager2 {
                 lastServerCheck = Calendar.getInstance();
                 firstServerCheck = true;
             }
-
 
         } else {
             if (location == null) {
@@ -261,7 +259,7 @@ public class GpsManager2 {
         for (VisilabsGeoFenceEntity entity : allGeoFenceEntityList) {
             entity.distance = GeoFencesUtils.haversine(lat1, long1, Double.parseDouble(entity.lat), Double.parseDouble(entity.lng));
         }
-        Collections.sort(allGeoFenceEntityList, new GpsManager2.DistanceComparator());
+        Collections.sort(allGeoFenceEntityList, new GpsManagerMoreThanOreo.DistanceComparator());
         toAddGeoFenceEntityList.clear();
         toRemoveGeoFenceEntityList.clear();
 
@@ -271,7 +269,6 @@ public class GpsManager2 {
                 removeGeofences(activeGeoFenceEntityList);
             activeGeoFenceEntityList.clear();
         }
-
 
         if (activeGeoFenceEntityList.isEmpty()) {
             if (allGeoFenceEntityList.size() > 100) {
@@ -303,7 +300,6 @@ public class GpsManager2 {
         }
 
     }
-
 
     private void removeGeofences(final List<VisilabsGeoFenceEntity> geoFencesToRemove) {
         final List<String> IdsToRemove = new ArrayList<>();

@@ -19,7 +19,7 @@ import com.visilabs.exceptions.VisilabsNotReadyException;
 import com.visilabs.gps.factory.GpsFactory;
 import com.visilabs.gps.factory.GpsFactory2;
 import com.visilabs.gps.manager.GpsManager;
-import com.visilabs.gps.manager.GpsManager2;
+import com.visilabs.gps.manager.GpsManagerMoreThanOreo;
 import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
@@ -183,7 +183,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                     , null, null, targetURL, actionURL, geofenceURL, geofenceEnabled);
             if (geofenceEnabled && !StringUtils.isNullOrWhiteSpace(geofenceURL)) {
                 Visilabs.CallAPI().startGpsManager();
-
             }
 
         }
@@ -1240,7 +1239,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
 
     private GpsManager gpsManager = null;
-    private GpsManager2 gpsManager2 = null;
+    private GpsManagerMoreThanOreo gpsManagerMoreThanOreo = null;
 
     public void startGpsManager() {
         //if (ContextCompat.checkSelfPermission(application, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -1258,8 +1257,8 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 timer.schedule(task, 5000);
                 return;
             }
-            gpsManager2 = GpsFactory2.createManager(this._context);
-            gpsManager2.start();
+            gpsManagerMoreThanOreo = GpsFactory2.createManager(this._context);
+            gpsManagerMoreThanOreo.start();
         } else {
             int per = ContextCompat.checkSelfPermission(this._context, Manifest.permission.ACCESS_FINE_LOCATION);
             if (per != PackageManager.PERMISSION_GRANTED) {

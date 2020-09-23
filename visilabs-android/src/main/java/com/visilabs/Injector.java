@@ -2,13 +2,13 @@ package com.visilabs;
 
 
 import com.visilabs.gps.manager.GpsManager;
-import com.visilabs.gps.manager.GpsManager2;
+import com.visilabs.gps.manager.GpsManagerMoreThanOreo;
 
 public enum Injector {
     INSTANCE;
 
     private GpsManager gpsManager;
-    private GpsManager2 gpsManager2;
+    private GpsManagerMoreThanOreo gpsManagerMoreThanOreo;
     //private GeofenceForegroundServiceHandler geofenceForegroundServiceHandler;
 
     Injector(){
@@ -18,15 +18,15 @@ public enum Injector {
         this.gpsManager = gpsManager;
     }
 
-    public void initGpsManager(GpsManager2 gpsManager2) {
-        this.gpsManager2 = gpsManager2;
+    public void initGpsManager(GpsManagerMoreThanOreo gpsManagerMoreThanOreo) {
+        this.gpsManagerMoreThanOreo = gpsManagerMoreThanOreo;
     }
 
     public GpsManager getGpsManager() {
         return gpsManager;
     }
 
-    public GpsManager2 getGpsManager2() {
-        return gpsManager2;
+    public GpsManagerMoreThanOreo getGpsManagerMoreThanOreo() {
+        return gpsManagerMoreThanOreo;
     }
 }
