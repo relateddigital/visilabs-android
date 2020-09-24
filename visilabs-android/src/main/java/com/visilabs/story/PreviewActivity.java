@@ -2,6 +2,7 @@ package com.visilabs.story;
 
 import android.os.Build;
 import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -9,9 +10,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.visilabs.android.R;
 import com.visilabs.story.action.StoriesProgressView;
@@ -22,7 +20,6 @@ import java.util.Objects;
 public class PreviewActivity extends AppCompatActivity implements StoriesProgressView.StoriesListener {
 
     private static final int PROGRESS_COUNT = 6;
-
     private StoriesProgressView storiesProgressView;
     private ImageView ivStory;
 
@@ -54,7 +51,7 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
 
         final GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
 
-       onTouchListener = new View.OnTouchListener() {
+        onTouchListener = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
@@ -89,23 +86,8 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
         });
 
         setStoryView();
-
-       final LinearLayout linearLayout = findViewById(R.id.ll);
-        linearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                float x=linearLayout.getX();
-               float  y=linearLayout.getY();
-
-               int z = 0;
-
-               Log.e("DATA", "x : " + x + "   -  y : " +y + " --  z: "+z);
-                storiesProgressView.reverse();
-            }
-        });
-
-     bindReverseView();
-     bindSkipView();
+        bindReverseView();
+        bindSkipView();
 
         View exit = findViewById(R.id.exit);
 
@@ -126,7 +108,7 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
         // storiesProgressView.setStoriesCountWithDurations(durations);
         storiesProgressView.setStoriesListener(this);
 //        storiesProgressView.startStories();
-        counter = 0;
+
         storiesProgressView.startStories(counter);
 
         ivStory = findViewById(R.id.iv_story);
