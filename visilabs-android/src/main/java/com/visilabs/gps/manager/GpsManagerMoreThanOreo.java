@@ -257,7 +257,7 @@ public class GpsManagerMoreThanOreo {
         double lat1 = lastKnownLocation.getLatitude();
         double long1 = lastKnownLocation.getLongitude();
         for (VisilabsGeoFenceEntity entity : allGeoFenceEntityList) {
-            entity.distance = GeoFencesUtils.haversine(lat1, long1, Double.parseDouble(entity.lat), Double.parseDouble(entity.lng));
+            entity.distance = GeoFencesUtils.haversine(lat1, long1, Double.parseDouble(entity.lat), Double.parseDouble(entity.lng)); //difference btw two points
         }
         Collections.sort(allGeoFenceEntityList, new GpsManagerMoreThanOreo.DistanceComparator());
         toAddGeoFenceEntityList.clear();
@@ -298,7 +298,6 @@ public class GpsManagerMoreThanOreo {
             addGeofences(toAddGeoFenceEntityList);
             activeGeoFenceEntityList.addAll(toAddGeoFenceEntityList);
         }
-
     }
 
     private void removeGeofences(final List<VisilabsGeoFenceEntity> geoFencesToRemove) {
@@ -325,7 +324,6 @@ public class GpsManagerMoreThanOreo {
 
     }
 
-
     private GeofencingRequest getAddGeofencingRequest(List<Geofence> geofences) {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.addGeofences(geofences);
@@ -333,7 +331,7 @@ public class GpsManagerMoreThanOreo {
     }
 
     private void addGeofences(final List<VisilabsGeoFenceEntity> geoFencesToAdd) {
-        final List<Geofence> geofences = new ArrayList<>();
+         List<Geofence> geofences = new ArrayList<>();
         for (VisilabsGeoFenceEntity geoFenceEntity : geoFencesToAdd) {
             Geofence newGf = geoFenceEntity.toGeofence();
             geofences.add(newGf);
@@ -358,7 +356,6 @@ public class GpsManagerMoreThanOreo {
         }
     }
 
-
     private PendingIntent getGeofencePendingIntent() {
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
@@ -367,7 +364,6 @@ public class GpsManagerMoreThanOreo {
         mGeofencePendingIntent = PendingIntent.getBroadcast(this.application, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return mGeofencePendingIntent;
     }
-
 
     private class DistanceComparator implements Comparator<VisilabsGeoFenceEntity> {
         @Override
@@ -378,5 +374,4 @@ public class GpsManagerMoreThanOreo {
             return Double.compare(position1, position2);
         }
     }
-
 }
