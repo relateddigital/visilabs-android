@@ -21,14 +21,12 @@
         <View
             android:id="@+id/reverse"
             android:layout_width="0dp"
-            android:visibility="visible"
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
         <View
             android:id="@+id/skip"
             android:layout_width="0dp"
-            android:visibility="visible"
             android:layout_height="match_parent"
             android:layout_weight="1" />
     </LinearLayout>
