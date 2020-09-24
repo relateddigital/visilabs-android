@@ -1,20 +1,17 @@
 package com.visilabs.story;
 
-import android.animation.ObjectAnimator;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.LinearLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.visilabs.android.R;
 import com.visilabs.story.action.StoriesProgressView;
@@ -39,8 +36,6 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
             R.drawable.sample6,
     };
 
-    View.OnTouchListener swipeListener;
-
     private final long[] durations = new long[]{
             500L, 1000L, 1500L, 4000L, 5000L, 1000,
     };
@@ -48,31 +43,37 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
     long pressTime = 0L;
     long limit = 500L;
 
-    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
+    View.OnTouchListener onTouchListener;
 
-                    pressTime = System.currentTimeMillis();
-                    storiesProgressView.pause();
-
-                    return false;
-                case MotionEvent.ACTION_UP:
-                    long now = System.currentTimeMillis();
-                    storiesProgressView.resume();
-
-                    return limit < now - pressTime;
-            }
-            return false;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_preview);
+
+        final GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
+
+       onTouchListener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+
+                        pressTime = System.currentTimeMillis();
+                        storiesProgressView.pause();
+
+                        return false;
+
+                    case MotionEvent.ACTION_UP:
+                        long now = System.currentTimeMillis();
+                        storiesProgressView.resume();
+
+                        return limit < now - pressTime;
+                }
+                return gestureDetector.onTouchEvent(event);
+            }
+        };
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -88,17 +89,25 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
         });
 
         setStoryView();
-        bindReverseView();
-        bindSkipView();
 
-        View exit = findViewById(R.id.exit);
-        exit.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+       final LinearLayout linearLayout = findViewById(R.id.ll);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSwipeTop() {
-                super.onSwipeTop();
-                onBackPressed();
+            public void onClick(View v) {
+                float x=linearLayout.getX();
+               float  y=linearLayout.getY();
+
+               int z = 0;
+
+               Log.e("DATA", "x : " + x + "   -  y : " +y + " --  z: "+z);
+                storiesProgressView.reverse();
             }
         });
+
+     bindReverseView();
+     bindSkipView();
+
+        View exit = findViewById(R.id.exit);
 
         Button btnStory = findViewById(R.id.btn_story);
         btnStory.setOnClickListener(new View.OnClickListener() {
@@ -120,34 +129,12 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
         counter = 0;
         storiesProgressView.startStories(counter);
 
-        storiesProgressView.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
-            public void onSwipeTop() {
-                Toast.makeText(getApplicationContext(), "top", Toast.LENGTH_SHORT).show();
-            }
-            public void onSwipeRight() {
-                Toast.makeText(getApplicationContext(), "right", Toast.LENGTH_SHORT).show();
-            }
-            public void onSwipeLeft() {
-                Toast.makeText(getApplicationContext(), "left", Toast.LENGTH_SHORT).show();
-            }
-            public void onSwipeBottom() {
-                Toast.makeText(getApplicationContext(), "bottom", Toast.LENGTH_SHORT).show();
-            }
-
-            public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
-            }
-        });
-
         ivStory = findViewById(R.id.iv_story);
         ivStory.setImageResource(resources[counter]);
-
-
     }
 
     private void bindSkipView() {
-        View skip = findViewById(R.id.skip);
-
+     View skip = findViewById(R.id.skip);
 
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,9 +143,7 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
             }
         });
 
-        skip.setOnTouchListener(swipeListener);
-
-
+        skip.setOnTouchListener(onTouchListener);
     }
 
     private void bindReverseView() {
@@ -169,6 +154,7 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
                 storiesProgressView.reverse();
             }
         });
+
         reverse.setOnTouchListener(onTouchListener);
     }
 
