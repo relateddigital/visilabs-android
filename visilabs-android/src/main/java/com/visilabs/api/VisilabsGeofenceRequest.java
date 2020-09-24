@@ -182,9 +182,6 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
                 uriBuilder.appendQueryParameter(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
             }
 
-
-
-
             if(mActionID != null && mActionID != ""){
                 uriBuilder.appendQueryParameter(VisilabsConstant.ACT_ID_KEY, VisilabsEncoder.encode(mActionID));
             }
