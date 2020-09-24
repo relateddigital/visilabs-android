@@ -123,7 +123,7 @@ public class VisilabsRecyclerView extends RecyclerView {
             @Override
             public void success(VisilabsResponse response) {
                 try {
-                    VisilabsStoryLookingBanner visilabsStoryLookingBanner = new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBanner.class);
+                    VisilabsStoryLookingBanner visilabsStoryLookingBanner = new Gson().fromJson(skin_bassed, VisilabsStoryLookingBanner.class);
 
                     if (visilabsStoryLookingBanner.getStory().get(0).getActiondata().getTaTemplate().equals("story_lookinxg_banners")) {
 
