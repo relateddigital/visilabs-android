@@ -42,7 +42,6 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
 
     View.OnTouchListener onTouchListener;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +109,6 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
 //        storiesProgressView.startStories();
 
         storiesProgressView.startStories(counter);
-
         ivStory = findViewById(R.id.iv_story);
         ivStory.setImageResource(resources[counter]);
     }
