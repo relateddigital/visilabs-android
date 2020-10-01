@@ -78,7 +78,7 @@ public class VisilabsRecyclerView extends RecyclerView {
             }
         };
     }
-    
+
     private void setStoryItemAdapter(Context context, VisilabsStoryResponse visilabsStoryResponse) {
         setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         VisilabsStoryAdapter visilabsStoryAdapter = new VisilabsStoryAdapter(context, storyItemClickListener);
