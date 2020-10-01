@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
+import com.visilabs.Visilabs;
 import com.visilabs.android.R;
-import com.visilabs.story.model.storylookingbanner.StoryLookingBanner;
 
 import com.visilabs.story.model.ExtendedProps;
 import com.visilabs.story.model.StoryItemClickListener;
@@ -69,8 +69,8 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
             @Override
             public void onClick(View v) {
 
-                String storyLink = visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getLink();
-                Visilabs.CallAPI().trackStoryClick(visilabsStoryResponse.getStory().get(0).getActiondata().getReport().getClick());
+                String storyLink = storyLookingBanner.getStory().get(0).getActiondata().getStories().get(position).getLink();
+                Visilabs.CallAPI().trackStoryClick(storyLookingBanner.getStory().get(0).getActid());
                 if (storyItemClickListener != null) {
 
                     storyItemClickListener.storyItemClicked(storyLink); }
@@ -88,7 +88,7 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
 
         if (extendedProps.getStorylb_img_boxShadow().equals("")){
-            storyHolder.frameLayout.setVisibility(View.VISIBLE);
+            storyHolder.flCircleShadow.setVisibility(View.VISIBLE);
         } else {
 
         }
@@ -157,7 +157,7 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         private void setRectangleViewProperties(float[] borderRadius) {
             ivStory.setVisibility(View.VISIBLE);
 
-            if (extendedProps.getStorylb_img_boxShadow().equals("")) {
+            if (extendedProps.getStorylb_img_boxShadow().equals("")){
                 flRectangleShadow.setBackground(null);
             }
             ivStory.setVisibility(View.VISIBLE);
@@ -171,7 +171,7 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
         private void setCircleViewProperties() {
 
-            if (extendedProps.getStorylb_img_boxShadow().equals("")) {
+            if (extendedProps.getStorylb_img_boxShadow().equals("")){
                 flCircleShadow.setBackground(null);
             }
 

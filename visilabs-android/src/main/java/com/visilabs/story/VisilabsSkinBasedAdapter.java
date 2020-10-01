@@ -145,7 +145,7 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
             civStory = itemView.findViewById(R.id.civ_story);
             ivStory = itemView.findViewById(R.id.iv_story);
             llStoryContainer = itemView.findViewById(R.id.ll_story);
-            frameLayout = itemView.findViewById(R.id.fl);
+            frameLayout = itemView.findViewById(R.id.fl_circle);
 
             String extendedPropsEncoded = extendsProps;
 

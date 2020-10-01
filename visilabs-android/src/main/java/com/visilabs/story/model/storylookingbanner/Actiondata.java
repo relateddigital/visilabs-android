@@ -1,5 +1,7 @@
 package com.visilabs.story.model.storylookingbanner;
 
+import com.visilabs.story.model.Report;
+
 import java.util.List;
 
 public class Actiondata {
@@ -8,8 +10,6 @@ public class Actiondata {
     private String taTemplate;
 
     private String ExtendedProps;
-
-    public void setStories(List<Stories> stories) {
     private Report report;
 
     public void setStories(List<Stories> stories) {
@@ -36,6 +36,7 @@ public class Actiondata {
         return this.ExtendedProps;
     }
 
-    public Report getReport() {return this.report;
+    public Report getReport() {
+        return this.report;
     }
 }
