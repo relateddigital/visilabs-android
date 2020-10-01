@@ -9,6 +9,8 @@ public class Actiondata {
 
     private String ExtendedProps;
 
+    private Report report;
+
     public void setStories(List<Stories> stories) {
         this.stories = stories;
     }
@@ -31,5 +33,8 @@ public class Actiondata {
 
     public String getExtendedProps() {
         return this.ExtendedProps;
+    }
+
+    public Report getReport() {return this.report;
     }
 }

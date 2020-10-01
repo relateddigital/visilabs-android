@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_story"
     android:layout_width="wrap_content"
-    android:layout_margin="10dp"
     android:layout_height="wrap_content"
+    android:layout_margin="10dp"
     android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/fl"
-        android:visibility="gone"
         android:layout_width="wrap_content"
+        android:padding="2dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_circle">
+        android:background="@drawable/bg_circle_shadow">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/civ_story"
@@ -30,23 +30,27 @@
             tools:targetApi="lollipop" />
     </FrameLayout>
 
-    <ImageView
-        android:id="@+id/iv_story"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_margin="10dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="5dp"
-        android:adjustViewBounds="false"
-        android:background="@drawable/bg_story_radius"
-        android:cropToPadding="false"
-        android:elevation="2dp"
-        android:padding="5dp"
-        android:src="@android:mipmap/sym_def_app_icon"
-        android:visibility="gone"
+    <FrameLayout
+        android:id="@+id/fl_rect"
+        android:padding="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_rectangle_shadow">
 
-        tools:targetApi="lollipop" />
+        <ImageView
+            android:id="@+id/iv_story"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:adjustViewBounds="false"
+            android:background="@drawable/bg_story_radius"
+            android:cropToPadding="false"
+            android:elevation="2dp"
+            android:padding="5dp"
+            android:src="@android:mipmap/sym_def_app_icon"
+            android:visibility="gone"
+
+            tools:targetApi="lollipop" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tv_story_name"

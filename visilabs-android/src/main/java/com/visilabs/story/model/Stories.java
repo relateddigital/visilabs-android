@@ -7,8 +7,6 @@ public class Stories {
 
     private String link;
 
-    private String linkOriginal;
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -31,13 +29,5 @@ public class Stories {
 
     public String getLink() {
         return this.link;
-    }
-
-    public void setLinkOriginal(String linkOriginal) {
-        this.linkOriginal = linkOriginal;
-    }
-
-    public String getLinkOriginal() {
-        return this.linkOriginal;
     }
 }

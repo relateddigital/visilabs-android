@@ -355,7 +355,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
     }
 
-    public void trackStoryClick(String actionId) {
+    public void trackStoryClick(String report) {
 
 
         long timeOfEvent = System.currentTimeMillis() / 1000;
@@ -373,8 +373,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
         }
 
-        query += String.format("&OM.zn=%s", "acttype-32");
-        query += String.format("&OM.zpc=%s", "act-" + actionId);
+        query += String.format("&"+report);
 
 
         String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;

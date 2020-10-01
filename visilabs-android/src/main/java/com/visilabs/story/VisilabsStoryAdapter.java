@@ -63,7 +63,7 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
             public void onClick(View v) {
 
                 String storyLink = visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getLink();
-                Visilabs.CallAPI().trackStoryClick(visilabsStoryResponse.getStory().get(0).getActid());
+                Visilabs.CallAPI().trackStoryClick(visilabsStoryResponse.getStory().get(0).getActiondata().getReport().getClick());
                 storyItemClickListener.storyItemClicked(storyLink);
             }
         });
@@ -74,12 +74,6 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
              extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
         } catch (URISyntaxException e) {
             e.printStackTrace();
-        }
-
-        if (extendedProps.getStorylb_img_boxShadow().equals("")){
-            storyHolder.frameLayout.setVisibility(View.VISIBLE);
-        } else {
-
         }
 
         storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
@@ -121,7 +115,7 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
         public ImageView ivStory;
         public LinearLayout llStoryContainer;
         ExtendedProps extendedProps;
-        FrameLayout frameLayout;
+        FrameLayout frameLayout, flRect;
 
         public StoryHolder(final View itemView) {
             super(itemView);
@@ -131,6 +125,7 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
             ivStory = itemView.findViewById(R.id.iv_story);
             llStoryContainer = itemView.findViewById(R.id.ll_story);
             frameLayout = itemView.findViewById(R.id.fl);
+            flRect = itemView.findViewById(R.id.fl_rect);
 
             String extendedPropsEncoded = visilabsStoryResponse.getStory().get(0).getActiondata().getExtendedProps();
 
@@ -142,26 +137,28 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
         }
 
         private void setRectangleViewProperties(float[] borderRadius) {
-            ivStory.setVisibility(View.VISIBLE);
 
             if (extendedProps.getStorylb_img_boxShadow().equals("")){
-                frameLayout.setBackground(null);
+                flRect.setBackground(null);
             }
+            ivStory.setVisibility(View.VISIBLE);
+
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setCornerRadii(borderRadius);
-            shape.setStroke( Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 5, Color.parseColor(extendedProps.getStorylb_img_borderColor()));
+            shape.setStroke( Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2, Color.parseColor(extendedProps.getStorylb_img_borderColor()));
             ivStory.setBackground(shape);
         }
 
         private void setCircleViewProperties() {
+
             if (extendedProps.getStorylb_img_boxShadow().equals("")){
                 frameLayout.setBackground(null);
             }
 
             civStory.setVisibility(View.VISIBLE);
             civStory.setBorderColor(Color.parseColor(extendedProps.getStorylb_img_borderColor()));
-            civStory.setBorderWidth(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()));
+            civStory.setBorderWidth(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2);
         }
     }
 }
