@@ -1,7 +1,5 @@
 package com.visilabs.story.model;
 
-import com.visilabs.story.model.ExtendedProps;
-import com.visilabs.story.model.Story;
 
 import java.util.List;
 

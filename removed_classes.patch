@@ -1,0 +1,9 @@
+Index: visilabs-android/src/main/java/com/visilabs/story/Effects.java
+===================================================================
+--- visilabs-android/src/main/java/com/visilabs/story/Effects.java	(revision 1fedf985e14e6997be4bfccd9c4c009d7309b40e)
++++ visilabs-android/src/main/java/com/visilabs/story/Effects.java	(revision 1fedf985e14e6997be4bfccd9c4c009d7309b40e)
+@@ -1,4 +0,0 @@
+-package com.visilabs.story;
+-
+-public class Effects {
+-}

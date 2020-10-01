@@ -101,7 +101,7 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
 
     @Override
     public int getItemCount() {
-        return visilabsStoryResponse.getStory().get(0).getActiondata().getStories().size()-1;
+        return visilabsStoryResponse.getStory().get(0).getActiondata().getStories().size();
     }
 
     public void setStoryItem(VisilabsStoryResponse story) {

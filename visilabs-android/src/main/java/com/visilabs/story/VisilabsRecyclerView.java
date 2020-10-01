@@ -47,7 +47,7 @@ public class VisilabsRecyclerView extends RecyclerView {
 
     public void setStoryActionId(Context context, String actionId,StoryItemClickListener storyItemClickListener) {
         this.storyItemClickListener = storyItemClickListener;
-        VisilabsActionRequest visilabsActionRequest = null;
+        VisilabsActionRequest visilabsActionRequest;
         try {
             visilabsActionRequest = Visilabs.CallAPI().requestActionId(actionId);
             visilabsActionRequest.executeAsyncAction(getVisilabsStoryCallback(context));
@@ -78,8 +78,7 @@ public class VisilabsRecyclerView extends RecyclerView {
             }
         };
     }
-
-
+    
     private void setStoryItemAdapter(Context context, VisilabsStoryResponse visilabsStoryResponse) {
         setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         VisilabsStoryAdapter visilabsStoryAdapter = new VisilabsStoryAdapter(context, storyItemClickListener);
