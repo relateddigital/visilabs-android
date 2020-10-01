@@ -27,7 +27,7 @@ import java.net.URISyntaxException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdapter.StoryHolder> {
+public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<VisilabsStoryLookingBannerAdapter.StoryHolder> {
 
     Context context;
 
@@ -35,7 +35,7 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
 
     StoryItemClickListener storyItemClickListener;
 
-    public VisilabsStoryAdapter(Context context, StoryItemClickListener storyItemClickListener) {
+    public VisilabsStoryLookingBannerAdapter(Context context, StoryItemClickListener storyItemClickListener) {
         this.context = context;
         this.storyItemClickListener = storyItemClickListener;
     }
@@ -115,7 +115,7 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
         public ImageView ivStory;
         public LinearLayout llStoryContainer;
         ExtendedProps extendedProps;
-        FrameLayout frameLayout, flRect;
+        FrameLayout flCircleShadow, flRectangleShadow;
 
         public StoryHolder(final View itemView) {
             super(itemView);
@@ -124,8 +124,8 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
             civStory = itemView.findViewById(R.id.civ_story);
             ivStory = itemView.findViewById(R.id.iv_story);
             llStoryContainer = itemView.findViewById(R.id.ll_story);
-            frameLayout = itemView.findViewById(R.id.fl);
-            flRect = itemView.findViewById(R.id.fl_rect);
+            flCircleShadow = itemView.findViewById(R.id.fl_circle);
+            flRectangleShadow = itemView.findViewById(R.id.fl_rect);
 
             String extendedPropsEncoded = visilabsStoryResponse.getStory().get(0).getActiondata().getExtendedProps();
 
@@ -139,7 +139,7 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
         private void setRectangleViewProperties(float[] borderRadius) {
 
             if (extendedProps.getStorylb_img_boxShadow().equals("")){
-                flRect.setBackground(null);
+                flRectangleShadow.setBackground(null);
             }
             ivStory.setVisibility(View.VISIBLE);
 
@@ -153,7 +153,7 @@ public class VisilabsStoryAdapter extends RecyclerView.Adapter<VisilabsStoryAdap
         private void setCircleViewProperties() {
 
             if (extendedProps.getStorylb_img_boxShadow().equals("")){
-                frameLayout.setBackground(null);
+                flCircleShadow.setBackground(null);
             }
 
             civStory.setVisibility(View.VISIBLE);

@@ -81,9 +81,9 @@ public class VisilabsRecyclerView extends RecyclerView {
 
     private void setStoryItemAdapter(Context context, VisilabsStoryResponse visilabsStoryResponse) {
         setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-        VisilabsStoryAdapter visilabsStoryAdapter = new VisilabsStoryAdapter(context, storyItemClickListener);
+        VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter = new VisilabsStoryLookingBannerAdapter(context, storyItemClickListener);
         setHasFixedSize(true);
-        visilabsStoryAdapter.setStoryItem(visilabsStoryResponse);
-        setAdapter(visilabsStoryAdapter);
+        visilabsStoryLookingBannerAdapter.setStoryItem(visilabsStoryResponse);
+        setAdapter(visilabsStoryLookingBannerAdapter);
     }
 }
