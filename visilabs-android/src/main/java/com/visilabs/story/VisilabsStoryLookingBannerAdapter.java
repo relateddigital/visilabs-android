@@ -21,6 +21,7 @@ import com.visilabs.android.R;
 import com.visilabs.story.model.ExtendedProps;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.VisilabsStoryResponse;
+import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
 
 import java.net.URISyntaxException;
@@ -71,12 +72,15 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         ExtendedProps extendedProps = null;
 
         try {
-             extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
+            extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
-        storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
+        if (StringUtils.validateHexColor(extendedProps.getStorylb_img_borderColor())) {
+
+            storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
+        }
 
         String borderRadius = extendedProps != null ? extendedProps.getStorylb_img_borderRadius() : null;
 
@@ -138,26 +142,35 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
         private void setRectangleViewProperties(float[] borderRadius) {
 
-            if (extendedProps.getStorylb_img_boxShadow().equals("")){
+            if (extendedProps.getStorylb_img_boxShadow().equals("")) {
                 flRectangleShadow.setBackground(null);
             }
+
             ivStory.setVisibility(View.VISIBLE);
 
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setCornerRadii(borderRadius);
-            shape.setStroke( Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2, Color.parseColor(extendedProps.getStorylb_img_borderColor()));
+
+            if (StringUtils.validateHexColor(extendedProps.getStorylb_img_borderColor())) {
+                shape.setStroke(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2, Color.parseColor(extendedProps.getStorylb_img_borderColor()));
+            }
+
             ivStory.setBackground(shape);
         }
 
         private void setCircleViewProperties() {
 
-            if (extendedProps.getStorylb_img_boxShadow().equals("")){
+            if (extendedProps.getStorylb_img_boxShadow().equals("")) {
                 flCircleShadow.setBackground(null);
             }
 
             civStory.setVisibility(View.VISIBLE);
-            civStory.setBorderColor(Color.parseColor(extendedProps.getStorylb_img_borderColor()));
+
+            if (StringUtils.validateHexColor(extendedProps.getStorylb_img_borderColor())) {
+                civStory.setBorderColor(Color.parseColor(extendedProps.getStorylb_img_borderColor()));
+            }
+
             civStory.setBorderWidth(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2);
         }
     }
