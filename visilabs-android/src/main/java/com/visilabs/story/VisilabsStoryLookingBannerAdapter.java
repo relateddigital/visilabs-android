@@ -77,10 +77,7 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
             e.printStackTrace();
         }
 
-        if (StringUtils.validateHexColor(extendedProps.getStorylb_img_borderColor())) {
-
-            storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
-        }
+        storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
 
         String borderRadius = extendedProps != null ? extendedProps.getStorylb_img_borderRadius() : null;
 
@@ -151,10 +148,7 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setCornerRadii(borderRadius);
-
-            if (StringUtils.validateHexColor(extendedProps.getStorylb_img_borderColor())) {
-                shape.setStroke(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2, Color.parseColor(extendedProps.getStorylb_img_borderColor()));
-            }
+            shape.setStroke(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2, Color.parseColor(extendedProps.getStorylb_img_borderColor()));
 
             ivStory.setBackground(shape);
         }
@@ -166,10 +160,7 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
             }
 
             civStory.setVisibility(View.VISIBLE);
-
-            if (StringUtils.validateHexColor(extendedProps.getStorylb_img_borderColor())) {
-                civStory.setBorderColor(Color.parseColor(extendedProps.getStorylb_img_borderColor()));
-            }
+            civStory.setBorderColor(Color.parseColor(extendedProps.getStorylb_img_borderColor()));
 
             civStory.setBorderWidth(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2);
         }

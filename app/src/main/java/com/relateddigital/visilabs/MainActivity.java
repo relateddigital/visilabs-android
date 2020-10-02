@@ -16,14 +16,14 @@ import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.VisilabsActionRequest;
-import com.visilabs.story.model.StoryItemClickListener;
+
 import com.visilabs.story.VisilabsRecyclerView;
+import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.util.VisilabsConstant;
 
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
-
 
     Button btnGoToLogin;
 
