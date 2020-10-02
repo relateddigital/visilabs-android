@@ -26,7 +26,7 @@ import com.visilabs.api.VisilabsGeofenceRequest;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
 import com.visilabs.gps.geofence.GeofenceBroadcastReceiver;
-import com.visilabs.gps.geofence.VisilabsGeofenceTriggerAlarm;
+import com.visilabs.gps.geofence.VisilabsAlarm;
 import com.visilabs.gps.util.GeoFencesUtils;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
@@ -68,7 +68,7 @@ public class GpsManagerMoreThanOreo {
         isManagerStarting = true;
         initGpsService();
         startGpsService();
-        VisilabsGeofenceTriggerAlarm.getSingleton().setAlarmCheckIn(this.application);
+        VisilabsAlarm.getSingleton().setAlarmCheckIn(this.application);
 
     }
 

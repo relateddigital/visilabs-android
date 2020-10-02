@@ -52,7 +52,7 @@
         </receiver>
 
          <receiver
-            android:name="com.visilabs.gps.geofence.VisilabsGeofenceTriggerAlarm"
+            android:name="com.visilabs.gps.geofence.VisilabsAlarm"
             android:exported="false" />
 
         <receiver

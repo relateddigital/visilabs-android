@@ -15,13 +15,12 @@ import com.visilabs.Visilabs;
 import com.visilabs.gps.manager.GpsManagerMoreThanOreo;
 
 
-public class VisilabsGeofenceTriggerAlarm extends BroadcastReceiver {
-    static VisilabsGeofenceTriggerAlarm alarm = new VisilabsGeofenceTriggerAlarm();
+public class VisilabsAlarm extends BroadcastReceiver {
+    static VisilabsAlarm alarm = new VisilabsAlarm();
 
-    public static VisilabsGeofenceTriggerAlarm getSingleton() {
+    public static VisilabsAlarm getSingleton() {
         return alarm;
     }
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -44,7 +43,7 @@ public class VisilabsGeofenceTriggerAlarm extends BroadcastReceiver {
 
     public void setAlarmCheckIn(final Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(context, VisilabsGeofenceTriggerAlarm.class);
+        Intent i = new Intent(context, VisilabsAlarm.class);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
