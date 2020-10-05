@@ -30,8 +30,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 3
-        versionName "3.2.0"
+        versionCode 4
+        versionName "4.0.0"
     }
     buildTypes {
         release {
@@ -43,8 +43,8 @@ android {
 
 dependencies {
 
-    api 'com.google.android.gms:play-services-base:17.1.0'
-    api 'com.google.android.gms:play-services-location:17.0.0'
+    api 'com.google.android.gms:play-services-base:17.4.0'
+    api 'com.google.android.gms:play-services-location:17.1.0'
     api 'com.loopj.android:android-async-http:1.4.9'
     api 'com.google.code.gson:gson:2.8.6'
     api 'com.squareup.picasso:picasso:2.71828'
@@ -52,11 +52,12 @@ dependencies {
     //story
     api 'de.hdodenhof:circleimageview:3.1.0'
     api 'androidx.recyclerview:recyclerview:1.1.0'
-    api 'androidx.constraintlayout:constraintlayout:2.0.0-rc1'
+    api 'androidx.constraintlayout:constraintlayout:2.0.1'
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.13'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
 }
 
 allprojects {
