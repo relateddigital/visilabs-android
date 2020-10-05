@@ -12,7 +12,7 @@ ext {
     siteUrl = 'http://visilabs.com/'
     gitUrl = 'http://visilabs.com/'
 
-    libraryVersion = '3.2.0'
+    libraryVersion = '4.0.0'
 
     developerId = 'visilabs'
     developerName = 'Visilabs'
