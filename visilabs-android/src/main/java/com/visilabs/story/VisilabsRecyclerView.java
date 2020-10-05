@@ -45,7 +45,7 @@ public class VisilabsRecyclerView extends RecyclerView {
         }
     }
 
-    public void setStoryActionId(Context context, String actionId,StoryItemClickListener storyItemClickListener) {
+    public void setStoryActionId(Context context, String actionId, StoryItemClickListener storyItemClickListener) {
         this.storyItemClickListener = storyItemClickListener;
         VisilabsActionRequest visilabsActionRequest;
         try {
@@ -83,7 +83,9 @@ public class VisilabsRecyclerView extends RecyclerView {
         setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter = new VisilabsStoryLookingBannerAdapter(context, storyItemClickListener);
         setHasFixedSize(true);
-        visilabsStoryLookingBannerAdapter.setStoryItem(visilabsStoryResponse);
-        setAdapter(visilabsStoryLookingBannerAdapter);
+        if (visilabsStoryResponse.getStory().size() > 0) {
+            visilabsStoryLookingBannerAdapter.setStoryItem(visilabsStoryResponse);
+            setAdapter(visilabsStoryLookingBannerAdapter);
+        }
     }
 }
