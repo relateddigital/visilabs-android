@@ -5,7 +5,7 @@
 
 # Latest Version 
 
-***July 23, 2020*** - [Visilabs v3.2.0](https://github.com/relateddigital/visilabs-android/releases) 
+***October 6, 2020*** - [Visilabs v3.2.0](https://github.com/relateddigital/visilabs-android/releases) 
 
 # Latest Version [![Build Status](https://travis-ci.com/relateddigital/visilabs-android.svg?branch=master)](https://travis-ci.com/relateddigital/visilabs-android)
 
