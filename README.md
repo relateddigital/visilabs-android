@@ -28,7 +28,7 @@ The Visilabs Android Sdk is a java implementation of an Android client for Visil
 Add Visilabs to the ```dependencies``` in app/build.gradle.
 
 ```java
-implementation "com.visilabs.android:visilabs-android:3.2.0
+implementation "com.visilabs.android:visilabs-android:4.0.0
 ```
 This version uses AndroidX
 
