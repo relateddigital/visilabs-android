@@ -65,7 +65,10 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
                 String storyLink = visilabsStoryResponse.getStory().get(0).getActiondata().getStories().get(position).getLink();
                 Visilabs.CallAPI().trackStoryClick(visilabsStoryResponse.getStory().get(0).getActiondata().getReport().getClick());
-                storyItemClickListener.storyItemClicked(storyLink);
+
+                if (storyItemClickListener != null) {
+                    storyItemClickListener.storyItemClicked(storyLink);
+                }
             }
         });
 

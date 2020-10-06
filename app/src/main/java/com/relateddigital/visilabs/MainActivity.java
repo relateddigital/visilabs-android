@@ -47,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        visilabsRecyclerView.setStoryAction(getApplicationContext(), storyItemClickListener);
+       visilabsRecyclerView.setStoryAction(getApplicationContext(), storyItemClickListener);
+
+     //   visilabsRecyclerView.setStoryActionId(getApplicationContext(), "250", null);
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-sdk");
