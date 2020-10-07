@@ -4,7 +4,7 @@ import com.visilabs.story.model.storylookingbanner.Story;
 
 import java.util.List;
 
-public class VisilabsStoryLookingBanner {
+public class VisilabsStoryLookingBannerResponse {
     private String capping;
 
     private int VERSION;

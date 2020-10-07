@@ -4,7 +4,7 @@ package com.visilabs.story.model.skinbased;
 
 import java.util.List;
 
-public class VisilabsSkinBased {
+public class VisilabsSkinBasedResponse {
     private String capping;
 
     private int VERSION;
