@@ -17,13 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
-import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 
 import com.visilabs.story.model.ExtendedProps;
 import com.visilabs.story.model.StoryItemClickListener;
-import com.visilabs.util.StringUtils;
-import com.visilabs.story.model.storylookingbanner.VisilabsStoryLookingBanner;
+import com.visilabs.story.model.storylookingbanner.VisilabsStoryLookingBannerResponse;
 import com.visilabs.util.VisilabsConstant;
 
 import java.net.URISyntaxException;
@@ -34,11 +32,10 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
     //test
     Context context;
-    VisilabsStoryResponse visilabsStoryResponse;
 
     StoryItemClickListener storyItemClickListener;
 
-    VisilabsStoryLookingBanner storyLookingBanner;
+    VisilabsStoryLookingBannerResponse storyLookingBanner;
 
     String extendsProps;
 
@@ -122,7 +119,7 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         return storyLookingBanner.getStory().get(0).getActiondata().getStories().size();
     }
 
-    public void setStoryList(VisilabsStoryLookingBanner storyLookingBanner, String extendsProps) {
+    public void setStoryList(VisilabsStoryLookingBannerResponse storyLookingBanner, String extendsProps) {
         this.extendsProps = extendsProps;
         this.storyLookingBanner = storyLookingBanner;
     }
