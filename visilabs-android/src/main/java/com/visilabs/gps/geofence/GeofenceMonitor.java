@@ -1,6 +1,7 @@
 package com.visilabs.gps.geofence;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -201,7 +202,7 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 final PendingIntent geoFenceIntent = GeoFencesUtils.getTransitionPendingIntent(context);
-                PendingResult<Status> result = LocationServices.GeofencingApi.addGeofences(googleApiClient, getAddGeofencingRequest(geofences), geoFenceIntent);
+                @SuppressLint("MissingPermission") PendingResult<Status> result = LocationServices.GeofencingApi.addGeofences(googleApiClient, getAddGeofencingRequest(geofences), geoFenceIntent);
                 result.setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
@@ -220,6 +221,7 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
         }
     }
 
+    @SuppressLint("MissingPermission")
     public void setMediumPowerGPS() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED)

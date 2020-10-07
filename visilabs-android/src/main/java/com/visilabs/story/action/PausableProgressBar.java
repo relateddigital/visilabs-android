@@ -17,7 +17,6 @@ import com.visilabs.android.R;
 
 final class PausableProgressBar extends FrameLayout {
 
-
     private static final int DEFAULT_PROGRESS_DURATION = 2000;
 
     private View frontProgressView;
