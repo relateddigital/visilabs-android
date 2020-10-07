@@ -1,6 +1,7 @@
 package com.visilabs.gps.manager;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -77,6 +78,7 @@ public class GpsManagerMoreThanOreo {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this.application);
     }
 
+    @SuppressLint("MissingPermission")
     public void startGpsService() {
 
         boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(this.application, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
@@ -330,6 +332,7 @@ public class GpsManagerMoreThanOreo {
         return builder.build();
     }
 
+    @SuppressLint("MissingPermission")
     private void addGeofences(final List<VisilabsGeoFenceEntity> geoFencesToAdd) {
          List<Geofence> geofences = new ArrayList<>();
         for (VisilabsGeoFenceEntity geoFenceEntity : geoFencesToAdd) {
@@ -373,5 +376,9 @@ public class GpsManagerMoreThanOreo {
             position2 = object2.distance;
             return Double.compare(position1, position2);
         }
+    }
+
+    public Location getLastKnownLocation() {
+        return lastKnownLocation;
     }
 }

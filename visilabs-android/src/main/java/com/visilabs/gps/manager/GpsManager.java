@@ -269,8 +269,6 @@ public class GpsManager {
 
     }
 
-
-
     public IVisilabsGeofenceListener getListener() {
         return geofenceListener;
     }
@@ -284,6 +282,10 @@ public class GpsManager {
             position2 = object2.distance;
             return Double.compare(position1, position2);
         }
+    }
+
+    public Location getLastKnownLocation() {
+        return lastKnownLocation;
     }
 }
 

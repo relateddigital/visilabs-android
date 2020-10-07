@@ -12,7 +12,9 @@ import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsGeofenceRequest;
 import com.visilabs.api.VisilabsCallback;
+import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
 import com.visilabs.gps.manager.GpsManager;
+import com.visilabs.gps.util.GeoFencesUtils;
 import com.visilabs.json.JSONArray;
 
 import java.util.List;
@@ -28,6 +30,10 @@ public class GeofenceTransitionsReceiver extends BroadcastReceiver {
 
         Visilabs.CallAPI().startGpsManager();
 
+        setGeofenceEvent(intent);
+    }
+
+    private void setGeofenceEvent(Intent intent) {
         GeofencingEvent geoFenceEvent = GeofencingEvent.fromIntent(intent);
         if (geoFenceEvent.hasError()) {
             int errorCode = geoFenceEvent.getErrorCode();
@@ -38,29 +44,31 @@ public class GeofenceTransitionsReceiver extends BroadcastReceiver {
 
             if (gpsManager != null) {
                 List<Geofence> triggerList = geoFenceEvent.getTriggeringGeofences();
+                Geofence closestGeofence = getClosestTriggeredGoefence(gpsManager, triggerList);
 
-                for (Geofence geofence : triggerList) {
-                    try {
-                        geoFenceTriggered(geofence.getRequestId(), geoFenceEvent.getGeofenceTransition());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    if (gpsManager.getListener() != null)
-                        gpsManager.getListener().onTrigger(geofence);
+                try {
+                    geoFenceTriggered(closestGeofence.getRequestId(), geoFenceEvent.getGeofenceTransition(), gpsManager.getLastKnownLocation().getLatitude(), gpsManager.getLastKnownLocation().getLongitude());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                if (gpsManager.getListener() != null)
+                    gpsManager.getListener().onTrigger(closestGeofence);
+
             }
         }
     }
 
-    private void geoFenceTriggered(String geofence_guid, int transition) throws Exception {
+    private void geoFenceTriggered(String geofence_guid, int transition, double lati, double longi) throws Exception {
         Log.i(TAG, geofence_guid);
 
         VisilabsGeofenceRequest request = new VisilabsGeofenceRequest(Visilabs.CallAPI().getContext());
         request.setAction("process");
         request.setApiVer("Android");
+        request.setLatitude(lati);
+        request.setLongitude(longi);
 
         String[] geofenceParts = geofence_guid.split("_");
-        if (geofenceParts != null && geofenceParts.length > 2) {
+        if (geofenceParts.length > 2) {
             request.setActionID(geofenceParts[0]);
             request.setGeofenceID(geofenceParts[2]);
 
@@ -68,18 +76,39 @@ public class GeofenceTransitionsReceiver extends BroadcastReceiver {
                 @Override
                 public void success(VisilabsResponse response) {
                     String rawResponse = response.getRawResponse();
-                    Log.i("Geofence Response", rawResponse);
+                    Log.i(TAG, rawResponse);
                 }
 
                 @Override
                 public void fail(VisilabsResponse response) {
                     String rawResponse = response.getRawResponse();
-                    JSONArray array = response.getArray();
-
+                    Log.e(TAG, rawResponse);
                 }
             };
             request.executeAsync(callback);
         }
+    }
 
+    private Geofence getClosestTriggeredGoefence(GpsManager gpsManager, List<Geofence> triggerList) {
+        if (triggerList.size() == 0) {
+            return null;
+        } else if (triggerList.size() == 1) {
+            return triggerList.get(0);
+        } else {
+
+            Geofence triggeredGeofence = null;
+            double minDistance = Double.MAX_VALUE;
+            for (Geofence geofence : triggerList) {
+                for (VisilabsGeoFenceEntity geoFenceEntity : gpsManager.activeGeoFenceEntityList) {
+                    double distance = GeoFencesUtils.haversine(gpsManager.getLastKnownLocation().getLatitude(), gpsManager.getLastKnownLocation().getLongitude(), Double.parseDouble(geoFenceEntity.lat), Double.parseDouble(geoFenceEntity.lng));
+                    if (distance < minDistance) {
+                        triggeredGeofence = geofence;
+                        minDistance = distance;
+                        break;
+                    }
+                }
+            }
+            return triggeredGeofence;
+        }
     }
 }
