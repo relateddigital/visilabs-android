@@ -2,9 +2,10 @@ package com.visilabs.story.model.skinbased;
 
 
 
+import java.io.Serializable;
 import java.util.List;
 
-public class VisilabsSkinBasedResponse {
+public class VisilabsSkinBasedResponse implements Serializable {
     private String capping;
 
     private int VERSION;

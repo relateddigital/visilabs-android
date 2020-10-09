@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.util.VisilabsConstant;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -78,6 +80,7 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
             public void onClick(View v) {
                 storyItemClickListener.storyItemClicked("");
                 Intent intent = new Intent(context, PreviewActivity.class);
+                intent.putExtra("bundle", visilabsSkinBasedResponse.getStory().get(0).getActiondata());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }

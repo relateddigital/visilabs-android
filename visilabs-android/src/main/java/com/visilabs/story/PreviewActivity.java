@@ -2,8 +2,9 @@ package com.visilabs.story;
 
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
+
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,27 +12,22 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
 import com.visilabs.android.R;
 import com.visilabs.story.action.StoriesProgressView;
+import com.visilabs.story.model.skinbased.Actiondata;
+import com.visilabs.story.model.skinbased.Stories;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 
 public class PreviewActivity extends AppCompatActivity implements StoriesProgressView.StoriesListener {
 
-    private static final int PROGRESS_COUNT = 6;
     private StoriesProgressView storiesProgressView;
     private ImageView ivStory;
 
     private int counter = 0;
-    private final int[] resources = new int[]{
-            R.drawable.sample1,
-            R.drawable.sample2,
-            R.drawable.sample3,
-            R.drawable.sample4,
-            R.drawable.sample5,
-            R.drawable.sample6,
-    };
 
     private final long[] durations = new long[]{
             500L, 1000L, 1500L, 4000L, 5000L, 1000,
@@ -39,6 +35,10 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
 
     long pressTime = 0L;
     long limit = 500L;
+
+    Actiondata actiondata;
+
+    GestureDetector gestureDetector;
 
     View.OnTouchListener onTouchListener;
 
@@ -48,7 +48,13 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_preview);
 
-        final GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            actiondata = (Actiondata) getIntent().getSerializableExtra("bundle"); //Obtaining data
+        }
+
+        gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
 
         onTouchListener = new View.OnTouchListener() {
             @Override
@@ -101,7 +107,7 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
     private void setStoryView() {
 
         storiesProgressView = findViewById(R.id.stories);
-        storiesProgressView.setStoriesCount(PROGRESS_COUNT);
+        storiesProgressView.setStoriesCount(actiondata.getStories().size());
         storiesProgressView.setStoryDuration(3000L);
         // or
         // storiesProgressView.setStoriesCountWithDurations(durations);
@@ -110,11 +116,11 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
 
         storiesProgressView.startStories(counter);
         ivStory = findViewById(R.id.iv_story);
-        ivStory.setImageResource(resources[counter]);
+        Picasso.get().load(actiondata.getStories().get(counter).getThumbnail()).into(ivStory);
     }
 
     private void bindSkipView() {
-     View skip = findViewById(R.id.skip);
+        View skip = findViewById(R.id.skip);
 
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,13 +146,14 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
 
     @Override
     public void onNext() {
-        ivStory.setImageResource(resources[++counter]);
+        Picasso.get().load(actiondata.getStories().get(++counter).getThumbnail()).into(ivStory);
+      //  ivStory.setImageResource(resources[++counter]);
     }
 
     @Override
     public void onPrev() {
         if ((counter - 1) < 0) return;
-        ivStory.setImageResource(resources[--counter]);
+        Picasso.get().load(actiondata.getStories().get(--counter).getThumbnail()).into(ivStory);
     }
 
     @Override

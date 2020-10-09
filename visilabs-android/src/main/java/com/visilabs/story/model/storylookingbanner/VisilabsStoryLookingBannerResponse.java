@@ -2,9 +2,10 @@ package com.visilabs.story.model.storylookingbanner;
 
 import com.visilabs.story.model.storylookingbanner.Story;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class VisilabsStoryLookingBannerResponse {
+public class VisilabsStoryLookingBannerResponse implements Serializable {
     private String capping;
 
     private int VERSION;
