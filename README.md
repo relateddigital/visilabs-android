@@ -5,7 +5,7 @@
 
 # Latest Version 
 
-***July 23, 2020*** - [Visilabs v3.2.0](https://github.com/relateddigital/visilabs-android/releases) 
+***October 6, 2020*** - [Visilabs v4.0.0](https://github.com/relateddigital/visilabs-android/releases) 
 
 # Latest Version [![Build Status](https://travis-ci.com/relateddigital/visilabs-android.svg?branch=master)](https://travis-ci.com/relateddigital/visilabs-android)
 
@@ -28,7 +28,7 @@ The Visilabs Android Sdk is a java implementation of an Android client for Visil
 Add Visilabs to the ```dependencies``` in app/build.gradle.
 
 ```java
-implementation "com.visilabs.android:visilabs-android:3.2.0
+implementation "com.visilabs.android:visilabs-android:4.0.0
 ```
 This version uses AndroidX
 
@@ -36,69 +36,6 @@ This version uses AndroidX
 
 Mobile Tagging for Visilab and more information :  [Please check docs](https://relateddigital.atlassian.net/wiki/spaces/RMCKBT/pages/428802408/Android+-+API+Setup) 
 
-### In App Set Up
-
- ```java 
- Visilabs.CreateAPI(organizationID, siteID, "http://lgr.visilabs.net",
-                datasource, "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000);
-```
-You need to get the three paramaters from RMC web panel.
-
-organizationID
-siteID
-datasource
-
-To show in app message, you need to create an active in app target action on RMC web panel.
-After that please add code below to show in app message.
-
-    HashMap<String, String> parameters = new HashMap<>();
-                parameters.put("OM.exVisitorID", exVisitorId);
-                Visilabs.CallAPI().customEvent("android-visilab", parameters, MainActivity.this);                      
-
-
-<img src="https://github.com/relateddigital/visilabs-android/blob/master/inappnew.gif" alt="Euromessage Android Library" width="300" style="max-width:100%;">
-
-
-### Favorites Attributes 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    
-    
-    //requestAction() or requestActionId()
-      try {
-            VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
-            visilabsActionRequest.executeAsyncAction(getVisilabsCallback());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        }
-Later;         
-        
-    public VisilabsCallback getVisilabsCallback() {
-
-        return new VisilabsCallback() {
-            @Override
-            public void success(VisilabsResponse response) {
-                try {
-
-                    FavsResponse favsResponse = new Gson().fromJson(response.getRawResponse(), FavsResponse.class);
-
-                    String favBrands = favsResponse.getFavoriteAttributeAction()[0].getActiondata().getFavorites().getBrand()[0];
-                    Log.i("Favs 1.Brand", favBrands);
-
-                } catch (Exception ex) {
-                    Log.e("Error", ex.getMessage(), ex);
-                }
-            }
-
-            @Override
-            public void fail(VisilabsResponse response) {
-                Log.d("Error", response.getRawResponse());
-            }
-        };
-    }
         
         
 ### Sample Applications 
