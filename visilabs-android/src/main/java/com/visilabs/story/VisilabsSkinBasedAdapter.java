@@ -78,23 +78,14 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         storyHolder.civStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                storyItemClickListener.storyItemClicked("");
-                Intent intent = new Intent(context, PreviewActivity.class);
-                intent.putExtra("bundle", visilabsSkinBasedResponse.getStory().get(0).getActiondata());
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                clickEvent(position);
             }
         });
 
         storyHolder.ivStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                storyItemClickListener.storyItemClicked("");
-                Intent intent = new Intent(context, PreviewActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("item", visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getItems());
-                context.startActivity(intent);
+                clickEvent(position);
             }
         });
 
@@ -118,6 +109,18 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
                     storyHolder.setRectangleViewProperties(rectangleBorderRadius);
                     break;
             }
+        }
+    }
+
+    private void clickEvent(int position) {
+
+        storyItemClickListener.storyItemClicked("");
+
+        if (visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getItems().size() != 0) {
+            Intent intent = new Intent(context, PreviewActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("story", visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position));
+            context.startActivity(intent);
         }
     }
 

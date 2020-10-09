@@ -1,5 +1,6 @@
 package com.visilabs.story;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -15,10 +16,8 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 import com.visilabs.android.R;
 import com.visilabs.story.action.StoriesProgressView;
-import com.visilabs.story.model.skinbased.Actiondata;
 import com.visilabs.story.model.skinbased.Stories;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 
@@ -29,15 +28,16 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
 
     private int counter = 0;
 
-    private final long[] durations = new long[]{
-            500L, 1000L, 1500L, 4000L, 5000L, 1000,
-    };
-
     long pressTime = 0L;
     long limit = 500L;
 
-    Actiondata actiondata;
+    Stories stories;
 
+    Button btnStory;
+
+    View reverse, skip;
+
+    ImageView ivClose, ivCover;
     GestureDetector gestureDetector;
 
     View.OnTouchListener onTouchListener;
@@ -48,12 +48,14 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_preview);
 
+        stories = (Stories) getIntent().getSerializableExtra("story");
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            actiondata = (Actiondata) getIntent().getSerializableExtra("bundle"); //Obtaining data
-        }
+        setTouchEvents();
 
+        setInitialView();
+    }
+
+    private void setTouchEvents() {
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
 
         onTouchListener = new View.OnTouchListener() {
@@ -76,13 +78,29 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
                 return gestureDetector.onTouchEvent(event);
             }
         };
+    }
+
+    private void setInitialView() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
             getSupportActionBar().hide();
         }
 
-        ImageView ivClose = findViewById(R.id.ivClose);
+        ivCover = findViewById(R.id.civ_cover);
+        ivClose = findViewById(R.id.ivClose);
+        btnStory = findViewById(R.id.btn_story);
+        ivStory = findViewById(R.id.iv_story);
+        storiesProgressView = findViewById(R.id.stories);
+        reverse = findViewById(R.id.reverse);
+        skip = findViewById(R.id.skip);
+
+        storiesProgressView.setStoriesCount(stories.getItems().size());
+        storiesProgressView.setStoryDuration(3000L);
+        storiesProgressView.setStoriesListener(this);
+        storiesProgressView.startStories(counter);
+
+        Picasso.get().load(stories.getThumbnail()).into(ivCover);
         ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,37 +108,13 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
             }
         });
 
-        setStoryView();
+        setStoryItem(counter);
         bindReverseView();
         bindSkipView();
 
-        View exit = findViewById(R.id.exit);
-
-        Button btnStory = findViewById(R.id.btn_story);
-        btnStory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-    }
-
-    private void setStoryView() {
-
-        storiesProgressView = findViewById(R.id.stories);
-        storiesProgressView.setStoriesCount(actiondata.getStories().size());
-        storiesProgressView.setStoryDuration(3000L);
-        // or
-        // storiesProgressView.setStoriesCountWithDurations(durations);
-        storiesProgressView.setStoriesListener(this);
-//        storiesProgressView.startStories();
-
-        storiesProgressView.startStories(counter);
-        ivStory = findViewById(R.id.iv_story);
-        Picasso.get().load(actiondata.getStories().get(counter).getThumbnail()).into(ivStory);
     }
 
     private void bindSkipView() {
-        View skip = findViewById(R.id.skip);
 
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,7 +127,6 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
     }
 
     private void bindReverseView() {
-        View reverse = findViewById(R.id.reverse);
         reverse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,14 +139,16 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
 
     @Override
     public void onNext() {
-        Picasso.get().load(actiondata.getStories().get(++counter).getThumbnail()).into(ivStory);
-      //  ivStory.setImageResource(resources[++counter]);
+        setStoryItem(++counter);
+
     }
 
     @Override
     public void onPrev() {
+
         if ((counter - 1) < 0) return;
-        Picasso.get().load(actiondata.getStories().get(--counter).getThumbnail()).into(ivStory);
+
+        setStoryItem(--counter);
     }
 
     @Override
@@ -165,5 +160,12 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
     protected void onDestroy() {
         storiesProgressView.destroy();
         super.onDestroy();
+    }
+
+    private void setStoryItem(int i) {
+            Picasso.get().load(stories.getItems().get(i).getFileSrc()).into(ivStory);
+            btnStory.setText(stories.getItems().get(i).getButtonText());
+            btnStory.setTextColor(Color.parseColor(stories.getItems().get(i).getButtonTextColor()));
+            btnStory.setBackgroundColor(Color.parseColor(stories.getItems().get(i).getButtonColor()));
     }
 }

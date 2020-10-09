@@ -2,6 +2,7 @@ package com.visilabs.story.model.skinbased;
 
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Stories implements Serializable
 {
@@ -9,7 +10,7 @@ public class Stories implements Serializable
 
     private String title;
 
-    private Items[] items;
+    private List<Items> items;
 
     public String getThumbnail ()
     {
@@ -31,12 +32,12 @@ public class Stories implements Serializable
         this.title = title;
     }
 
-    public Items[] getItems ()
+    public List<Items> getItems ()
     {
         return items;
     }
 
-    public void setItems (Items[] items)
+    public void setItems (List<Items> items)
     {
         this.items = items;
     }

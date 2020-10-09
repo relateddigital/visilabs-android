@@ -41,7 +41,7 @@ public class VisilabsRecyclerView extends RecyclerView {
             "            \"thumbnail\": \"https://cdn.jpegmini.com/user/images/slider_puffin_jpegmini_mobile.jpg\",\n" +
             "            \"items\": [\n" +
             "              {\n" +
-            "                \"fileSrc\": \"http://testapp.relateddigital.com/cdnpath/img/Story/stories1.jpg\",\n" +
+            "                \"fileSrc\": \"https://nenedir.com.tr/wp-content/uploads/2018/11/reklam.jpg\",\n" +
             "                \"filePreview\": \"\",\n" +
             "                \"buttonText\": \"Visit my Portfolio\",\n" +
             "                \"buttonTextColor\": \"#7d1212\",\n" +
@@ -52,9 +52,11 @@ public class VisilabsRecyclerView extends RecyclerView {
             "                \"targetUrlOriginal\": \"http://visilabs.com/?title=Ramon\"\n" +
             "              },\n" +
             "              {\n" +
-            "                \"fileSrc\": \"http://testapp.relateddigital.com/cdnpath/img/Story/stories2.mp4\",\n" +
+            "                \"fileSrc\": \"https://digitalage.com.tr/wp-content/uploads/2017/06/Sosyal-medya-reklam-modelleri.jpg\",\n" +
             "                \"filePreview\": \"\",\n" +
-            "                \"buttonText\": \"\",\n" +
+            "                \"buttonText\": \"test test Portfolio\",\n" +
+            "                \"buttonTextColor\": \"#7d1212\",\n" +
+            "                \"buttonColor\": \"#998686\",\n" +
             "                \"fileType\": \"video\",\n" +
             "                \"displayTime\": 0,\n" +
             "                \"targetUrl\": \"\",\n" +
@@ -65,9 +67,7 @@ public class VisilabsRecyclerView extends RecyclerView {
             "          {\n" +
             "            \"title\": \"Rivers Cuomo\",\n" +
             "            \"thumbnail\": \"https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg\",\n" +
-            "            \"items\": [\n" +
-            "              {\n" +
-            "              }]\n" +
+            "            \"items\": []\n" +
             "          }\n" +
             "        ],\n" +
             "        \"taTemplate\": \"skin_based\",\n" +

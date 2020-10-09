@@ -35,11 +35,13 @@
     <View
         android:id="@+id/exit"
         android:layout_width="match_parent"
-        android:layout_gravity="bottom"
-        android:layout_height="150dp"/>
+        android:layout_height="150dp"
+        android:layout_gravity="bottom" />
+
     <Button
         android:id="@+id/btn_story"
         android:layout_width="wrap_content"
+        android:padding="5dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_marginBottom="20dp"
