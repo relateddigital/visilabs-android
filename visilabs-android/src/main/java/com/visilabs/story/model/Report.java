@@ -1,6 +1,8 @@
 package com.visilabs.story.model;
 
-public class Report {
+import java.io.Serializable;
+
+public class Report implements Serializable {
     public String impression;
     public String click;
 

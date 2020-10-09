@@ -2,9 +2,10 @@ package com.visilabs.story.model.storylookingbanner;
 
 import com.visilabs.story.model.Report;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Actiondata {
+public class Actiondata implements Serializable {
     private List<Stories> stories;
 
     private String taTemplate;

@@ -1,8 +1,9 @@
 package com.visilabs.story.model.skinbased;
 
 
-public class Items
-{
+import java.io.Serializable;
+
+public class Items implements Serializable {
     private String targetUrlOriginal;
 
     private String fileSrc;
@@ -21,100 +22,81 @@ public class Items
 
     private String fileType;
 
-    public String getTargetUrlOriginal ()
-    {
+    public String getTargetUrlOriginal() {
         return targetUrlOriginal;
     }
 
-    public void setTargetUrlOriginal (String targetUrlOriginal)
-    {
+    public void setTargetUrlOriginal(String targetUrlOriginal) {
         this.targetUrlOriginal = targetUrlOriginal;
     }
 
-    public String getFileSrc ()
-    {
+    public String getFileSrc() {
         return fileSrc;
     }
 
-    public void setFileSrc (String fileSrc)
-    {
+    public void setFileSrc(String fileSrc) {
         this.fileSrc = fileSrc;
     }
 
-    public String getButtonText ()
-    {
+    public String getButtonText() {
         return buttonText;
     }
 
-    public void setButtonText (String buttonText)
-    {
+    public void setButtonText(String buttonText) {
         this.buttonText = buttonText;
     }
 
-    public String getDisplayTime ()
-    {
+    public String getDisplayTime() {
         return displayTime;
     }
 
-    public void setDisplayTime (String displayTime)
-    {
+    public void setDisplayTime(String displayTime) {
         this.displayTime = displayTime;
     }
 
-    public String getButtonColor ()
-    {
+    public String getButtonColor() {
         return buttonColor;
     }
 
-    public void setButtonColor (String buttonColor)
-    {
+    public void setButtonColor(String buttonColor) {
         this.buttonColor = buttonColor;
     }
 
-    public String getFilePreview ()
-    {
+    public String getFilePreview() {
         return filePreview;
     }
 
-    public void setFilePreview (String filePreview)
-    {
+    public void setFilePreview(String filePreview) {
         this.filePreview = filePreview;
     }
 
-    public String getButtonTextColor ()
-    {
+    public String getButtonTextColor() {
         return buttonTextColor;
     }
 
-    public void setButtonTextColor (String buttonTextColor)
-    {
+    public void setButtonTextColor(String buttonTextColor) {
         this.buttonTextColor = buttonTextColor;
     }
 
-    public String getTargetUrl ()
-    {
+    public String getTargetUrl() {
         return targetUrl;
     }
 
-    public void setTargetUrl (String targetUrl)
-    {
+    public void setTargetUrl(String targetUrl) {
         this.targetUrl = targetUrl;
     }
 
-    public String getFileType ()
-    {
+    public String getFileType() {
         return fileType;
     }
 
-    public void setFileType (String fileType)
-    {
+    public void setFileType(String fileType) {
         this.fileType = fileType;
     }
 
     @Override
-    public String toString()
-    {
-        return "Items [targetUrlOriginal = "+targetUrlOriginal+", fileSrc = "+fileSrc+", buttonText = "+buttonText+", displayTime = "+displayTime+", buttonColor = "+buttonColor+", filePreview = "+filePreview+", buttonTextColor = "+buttonTextColor+", targetUrl = "+targetUrl+", fileType = "+fileType+"]";
+    public String toString() {
+        return "Items [targetUrlOriginal = " + targetUrlOriginal + ", fileSrc = " + fileSrc + ", buttonText = " + buttonText + ", displayTime = " + displayTime + ", buttonColor = " + buttonColor + ", filePreview = " + filePreview + ", buttonTextColor = " + buttonTextColor + ", targetUrl = " + targetUrl + ", fileType = " + fileType + "]";
     }
 }
 

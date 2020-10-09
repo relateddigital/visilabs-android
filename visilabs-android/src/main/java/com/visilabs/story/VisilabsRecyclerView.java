@@ -64,7 +64,7 @@ public class VisilabsRecyclerView extends RecyclerView {
             "          },\n" +
             "          {\n" +
             "            \"title\": \"Rivers Cuomo\",\n" +
-            "            \"thumbnail\": \"https://cdn.jpegmini.com/user/images/slider_puffin_jpegmini_mobile.jpg\",\n" +
+            "            \"thumbnail\": \"https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg\",\n" +
             "            \"items\": [\n" +
             "              {\n" +
             "              }]\n" +
@@ -123,7 +123,7 @@ public class VisilabsRecyclerView extends RecyclerView {
                 try {
                     VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse = new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
 
-                    if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals("story_looking_banners")) {
+                    if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals("story_looking_bannersz")) {
 
                         VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter = new VisilabsStoryLookingBannerAdapter(context, storyItemClickListener);
 

@@ -1,7 +1,9 @@
 package com.visilabs.story.model.skinbased;
 
 
-public class Stories
+import java.io.Serializable;
+
+public class Stories implements Serializable
 {
     private String thumbnail;
 

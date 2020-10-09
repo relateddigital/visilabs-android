@@ -1,8 +1,9 @@
 package com.visilabs.story.model.storylookingbanner;
 
 
-public class Story
-{
+import java.io.Serializable;
+
+public class Story implements Serializable {
     private String actid;
 
     private String title;
@@ -11,28 +12,35 @@ public class Story
 
     private Actiondata actiondata;
 
-    public void setActid(String actid){
+    public void setActid(String actid) {
         this.actid = actid;
     }
-    public String getActid(){
+
+    public String getActid() {
         return this.actid;
     }
-    public void setTitle(String title){
+
+    public void setTitle(String title) {
         this.title = title;
     }
-    public String getTitle(){
+
+    public String getTitle() {
         return this.title;
     }
-    public void setActiontype(String actiontype){
+
+    public void setActiontype(String actiontype) {
         this.actiontype = actiontype;
     }
-    public String getActiontype(){
+
+    public String getActiontype() {
         return this.actiontype;
     }
-    public void setActiondata(Actiondata Actiondata){
+
+    public void setActiondata(Actiondata Actiondata) {
         this.actiondata = actiondata;
     }
-    public Actiondata getActiondata(){
+
+    public Actiondata getActiondata() {
         return this.actiondata;
     }
 }

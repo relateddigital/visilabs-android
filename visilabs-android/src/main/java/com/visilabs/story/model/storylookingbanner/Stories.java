@@ -1,6 +1,8 @@
 package com.visilabs.story.model.storylookingbanner;
 
-public class Stories {
+import java.io.Serializable;
+
+public class Stories implements Serializable {
     private String title;
 
     private String smallImg;

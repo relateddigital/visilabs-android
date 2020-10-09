@@ -1,8 +1,9 @@
 package com.visilabs.story.model.skinbased;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class SkinBased {
+public class SkinBased implements Serializable {
 
     List<Stories> stories;
 
