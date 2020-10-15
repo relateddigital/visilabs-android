@@ -67,7 +67,30 @@ public class VisilabsRecyclerView extends RecyclerView {
             "          {\n" +
             "            \"title\": \"Rivers Cuomo\",\n" +
             "            \"thumbnail\": \"https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg\",\n" +
-            "            \"items\": []\n" +
+            "            \"items\": [\n" +
+            "              {\n" +
+            "                \"fileSrc\": \"https://i.pinimg.com/originals/64/20/4e/64204e53a21f9e4cf8b1bf2a929b528b.jpg\",\n" +
+            "                \"filePreview\": \"\",\n" +
+            "                \"buttonText\": \"Visit my Portfolio\",\n" +
+            "                \"buttonTextColor\": \"#7d1212\",\n" +
+            "                \"buttonColor\": \"#998686\",\n" +
+            "                \"fileType\": \"photo\",\n" +
+            "                \"displayTime\": 3,\n" +
+            "                \"targetUrl\": \"http://visilabs.com/?title=Ramon&OM.zn=acttype-32&OM.zpc=act-160\",\n" +
+            "                \"targetUrlOriginal\": \"http://visilabs.com/?title=Ramon\"\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"fileSrc\": \"https://i.pinimg.com/564x/2d/1e/52/2d1e5289f3f5c52c80159fe8c99d07a6.jpg\",\n" +
+            "                \"filePreview\": \"\",\n" +
+            "                \"buttonText\": \"test test Portfolio\",\n" +
+            "                \"buttonTextColor\": \"#7d1212\",\n" +
+            "                \"buttonColor\": \"#998686\",\n" +
+            "                \"fileType\": \"video\",\n" +
+            "                \"displayTime\": 0,\n" +
+            "                \"targetUrl\": \"\",\n" +
+            "                \"targetUrlOriginal\": \"\"\n" +
+            "              }\n" +
+            "            ]\n" +
             "          }\n" +
             "        ],\n" +
             "        \"taTemplate\": \"skin_based\",\n" +

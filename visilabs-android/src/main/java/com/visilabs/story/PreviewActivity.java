@@ -1,5 +1,6 @@
 package com.visilabs.story;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 import com.visilabs.android.R;
 import com.visilabs.story.action.StoriesProgressView;
+import com.visilabs.story.model.skinbased.Actiondata;
+import com.visilabs.story.model.skinbased.Items;
 import com.visilabs.story.model.skinbased.Stories;
 
 import java.util.Objects;
@@ -32,6 +35,7 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
     long limit = 500L;
 
     Stories stories;
+    Actiondata actiondata;
 
     Button btnStory;
 
@@ -39,17 +43,21 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
 
     ImageView ivClose, ivCover;
     GestureDetector gestureDetector;
-
+    int position;
     View.OnTouchListener onTouchListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.anim_fade_in, R.anim.anim_fade_out);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_preview);
 
         stories = (Stories) getIntent().getSerializableExtra("story");
 
+        actiondata = (Actiondata) getIntent().getSerializableExtra("action");
+
+        position = getIntent().getExtras().getInt("position");
         setTouchEvents();
 
         setInitialView();
@@ -104,11 +112,12 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
         ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 onBackPressed();
             }
         });
 
-        setStoryItem(counter);
+        setStoryItem(counter, stories);
         bindReverseView();
         bindSkipView();
 
@@ -139,7 +148,7 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
 
     @Override
     public void onNext() {
-        setStoryItem(++counter);
+        setStoryItem(++counter, stories);
 
     }
 
@@ -148,12 +157,44 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
 
         if ((counter - 1) < 0) return;
 
-        setStoryItem(--counter);
+        setStoryItem(--counter, stories);
     }
 
     @Override
     public void onComplete() {
-        onBackPressed();
+
+        position = position + 1;
+
+
+        if (position < actiondata.getStories().size()) {
+
+            Intent intent = new Intent(getApplicationContext(), PreviewActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("position", position);
+            intent.putExtra("action", actiondata);
+            intent.putExtra("story", actiondata.getStories().get(position));
+            startActivity(intent);
+        } else {
+            onBackPressed();
+        }
+
+        /*
+        position = position+1;
+
+
+        if(position<actiondata.getStories().size()) {
+
+            counter = 0;
+            storiesProgressView.setStoriesCount(actiondata.getStories().get(position).getItems().size());
+            storiesProgressView.setStoryDuration(3000L);
+            storiesProgressView.startStories(counter);
+
+            setStoryItem(counter, actiondata.getStories().get(position));
+            stories = actiondata.getStories().get(position);
+
+        } else {
+          onBackPressed();
+        }*/
     }
 
     @Override
@@ -162,10 +203,23 @@ public class PreviewActivity extends AppCompatActivity implements StoriesProgres
         super.onDestroy();
     }
 
-    private void setStoryItem(int i) {
-            Picasso.get().load(stories.getItems().get(i).getFileSrc()).into(ivStory);
-            btnStory.setText(stories.getItems().get(i).getButtonText());
-            btnStory.setTextColor(Color.parseColor(stories.getItems().get(i).getButtonTextColor()));
-            btnStory.setBackgroundColor(Color.parseColor(stories.getItems().get(i).getButtonColor()));
+    private void setStoryItem(int i, Stories stories) {
+        Picasso.get().load(stories.getItems().get(i).getFileSrc()).into(ivStory);
+        btnStory.setText(stories.getItems().get(i).getButtonText());
+        btnStory.setTextColor(Color.parseColor(stories.getItems().get(i).getButtonTextColor()));
+        btnStory.setBackgroundColor(Color.parseColor(stories.getItems().get(i).getButtonColor()));
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        Intent intent = null;
+        try {
+            intent = new Intent(this,
+                    Class.forName("com.relateddigital.visilabs.MainActivity"));
+            startActivity(intent);
+        } catch (ClassNotFoundException e) {
+
+        }
     }
 }

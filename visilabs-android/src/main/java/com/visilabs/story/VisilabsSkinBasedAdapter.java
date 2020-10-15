@@ -119,6 +119,8 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         if (visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getItems().size() != 0) {
             Intent intent = new Intent(context, PreviewActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("position", position);
+            intent.putExtra("action", visilabsSkinBasedResponse.getStory().get(0).getActiondata());
             intent.putExtra("story", visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position));
             context.startActivity(intent);
         }
