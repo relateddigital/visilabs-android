@@ -133,9 +133,9 @@ public class VisilabsConstant {
 
     public static final String STORY_LOOKING_BANNER = "story_looking_banner";
     public static final String STORY_SKIN_BASED = "skin_based";
-    public static final String POSITION = "position";
+    public static final String STORY_ITEM_POSITION = "story_item_position";
+    public static final String STORY_POSITION = "position";
     public static final String ACTION_DATA = "action";
-    public static final String STORY = "story";
 
     private static final String LOG_TAG = "VisilabsConfig";
     public static final String FavoriteAttributeAction = "FavoriteAttributeAction";

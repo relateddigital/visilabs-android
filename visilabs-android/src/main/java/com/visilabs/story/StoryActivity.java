@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,10 +21,13 @@ import com.visilabs.android.R;
 import com.visilabs.story.action.StoriesProgressView;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.skinbased.Actiondata;
+import com.visilabs.story.model.skinbased.Items;
 import com.visilabs.story.model.skinbased.Stories;
 import com.visilabs.util.VisilabsConstant;
 
 import java.util.Objects;
+
+import okhttp3.internal.Util;
 
 
 public class StoryActivity extends AppCompatActivity implements StoriesProgressView.StoriesListener {
@@ -33,10 +35,8 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
     private StoriesProgressView storiesProgressView;
     private ImageView ivStory;
 
-    int counter;
+    int storyItemPosition;
 
-    private static final int SWIPE_THRESHOLD = 100;
-    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
     long pressTime = 0L;
     long limit = 500L;
 
@@ -52,13 +52,12 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
     TextView tvCover;
 
     GestureDetector gestureDetector;
-    int position;
+    int storyPosition;
     View.OnTouchListener onTouchListener;
 
     static StoryItemClickListener storyItemClickListener;
 
-
-    public static void setStoryItemClickListener(StoryItemClickListener mStoryItemClickListener){
+    public static void setStoryItemClickListener(StoryItemClickListener mStoryItemClickListener) {
         storyItemClickListener = mStoryItemClickListener;
     }
 
@@ -69,16 +68,12 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_preview);
 
-        stories = (Stories) getIntent().getSerializableExtra("story");
+        hideActionBar();
 
-        actiondata = (Actiondata) getIntent().getSerializableExtra("action");
-
-        position = getIntent().getExtras().getInt("position");
-
-        counter = getIntent().getExtras().getInt("counter");
-
-   //     storyItemClickListener = (StoryItemClickListener) getIntent().getSerializableExtra("listener");
-
+        actiondata = (Actiondata) getIntent().getSerializableExtra(VisilabsConstant.ACTION_DATA);
+        storyPosition = getIntent().getExtras().getInt(VisilabsConstant.STORY_POSITION);
+        storyItemPosition = getIntent().getExtras().getInt(VisilabsConstant.STORY_ITEM_POSITION);
+        stories = actiondata.getStories().get(storyPosition);
 
         setTouchEvents();
 
@@ -87,100 +82,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
 
     private void setTouchEvents() {
 
-        gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener() {
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                boolean result = false;
-                try {
-                    float diffY = e2.getY() - e1.getY();
-                    float diffX = e2.getX() - e1.getX();
-                    if (Math.abs(diffX) > Math.abs(diffY)) {
-                        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                            if (diffX > 0) {
-
-                                Log.e("flipping", "right");
-                                position = position + 1;
-
-                                if (position < actiondata.getStories().size()) {
-
-                                    Intent intent = new Intent(getApplicationContext(), StoryActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    intent.putExtra(VisilabsConstant.POSITION, position);
-                                    intent.putExtra(VisilabsConstant.ACTION_DATA, actiondata);
-                                    intent.putExtra("counter", 0);
-                                    intent.putExtra(VisilabsConstant.STORY, actiondata.getStories().get(position));
-                                    startActivity(intent);
-                                } else {
-                                    onBackPressed();
-                                }
-
-                            } else {
-                                Log.e("flipping", "left");
-
-                                position = position - 1;
-
-                                if (position < actiondata.getStories().size()) {
-
-                                    Intent intent = new Intent(getApplicationContext(), StoryActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    intent.putExtra(VisilabsConstant.POSITION, position);
-                                    intent.putExtra(VisilabsConstant.ACTION_DATA, actiondata);
-                                    intent.putExtra("counter", 0);
-                                    intent.putExtra(VisilabsConstant.STORY, actiondata.getStories().get(position));
-                                    startActivity(intent);
-                                } else {
-                                    onBackPressed();
-                                }
-                            }
-                            result = true;
-                        }
-                    } else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
-                        if (diffY > 0) {
-                            position = position + 1;
-
-                            Log.e("flipping", "bottom");
-
-
-                            if (position < actiondata.getStories().size()) {
-
-                                Intent intent = new Intent(getApplicationContext(), StoryActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.putExtra(VisilabsConstant.POSITION, position);
-                                intent.putExtra("counter", 0);
-                                intent.putExtra(VisilabsConstant.ACTION_DATA, actiondata);
-                                intent.putExtra(VisilabsConstant.STORY, actiondata.getStories().get(position));
-                                startActivity(intent);
-                            } else {
-                                onBackPressed();
-                            }
-                        } else {
-                            position = position - 1;
-
-                            Log.e("flipping", "top");
-
-                            if (position < actiondata.getStories().size()) {
-
-                                Intent intent = new Intent(getApplicationContext(), StoryActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.putExtra("counter", 0);
-                                intent.putExtra(VisilabsConstant.POSITION, position);
-                                intent.putExtra(VisilabsConstant.ACTION_DATA, actiondata);
-                                intent.putExtra(VisilabsConstant.STORY, actiondata.getStories().get(position));
-                                startActivity(intent);
-                            } else {
-                                onBackPressed();
-                            }
-                        }
-
-
-                        result = true;
-                    }
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-                return result;
-            }
-        });
+        gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
 
         onTouchListener = new View.OnTouchListener() {
             @Override
@@ -200,20 +102,13 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
                         return limit < now - pressTime;
                 }
                 return gestureDetector.onTouchEvent(event);
-
             }
-
         };
     }
 
     private void setInitialView() {
 
         Visilabs.CallAPI().impressionStory(actiondata.getReport().getImpression());
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
-            getSupportActionBar().hide();
-        }
 
         ivCover = findViewById(R.id.civ_cover);
         tvCover = findViewById(R.id.tv_cover);
@@ -228,26 +123,21 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         storiesProgressView.setStoriesCount(stories.getItems().size());
         storiesProgressView.setStoryDuration(3000L);
         storiesProgressView.setStoriesListener(this);
+        storiesProgressView.startStories(storyItemPosition);
+
+        setStoryItem(stories.getItems().get(storyItemPosition));
 
         Picasso.get().load(stories.getThumbnail()).into(ivCover);
+
         ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 onBackPressed();
             }
         });
 
-        counter = getIntent().getExtras().getInt("counter");
-
-        storiesProgressView.startStories(counter);
-
-        setStoryItem(counter, stories);
-
-
         bindReverseView();
         bindSkipView();
-
     }
 
     private void bindSkipView() {
@@ -273,57 +163,60 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         reverse.setOnTouchListener(onTouchListener);
     }
 
+    private void hideActionBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+            getSupportActionBar().hide();
+        }
+    }
+
     @Override
     public void onNext() {
         Visilabs.CallAPI().impressionStory(actiondata.getReport().getImpression());
 
-        setStoryItem(++counter, stories);
-
+        setStoryItem(stories.getItems().get(++storyItemPosition));
     }
 
     @Override
     public void onPrev() {
         Visilabs.CallAPI().impressionStory(actiondata.getReport().getImpression());
 
-        if ((counter - 1) < 0) {
-            if (position - 1 < actiondata.getStories().size() && position - 1 > -1) {
+        if ((storyItemPosition - 1) < 0) {
+            if (storyPosition - 1 < actiondata.getStories().size() && storyPosition - 1 > -1) {
 
-                Intent intent = new Intent(getApplicationContext(), StoryActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                storyPosition--;
 
-                intent.putExtra("counter", actiondata.getStories().get(position - 1).getItems().size() - 1);
-                intent.putExtra(VisilabsConstant.POSITION, position - 1);
-                intent.putExtra(VisilabsConstant.ACTION_DATA, actiondata);
-                intent.putExtra(VisilabsConstant.STORY, actiondata.getStories().get(position - 1));
-                startActivity(intent);
+                int previousStoryGroupLatestPosition = actiondata.getStories().get(storyPosition).getItems().size() - 1;
 
-                position = position - 1;
+                startStoryGroup(previousStoryGroupLatestPosition);
             } else {
                 onBackPressed();
             }
         } else {
-
-            setStoryItem(--counter, stories);
+            setStoryItem(stories.getItems().get(--storyItemPosition));
         }
     }
 
     @Override
     public void onComplete() {
 
-        position = position + 1;
+        storyPosition++;
 
-        if (position < actiondata.getStories().size()) {
-
-            Intent intent = new Intent(getApplicationContext(), StoryActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("counter", 0);
-            intent.putExtra(VisilabsConstant.POSITION, position);
-            intent.putExtra(VisilabsConstant.ACTION_DATA, actiondata);
-            intent.putExtra(VisilabsConstant.STORY, actiondata.getStories().get(position));
-            startActivity(intent);
+        if (storyPosition < actiondata.getStories().size()) {
+            int nextStoryGroupFirstPosition = 0;
+            startStoryGroup(nextStoryGroupFirstPosition);
         } else {
             onBackPressed();
         }
+    }
+
+    private void startStoryGroup(int itemPosition) {
+        Intent intent = new Intent(getApplicationContext(), StoryActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(VisilabsConstant.STORY_ITEM_POSITION, itemPosition);
+        intent.putExtra(VisilabsConstant.STORY_POSITION, storyPosition);
+        intent.putExtra(VisilabsConstant.ACTION_DATA, actiondata);
+        startActivity(intent);
     }
 
     @Override
@@ -332,16 +225,17 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         super.onDestroy();
     }
 
-    private void setStoryItem(final int i, final Stories stories) {
+    private void setStoryItem(final Items item) {
 
-        Picasso.get().load(stories.getItems().get(i).getFileSrc()).into(ivStory);
+        Picasso.get().load(item.getFileSrc()).into(ivStory);
         tvCover.setText(stories.getTitle());
+        final String storyLink = item.getTargetUrl();
 
-        if (!stories.getItems().get(i).getButtonText().equals("")) {
+        if (!item.getButtonText().equals("")) {
             btnStory.setVisibility(View.VISIBLE);
-            btnStory.setText(stories.getItems().get(i).getButtonText());
-            btnStory.setTextColor(Color.parseColor(stories.getItems().get(i).getButtonTextColor()));
-            btnStory.setBackgroundColor(Color.parseColor(stories.getItems().get(i).getButtonColor()));
+            btnStory.setText(item.getButtonText());
+            btnStory.setTextColor(Color.parseColor(item.getButtonTextColor()));
+            btnStory.setBackgroundColor(Color.parseColor(item.getButtonColor()));
 
         } else {
             btnStory.setVisibility(View.GONE);
@@ -351,26 +245,23 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
             @Override
             public void onClick(View v) {
 
-                String storyLink = stories.getItems().get(i).getTargetUrl();
                 Visilabs.CallAPI().trackStoryClick(storyLink);
                 if (storyItemClickListener != null) {
                     storyItemClickListener.storyItemClicked(storyLink);
                 }
-
             }
         });
     }
 
     @Override
     public void onBackPressed() {
-
         Intent intent;
         try {
             intent = new Intent(this,
                     Class.forName("com.relateddigital.visilabs.MainActivity"));
             startActivity(intent);
         } catch (ClassNotFoundException e) {
-
+            e.printStackTrace();
         }
     }
 }
