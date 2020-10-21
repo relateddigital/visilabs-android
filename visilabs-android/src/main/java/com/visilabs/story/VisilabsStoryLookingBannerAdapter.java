@@ -19,7 +19,7 @@ import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 
-import com.visilabs.story.model.ExtendedProps;
+import com.visilabs.story.model.storylookingbanner.ExtendedProps;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.storylookingbanner.VisilabsStoryLookingBannerResponse;
 import com.visilabs.util.VisilabsConstant;
@@ -30,7 +30,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<VisilabsStoryLookingBannerAdapter.StoryHolder> {
 
-    //test
     Context context;
 
     StoryItemClickListener storyItemClickListener;

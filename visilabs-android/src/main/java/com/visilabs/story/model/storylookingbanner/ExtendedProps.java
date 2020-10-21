@@ -1,9 +1,10 @@
-package com.visilabs.story.model;
+package com.visilabs.story.model.storylookingbanner;
 
 
 import java.io.Serializable;
 
 public class ExtendedProps implements Serializable {
+
     private String storylb_img_borderWidth;
 
     private String storylb_img_borderRadius;

@@ -48,8 +48,7 @@ public class VisilabsRecyclerView extends RecyclerView {
             "                \"buttonColor\": \"#998686\",\n" +
             "                \"fileType\": \"photo\",\n" +
             "                \"displayTime\": 3,\n" +
-            "                \"targetUrl\": \"http://visilabs.com/?title=Ramon&OM.zn=acttype-32&OM.zpc=act-160\",\n" +
-            "                \"targetUrlOriginal\": \"http://visilabs.com/?title=Ramon\"\n" +
+            "                \"targetUrl\": \"http://1.com/\"\n" +
             "              },\n" +
             "              {\n" +
             "                \"fileSrc\": \"https://digitalage.com.tr/wp-content/uploads/2017/06/Sosyal-medya-reklam-modelleri.jpg\",\n" +
@@ -59,8 +58,7 @@ public class VisilabsRecyclerView extends RecyclerView {
             "                \"buttonColor\": \"#998686\",\n" +
             "                \"fileType\": \"video\",\n" +
             "                \"displayTime\": 0,\n" +
-            "                \"targetUrl\": \"\",\n" +
-            "                \"targetUrlOriginal\": \"\"\n" +
+            "                \"targetUrl\": \"http://2.com/\"\n" +
             "              }\n" +
             "            ]\n" +
             "          },\n" +
@@ -76,29 +74,30 @@ public class VisilabsRecyclerView extends RecyclerView {
             "                \"buttonColor\": \"#998686\",\n" +
             "                \"fileType\": \"photo\",\n" +
             "                \"displayTime\": 3,\n" +
-            "                \"targetUrl\": \"http://visilabs.com/?title=Ramon&OM.zn=acttype-32&OM.zpc=act-160\",\n" +
-            "                \"targetUrlOriginal\": \"http://visilabs.com/?title=Ramon\"\n" +
+            "                \"targetUrl\": \"http://3.com/\"\n" +
             "              },\n" +
             "              {\n" +
             "                \"fileSrc\": \"https://i.pinimg.com/564x/2d/1e/52/2d1e5289f3f5c52c80159fe8c99d07a6.jpg\",\n" +
             "                \"filePreview\": \"\",\n" +
-            "                \"buttonText\": \"test test Portfolio\",\n" +
+            "                \"buttonText\": \"\",\n" +
             "                \"buttonTextColor\": \"#7d1212\",\n" +
             "                \"buttonColor\": \"#998686\",\n" +
             "                \"fileType\": \"video\",\n" +
             "                \"displayTime\": 0,\n" +
-            "                \"targetUrl\": \"\",\n" +
-            "                \"targetUrlOriginal\": \"\"\n" +
+            "                \"targetUrl\": \"www.4.com\"\n" +
             "              }\n" +
             "            ]\n" +
             "          }\n" +
             "        ],\n" +
             "        \"taTemplate\": \"skin_based\",\n" +
-            "        \"ExtendedProps\": \"%7B%22storylb_img_borderWidth%22%3A%223%22%2C%22storylb_img_borderColor%22%3A%22%23ebc70b%22%2C%22storylb_img_borderRadius%22%3A%2250%25%22%2C%22storylb_img_boxShadow%22%3A%22rgba(0%2C0%2C0%2C0.4)%205px%205px%2010px%22%2C%22storylb_label_color%22%3A%22%23ff34ae%22%7D\"\n" +
+            "      \"report\":{\"impression\":\"OM.zdn=acttype-32&OM.zcp=act-305\",\"click\":\"OM.zpc=acttype-32&OM.zn=act-305\"},\"after\":false,\n" +
+            "        \"ExtendedProps\": \"%7B%22storyz_img_borderRadius%22%3A%2250%25%22%7D\"\n" +
             "      }\n" +
             "    }]\n" +
             "}\n" +
             " ";
+
+
 
     public VisilabsRecyclerView(Context context) {
         super(context);
@@ -150,6 +149,7 @@ public class VisilabsRecyclerView extends RecyclerView {
 
                         VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter = new VisilabsStoryLookingBannerAdapter(context, storyItemClickListener);
 
+
                         visilabsStoryLookingBannerAdapter.setStoryList(visilabsStoryLookingBannerResponse, visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getExtendedProps());
 
                         setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
@@ -160,7 +160,9 @@ public class VisilabsRecyclerView extends RecyclerView {
                     } else {
                         VisilabsSkinBasedResponse skinBased = new Gson().fromJson(skin_bassed, VisilabsSkinBasedResponse.class);
 
-                        VisilabsSkinBasedAdapter visilabsSkinBasedAdapter = new VisilabsSkinBasedAdapter(context, storyItemClickListener);
+                        VisilabsSkinBasedAdapter visilabsSkinBasedAdapter = new VisilabsSkinBasedAdapter(context);
+
+                        visilabsSkinBasedAdapter.setStoryListener(storyItemClickListener);
 
                         visilabsSkinBasedAdapter.setStoryList(skinBased, skinBased.getStory().get(0).getActiondata().getExtendedProps());
 

@@ -1,6 +1,10 @@
 package com.visilabs.story.model;
 
-public interface StoryItemClickListener {
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
+public interface StoryItemClickListener extends Serializable {
 
     void storyItemClicked(String storyLink);
 }

@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,14 +18,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.android.R;
+import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.skinbased.VisilabsSkinBasedResponse;
 
-import com.visilabs.story.model.ExtendedProps;
-import com.visilabs.story.model.StoryItemClickListener;
+import com.visilabs.story.model.skinbased.ExtendedProps;
 import com.visilabs.util.VisilabsConstant;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -35,15 +32,13 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
     Context context;
 
-    StoryItemClickListener storyItemClickListener;
 
     VisilabsSkinBasedResponse visilabsSkinBasedResponse;
 
     String extendsProps;
 
-    public VisilabsSkinBasedAdapter(Context context, StoryItemClickListener storyItemClickListener) {
+    public VisilabsSkinBasedAdapter(Context context) {
         this.context = context;
-        this.storyItemClickListener = storyItemClickListener;
     }
 
     @Override
@@ -66,9 +61,11 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
         String extendedPropsEncoded = extendsProps;
 
+
         ExtendedProps extendedProps = null;
 
         try {
+
             extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
 
         } catch (URISyntaxException e) {
@@ -89,9 +86,8 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
             }
         });
 
-        storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
 
-        String borderRadius = extendedProps != null ? extendedProps.getStorylb_img_borderRadius() : null;
+        String borderRadius = extendedProps != null ? extendedProps.getStoryz_img_borderRadius() : null;
 
         if (borderRadius != null) {
             switch (borderRadius) {
@@ -108,20 +104,26 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
                     float[] rectangleBorderRadius = new float[]{0, 0, 0, 0, 0, 0, 0, 0};
                     storyHolder.setRectangleViewProperties(rectangleBorderRadius);
                     break;
+
+                default:
+                    storyHolder.setCircleViewProperties();
+                    break;
             }
         }
     }
 
     private void clickEvent(int position) {
 
-        storyItemClickListener.storyItemClicked("");
-
         if (visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getItems().size() != 0) {
-            Intent intent = new Intent(context, PreviewActivity.class);
+
+            StoryActivity story = new StoryActivity();
+            Intent intent = new Intent(context, story.getClass());
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("position", position);
-            intent.putExtra("action", visilabsSkinBasedResponse.getStory().get(0).getActiondata());
-            intent.putExtra("story", visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position));
+            intent.putExtra(VisilabsConstant.POSITION, position);
+         //   intent.putExtra("listener", (Serializable) storyItemClickListener);
+            intent.putExtra("counter", 0);
+            intent.putExtra(VisilabsConstant.ACTION_DATA, visilabsSkinBasedResponse.getStory().get(0).getActiondata());
+            intent.putExtra(VisilabsConstant.STORY, visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position));
             context.startActivity(intent);
         }
     }
@@ -134,6 +136,11 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
     public void setStoryList(VisilabsSkinBasedResponse visilabsSkinBasedResponse, String extendsProps) {
         this.extendsProps = extendsProps;
         this.visilabsSkinBasedResponse = visilabsSkinBasedResponse;
+    }
+
+    public void setStoryListener(StoryItemClickListener storyItemClickListener) {
+        StoryActivity.setStoryItemClickListener(storyItemClickListener);
+
     }
 
     public class StoryHolder extends RecyclerView.ViewHolder {
@@ -166,24 +173,17 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         private void setRectangleViewProperties(float[] borderRadius) {
             ivStory.setVisibility(View.VISIBLE);
 
-            if (extendedProps.getStorylb_img_boxShadow().equals("")) {
-                frameLayout.setBackground(null);
-            }
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setCornerRadii(borderRadius);
-            shape.setStroke(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 5, Color.parseColor(extendedProps.getStorylb_img_borderColor()));
+            shape.setStroke(3, Color.parseColor("#A563A3"));
             ivStory.setBackground(shape);
         }
 
         private void setCircleViewProperties() {
-            if (extendedProps.getStorylb_img_boxShadow().equals("")) {
-                frameLayout.setBackground(null);
-            }
-
             civStory.setVisibility(View.VISIBLE);
-            civStory.setBorderColor(Color.parseColor(extendedProps.getStorylb_img_borderColor()));
-            civStory.setBorderWidth(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()));
+            civStory.setBorderColor(Color.parseColor("#A563A3"));
+            civStory.setBorderWidth(3);
         }
     }
 }

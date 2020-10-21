@@ -3,6 +3,8 @@ package com.visilabs.story.model.skinbased;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.visilabs.story.model.Report;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -12,6 +14,9 @@ public class Actiondata implements Serializable{
     private String taTemplate;
 
     private String ExtendedProps;
+
+    public Report report;
+    public boolean after;
 
     public void setStories(List<Stories> stories) {
         this.stories = stories;
@@ -37,4 +42,11 @@ public class Actiondata implements Serializable{
         return this.ExtendedProps;
     }
 
+    public Report getReport() {
+        return report;
+    }
+
+    public void setReport(Report report) {
+        this.report = report;
+    }
 }

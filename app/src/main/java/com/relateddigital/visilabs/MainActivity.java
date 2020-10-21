@@ -15,8 +15,8 @@ import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.favs.FavsResponse;
-import com.visilabs.inApp.VisilabsActionRequest;
 
+import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.story.VisilabsRecyclerView;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.util.VisilabsConstant;
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnGoToLogin;
 
-    VisilabsRecyclerView visilabsRecyclerView ;
+    VisilabsRecyclerView visilabsRecyclerView;
 
     StoryItemClickListener storyItemClickListener;
 
@@ -43,13 +43,14 @@ public class MainActivity extends AppCompatActivity {
         storyItemClickListener = new StoryItemClickListener() {
             @Override
             public void storyItemClicked(String storyLink) {
-                //Toast.makeText(getApplicationContext(), storyLink, Toast.LENGTH_LONG).show();
+
+                Log.i("link story", storyLink);
             }
         };
 
-       visilabsRecyclerView.setStoryAction(getApplicationContext(), storyItemClickListener);
+        visilabsRecyclerView.setStoryAction(getApplicationContext(), storyItemClickListener);
 
-     //   visilabsRecyclerView.setStoryActionId(getApplicationContext(), "250", null);
+        //   visilabsRecyclerView.setStoryActionId(getApplicationContext(), "250", null);
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-sdk");
@@ -64,12 +65,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-     /*   try {
+      try {
             VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
             visilabsActionRequest.executeAsyncAction(getVisilabsCallback());
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     public VisilabsCallback getVisilabsCallback() {
@@ -82,10 +83,9 @@ public class MainActivity extends AppCompatActivity {
                     FavsResponse favsResponse = new Gson().fromJson(response.getRawResponse(), FavsResponse.class);
 
 //                    String favBrands = favsResponse.getFavoriteAttributeAction()[0].getActiondata().getFavorites().getBrand()[0];
-                 //   Log.i("Favs 1.Brand", favBrands);
+                    //   Log.i("Favs 1.Brand", favBrands);
 
-                } catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     Log.e("Error", ex.getMessage(), ex);
                 }
             }
