@@ -27,8 +27,6 @@ import com.visilabs.util.VisilabsConstant;
 
 import java.util.Objects;
 
-import okhttp3.internal.Util;
-
 
 public class StoryActivity extends AppCompatActivity implements StoriesProgressView.StoriesListener {
 
@@ -41,6 +39,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
     long limit = 500L;
 
     Stories stories;
+
     Actiondata actiondata;
 
     Button btnStory;
@@ -108,27 +107,27 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
 
     private void setInitialView() {
 
-        Visilabs.CallAPI().impressionStory(actiondata.getReport().getImpression());
-
+        ivStory = findViewById(R.id.iv_story);
         ivCover = findViewById(R.id.civ_cover);
         tvCover = findViewById(R.id.tv_cover);
         ivClose = findViewById(R.id.ivClose);
         btnStory = findViewById(R.id.btn_story);
-        ivStory = findViewById(R.id.iv_story);
         storiesProgressView = findViewById(R.id.stories);
         reverse = findViewById(R.id.reverse);
         skip = findViewById(R.id.skip);
-
 
         storiesProgressView.setStoriesCount(stories.getItems().size());
         storiesProgressView.setStoryDuration(3000L);
         storiesProgressView.setStoriesListener(this);
         storiesProgressView.startStories(storyItemPosition);
 
-        setStoryItem(stories.getItems().get(storyItemPosition));
+        String impressionReport = actiondata.getReport().getImpression();
+        Visilabs.CallAPI().impressionStory(impressionReport);
+
 
         Picasso.get().load(stories.getThumbnail()).into(ivCover);
-
+        tvCover.setText(stories.getTitle());
+        setStoryItem(stories.getItems().get(storyItemPosition));
         ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -228,7 +227,6 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
     private void setStoryItem(final Items item) {
 
         Picasso.get().load(item.getFileSrc()).into(ivStory);
-        tvCover.setText(stories.getTitle());
         final String storyLink = item.getTargetUrl();
 
         if (!item.getButtonText().equals("")) {

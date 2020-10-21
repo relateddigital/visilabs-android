@@ -45,7 +45,7 @@ public class Stories implements Serializable
     @Override
     public String toString()
     {
-        return "ClassPojo [thumbnail = "+thumbnail+", title = "+title+", items = "+items+"]";
+        return "Stories [thumbnail = "+thumbnail+", title = "+title+", items = "+items+"]";
     }
 }
 
