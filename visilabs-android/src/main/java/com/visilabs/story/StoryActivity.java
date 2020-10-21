@@ -65,7 +65,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.anim_fade_in, R.anim.anim_fade_out);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_preview);
+        setContentView(R.layout.activity_story);
 
         hideActionBar();
 
