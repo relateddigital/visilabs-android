@@ -119,6 +119,7 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
             StoryActivity story = new StoryActivity();
             Intent intent = new Intent(context, story.getClass());
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
             intent.putExtra(VisilabsConstant.STORY_POSITION, position);
             intent.putExtra(VisilabsConstant.STORY_ITEM_POSITION, 0);
             intent.putExtra(VisilabsConstant.ACTION_DATA, visilabsSkinBasedResponse.getStory().get(0).getActiondata());

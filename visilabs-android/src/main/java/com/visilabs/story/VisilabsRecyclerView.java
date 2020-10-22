@@ -57,7 +57,7 @@ public class VisilabsRecyclerView extends RecyclerView {
             "                \"buttonTextColor\": \"#7d1212\",\n" +
             "                \"buttonColor\": \"#998686\",\n" +
             "                \"fileType\": \"video\",\n" +
-            "                \"displayTime\": 0,\n" +
+            "                \"displayTime\": 3,\n" +
             "                \"targetUrl\": \"http://2.com/\"\n" +
             "              }\n" +
             "            ]\n" +
@@ -82,8 +82,8 @@ public class VisilabsRecyclerView extends RecyclerView {
             "                \"buttonText\": \"\",\n" +
             "                \"buttonTextColor\": \"#7d1212\",\n" +
             "                \"buttonColor\": \"#998686\",\n" +
-            "                \"fileType\": \"video\",\n" +
-            "                \"displayTime\": 0,\n" +
+            "                \"fileType\": \"photo\",\n" +
+            "                \"displayTime\": 3,\n" +
             "                \"targetUrl\": \"www.4.com\"\n" +
             "              }\n" +
             "            ]\n" +

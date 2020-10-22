@@ -117,16 +117,16 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         skip = findViewById(R.id.skip);
 
         storiesProgressView.setStoriesCount(stories.getItems().size());
-        storiesProgressView.setStoryDuration(3000L);
+        storiesProgressView.setStoryDuration(Integer.parseInt(stories.getItems().get(storyItemPosition).getDisplayTime()) * 1000);
         storiesProgressView.setStoriesListener(this);
         storiesProgressView.startStories(storyItemPosition);
 
         String impressionReport = actiondata.getReport().getImpression();
         Visilabs.CallAPI().impressionStory(impressionReport);
 
-
         Picasso.get().load(stories.getThumbnail()).into(ivCover);
         tvCover.setText(stories.getTitle());
+
         setStoryItem(stories.getItems().get(storyItemPosition));
         ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,6 +212,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
     private void startStoryGroup(int itemPosition) {
         Intent intent = new Intent(getApplicationContext(), StoryActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
         intent.putExtra(VisilabsConstant.STORY_ITEM_POSITION, itemPosition);
         intent.putExtra(VisilabsConstant.STORY_POSITION, storyPosition);
         intent.putExtra(VisilabsConstant.ACTION_DATA, actiondata);
@@ -242,24 +243,11 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         btnStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Visilabs.CallAPI().trackStoryClick(storyLink);
                 if (storyItemClickListener != null) {
                     storyItemClickListener.storyItemClicked(storyLink);
                 }
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent;
-        try {
-            intent = new Intent(this,
-                    Class.forName("com.relateddigital.visilabs.MainActivity"));
-            startActivity(intent);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 }
