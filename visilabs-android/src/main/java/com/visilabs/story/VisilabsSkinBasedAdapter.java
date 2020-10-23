@@ -175,13 +175,13 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setCornerRadii(borderRadius);
-            shape.setStroke(3, Color.parseColor("#A563A3"));
+            shape.setStroke(3, Color.parseColor(extendedProps.getStoryz_img_borderColor()));
             ivStory.setBackground(shape);
         }
 
         private void setCircleViewProperties() {
             civStory.setVisibility(View.VISIBLE);
-            civStory.setBorderColor(Color.parseColor("#A563A3"));
+            civStory.setBorderColor(Color.parseColor(extendedProps.getStoryz_img_borderColor()));
             civStory.setBorderWidth(3);
         }
     }

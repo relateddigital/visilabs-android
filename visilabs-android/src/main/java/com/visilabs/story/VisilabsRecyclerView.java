@@ -91,7 +91,7 @@ public class VisilabsRecyclerView extends RecyclerView {
             "        ],\n" +
             "        \"taTemplate\": \"skin_based\",\n" +
             "      \"report\":{\"impression\":\"OM.zdn=acttype-32&OM.zcp=act-305\",\"click\":\"OM.zpc=acttype-32&OM.zn=act-305\"},\"after\":false,\n" +
-            "        \"ExtendedProps\": \"%7B%22storyz_img_borderRadius%22%3A%2250%25%22%7D\"\n" +
+            "        \"ExtendedProps\": \"%7B%22storyz_img_borderRadius%22%3A%2250%25%22%2C%22storyz_img_borderColor%22%3A%22%23ebc70b%22%7D\"\n" +
             "      }\n" +
             "    }]\n" +
             "}\n" +
