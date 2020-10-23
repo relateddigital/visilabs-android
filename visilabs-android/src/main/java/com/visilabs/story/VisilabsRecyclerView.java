@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.story.model.skinbased.VisilabsSkinBasedResponse;
-import com.visilabs.story.model.storylookingbanner.Actiondata;
 import com.visilabs.util.VisilabsConstant;
 
 import com.visilabs.api.VisilabsCallback;
@@ -24,7 +23,7 @@ public class VisilabsRecyclerView extends RecyclerView {
     Context context;
     StoryItemClickListener storyItemClickListener;
 
-    String skin_bassed = "{\n" +
+    String test_skin_bassed = "{\n" +
             "  \"capping\": \"{\\\"data\\\":{}}\",\n" +
             "  \"VERSION\": 2,\n" +
             "  \"FavoriteAttributeAction\": [\n" +
@@ -145,7 +144,7 @@ public class VisilabsRecyclerView extends RecyclerView {
                 try {
                     VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse = new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
 
-                    if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals("story_looking_bannersz")) {
+                    if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals(VisilabsConstant.STORY_LOOKING_BANNER)) {
 
                         VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter = new VisilabsStoryLookingBannerAdapter(context, storyItemClickListener);
 
@@ -158,7 +157,7 @@ public class VisilabsRecyclerView extends RecyclerView {
                         setAdapter(visilabsStoryLookingBannerAdapter);
 
                     } else {
-                        VisilabsSkinBasedResponse skinBased = new Gson().fromJson(skin_bassed, VisilabsSkinBasedResponse.class);
+                        VisilabsSkinBasedResponse skinBased = new Gson().fromJson(test_skin_bassed, VisilabsSkinBasedResponse.class);
 
                         VisilabsSkinBasedAdapter visilabsSkinBasedAdapter = new VisilabsSkinBasedAdapter(context);
 

@@ -131,7 +131,7 @@ public class VisilabsConstant {
     public static final String STORY_ROUNDED_RECTANGLE = "10%";
     public static final String STORY_RECTANGLE = "";
 
-    public static final String STORY_LOOKING_BANNER = "story_looking_banner";
+    public static final String STORY_LOOKING_BANNER = "story_looking_banners";
     public static final String STORY_SKIN_BASED = "skin_based";
     public static final String STORY_ITEM_POSITION = "story_item_position";
     public static final String STORY_POSITION = "position";
