@@ -57,8 +57,8 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         String storyImage = storyLookingBanner.getStory().get(0).getActiondata().getStories().get(position).getSmallImg();
         storyHolder.tvStoryName.setText(storyName);
 
-        Picasso.get().load(storyImage).into(storyHolder.ivStory);
-        Picasso.get().load(storyImage).into(storyHolder.civStory);
+        Picasso.get().load(storyImage).fit().into(storyHolder.ivStory);
+        Picasso.get().load(storyImage).fit().into(storyHolder.civStory);
 
         String extendedPropsEncoded = extendsProps;
 

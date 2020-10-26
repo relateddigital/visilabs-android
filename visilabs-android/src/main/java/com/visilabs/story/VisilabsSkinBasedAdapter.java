@@ -55,9 +55,9 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         String storyImage = visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getThumbnail();
         storyHolder.tvStoryName.setText(storyName);
 
-        Picasso.get().load(storyImage).into(storyHolder.ivStory);
+        Picasso.get().load(storyImage).fit().into(storyHolder.ivStory);
 
-        Picasso.get().load(storyImage).into(storyHolder.civStory);
+        Picasso.get().load(storyImage).fit().into(storyHolder.civStory);
 
         String extendedPropsEncoded = extendsProps;
 
