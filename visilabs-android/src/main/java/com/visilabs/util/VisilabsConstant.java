@@ -1,13 +1,11 @@
 package com.visilabs.util;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.visilabs.inApp.VisilabsInAppActivity;
@@ -70,7 +68,6 @@ public class VisilabsConstant {
     public static final String TOKENID_KEY = "OM.sys.TokenID";
     public static final String APPID_KEY = "OM.sys.AppID";
 
-
     public static final String FILTER_KEY = "OM.w.f";
     public static final String APIVER_KEY = "OM.apiver";
 
@@ -79,7 +76,6 @@ public class VisilabsConstant {
     public static final String ACT_KEY = "act";
 
     public static final String GEO_ID_KEY = "OM.locationid";
-
 
     public static final String TARGET_PREF_VOSS_STORE_KEY = "OM.voss";
     public static final String TARGET_PREF_VCNAME_STORE_KEY = "OM.vcname";
@@ -117,7 +113,6 @@ public class VisilabsConstant {
     public static final String TARGET_PREF_VQ_KEY = "OM.q";
     public static final String TARGET_PREF_VRDOMAIN_KEY = "OM.rDomain";
 
-
     public static final String TARGET_PREF_PPR_KEY = "OM.ppr";
 
     public static final int LOG_LEVEL_VERBOSE = 1;
@@ -130,8 +125,7 @@ public class VisilabsConstant {
     public static final String STORY_CIRCLE = "50%";
     public static final String STORY_ROUNDED_RECTANGLE = "10%";
     public static final String STORY_RECTANGLE = "";
-
-    public static final String STORY_LOOKING_BANNER = "story_looking_banners";
+    public static final String STORY_LOOKING_BANNERS = "story_looking_banners";
     public static final String STORY_SKIN_BASED = "skin_based";
     public static final String STORY_ITEM_POSITION = "story_item_position";
     public static final String STORY_POSITION = "position";
@@ -156,7 +150,6 @@ public class VisilabsConstant {
             Log.i(LOG_TAG, "Please add the child tag <activity android:name=\"com.visilabs.notifications.VisilabsNotificationActivity\" /> to your <application> tag.");
             return false;
         }
-
         return true;
     }
 }

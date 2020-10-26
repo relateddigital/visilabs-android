@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 
 class GestureListener extends GestureDetector.SimpleOnGestureListener {
-    long pressTime = 0L;
-    long limit = 500L;
 
     private static final int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 100;

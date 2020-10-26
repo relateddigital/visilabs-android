@@ -19,9 +19,9 @@ import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 
-import com.visilabs.story.model.storylookingbanner.ExtendedProps;
+import com.visilabs.story.model.storylookingbanners.ExtendedProps;
 import com.visilabs.story.model.StoryItemClickListener;
-import com.visilabs.story.model.storylookingbanner.VisilabsStoryLookingBannerResponse;
+import com.visilabs.story.model.storylookingbanners.VisilabsStoryLookingBannerResponse;
 import com.visilabs.util.VisilabsConstant;
 
 import java.net.URISyntaxException;
@@ -84,15 +84,13 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
         storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
 
+        assert extendedProps != null;
         if (extendedProps.getStorylb_img_boxShadow().equals("")){
             storyHolder.flCircleShadow.setVisibility(View.VISIBLE);
-        } else {
-
         }
+        storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps.getStorylb_label_color()));
 
-        storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps != null ? extendedProps.getStorylb_label_color() : null));
-
-        String borderRadius = extendedProps != null ? extendedProps.getStorylb_img_borderRadius() : null;
+        String borderRadius = extendedProps.getStorylb_img_borderRadius();
 
         if (borderRadius != null) {
             switch (borderRadius) {
@@ -124,7 +122,6 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
     }
 
     public class StoryHolder extends RecyclerView.ViewHolder {
-
         public TextView tvStoryName;
         public CircleImageView civStory;
         public ImageView ivStory;
@@ -174,7 +171,6 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
             civStory.setVisibility(View.VISIBLE);
             civStory.setBorderColor(Color.parseColor(extendedProps.getStorylb_img_borderColor()));
-
             civStory.setBorderWidth(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2);
         }
     }

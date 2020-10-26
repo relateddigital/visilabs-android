@@ -16,11 +16,14 @@ import com.visilabs.util.VisilabsConstant;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.story.model.StoryItemClickListener;
-import com.visilabs.story.model.storylookingbanner.VisilabsStoryLookingBannerResponse;
+import com.visilabs.story.model.storylookingbanners.VisilabsStoryLookingBannerResponse;
 
 public class VisilabsRecyclerView extends RecyclerView {
 
     Context context;
+
+    public static final String TAG = "VisilabsRecyclerView";
+
     StoryItemClickListener storyItemClickListener;
     public VisilabsRecyclerView(Context context) {
         super(context);
@@ -59,7 +62,6 @@ public class VisilabsRecyclerView extends RecyclerView {
         }
     }
 
-
     public VisilabsCallback getVisilabsStoryCallback(final Context context) {
 
         return new VisilabsCallback() {
@@ -68,10 +70,9 @@ public class VisilabsRecyclerView extends RecyclerView {
                 try {
                     VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse = new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
 
-                    if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals(VisilabsConstant.STORY_LOOKING_BANNER)) {
+                    if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals(VisilabsConstant.STORY_LOOKING_BANNERS)) {
 
                         VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter = new VisilabsStoryLookingBannerAdapter(context, storyItemClickListener);
-
 
                         visilabsStoryLookingBannerAdapter.setStoryList(visilabsStoryLookingBannerResponse, visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getExtendedProps());
 
@@ -96,13 +97,13 @@ public class VisilabsRecyclerView extends RecyclerView {
                     }
 
                 } catch (Exception ex) {
-                    Log.e("Error", ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                 }
             }
 
             @Override
             public void fail(VisilabsResponse response) {
-                Log.d("Error", response.getRawResponse());
+                Log.e(TAG, response.getRawResponse());
             }
         };
     }

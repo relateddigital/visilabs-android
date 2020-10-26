@@ -1,4 +1,4 @@
-package com.visilabs.story.model.storylookingbanner;
+package com.visilabs.story.model.storylookingbanners;
 
 import com.visilabs.story.model.Report;
 

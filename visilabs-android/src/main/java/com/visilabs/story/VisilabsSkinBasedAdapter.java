@@ -32,7 +32,6 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
     Context context;
 
-
     VisilabsSkinBasedResponse visilabsSkinBasedResponse;
 
     String extendsProps;
@@ -56,16 +55,13 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         storyHolder.tvStoryName.setText(storyName);
 
         Picasso.get().load(storyImage).fit().into(storyHolder.ivStory);
-
         Picasso.get().load(storyImage).fit().into(storyHolder.civStory);
 
         String extendedPropsEncoded = extendsProps;
 
-
         ExtendedProps extendedProps = null;
 
         try {
-
             extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
 
         } catch (URISyntaxException e) {
@@ -139,7 +135,6 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
     public void setStoryListener(StoryItemClickListener storyItemClickListener) {
         StoryActivity.setStoryItemClickListener(storyItemClickListener);
-
     }
 
     public class StoryHolder extends RecyclerView.ViewHolder {

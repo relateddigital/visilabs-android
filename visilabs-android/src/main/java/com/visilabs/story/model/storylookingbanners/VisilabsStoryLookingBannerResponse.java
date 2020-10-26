@@ -1,6 +1,4 @@
-package com.visilabs.story.model.storylookingbanner;
-
-import com.visilabs.story.model.storylookingbanner.Story;
+package com.visilabs.story.model.storylookingbanners;
 
 import java.io.Serializable;
 import java.util.List;

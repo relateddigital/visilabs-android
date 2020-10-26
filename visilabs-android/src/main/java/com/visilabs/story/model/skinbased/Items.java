@@ -4,7 +4,6 @@ package com.visilabs.story.model.skinbased;
 import java.io.Serializable;
 
 public class Items implements Serializable {
-    private String targetUrlOriginal;
 
     private String fileSrc;
 
@@ -21,14 +20,6 @@ public class Items implements Serializable {
     private String targetUrl;
 
     private String fileType;
-
-    public String getTargetUrlOriginal() {
-        return targetUrlOriginal;
-    }
-
-    public void setTargetUrlOriginal(String targetUrlOriginal) {
-        this.targetUrlOriginal = targetUrlOriginal;
-    }
 
     public String getFileSrc() {
         return fileSrc;
@@ -96,7 +87,7 @@ public class Items implements Serializable {
 
     @Override
     public String toString() {
-        return "Items [targetUrlOriginal = " + targetUrlOriginal + ", fileSrc = " + fileSrc + ", buttonText = " + buttonText + ", displayTime = " + displayTime + ", buttonColor = " + buttonColor + ", filePreview = " + filePreview + ", buttonTextColor = " + buttonTextColor + ", targetUrl = " + targetUrl + ", fileType = " + fileType + "]";
+        return "Items [ fileSrc = " + fileSrc + ", buttonText = " + buttonText + ", displayTime = " + displayTime + ", buttonColor = " + buttonColor + ", filePreview = " + filePreview + ", buttonTextColor = " + buttonTextColor + ", targetUrl = " + targetUrl + ", fileType = " + fileType + "]";
     }
 }
 
