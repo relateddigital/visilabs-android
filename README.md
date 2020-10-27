@@ -24,7 +24,6 @@ The Visilabs Android Sdk is a java implementation of an Android client for Visil
 
 ## Installation
 
-
 Add Visilabs to the ```dependencies``` in app/build.gradle.
 
 ```java
@@ -45,6 +44,9 @@ Mobile Tagging for Visilab and more information :  [Please check docs](https://r
 #### Note : 
 You may use the support library module in sample application but we will not contribute support library in the future. This is our last support.
 
+<p align="center">
+  <a target="_blank" rel="noopener noreferrer" href="https://github.com/relateddigital/visilabs-android"><img src="https://github.com/relateddigital/visilabs-android/blob/master/inappnew.gif" alt="Visilabs Android Library" width="500" style="max-width:100%;"></a>
+</p>
 
 ### Licences
 
