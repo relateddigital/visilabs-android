@@ -56,8 +56,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:gravity="center"
-        android:textSize="12dp"
+        android:textSize="12sp"
         android:maxLines="1"
-        android:text="TextView"
         android:textColor="#000000" />
 </LinearLayout>
