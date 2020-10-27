@@ -244,7 +244,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         btnStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Visilabs.CallAPI().trackStoryClick(item.getTargetUrl());
+                Visilabs.CallAPI().trackStoryClick(actiondata.getReport().getClick());
                 if (storyItemClickListener != null) {
                     storyItemClickListener.storyItemClicked(item.getTargetUrl());
                 }
