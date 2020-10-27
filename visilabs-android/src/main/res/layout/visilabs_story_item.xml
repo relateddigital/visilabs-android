@@ -5,7 +5,7 @@
     android:id="@+id/ll_story"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
+    android:layout_margin="8dp"
     android:orientation="vertical">
 
     <FrameLayout
@@ -17,9 +17,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/civ_story"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_margin="2dp"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
             android:adjustViewBounds="false"
             android:cropToPadding="false"
             android:elevation="2dp"
@@ -39,8 +38,8 @@
 
         <ImageView
             android:id="@+id/iv_story"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
             android:adjustViewBounds="false"
             android:background="@drawable/bg_story_radius"
             android:cropToPadding="false"
@@ -48,20 +47,16 @@
             android:padding="5dp"
             android:src="@android:mipmap/sym_def_app_icon"
             android:visibility="gone"
-
             tools:targetApi="lollipop" />
     </FrameLayout>
 
     <TextView
         android:id="@+id/tv_story_name"
-        android:layout_width="96dp"
+        android:layout_width="72dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
         android:ellipsize="end"
         android:gravity="center"
+        android:textSize="12dp"
         android:maxLines="1"
         android:text="TextView"
         android:textColor="#000000" />
