@@ -227,8 +227,9 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
 
     private void setStoryItem(final Items item) {
 
-        Picasso.get().load(item.getFileSrc()).into(ivStory);
-        final String storyLink = item.getTargetUrl();
+        if (!item.getFileSrc().equals("")) {
+            Picasso.get().load(item.getFileSrc()).into(ivStory);
+        }
 
         if (!item.getButtonText().equals("")) {
             btnStory.setVisibility(View.VISIBLE);
@@ -243,9 +244,9 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         btnStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Visilabs.CallAPI().trackStoryClick(storyLink);
+                Visilabs.CallAPI().trackStoryClick(item.getTargetUrl());
                 if (storyItemClickListener != null) {
-                    storyItemClickListener.storyItemClicked(storyLink);
+                    storyItemClickListener.storyItemClicked(item.getTargetUrl());
                 }
             }
         });

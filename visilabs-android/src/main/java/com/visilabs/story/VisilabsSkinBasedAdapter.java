@@ -167,16 +167,26 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         private void setRectangleViewProperties(float[] borderRadius) {
             ivStory.setVisibility(View.VISIBLE);
 
+            String borderColor = extendedProps.getStoryz_img_borderColor();
+            if (borderColor.equals("")){
+                borderColor = "#161616";
+            }
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setCornerRadii(borderRadius);
-            shape.setStroke(3, Color.parseColor(extendedProps.getStoryz_img_borderColor()));
+            shape.setStroke(3, Color.parseColor(borderColor));
             ivStory.setBackground(shape);
         }
 
         private void setCircleViewProperties() {
             civStory.setVisibility(View.VISIBLE);
-            civStory.setBorderColor(Color.parseColor(extendedProps.getStoryz_img_borderColor()));
+
+            String borderColor = extendedProps.getStoryz_img_borderColor();
+            if (borderColor.equals("")){
+                borderColor = "#161616";
+            }
+
+            civStory.setBorderColor(Color.parseColor(borderColor));
             civStory.setBorderWidth(3);
         }
     }

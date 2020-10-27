@@ -25,6 +25,7 @@ public class VisilabsRecyclerView extends RecyclerView {
     public static final String TAG = "VisilabsRecyclerView";
 
     StoryItemClickListener storyItemClickListener;
+
     public VisilabsRecyclerView(Context context) {
         super(context);
         this.context = context;
@@ -81,19 +82,21 @@ public class VisilabsRecyclerView extends RecyclerView {
 
                         setAdapter(visilabsStoryLookingBannerAdapter);
 
-                    } else {
-                        VisilabsSkinBasedResponse skinBased = new Gson().fromJson(response.getRawResponse(), VisilabsSkinBasedResponse.class);
+                    } else if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals(VisilabsConstant.STORY_SKIN_BASED)) {
+                        {
+                            VisilabsSkinBasedResponse skinBased = new Gson().fromJson(response.getRawResponse(), VisilabsSkinBasedResponse.class);
 
-                        VisilabsSkinBasedAdapter visilabsSkinBasedAdapter = new VisilabsSkinBasedAdapter(context);
+                            VisilabsSkinBasedAdapter visilabsSkinBasedAdapter = new VisilabsSkinBasedAdapter(context);
 
-                        visilabsSkinBasedAdapter.setStoryListener(storyItemClickListener);
+                            visilabsSkinBasedAdapter.setStoryListener(storyItemClickListener);
 
-                        visilabsSkinBasedAdapter.setStoryList(skinBased, skinBased.getStory().get(0).getActiondata().getExtendedProps());
+                            visilabsSkinBasedAdapter.setStoryList(skinBased, skinBased.getStory().get(0).getActiondata().getExtendedProps());
 
-                        setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                        setHasFixedSize(true);
+                            setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                            setHasFixedSize(true);
 
-                        setAdapter(visilabsSkinBasedAdapter);
+                            setAdapter(visilabsSkinBasedAdapter);
+                        }
                     }
 
                 } catch (Exception ex) {
