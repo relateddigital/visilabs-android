@@ -45,7 +45,11 @@ Mobile Tagging for Visilab and more information :  [Please check docs](https://r
 You may use the support library module in sample application but we will not contribute support library in the future. This is our last support.
 
 <p align="center">
-  <a target="_blank" rel="noopener noreferrer" href="https://github.com/relateddigital/visilabs-android"><img src="https://github.com/relateddigital/visilabs-android/blob/master/inappnew.gif" alt="Visilabs Android Library" width="100" style="max-width:100%;"></a>
+  <a href="https://github.com/relateddigital/visilabs-android"><img src="https://github.com/relateddigital/visilabs-android/blob/master/inappnew.gif" alt="Visilabs Android Library" width="100" style="max-width:100%;"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/relateddigital/visilabs-android"><img src="https://github.com/relateddigital/visilabs-android/blob/master/app/story.png" alt="Visilabs Android Library" width="100" style="max-width:100%;"></a>
 </p>
 
 ### Licences
