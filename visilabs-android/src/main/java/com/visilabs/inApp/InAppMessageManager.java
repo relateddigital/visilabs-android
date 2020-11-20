@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.visilabs.InAppNotificationState;
 import com.visilabs.api.VisilabsUpdateDisplayState;
+import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.util.ActivityImageUtils;
 import com.visilabs.util.VisilabsConstant;
 
@@ -18,20 +19,60 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class InAppMessageManager {
 
-    private String _cookieID;
-    private String _dataSource;
+    private final String _cookieID;
+    private final String _dataSource;
 
-    private String LOG_TAG = "InAppManager";
+    private final String LOG_TAG = "InAppManager";
 
     public InAppMessageManager(String cookieID, String dataSource) {
         this._cookieID = cookieID;
         this._dataSource = dataSource;
     }
 
+    public void showMailSubscriptionForm(final MailSubscriptionForm mailSubscriptionForm, final Activity parent) {
+
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            showDebugMessage("Android version is below necessary version");
+        }
+
+        parent.runOnUiThread(new Runnable() {
+            @Override
+            @TargetApi(VisilabsConstant.UI_FEATURES_MIN_API)
+            public void run() {
+
+                ReentrantLock lock = VisilabsUpdateDisplayState.getLockObject();
+                lock.lock();
+
+                try {
+
+                    if (VisilabsUpdateDisplayState.hasCurrentProposal()) {
+                        showDebugMessage("DisplayState is locked, will not show notifications");
+                    }
+
+                    AppCompatActivity context = (AppCompatActivity) parent;
+
+                    Intent intent = new Intent(context, TemplateActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+                    //TODO:
+                    //intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, mailSubscriptionForm));
+
+                    context.startActivity(intent);
+
+                } catch (Exception ex) {
+                    Log.e(LOG_TAG, ex.getMessage(), ex);
+                } finally {
+                    lock.unlock();
+                }
+            }
+        });
+
+    }
+
     public void showInAppMessage(final InAppMessage inAppMessage, final Activity parent) {
 
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
-
             showDebugMessage("Android version is below necessary version");
         }
 
@@ -150,8 +191,7 @@ public class InAppMessageManager {
     private int getStateId(Activity parent, InAppMessage inAppMessage) {
         int highlightColor = ActivityImageUtils.getHighlightColorFromBackground(parent);
 
-        InAppNotificationState inAppNotificationState =
-                new InAppNotificationState(inAppMessage, highlightColor);
+        InAppNotificationState inAppNotificationState =  new InAppNotificationState(inAppMessage, highlightColor);
 
         int stateID = VisilabsUpdateDisplayState.proposeDisplay(inAppNotificationState, _cookieID, _dataSource);
 

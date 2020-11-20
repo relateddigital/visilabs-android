@@ -10,7 +10,9 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.gson.Gson;
 import com.visilabs.api.VisilabsAction;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.api.VisilabsTargetFilter;
@@ -25,6 +27,11 @@ import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.VisilabsActionRequest;
+import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
+import com.visilabs.story.VisilabsSkinBasedAdapter;
+import com.visilabs.story.VisilabsStoryLookingBannerAdapter;
+import com.visilabs.story.model.skinbased.VisilabsSkinBasedResponse;
+import com.visilabs.story.model.storylookingbanners.VisilabsStoryLookingBannerResponse;
 import com.visilabs.util.Device;
 import com.visilabs.util.NetworkManager;
 import com.visilabs.util.PersistentTargetManager;
@@ -451,6 +458,72 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
     }
 
+
+    private void showMailSubscriptionForm(String pageName, Activity parent, HashMap<String, String> properties) {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            return;
+        }
+        try {
+            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm");
+            visilabsActionRequest.executeAsyncAction(getVisilabsStoryCallback(this._context));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public VisilabsCallback getVisilabsStoryCallback(final Context context) {
+
+        return new VisilabsCallback() {
+            @Override
+            public void success(VisilabsResponse response) {
+                try {
+                    VisilabsMailSubscriptionFormResponse visilabsMailSubscriptionFormResponse = new Gson().fromJson(response.getRawResponse(), VisilabsMailSubscriptionFormResponse.class);
+                    if(visilabsMailSubscriptionFormResponse != null && !visilabsMailSubscriptionFormResponse.getMailSubscriptionForm().isEmpty()) {
+                        visilabsMailSubscriptionFormResponse.getMailSubscriptionForm().get(0);
+
+                    }
+
+                    /*
+                    if (visilabsMailSubscriptionFormResponse.getStory().get(0).getActiondata().getTaTemplate().equals(VisilabsConstant.STORY_LOOKING_BANNERS)) {
+
+                        VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter = new VisilabsStoryLookingBannerAdapter(context, storyItemClickListener);
+
+                        visilabsStoryLookingBannerAdapter.setStoryList(visilabsStoryLookingBannerResponse, visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getExtendedProps());
+
+                        setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                        setHasFixedSize(true);
+
+                        setAdapter(visilabsStoryLookingBannerAdapter);
+
+                    } else if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals(VisilabsConstant.STORY_SKIN_BASED)) {
+                        {
+                            VisilabsSkinBasedResponse skinBased = new Gson().fromJson(response.getRawResponse(), VisilabsSkinBasedResponse.class);
+
+                            VisilabsSkinBasedAdapter visilabsSkinBasedAdapter = new VisilabsSkinBasedAdapter(context);
+
+                            visilabsSkinBasedAdapter.setStoryListener(storyItemClickListener);
+
+                            visilabsSkinBasedAdapter.setStoryList(skinBased, skinBased.getStory().get(0).getActiondata().getExtendedProps());
+
+                            setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                            setHasFixedSize(true);
+
+                            setAdapter(visilabsSkinBasedAdapter);
+                        }
+                    }
+                    */
+
+                } catch (Exception ex) {
+                    //Log.e(TAG, ex.getMessage(), ex);
+                }
+            }
+
+            @Override
+            public void fail(VisilabsResponse response) {
+                //Log.e(TAG, response.getRawResponse());
+            }
+        };
+    }
 
     public void showNotification(String pageName, Activity parent) {
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {

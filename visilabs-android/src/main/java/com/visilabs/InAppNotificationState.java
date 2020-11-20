@@ -9,11 +9,11 @@ public class InAppNotificationState extends DisplayState {
 
     public static final String TYPE = "InAppNotificationState";
 
-    private static String INAPP_KEY = "INAPP_KEY";
-    private static String HIGHLIGHT_KEY = "HIGHLIGHT_KEY";
+    private static final String INAPP_KEY = "INAPP_KEY";
+    private static final String HIGHLIGHT_KEY = "HIGHLIGHT_KEY";
 
-    private InAppMessage mInAppNotification;
-    private int mHighlightColor;
+    private final InAppMessage mInAppNotification;
+    private final int mHighlightColor;
 
     public InAppNotificationState(Bundle in) {
         mInAppNotification = in.getParcelable(INAPP_KEY);
