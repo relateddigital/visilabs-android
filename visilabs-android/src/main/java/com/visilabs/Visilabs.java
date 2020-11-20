@@ -27,6 +27,7 @@ import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.VisilabsActionRequest;
+import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
 import com.visilabs.story.VisilabsSkinBasedAdapter;
 import com.visilabs.story.VisilabsStoryLookingBannerAdapter;
@@ -465,13 +466,13 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
         try {
             VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm");
-            visilabsActionRequest.executeAsyncAction(getVisilabsStoryCallback(this._context));
+            visilabsActionRequest.executeAsyncAction(getVisilabsMailSubscriptionFormCallback(parent));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public VisilabsCallback getVisilabsStoryCallback(final Context context) {
+    public VisilabsCallback getVisilabsMailSubscriptionFormCallback(final Activity parent) {
 
         return new VisilabsCallback() {
             @Override
@@ -479,8 +480,8 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 try {
                     VisilabsMailSubscriptionFormResponse visilabsMailSubscriptionFormResponse = new Gson().fromJson(response.getRawResponse(), VisilabsMailSubscriptionFormResponse.class);
                     if(visilabsMailSubscriptionFormResponse != null && !visilabsMailSubscriptionFormResponse.getMailSubscriptionForm().isEmpty()) {
-                        visilabsMailSubscriptionFormResponse.getMailSubscriptionForm().get(0);
-
+                        MailSubscriptionForm mailSubscriptionForm = visilabsMailSubscriptionFormResponse.getMailSubscriptionForm().get(0);
+                        new InAppMessageManager(_cookieID, _dataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
                     }
 
                     /*
@@ -514,13 +515,13 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                     */
 
                 } catch (Exception ex) {
-                    //Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(LOG_TAG, ex.getMessage(), ex);
                 }
             }
 
             @Override
             public void fail(VisilabsResponse response) {
-                //Log.e(TAG, response.getRawResponse());
+                Log.e(LOG_TAG, response.getRawResponse());
             }
         };
     }
@@ -1113,6 +1114,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         if (mCheckForNotificationsOnLoggerRequest && mActionURL != null) {
             this.showNotification(pageName, parent, properties);
+            this.showMailSubscriptionForm(pageName, parent, properties);
         }
 
         this.send();

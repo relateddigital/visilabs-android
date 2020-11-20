@@ -15,6 +15,7 @@ public class MainApplication extends Application {
         super.onCreate();
 
         Visilabs.CreateAPI(ORGANIZATION_ID, SITE_ID, "http://lgr.visilabs.net",
-                DATASOURCE, "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json", "http://s.visilabs.net/actjson", 30000, "http://s.visilabs.net/geojson", true);
+                DATASOURCE, "http://rt.visilabs.net", "Android", getApplicationContext(),  "http://s.visilabs.net/json"
+                , "http://s.visilabs.net/actjson", 30000, "http://s.visilabs.net/geojson", true);
     }
 }

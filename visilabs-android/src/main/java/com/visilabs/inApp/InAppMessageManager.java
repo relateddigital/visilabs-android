@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.mailSub.MailSubscriptionForm;
+import com.visilabs.mailSub.MailSubscriptionFormActivity;
 import com.visilabs.util.ActivityImageUtils;
 import com.visilabs.util.VisilabsConstant;
 
@@ -42,7 +43,6 @@ public class InAppMessageManager {
 
                 ReentrantLock lock = VisilabsUpdateDisplayState.getLockObject();
                 lock.lock();
-
                 try {
 
                     if (VisilabsUpdateDisplayState.hasCurrentProposal()) {
@@ -51,13 +51,10 @@ public class InAppMessageManager {
 
                     AppCompatActivity context = (AppCompatActivity) parent;
 
-                    Intent intent = new Intent(context, TemplateActivity.class);
+                    Intent intent = new Intent(context, MailSubscriptionFormActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-
-                    //TODO:
-                    //intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, mailSubscriptionForm));
-
+                    intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, mailSubscriptionForm));
                     context.startActivity(intent);
 
                 } catch (Exception ex) {
@@ -186,6 +183,20 @@ public class InAppMessageManager {
             }
         });
 
+    }
+
+    private int getStateId(Activity parent, MailSubscriptionForm mailSubscriptionForm) {
+        int highlightColor = ActivityImageUtils.getHighlightColorFromBackground(parent);
+
+        InAppNotificationState inAppNotificationState =  new InAppNotificationState(mailSubscriptionForm, highlightColor);
+
+        int stateID = VisilabsUpdateDisplayState.proposeDisplay(inAppNotificationState, _cookieID, _dataSource);
+
+        if (stateID <= 0) {
+            Log.e(LOG_TAG, "DisplayState Lock in inconsistent state!");
+        }
+
+        return stateID;
     }
 
     private int getStateId(Activity parent, InAppMessage inAppMessage) {

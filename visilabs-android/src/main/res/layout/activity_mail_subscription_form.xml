@@ -16,19 +16,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <FrameLayout
-                android:id="@+id/ll_overlay"
+            <LinearLayout
+                android:id="@+id/ll_text_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
-
-               <!-- <ImageView
-                    android:id="@+id/iv_template"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:adjustViewBounds="true" />-->
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:clickable="true"
+                android:focusableInTouchMode="true">
 
                 <ImageButton
                     android:id="@+id/ib_close"
@@ -38,23 +34,14 @@
                     android:layout_margin="5dp"
                     android:textColor="#fff" />
 
-            </FrameLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_text_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:visibility="visible">
-
                 <TextView
                     android:id="@+id/tv_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="0dp"
                     android:ellipsize="end"
-                    android:gravity="center"
+                    android:gravity="left"
+                    android:paddingLeft="10dp"
                     android:textColor="#fff"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -64,32 +51,44 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:gravity="center"
+                    android:gravity="left"
                     android:paddingLeft="10dp"
                     android:paddingTop="5dp"
                     android:paddingRight="10dp"
                     android:paddingBottom="5dp" />
+
+                <EditText
+                    android:id="@+id/et_email"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:inputType="textEmailAddress"/>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+                    <CheckBox android:id="@+id/cb_email_permit"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_margin="5dp" />
+                    <TextView
+                        android:id="@+id/tv_email_permit"
+                        android:clickable="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:gravity="left"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="5dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="5dp" />
+                </LinearLayout>
+
+
+
             </LinearLayout>
-
-            <com.visilabs.view.SmileRating
-                android:id="@+id/smileRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:visibility="gone"
-                app:isIndicator="false" />
-
-            <RatingBar
-                android:id="@+id/ratingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="10dp"
-                android:layout_weight="1"
-                android:isIndicator="false"
-                android:numStars="5"
-                android:stepSize="0.5"
-                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btn_template"

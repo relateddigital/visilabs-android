@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 
 import com.visilabs.inApp.InAppMessage;
+import com.visilabs.mailSub.MailSubscriptionForm;
 
 public class InAppNotificationState extends DisplayState {
 
@@ -12,7 +13,8 @@ public class InAppNotificationState extends DisplayState {
     private static final String INAPP_KEY = "INAPP_KEY";
     private static final String HIGHLIGHT_KEY = "HIGHLIGHT_KEY";
 
-    private final InAppMessage mInAppNotification;
+    private InAppMessage mInAppNotification;
+    private MailSubscriptionForm mMailSubscriptionForm;
     private final int mHighlightColor;
 
     public InAppNotificationState(Bundle in) {
@@ -23,6 +25,10 @@ public class InAppNotificationState extends DisplayState {
         mInAppNotification = inAppMessage;
         mHighlightColor = highlightColor;
     }
+    public InAppNotificationState(MailSubscriptionForm mailSubscriptionForm, int highlightColor) {
+        mMailSubscriptionForm = mailSubscriptionForm;
+        mHighlightColor = highlightColor;
+    }
 
     public int getHighlightColor() {
         return mHighlightColor;
@@ -30,6 +36,10 @@ public class InAppNotificationState extends DisplayState {
 
     public InAppMessage getInAppMessage() {
         return mInAppNotification;
+    }
+
+    public MailSubscriptionForm getMailSubscriptionForm() {
+        return mMailSubscriptionForm;
     }
 
     @Override
@@ -45,7 +55,11 @@ public class InAppNotificationState extends DisplayState {
     @Override
     public void writeToParcel(Parcel dest, final int flags) {
         Bundle write = new Bundle();
-        write.putParcelable(INAPP_KEY, mInAppNotification);
+        if(mMailSubscriptionForm != null) {
+            write.putParcelable(INAPP_KEY, mMailSubscriptionForm);
+        } else {
+            write.putParcelable(INAPP_KEY, mInAppNotification);
+        }
         write.putInt(HIGHLIGHT_KEY, mHighlightColor);
         dest.writeBundle(write);
     }
