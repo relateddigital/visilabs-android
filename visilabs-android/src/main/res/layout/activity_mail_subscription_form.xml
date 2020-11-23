@@ -65,10 +65,21 @@
                     android:paddingRight="10dp"
                     android:inputType="textEmailAddress"/>
 
+                <TextView
+                    android:id="@+id/tv_invalid_email_message"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="left"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" />
+
                 <LinearLayout
+                    android:id="@+id/ll_email_permit"
                     android:orientation="horizontal"
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
+                    android:layout_height="wrap_content">
                     <CheckBox android:id="@+id/cb_email_permit"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
@@ -76,6 +87,7 @@
                     <TextView
                         android:id="@+id/tv_email_permit"
                         android:clickable="true"
+                        android:focusable="true"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
@@ -86,12 +98,44 @@
                         android:paddingBottom="5dp" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/ll_consent"
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+                    <CheckBox android:id="@+id/cb_consent"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_margin="5dp" />
+                    <TextView
+                        android:id="@+id/tv_consent"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:gravity="left"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="5dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="5dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_check_consent_message"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="left"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" />
 
 
             </LinearLayout>
 
             <Button
-                android:id="@+id/btn_template"
+                android:id="@+id/btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"

@@ -1,6 +1,8 @@
 package com.visilabs.mailSub;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -8,9 +10,11 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -21,12 +25,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 import com.visilabs.InAppNotificationState;
+import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.inApp.FontFamily;
 import com.visilabs.inApp.InAppMessage;
+import com.visilabs.util.StringUtils;
 
 import java.net.URISyntaxException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MailSubscriptionFormActivity extends AppCompatActivity {
 
@@ -43,8 +51,15 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
     ImageButton ibClose;
     TextView tvBody, tvTitle;
     EditText etEmail;
+    TextView tvInvalidEmailMessage;
+    LinearLayout llEmailPermit;
     CheckBox cbEmailPermit;
     TextView tvEmailPermit;
+    LinearLayout llConsent;
+    CheckBox cbConsent;
+    TextView tvConsent;
+    TextView tvCheckConsentMessage;
+    Button btn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,12 +92,26 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     hideKeyboard(v);
+                    if(checkEmail(etEmail.getText().toString())) {
+                        tvInvalidEmailMessage.setVisibility(View.GONE);
+                    } else {
+                        tvInvalidEmailMessage.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
+        tvInvalidEmailMessage = findViewById(R.id.tv_invalid_email_message);
+        llEmailPermit = findViewById(R.id.ll_email_permit);
         cbEmailPermit = findViewById(R.id.cb_email_permit);
         tvEmailPermit = findViewById(R.id.tv_email_permit);
         tvEmailPermit.setMovementMethod(LinkMovementMethod.getInstance());
+
+        llConsent = findViewById(R.id.ll_consent);
+        cbConsent = findViewById(R.id.cb_consent);
+        tvConsent = findViewById(R.id.tv_consent);
+        tvConsent.setMovementMethod(LinkMovementMethod.getInstance());
+        tvCheckConsentMessage = findViewById(R.id.tv_check_consent_message);
+        btn = findViewById(R.id.btn);
 
 
 
@@ -124,7 +153,20 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
         setTitle();
         setBody();
         setEmail();
+        setInvalidEmailMessage();
         setCheckBoxes();
+        setButton();
+    }
+
+    public void setCloseButton() {
+        ibClose.setBackgroundResource(getCloseIcon());
+        ibClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                finish();
+            }
+        });
     }
 
     private void setTitle() {
@@ -145,17 +187,66 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
         etEmail.setHint(mailSubscriptionForm.getActiondata().getPlaceholder());
     }
 
+    private void setInvalidEmailMessage(){
+        tvInvalidEmailMessage.setText(mailSubscriptionForm.getActiondata().getInvalid_email_message());
+        tvInvalidEmailMessage.setTextSize(Float.parseFloat(extendedProps.getText_size()) + 8);
+        tvInvalidEmailMessage.setTextColor(Color.RED);
+    }
+
     private void setCheckBoxes() {
-        tvEmailPermit.setText(Html.fromHtml("Don't have account? <a href=\"https://visilabs.com\">Register</a> here."));
-        //tvEmailPermit.setText(mailSubscriptionForm.getActiondata().getEmailpermit_text());
-        tvEmailPermit.setTextSize(Float.parseFloat(extendedProps.getEmailpermit_text_size()) + 8);
+        if (mailSubscriptionForm.getActiondata().getEmailpermit_text() == null || mailSubscriptionForm.getActiondata().getEmailpermit_text().isEmpty()) {
+            llEmailPermit.setVisibility(View.GONE);
+        } else {
+            tvEmailPermit.setText(createHtml(mailSubscriptionForm.getActiondata().getEmailpermit_text(), extendedProps.getEmailpermit_text_url() ));
+            tvEmailPermit.setTextSize(Float.parseFloat(extendedProps.getEmailpermit_text_size()) + 8);
+        }
+        if (mailSubscriptionForm.getActiondata().getConsent_text() == null || mailSubscriptionForm.getActiondata().getConsent_text().isEmpty()) {
+            llConsent.setVisibility(View.GONE);
+        } else {
+            tvConsent.setText(createHtml(mailSubscriptionForm.getActiondata().getConsent_text(), extendedProps.getConsent_text_url() ));
+            tvConsent.setTextSize(Float.parseFloat(extendedProps.getConsent_text_size()) + 8);
+        }
+    }
+
+    private void setButton() {
+        btn.setText(mailSubscriptionForm.getActiondata().getButton_label());
+        btn.setTypeface(getFont_family(extendedProps.getButton_font_family()));
+        btn.setTextColor(Color.parseColor(extendedProps.getButton_text_color()));
+        btn.setBackgroundColor(Color.parseColor(extendedProps.getButton_color()));
+        btn.setTextSize(Float.parseFloat(extendedProps.getButton_text_size()) + 8);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                finish();
+            }
+        });
+    }
+
+    private Boolean checkEmail(String email){
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     //Email Permit TextEmail Permit <LINK>TextEmail</LINK> Permit Text
     private Spanned createHtml(String text, String url) {
-        String[] textParts = text.split("LINK");
-
-        return Html.fromHtml("Don't have account? <a href=\"https://visilabs.com\">Register</a> here.");
+        if(url == null || url.isEmpty() || !Patterns.WEB_URL.matcher(url).matches()){
+            return Html.fromHtml(url.replace("<LINK>", "").replace("</LINK>", ""));
+        }
+        Pattern pattern = Pattern.compile("<LINK>(\\S+)</LINK>");
+        Matcher matcher = pattern.matcher(text);
+        Boolean linkMatched = false;
+        while (matcher.find()) {
+            linkMatched = true;
+            String outerHtml = matcher.group(0);
+            String innerText = matcher.group(1);
+            String s = "<a href=\"" + url + "\">" + innerText +  "</a>";
+            text = text.replace(outerHtml, s);
+        }
+        if(!linkMatched) {
+            text = "<a href=\"" + url + "\">" + text +  "</a>";
+        }
+        return Html.fromHtml(text);
     }
 
     private Typeface getFont_family(String font_family) {
@@ -177,16 +268,7 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
         return Typeface.DEFAULT;
     }
 
-    public void setCloseButton() {
-        ibClose.setBackgroundResource(getCloseIcon());
-        ibClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
-                finish();
-            }
-        });
-    }
+
 
     private int getCloseIcon() {
         switch (extendedProps.getClose_button_color()) {

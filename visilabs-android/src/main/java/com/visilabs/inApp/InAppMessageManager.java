@@ -44,19 +44,16 @@ public class InAppMessageManager {
                 ReentrantLock lock = VisilabsUpdateDisplayState.getLockObject();
                 lock.lock();
                 try {
-
                     if (VisilabsUpdateDisplayState.hasCurrentProposal()) {
                         showDebugMessage("DisplayState is locked, will not show notifications");
+                    } else {
+                        AppCompatActivity context = (AppCompatActivity) parent;
+                        Intent intent = new Intent(context, MailSubscriptionFormActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, mailSubscriptionForm));
+                        context.startActivity(intent);
                     }
-
-                    AppCompatActivity context = (AppCompatActivity) parent;
-
-                    Intent intent = new Intent(context, MailSubscriptionFormActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, mailSubscriptionForm));
-                    context.startActivity(intent);
-
                 } catch (Exception ex) {
                     Log.e(LOG_TAG, ex.getMessage(), ex);
                 } finally {
@@ -80,18 +77,23 @@ public class InAppMessageManager {
 
                 ReentrantLock lock = VisilabsUpdateDisplayState.getLockObject();
                 lock.lock();
-
                 try {
-
+                    Boolean willShowInApp = true;
                     if (VisilabsUpdateDisplayState.hasCurrentProposal()) {
                         showDebugMessage("DisplayState is locked, will not show notifications");
+                        willShowInApp = false;
                     }
                     if (inAppMessage.getType() == null) {
                         showDebugMessage("No in app available, will not show.");
+                        willShowInApp = false;
                     }
-
                     if (inAppMessage.getType() == InAppActionType.FULL && !VisilabsConstant.checkNotificationActivityAvailable(parent.getApplicationContext())) {
                         showDebugMessage("Application is not configured to show full screen in app, none will be shown.");
+                        willShowInApp = false;
+                    }
+
+                    if(!willShowInApp){
+                        return;
                     }
 
                     AppCompatActivity context = (AppCompatActivity) parent;
