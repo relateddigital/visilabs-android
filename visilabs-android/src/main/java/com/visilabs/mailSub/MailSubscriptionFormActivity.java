@@ -155,6 +155,7 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
         setEmail();
         setInvalidEmailMessage();
         setCheckBoxes();
+        setCheckConsentMessage();
         setButton();
     }
 
@@ -208,6 +209,12 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
         }
     }
 
+    private void setCheckConsentMessage(){
+        tvCheckConsentMessage.setText(mailSubscriptionForm.getActiondata().getCheck_consent_message());
+        tvCheckConsentMessage.setTextSize(Float.parseFloat(extendedProps.getText_size()) + 8);
+        tvCheckConsentMessage.setTextColor(Color.RED);
+    }
+
     private void setButton() {
         btn.setText(mailSubscriptionForm.getActiondata().getButton_label());
         btn.setTypeface(getFont_family(extendedProps.getButton_font_family()));
@@ -218,10 +225,52 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                String email = etEmail.getText().toString();
+
+                if(checkEmail(email)) {
+                    tvInvalidEmailMessage.setVisibility(View.GONE);
+                } else {
+                    tvInvalidEmailMessage.setVisibility(View.VISIBLE);
+                    return;
+                }
+
+                if(!checkCheckBoxes()) {
+                    return;
+                }
+
+                //mailSubscriptionForm.getActiondata().getReport().getClick();
+
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                 finish();
             }
         });
+    }
+
+    private Boolean checkCheckBoxes() {
+        Boolean isCheckboxesOk = true;
+
+        if(llEmailPermit.getVisibility() != View.GONE){
+            if(!cbEmailPermit.isChecked()) {
+                isCheckboxesOk = false;
+                tvCheckConsentMessage.setVisibility(View.VISIBLE);
+                return isCheckboxesOk;
+            } else {
+                isCheckboxesOk = true;
+                tvCheckConsentMessage.setVisibility(View.GONE);
+            }
+        }
+        if(llConsent.getVisibility() != View.GONE){
+            if(!cbConsent.isChecked()) {
+                isCheckboxesOk = false;
+                tvCheckConsentMessage.setVisibility(View.VISIBLE);
+                return isCheckboxesOk;
+            } else {
+                isCheckboxesOk = true;
+                tvCheckConsentMessage.setVisibility(View.GONE);
+            }
+        }
+
+        return isCheckboxesOk;
     }
 
     private Boolean checkEmail(String email){
