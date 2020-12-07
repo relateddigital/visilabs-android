@@ -26,7 +26,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
 
     Button btnGoToLogin;
-    Button customEvent1;
+    Button customEvent1, customEvent2;
 
     VisilabsRecyclerView visilabsRecyclerView;
 
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnGoToLogin = findViewById(R.id.btn_go_to_login);
         customEvent1 = findViewById(R.id.customEvent1);
+        customEvent2 = findViewById(R.id.customEvent2);
 
         visilabsRecyclerView = findViewById(R.id.vrv_story);
 
@@ -72,6 +73,14 @@ public class MainActivity extends AppCompatActivity {
                 HashMap<String, String> parameters = new HashMap<>();
                 parameters.put("OM.inapptype", "image_text_button");
                 Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
+            }
+        });
+
+        customEvent2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, String> parameters = new HashMap<>();
+                Visilabs.CallAPI().customEvent("test", parameters, MainActivity.this);
             }
         });
 

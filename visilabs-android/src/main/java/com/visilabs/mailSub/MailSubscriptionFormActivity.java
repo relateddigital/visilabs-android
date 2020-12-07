@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -121,30 +123,6 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             finish();
         }
-
-        /*
-
-
-        this.setFinishOnTouchOutside(false);
-
-        ratingBar = findViewById(R.id.ratingBar);
-        tvBody = findViewById(R.id.tv_body);
-        tvTitle = findViewById(R.id.tv_title);
-        btnTemplate = findViewById(R.id.btn_template);
-        smileRating = findViewById(R.id.smileRating);
-        ivTemplate = findViewById(R.id.iv_template);
-        llTextContainer = findViewById(R.id.ll_text_container);
-        ibClose = findViewById(R.id.ib_close);
-
-
-        if (isShowingInApp() && inAppMessage != null) {
-            setUpView();
-        } else {
-            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
-            finish();
-        }
-
-         */
     }
 
     private void setUpView() {
@@ -240,10 +218,23 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
 
                 Visilabs.CallAPI().trackMailSubscriptionFormClick(mailSubscriptionForm.getActiondata().getReport());
 
-                //mailSubscriptionForm.getActiondata().getReport().getClick();
+                Visilabs.CallAPI().createSubsJsonRequest(mailSubscriptionForm.getActid(), mailSubscriptionForm.getActiondata().getAuth(), email);
 
-                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
-                finish();
+                tvCheckConsentMessage.setVisibility(View.VISIBLE);
+                tvCheckConsentMessage.setTextColor(Color.GREEN);
+                tvCheckConsentMessage.setText(mailSubscriptionForm.getActiondata().getSuccess_message());
+
+
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                        finish();
+                    }
+                }, 1000);
+
+
             }
         });
     }
@@ -284,7 +275,7 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
         if(url == null || url.isEmpty() || !Patterns.WEB_URL.matcher(url).matches()){
             return Html.fromHtml(url.replace("<LINK>", "").replace("</LINK>", ""));
         }
-        Pattern pattern = Pattern.compile("<LINK>(\\S+)</LINK>");
+        Pattern pattern = Pattern.compile("<LINK>(.+?)</LINK>");
         Matcher matcher = pattern.matcher(text);
         Boolean linkMatched = false;
         while (matcher.find()) {

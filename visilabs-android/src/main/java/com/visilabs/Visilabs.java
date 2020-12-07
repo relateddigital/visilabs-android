@@ -548,8 +548,24 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
     }
 
-    public void createSubsJsonRequest(String actId, String auth, String mail) {
-
+    public void createSubsJsonRequest(String actId, String auth, String email) {
+        long timeOfEvent = System.currentTimeMillis() / 1000;
+        String query = String.format("OM.oid=%s&OM.siteID=%s&&OM.cookieID=%s&type=%s&actionid=%s&auth=%s&OM.subsemail=%s"
+                , VisilabsEncoder.encode(this._organizationID)
+                , VisilabsEncoder.encode(this._siteID)
+                , VisilabsEncoder.encode(this._cookieID)
+                , "subscription_email"
+                , actId
+                , auth
+                , email);
+        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        }
+        String mailSubsURL = VisilabsConstant.SUBSJSON_ENDPOINT + "?" + query;
+        synchronized (this) {
+            addUrlToQueue(mailSubsURL);
+        }
+        this.send();
     }
 
     public void showNotification(String pageName, Activity parent) {

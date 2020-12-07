@@ -1,8 +1,5 @@
 package com.visilabs.mailSub;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.visilabs.story.model.Report;
 
 import java.io.Serializable;
@@ -72,7 +69,7 @@ public class Actiondata implements Serializable {
         return check_consent_message;
     }
 
-    public Report getReport() {
+    public com.visilabs.mailSub.Report getReport() {
         return report;
     }
 
@@ -108,5 +105,5 @@ public class Actiondata implements Serializable {
 
     private String check_consent_message;
 
-    private Report report;
+    private com.visilabs.mailSub.Report report;
 }
