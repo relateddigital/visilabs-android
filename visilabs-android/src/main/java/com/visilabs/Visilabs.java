@@ -28,6 +28,7 @@ import com.visilabs.json.JSONObject;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.mailSub.MailSubscriptionForm;
+import com.visilabs.mailSub.Report;
 import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
 import com.visilabs.story.VisilabsSkinBasedAdapter;
 import com.visilabs.story.VisilabsStoryLookingBannerAdapter;
@@ -483,37 +484,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                         MailSubscriptionForm mailSubscriptionForm = visilabsMailSubscriptionFormResponse.getMailSubscriptionForm().get(0);
                         new InAppMessageManager(_cookieID, _dataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
                     }
-
-                    /*
-                    if (visilabsMailSubscriptionFormResponse.getStory().get(0).getActiondata().getTaTemplate().equals(VisilabsConstant.STORY_LOOKING_BANNERS)) {
-
-                        VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter = new VisilabsStoryLookingBannerAdapter(context, storyItemClickListener);
-
-                        visilabsStoryLookingBannerAdapter.setStoryList(visilabsStoryLookingBannerResponse, visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getExtendedProps());
-
-                        setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                        setHasFixedSize(true);
-
-                        setAdapter(visilabsStoryLookingBannerAdapter);
-
-                    } else if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals(VisilabsConstant.STORY_SKIN_BASED)) {
-                        {
-                            VisilabsSkinBasedResponse skinBased = new Gson().fromJson(response.getRawResponse(), VisilabsSkinBasedResponse.class);
-
-                            VisilabsSkinBasedAdapter visilabsSkinBasedAdapter = new VisilabsSkinBasedAdapter(context);
-
-                            visilabsSkinBasedAdapter.setStoryListener(storyItemClickListener);
-
-                            visilabsSkinBasedAdapter.setStoryList(skinBased, skinBased.getStory().get(0).getActiondata().getExtendedProps());
-
-                            setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                            setHasFixedSize(true);
-
-                            setAdapter(visilabsSkinBasedAdapter);
-                        }
-                    }
-                    */
-
                 } catch (Exception ex) {
                     Log.e(LOG_TAG, ex.getMessage(), ex);
                 }
@@ -524,6 +494,62 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 Log.e(LOG_TAG, response.getRawResponse());
             }
         };
+    }
+
+    public void trackMailSubscriptionFormClick(Report report) {
+
+        if (report == null || report.getClick() == null || report.getClick().equals("")) {
+            Log.w(LOG_TAG, "Mail subs form report click is null or empty.");
+            return;
+        }
+
+        long timeOfEvent = System.currentTimeMillis() / 1000;
+        String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.uri=%s&OM.cookieID=%s&OM.vchannel=%s&OM.domain=%s"
+                , VisilabsEncoder.encode(this._organizationID)
+                , VisilabsEncoder.encode(this._siteID)
+                , timeOfEvent
+                , VisilabsEncoder.encode("/OM_evt.gif")
+                , VisilabsEncoder.encode(this._cookieID)
+                , VisilabsEncoder.encode(this._channel)
+                , VisilabsEncoder.encode(this._dataSource + "_Android"));
+
+
+        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        }
+
+        query += String.format("&%s", report.getClick());
+
+        String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;
+        String realURL = "";
+
+
+        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            realURL = this._realTimeURL + "/" + this._dataSource + "/om.gif?" + query;
+        }
+
+
+        if (VisilabsConstant.DEBUG) {
+            Log.v(LOG_TAG, String.format("Notification button tapped %s", segURL));
+        }
+
+
+        synchronized (this) {
+            addUrlToQueue(segURL);
+            if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+                addUrlToQueue(realURL);
+            }
+        }
+
+        this.send();
+
+        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            this.send();
+        }
+    }
+
+    public void createSubsJsonRequest(String actId, String auth, String mail) {
+
     }
 
     public void showNotification(String pageName, Activity parent) {

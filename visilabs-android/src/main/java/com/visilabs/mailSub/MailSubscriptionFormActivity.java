@@ -238,6 +238,8 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
                     return;
                 }
 
+                Visilabs.CallAPI().trackMailSubscriptionFormClick(mailSubscriptionForm.getActiondata().getReport());
+
                 //mailSubscriptionForm.getActiondata().getReport().getClick();
 
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
