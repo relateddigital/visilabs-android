@@ -1,10 +1,9 @@
 package com.visilabs.mailSub;
 
-import com.visilabs.story.model.Report;
-
 import java.io.Serializable;
 
 public class Actiondata implements Serializable {
+
     public String getPlaceholder() {
         return placeholder;
     }
@@ -69,7 +68,7 @@ public class Actiondata implements Serializable {
         return check_consent_message;
     }
 
-    public com.visilabs.mailSub.Report getReport() {
+    public Report getReport() {
         return report;
     }
 
@@ -105,5 +104,6 @@ public class Actiondata implements Serializable {
 
     private String check_consent_message;
 
-    private com.visilabs.mailSub.Report report;
+    private Report report;
+
 }

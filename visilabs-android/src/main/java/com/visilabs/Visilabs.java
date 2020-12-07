@@ -598,7 +598,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         request.setVisitorData(this.mVisitorData);
         request.setVisitData(this.mVisitData);
-
         request.setProperties(properties);
 
         try {
