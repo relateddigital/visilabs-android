@@ -17,6 +17,7 @@
     + [Sample Applications](#sample-applications)
     + [Using the SDK](#using-the-sdk)
     + [Licence](#licence)
+  * [Mail Subscription Form](#mail-subscription-form)
     
 # Visilabs Android
 
@@ -50,9 +51,18 @@ You may use the support library module in sample application but we will not con
 | ![Image of InAppNew](/Screenshots/inappnew.gif)                 | ![Image of Story](/Screenshots/story.png)                          |
 
 
+## Mail Subscription Form
 
+After form is created at **RMC** panel, likewise **in-app message**, existence of mail subscription form is controlled by after each `customEvent` call. You need to call overload `customEvent`
+which takes `Activity` as third parameter in order to show mail subscription forms.
 
+```java
+customEvent(String pageName, HashMap<String, String> properties, Activity parent)
+```
 
+It is shown as follows;
+
+![mail-subscription-form](/Screenshots/mail-subscription-form.png)
 
 
 ### Licences
