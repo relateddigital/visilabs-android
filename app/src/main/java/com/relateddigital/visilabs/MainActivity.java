@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-sdk");
-        parameters.put("OM.exVisitorID", "ogun.ozturk@euromsg.com");
+        //parameters.put("OM.exVisitorID", "ogun.ozturk@euromsg.com");
         Visilabs.CallAPI().customEvent("android-visilab", parameters);
 
         btnGoToLogin.setOnClickListener(new View.OnClickListener() {
