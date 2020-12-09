@@ -53,8 +53,8 @@ You may use the support library module in sample application but we will not con
 
 ## Mail Subscription Form
 
-After form is created at **RMC** panel, likewise **in-app message**, existence of mail subscription form is controlled by after each `customEvent` call. You need to call overload `customEvent`
-which takes `Activity` as third parameter in order to show mail subscription forms.
+After form is created at **RMC** panel, likewise **in-app message**, existence of mail subscription form is controlled by after each `customEvent` call.
+You need to call overload of `customEvent` which takes `Activity` as third parameter in order to show mail subscription forms.
 
 ```java
 customEvent(String pageName, HashMap<String, String> properties, Activity parent)
