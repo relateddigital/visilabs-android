@@ -12,7 +12,7 @@ ext {
     siteUrl = 'http://visilabs.com/'
     gitUrl = 'http://visilabs.com/'
 
-    libraryVersion = '5.0.0'
+    libraryVersion = '5.1.0'
 
     developerId = 'visilabs'
     developerName = 'Visilabs'
@@ -24,14 +24,14 @@ ext {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 30
+    buildToolsVersion '30.0.2'
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 4
-        versionName "5.0.0"
+        versionName "5.1.0"
     }
     buildTypes {
         release {
@@ -51,12 +51,12 @@ dependencies {
 
     api 'de.hdodenhof:circleimageview:3.1.0'
     api 'androidx.recyclerview:recyclerview:1.1.0'
-    api 'androidx.constraintlayout:constraintlayout:2.0.2'
+    api 'androidx.constraintlayout:constraintlayout:2.0.4'
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 }
 

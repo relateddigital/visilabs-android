@@ -10,7 +10,9 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.gson.Gson;
 import com.visilabs.api.VisilabsAction;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.api.VisilabsTargetFilter;
@@ -25,6 +27,13 @@ import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.VisilabsActionRequest;
+import com.visilabs.mailSub.MailSubscriptionForm;
+import com.visilabs.mailSub.Report;
+import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
+import com.visilabs.story.VisilabsSkinBasedAdapter;
+import com.visilabs.story.VisilabsStoryLookingBannerAdapter;
+import com.visilabs.story.model.skinbased.VisilabsSkinBasedResponse;
+import com.visilabs.story.model.storylookingbanners.VisilabsStoryLookingBannerResponse;
 import com.visilabs.util.Device;
 import com.visilabs.util.NetworkManager;
 import com.visilabs.util.PersistentTargetManager;
@@ -452,6 +461,113 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
     }
 
 
+    private void showMailSubscriptionForm(String pageName, Activity parent, HashMap<String, String> properties) {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            return;
+        }
+        try {
+            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm");
+            visilabsActionRequest.executeAsyncAction(getVisilabsMailSubscriptionFormCallback(parent));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public VisilabsCallback getVisilabsMailSubscriptionFormCallback(final Activity parent) {
+
+        return new VisilabsCallback() {
+            @Override
+            public void success(VisilabsResponse response) {
+                try {
+                    VisilabsMailSubscriptionFormResponse visilabsMailSubscriptionFormResponse = new Gson().fromJson(response.getRawResponse(), VisilabsMailSubscriptionFormResponse.class);
+                    if(visilabsMailSubscriptionFormResponse != null && !visilabsMailSubscriptionFormResponse.getMailSubscriptionForm().isEmpty()) {
+                        MailSubscriptionForm mailSubscriptionForm = visilabsMailSubscriptionFormResponse.getMailSubscriptionForm().get(0);
+                        new InAppMessageManager(_cookieID, _dataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
+                    }
+                } catch (Exception ex) {
+                    Log.e(LOG_TAG, ex.getMessage(), ex);
+                }
+            }
+
+            @Override
+            public void fail(VisilabsResponse response) {
+                Log.e(LOG_TAG, response.getRawResponse());
+            }
+        };
+    }
+
+    public void trackMailSubscriptionFormClick(Report report) {
+
+        if (report == null || report.getClick() == null || report.getClick().equals("")) {
+            Log.w(LOG_TAG, "Mail subs form report click is null or empty.");
+            return;
+        }
+
+        long timeOfEvent = System.currentTimeMillis() / 1000;
+        String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.uri=%s&OM.cookieID=%s&OM.vchannel=%s&OM.domain=%s"
+                , VisilabsEncoder.encode(this._organizationID)
+                , VisilabsEncoder.encode(this._siteID)
+                , timeOfEvent
+                , VisilabsEncoder.encode("/OM_evt.gif")
+                , VisilabsEncoder.encode(this._cookieID)
+                , VisilabsEncoder.encode(this._channel)
+                , VisilabsEncoder.encode(this._dataSource + "_Android"));
+
+
+        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        }
+
+        query += String.format("&%s", report.getClick());
+
+        String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;
+        String realURL = "";
+
+
+        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            realURL = this._realTimeURL + "/" + this._dataSource + "/om.gif?" + query;
+        }
+
+
+        if (VisilabsConstant.DEBUG) {
+            Log.v(LOG_TAG, String.format("Notification button tapped %s", segURL));
+        }
+
+
+        synchronized (this) {
+            addUrlToQueue(segURL);
+            if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+                addUrlToQueue(realURL);
+            }
+        }
+
+        this.send();
+
+        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            this.send();
+        }
+    }
+
+    public void createSubsJsonRequest(String actId, String auth, String email) {
+        long timeOfEvent = System.currentTimeMillis() / 1000;
+        String query = String.format("OM.oid=%s&OM.siteID=%s&&OM.cookieID=%s&type=%s&actionid=%s&auth=%s&OM.subsemail=%s"
+                , VisilabsEncoder.encode(this._organizationID)
+                , VisilabsEncoder.encode(this._siteID)
+                , VisilabsEncoder.encode(this._cookieID)
+                , "subscription_email"
+                , actId
+                , auth
+                , email);
+        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        }
+        String mailSubsURL = VisilabsConstant.SUBSJSON_ENDPOINT + "?" + query;
+        synchronized (this) {
+            addUrlToQueue(mailSubsURL);
+        }
+        this.send();
+    }
+
     public void showNotification(String pageName, Activity parent) {
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
             return;
@@ -482,7 +598,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         request.setVisitorData(this.mVisitorData);
         request.setVisitData(this.mVisitData);
-
         request.setProperties(properties);
 
         try {
@@ -1040,6 +1155,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         if (mCheckForNotificationsOnLoggerRequest && mActionURL != null) {
             this.showNotification(pageName, parent, properties);
+            this.showMailSubscriptionForm(pageName, parent, properties);
         }
 
         this.send();

@@ -134,6 +134,8 @@ public class VisilabsConstant {
     private static final String LOG_TAG = "VisilabsConfig";
     public static final String FavoriteAttributeAction = "FavoriteAttributeAction";
 
+    public static final String SUBSJSON_ENDPOINT = "https://s.visilabs.net/subsjson";
+
     public static boolean checkNotificationActivityAvailable(Context context) {
         if (Build.VERSION.SDK_INT < UI_FEATURES_MIN_API) {
             return false;

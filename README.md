@@ -5,7 +5,7 @@
 
 # Latest Version 
 
-***October 27, 2020*** - [Visilabs v5.0.0](https://github.com/relateddigital/visilabs-android/releases) 
+***December 9, 2020*** - [Visilabs v5.1.0](https://github.com/relateddigital/visilabs-android/releases)
 
 # Latest Version [![Build Status](https://travis-ci.com/relateddigital/visilabs-android.svg?branch=master)](https://travis-ci.com/relateddigital/visilabs-android)
 
@@ -17,6 +17,7 @@
     + [Sample Applications](#sample-applications)
     + [Using the SDK](#using-the-sdk)
     + [Licence](#licence)
+  * [Mail Subscription Form](#mail-subscription-form)
     
 # Visilabs Android
 
@@ -27,7 +28,7 @@ The Visilabs Android Sdk is a java implementation of an Android client for Visil
 Add Visilabs to the ```dependencies``` in app/build.gradle.
 
 ```java
-implementation "com.visilabs.android:visilabs-android:5.0.0
+implementation "com.visilabs.android:visilabs-android:5.1.0
 ```
 This version uses AndroidX
 
@@ -44,13 +45,25 @@ Mobile Tagging for Visilab and more information :  [Please check docs](https://r
 #### Note : 
 You may use the support library module in sample application but we will not contribute support library in the future. This is our last support.
 
-<p align="center">
-  <a href="https://github.com/relateddigital/visilabs-android"><img src="https://github.com/relateddigital/visilabs-android/blob/master/inappnew.gif" alt="Visilabs Android Library" width="100" style="max-width:100%;"></a>
-</p>
 
-<p align="center">
-  <a href="https://github.com/relateddigital/visilabs-android"><img src="https://github.com/relateddigital/visilabs-android/blob/master/app/story.png" alt="Visilabs Android Library" width="100" style="max-width:100%;"></a>
-</p>
+|              In App Notification              | Story                                                            |
+|:----------------------------------------------------------------:|----------------------------------------------------------------------------|
+| ![Image of InAppNew](/Screenshots/inappnew.gif)                 | ![Image of Story](/Screenshots/story.png)                          |
+
+
+## Mail Subscription Form
+
+After form is created at **RMC** panel, likewise **in-app message**, existence of mail subscription form is controlled by after each `customEvent` call.
+You need to call overload of `customEvent` which takes `Activity` as third parameter in order to show mail subscription forms.
+
+```java
+customEvent(String pageName, HashMap<String, String> properties, Activity parent)
+```
+
+It is shown as follows;
+
+![mail-subscription-form](/Screenshots/mail-subscription-form.png)
+
 
 ### Licences
 

@@ -1,10 +1,6 @@
 package com.visilabs.story.model.skinbased;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.visilabs.story.model.Report;
-
 import java.io.Serializable;
 import java.util.List;
 

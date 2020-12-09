@@ -26,6 +26,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
 
     Button btnGoToLogin;
+    Button customEvent1, customEvent2;
 
     VisilabsRecyclerView visilabsRecyclerView;
 
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnGoToLogin = findViewById(R.id.btn_go_to_login);
+        customEvent1 = findViewById(R.id.customEvent1);
+        customEvent2 = findViewById(R.id.customEvent2);
 
         visilabsRecyclerView = findViewById(R.id.vrv_story);
 
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-sdk");
-        parameters.put("OM.exVisitorID", "ogun.ozturk@euromsg.com");
+        //parameters.put("OM.exVisitorID", "ogun.ozturk@euromsg.com");
         Visilabs.CallAPI().customEvent("android-visilab", parameters);
 
         btnGoToLogin.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +64,23 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        customEvent1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, String> parameters = new HashMap<>();
+                parameters.put("OM.inapptype", "image_text_button");
+                Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
+            }
+        });
+
+        customEvent2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, String> parameters = new HashMap<>();
+                Visilabs.CallAPI().customEvent("test", parameters, MainActivity.this);
             }
         });
 
