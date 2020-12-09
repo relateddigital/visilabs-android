@@ -44,8 +44,9 @@ Mobile Tagging for Visilab and more information :  [Please check docs](https://r
 #### Note : 
 You may use the support library module in sample application but we will not contribute support library in the future. This is our last support.
 
-|:----------------------------------------------------------------:|----------------------------------------------------------------------------|
-| ![Image of InAppNew](/Screenshots/inappnew.gif)                 | ![Image of Story](/Screenshots/story.png)                          |
+
+| ----------- | ----------- |
+| ![Image of InAppNew](/Screenshots/inappnew.gif)        | ![Image of Story](/Screenshots/story.png)       |
 
 
 
