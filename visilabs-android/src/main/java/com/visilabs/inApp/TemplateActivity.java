@@ -203,7 +203,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     }
 
     private void setBody() {
-        tvBody.setText(inAppMessage.getBody());
+        tvBody.setText(inAppMessage.getBody().replace("\\n","\n"));
         tvBody.setTypeface(inAppMessage.getFont_family());
         tvBody.setVisibility(View.VISIBLE);
         tvBody.setTextColor(Color.parseColor(inAppMessage.getMsg_body_color()));

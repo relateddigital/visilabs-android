@@ -156,7 +156,7 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
     }
 
     private void setBody() {
-        tvBody.setText(mailSubscriptionForm.getActiondata().getMessage());
+        tvBody.setText(mailSubscriptionForm.getActiondata().getMessage().replace("\\n","\n"));
         tvBody.setTypeface(getFont_family(extendedProps.getText_font_family()));
         tvBody.setTextColor(Color.parseColor(extendedProps.getText_color()));
         tvBody.setTextSize(Float.parseFloat(extendedProps.getText_size()) + 8);

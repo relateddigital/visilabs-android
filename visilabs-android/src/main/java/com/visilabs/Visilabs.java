@@ -929,12 +929,15 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
     }
 
-    public void customEvent(String pageName, HashMap<String, String> properties) {
-        if (pageName == null || pageName.length() == 0) {
-            Log.w(LOG_TAG, "Name cannot be null");
+    public void sendCampaignParameters(HashMap<String, String> properties) {
+        if(properties == null || properties.isEmpty()){
+            Log.w(LOG_TAG, "properties cannot be null or empty.");
             return;
         }
+        sendEvent(properties);
+    }
 
+    private void sendEvent(HashMap<String, String> properties){
         Context context = this._context;
 
         if (properties != null) {
@@ -984,11 +987,10 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
         long timeOfEvent = System.currentTimeMillis() / 1000;
-        String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.uri=%s&OM.cookieID=%s&OM.vchannel=%s&OM.mappl=%s"
+        String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.cookieID=%s&OM.vchannel=%s&OM.mappl=%s"
                 , VisilabsEncoder.encode(this._organizationID)
                 , VisilabsEncoder.encode(this._siteID)
                 , timeOfEvent
-                , VisilabsEncoder.encode(pageName)
                 , VisilabsEncoder.encode(this._cookieID)
                 , VisilabsEncoder.encode(this._channel)
                 , VisilabsEncoder.encode("true"));
@@ -1043,6 +1045,19 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
             this.send();
         }
+
+    }
+
+    public void customEvent(String pageName, HashMap<String, String> properties) {
+        if (pageName == null || pageName.length() == 0) {
+            Log.w(LOG_TAG, "Name cannot be null");
+            return;
+        }
+        if (properties == null) {
+            properties = new HashMap<>();
+            properties.put("OM.uri", pageName);
+        }
+        sendEvent(properties);
     }
 
     public void customEvent(String pageName, HashMap<String, String> properties, Activity parent) {

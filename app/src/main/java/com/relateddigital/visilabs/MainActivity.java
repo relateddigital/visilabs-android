@@ -26,7 +26,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
 
     Button btnGoToLogin;
-    Button customEvent1, customEvent2;
+    Button customEvent1, customEvent2, customEvent3, inApp1;
 
     VisilabsRecyclerView visilabsRecyclerView;
 
@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         btnGoToLogin = findViewById(R.id.btn_go_to_login);
         customEvent1 = findViewById(R.id.customEvent1);
         customEvent2 = findViewById(R.id.customEvent2);
+        customEvent3 = findViewById(R.id.customEvent3);
+        inApp1 = findViewById(R.id.inApp1);
 
         visilabsRecyclerView = findViewById(R.id.vrv_story);
 
@@ -81,6 +83,26 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 HashMap<String, String> parameters = new HashMap<>();
                 Visilabs.CallAPI().customEvent("test", parameters, MainActivity.this);
+            }
+        });
+
+        customEvent3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, String> properties = new HashMap<>();
+                properties.put("utm_campaign","android-test-campaign");
+                properties.put("utm_source","euromsg");
+                properties.put("utm_medium","push");
+                Visilabs.CallAPI().sendCampaignParameters(properties);
+            }
+        });
+
+        inApp1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, String> parameters = new HashMap<>();
+                parameters.put("OM.inapptype", "image_text_button");
+                Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
             }
         });
 
