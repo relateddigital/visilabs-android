@@ -18,6 +18,7 @@
     + [Using the SDK](#using-the-sdk)
     + [Licence](#licence)
   * [Mail Subscription Form](#mail-subscription-form)
+  * [Sending Campaign Parameters](#sending-campaign-parameters)
     
 # Visilabs Android
 
@@ -64,6 +65,17 @@ It is shown as follows;
 
 ![mail-subscription-form](/Screenshots/mail-subscription-form.png)
 
+## Sending Campaign Parameters
+
+You can send campaign parameters using `sendCampaignParameters` :
+
+```java
+HashMap<String, String> properties = new HashMap<>();
+properties.put("utm_campaign","euromsg campaign");
+properties.put("utm_source","euromsg");
+properties.put("utm_medium","push");
+Visilabs.CallAPI().sendCampaignParameters(properties);
+```
 
 ### Licences
 
