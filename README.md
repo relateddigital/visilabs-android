@@ -5,7 +5,7 @@
 
 # Latest Version 
 
-***December 9, 2020*** - [Visilabs v5.1.0](https://github.com/relateddigital/visilabs-android/releases)
+***December 15, 2020*** - [Visilabs v5.2.0](https://github.com/relateddigital/visilabs-android/releases)
 
 # Latest Version [![Build Status](https://travis-ci.com/relateddigital/visilabs-android.svg?branch=master)](https://travis-ci.com/relateddigital/visilabs-android)
 
@@ -18,6 +18,7 @@
     + [Using the SDK](#using-the-sdk)
     + [Licence](#licence)
   * [Mail Subscription Form](#mail-subscription-form)
+  * [Sending Campaign Parameters](#sending-campaign-parameters)
     
 # Visilabs Android
 
@@ -28,7 +29,7 @@ The Visilabs Android Sdk is a java implementation of an Android client for Visil
 Add Visilabs to the ```dependencies``` in app/build.gradle.
 
 ```java
-implementation "com.visilabs.android:visilabs-android:5.1.0
+implementation "com.visilabs.android:visilabs-android:5.2.0
 ```
 This version uses AndroidX
 
@@ -64,6 +65,17 @@ It is shown as follows;
 
 ![mail-subscription-form](/Screenshots/mail-subscription-form.png)
 
+## Sending Campaign Parameters
+
+You can send campaign parameters using `sendCampaignParameters` :
+
+```java
+HashMap<String, String> properties = new HashMap<>();
+properties.put("utm_campaign","euromsg campaign");
+properties.put("utm_source","euromsg");
+properties.put("utm_medium","push");
+Visilabs.CallAPI().sendCampaignParameters(properties);
+```
 
 ### Licences
 
