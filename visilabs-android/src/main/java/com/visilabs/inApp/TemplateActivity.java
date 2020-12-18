@@ -197,7 +197,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
 
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setTypeface(inAppMessage.getFont_family(), Typeface.BOLD);
-        tvTitle.setText(inAppMessage.getTitle());
+        tvTitle.setText(inAppMessage.getTitle().replace("\\n","\n"));
         tvTitle.setTextColor(Color.parseColor(inAppMessage.getMsg_title_color()));
         tvTitle.setTextSize(Float.parseFloat(inAppMessage.getMsg_body_textsize()) + 12);
     }

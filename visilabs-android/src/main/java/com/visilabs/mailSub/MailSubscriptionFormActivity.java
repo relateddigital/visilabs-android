@@ -150,7 +150,7 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
 
     private void setTitle() {
         tvTitle.setTypeface(getFont_family(extendedProps.getTitle_font_family()), Typeface.BOLD);
-        tvTitle.setText(mailSubscriptionForm.getActiondata().getTitle());
+        tvTitle.setText(mailSubscriptionForm.getActiondata().getTitle().replace("\\n","\n"));
         tvTitle.setTextColor(Color.parseColor(extendedProps.getTitle_text_color()));
         tvTitle.setTextSize(Float.parseFloat(extendedProps.getTitle_text_size()) + 12);
     }
