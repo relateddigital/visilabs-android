@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnGoToLogin;
+    Button btnGoToLogin, btnGoToInApp;
     Button customEvent1, customEvent2, customEvent3, inApp1;
 
     VisilabsRecyclerView visilabsRecyclerView;
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnGoToLogin = findViewById(R.id.btn_go_to_login);
+        btnGoToInApp = findViewById(R.id.btn_go_to_inapp);
         customEvent1 = findViewById(R.id.customEvent1);
         customEvent2 = findViewById(R.id.customEvent2);
         customEvent3 = findViewById(R.id.customEvent3);
@@ -65,6 +66,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnGoToInApp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, InAppActivity.class);
                 startActivity(intent);
             }
         });

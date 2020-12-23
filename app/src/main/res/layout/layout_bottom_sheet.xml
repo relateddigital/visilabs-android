@@ -1,0 +1,73 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/dp_8"
+    android:layout_marginTop="@dimen/dp_8"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_bottom_sheet_title"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:layout_marginStart="@dimen/dp_16"
+        android:gravity="center"
+        android:text="Visilabs Demo"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tv_bottom_sheet_body"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_32"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:layout_marginStart="@dimen/dp_16"
+        android:gravity="center"
+        android:text="Kampanyaları görmek ister misiniz?"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_bottom_sheet_1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_48"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:layout_marginStart="@dimen/dp_16"
+        android:gravity="start|center_vertical"
+        android:text="GÖSTER"
+        android:textColor="@color/bottom_sheet_button_color"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
+
+   <!-- <TextView
+        android:id="@+id/tv_bottom_sheet_2"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:layout_marginStart="@dimen/dp_16"
+        android:gravity="start|center_vertical"
+        android:text="Bottom Sheet 2"
+        android:textColor="@color/black"
+        android:textSize="16sp" />-->
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/dp_8"
+        android:layout_marginTop="@dimen/md_bottom_sheet_separator_top_margin"
+        android:background="@color/black" />
+
+    <TextView
+        android:id="@+id/tv_bottom_sheet_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_48"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:layout_marginStart="@dimen/dp_16"
+        android:gravity="start|center_vertical"
+        android:text="KAPAT"
+        android:textColor="@color/bottom_sheet_button_color"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
+
+</LinearLayout>
