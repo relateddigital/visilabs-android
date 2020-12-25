@@ -111,13 +111,14 @@ public class InAppMessageManager {
 
                         case MINI:
 
-                            VisilabsUpdateDisplayState visilabsUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(getStateId(parent, inAppMessage));
+                            int stateId = getStateId(parent, inAppMessage);
+
+                            VisilabsUpdateDisplayState visilabsUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(stateId);
 
                             if (visilabsUpdateDisplayState == null) {
                                 showDebugMessage("Notification's display proposal was already consumed, no notification will be shown.");
                             } else {
-
-                                openInAppMiniFragment(getStateId(parent, inAppMessage), parent, visilabsUpdateDisplayState);
+                                openInAppMiniFragment(stateId, parent, visilabsUpdateDisplayState);
                             }
 
                             break;

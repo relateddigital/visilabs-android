@@ -57,6 +57,8 @@ public class VisilabsInAppFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
+
+
         if (inAppNotificationState != null) {
 
             rootView = inflater.inflate(R.layout.fragment_in_app_mini, container, false);
@@ -65,7 +67,7 @@ public class VisilabsInAppFragment extends Fragment {
             ivInAppImageMini = rootView.findViewById(R.id.iv_in_app_image_mini);
             InAppMessage inApp = inAppNotificationState.getInAppMessage();
 
-            tvInAppTitleMini.setText(inApp.getTitle());
+            tvInAppTitleMini.setText(inApp.getTitle().replace("\\n","\n"));
 
             Picasso.get().load(inApp.getImageUrl()).into(ivInAppImageMini);
 

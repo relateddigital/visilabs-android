@@ -85,6 +85,10 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             finish();
         }
+
+
+        //TODO: daha sonra bu kısım opsiyonel olabilir. Burada releaseDisplayState metodu da çağırılmalı
+        this.setFinishOnTouchOutside(true);
     }
 
     private InAppMessage getInAppMessage() {
@@ -336,5 +340,12 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
 
         VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
         finish();
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
     }
 }
