@@ -13,7 +13,7 @@
         android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
         android:gravity="center"
-        android:text="Visilabs Demo"
+        android:text="title"
         android:textColor="@color/black"
         android:textSize="20sp" />
 
@@ -24,7 +24,7 @@
         android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
         android:gravity="center"
-        android:text="Kampanyaları görmek ister misiniz?"
+        android:text="text"
         android:textColor="@color/black"
         android:textSize="16sp" />
 
@@ -35,7 +35,7 @@
         android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
         android:gravity="start|center_vertical"
-        android:text="GÖSTER"
+        android:text="BUTTON1"
         android:textColor="@color/bottom_sheet_button_color"
         android:textSize="14sp"
         android:textStyle="bold"/>
@@ -65,7 +65,7 @@
         android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
         android:gravity="start|center_vertical"
-        android:text="KAPAT"
+        android:text="CLOSE"
         android:textColor="@color/bottom_sheet_button_color"
         android:textSize="14sp"
         android:textStyle="bold"/>

@@ -95,13 +95,13 @@
         <Button
             android:id="@+id/inApp2"
             android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="inApp2"
+            android:text="mini"
             android:layout_weight="1.0" />
 
         <Button
             android:id="@+id/inApp3"
             android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="inApp3"
+            android:text="full"
             android:layout_weight="1.0" />
 
     </LinearLayout>

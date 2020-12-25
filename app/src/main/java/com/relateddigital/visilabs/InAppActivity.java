@@ -30,24 +30,24 @@ public class InAppActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                alertDialogBuilder.setMessage("Kampanyaları görmek ister misiniz ?")
+                alertDialogBuilder.setMessage("text")
                         .setCancelable(false)
-                        .setPositiveButton("Göster", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("button1", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 //finish(); //TODO:
-                                Toast.makeText(getApplicationContext(),"Kampanyaları Göster",
+                                Toast.makeText(getApplicationContext(),"button1",
                                         Toast.LENGTH_SHORT).show();
                             }
                         })
-                        .setNegativeButton("Kapat", new DialogInterface.OnClickListener() {
+                        .setNegativeButton("close", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
-                                Toast.makeText(getApplicationContext(),"Kapat",
+                                Toast.makeText(getApplicationContext(),"close",
                                         Toast.LENGTH_SHORT).show();
                             }
                         });
                 AlertDialog alert = alertDialogBuilder.create();
-                alert.setTitle("Visilabs Demo");
+                alert.setTitle("title");
                 alert.show();
             }
         });
