@@ -25,8 +25,8 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnGoToLogin;
-    Button customEvent1, customEvent2, customEvent3, inApp1;
+    Button btnGoToLogin, btnGoToInApp;
+    Button customEvent1, customEvent2, customEvent3, inApp1, inApp2, inApp3;
 
     VisilabsRecyclerView visilabsRecyclerView;
 
@@ -38,10 +38,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnGoToLogin = findViewById(R.id.btn_go_to_login);
+        btnGoToInApp = findViewById(R.id.btn_go_to_inapp);
         customEvent1 = findViewById(R.id.customEvent1);
         customEvent2 = findViewById(R.id.customEvent2);
         customEvent3 = findViewById(R.id.customEvent3);
         inApp1 = findViewById(R.id.inApp1);
+        inApp2 = findViewById(R.id.inApp2);
+        inApp3 = findViewById(R.id.inApp3);
 
         visilabsRecyclerView = findViewById(R.id.vrv_story);
 
@@ -69,12 +72,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btnGoToInApp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, InAppActivity.class);
+                startActivity(intent);
+            }
+        });
+
         customEvent1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 HashMap<String, String> parameters = new HashMap<>();
                 parameters.put("OM.inapptype", "image_text_button");
                 Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
+                //Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this); // TODO: ikincisini kaldır sonra
             }
         });
 
@@ -102,6 +114,24 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 HashMap<String, String> parameters = new HashMap<>();
                 parameters.put("OM.inapptype", "image_text_button");
+                Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
+            }
+        });
+
+        inApp2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, String> parameters = new HashMap<>();
+                parameters.put("OM.inapptype", "mini");
+                Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
+            }
+        });
+
+        inApp3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, String> parameters = new HashMap<>();
+                parameters.put("OM.inapptype", "full");
                 Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
             }
         });

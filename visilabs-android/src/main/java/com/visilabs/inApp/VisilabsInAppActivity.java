@@ -91,8 +91,8 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
     private void setInAppData() {
 
 
-        tvInAppTitle.setText(inApp.getTitle());
-        tvInAppSubtitle.setText(inApp.getBody());
+        tvInAppTitle.setText(inApp.getTitle().replace("\\n","\n"));
+        tvInAppSubtitle.setText(inApp.getBody().replace("\\n","\n"));
 
         if (inApp.getButtonText() != null && inApp.getButtonText().length() > 0) {
             btnInApp.setText(inApp.getButtonText());

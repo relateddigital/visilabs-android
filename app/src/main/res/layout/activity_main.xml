@@ -38,6 +38,16 @@
         android:text="Go To Login Page"
         android:textColor="@color/colorLight" />
 
+    <Button
+        android:id="@+id/btn_go_to_inapp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:padding="10dp"
+        android:background="@color/colorButton"
+        android:text="Go To InApp Page"
+        android:textColor="@color/colorLight" />
+
     <LinearLayout
         android:orientation="horizontal"
         android:background="@android:drawable/bottom_bar"
@@ -85,13 +95,13 @@
         <Button
             android:id="@+id/inApp2"
             android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="inApp2"
+            android:text="mini"
             android:layout_weight="1.0" />
 
         <Button
             android:id="@+id/inApp3"
             android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="inApp3"
+            android:text="full"
             android:layout_weight="1.0" />
 
     </LinearLayout>
