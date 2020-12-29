@@ -111,8 +111,8 @@ public class InAppMessage implements Parcelable {
             button_text_color = actionData.getString("button_text_color");
             button_color = actionData.getString("button_color");
 
-            close_button_text = actionData.getString("close_button_text");
-            alert_type = actionData.getString("alert_type");
+            close_button_text = actionData.optString("close_button_text");
+            alert_type = actionData.optString("alert_type");
 
             mContext = context;
 
