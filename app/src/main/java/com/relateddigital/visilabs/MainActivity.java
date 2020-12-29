@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 HashMap<String, String> parameters = new HashMap<>();
-                parameters.put("OM.inapptype", "full");
+                parameters.put("OM.inapptype", "alert");
                 Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
             }
         });
