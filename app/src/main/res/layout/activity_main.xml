@@ -107,7 +107,7 @@
             <Button
                 android:id="@+id/inApp3"
                 android:layout_width="0.0dip" android:layout_height="fill_parent"
-                android:text="full"
+                android:text="alert"
                 android:layout_weight="1.0" />
 
         </LinearLayout>
