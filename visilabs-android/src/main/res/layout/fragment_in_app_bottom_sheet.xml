@@ -7,35 +7,39 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/tv_bottom_sheet_title"
+        android:id="@+id/tv_title"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp_40"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/dp_40"
+        android:lineHeight="@dimen/dp_40"
         android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
-        android:gravity="center"
-        android:text="TITLE"
+        android:gravity="center_vertical"
+        android:text="@string/title"
         android:textColor="@android:color/black"
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/tv_bottom_sheet_body"
+        android:id="@+id/tv_body"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp_32"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/dp_32"
+        android:lineHeight="@dimen/dp_32"
         android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
-        android:gravity="center"
-        android:text="TEXT"
+        android:gravity="center_vertical"
+        android:text="@string/body"
         android:textColor="@android:color/black"
         android:textSize="16sp" />
 
     <TextView
-        android:id="@+id/tv_bottom_sheet_1"
+        android:id="@+id/tv_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_48"
         android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
         android:gravity="start|center_vertical"
-        android:text="BUTTON"
+        android:text="@string/button"
         android:textColor="@color/bottom_sheet_button_color"
         android:textSize="14sp"
         android:textStyle="bold"/>
@@ -48,13 +52,13 @@
         android:background="@android:color/black" />
 
     <TextView
-        android:id="@+id/tv_bottom_sheet_cancel"
+        android:id="@+id/tv_close"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_48"
         android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
         android:gravity="start|center_vertical"
-        android:text="CLOSE"
+        android:text="@string/close"
         android:textColor="@color/bottom_sheet_button_color"
         android:textSize="14sp"
         android:textStyle="bold"/>

@@ -56,7 +56,7 @@ public class InAppActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 VisilabsBottomSheetDialogFragment visilabsBottomSheetDialogFragment = VisilabsBottomSheetDialogFragment.newInstance();
-                visilabsBottomSheetDialogFragment.show(getSupportFragmentManager(), "visilabs_dialog_fragment");
+                visilabsBottomSheetDialogFragment.show( getSupportFragmentManager(), "visilabs_dialog_fragment");
             }
         });
     }

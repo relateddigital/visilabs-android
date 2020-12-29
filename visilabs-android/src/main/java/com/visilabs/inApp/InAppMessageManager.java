@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
@@ -193,7 +194,11 @@ public class InAppMessageManager {
                             if (visilabsUpdateDisplayState == null) {
                                 showDebugMessage("Notification's display proposal was already consumed, no notification will be shown.");
                             } else {
-                                openInAppAlert(stateId, parent, visilabsUpdateDisplayState);
+                                if(inAppMessage.getAlertType() != null && inAppMessage.getAlertType().equals("actionSheet")) {
+                                    openInAppActionSheet(stateId, parent, visilabsUpdateDisplayState);
+                                } else {
+                                    openInAppAlert(stateId, parent, visilabsUpdateDisplayState);
+                                }
                             }
 
 
@@ -264,12 +269,18 @@ public class InAppMessageManager {
         parent.startActivity(intent);
     }
 
+
+    //TODO: orientation-change onDismiss not called
     private void openInAppAlert(final int stateID, final Activity parent, VisilabsUpdateDisplayState visilabsUpdateDisplayState) {
+        if(visilabsUpdateDisplayState.getDisplayState() == null){
+            VisilabsUpdateDisplayState.releaseDisplayState(stateID);
+            return;
+        }
         InAppNotificationState state = (InAppNotificationState) visilabsUpdateDisplayState.getDisplayState();
         final InAppMessage inAppMessage = state.getInAppMessage();
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(parent, R.style.AlertDialogStyle);
-        alertDialogBuilder.setTitle(inAppMessage.getTitle())
-                .setMessage(inAppMessage.getBody())
+        alertDialogBuilder.setTitle(inAppMessage.getTitle().replace("\\n","\n"))
+                .setMessage(inAppMessage.getBody().replace("\\n","\n"))
                 .setCancelable(false)
                 .setPositiveButton(inAppMessage.getButtonText(), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -278,7 +289,6 @@ public class InAppMessageManager {
                         if (uriString != null && uriString.length() > 0) {
                             try {
                                 uri = Uri.parse(uriString);
-                                Visilabs.CallAPI().trackInAppMessageClick(inAppMessage, null);
                                 Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
                                 parent.startActivity(viewIntent);
                             } catch (IllegalArgumentException e) {
@@ -296,13 +306,31 @@ public class InAppMessageManager {
                         VisilabsUpdateDisplayState.releaseDisplayState(stateID);
                         dialog.cancel();
                     }
+                }).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        VisilabsUpdateDisplayState.releaseDisplayState(stateID);
+                    }
                 });
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
     }
 
     private void openInAppActionSheet(final int stateID, final Activity parent, VisilabsUpdateDisplayState visilabsUpdateDisplayState) {
+        if(visilabsUpdateDisplayState.getDisplayState() == null){
+            VisilabsUpdateDisplayState.releaseDisplayState(stateID);
+            return;
+        }
+        if(parent instanceof AppCompatActivity) {
+            InAppNotificationState state = (InAppNotificationState) visilabsUpdateDisplayState.getDisplayState();
+            final InAppMessage inAppMessage = state.getInAppMessage();
+            AppCompatActivity appCompatActivity = (AppCompatActivity)parent;
+            VisilabsBottomSheetDialogFragment visilabsBottomSheetDialogFragment = VisilabsBottomSheetDialogFragment.newInstance();
+            visilabsBottomSheetDialogFragment.setCancelable(false);
+            visilabsBottomSheetDialogFragment.setInAppState(stateID, state);
+            visilabsBottomSheetDialogFragment.show(appCompatActivity.getSupportFragmentManager(), "visilabs_dialog_fragment");
 
+        }
     }
 
 

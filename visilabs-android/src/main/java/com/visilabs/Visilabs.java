@@ -332,7 +332,10 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
         query += String.format("&%s", inAppMessage.getQueryString());
-        query += rating;
+
+        if(rating != null) {
+            query += rating;
+        }
 
 
         String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;
