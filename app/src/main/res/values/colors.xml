@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#000000</color>
-    <color name="bottom_sheet_button_color">#008b00</color>
+    <color name="bottom_sheet_button_color">#00897b</color>
 
 
 

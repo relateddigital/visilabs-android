@@ -13,8 +13,8 @@
         android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
         android:gravity="center"
-        android:text="title"
-        android:textColor="@color/black"
+        android:text="TITLE"
+        android:textColor="@android:color/black"
         android:textSize="20sp" />
 
     <TextView
@@ -24,8 +24,8 @@
         android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
         android:gravity="center"
-        android:text="text"
-        android:textColor="@color/black"
+        android:text="TEXT"
+        android:textColor="@android:color/black"
         android:textSize="16sp" />
 
     <TextView
@@ -35,7 +35,7 @@
         android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
         android:gravity="start|center_vertical"
-        android:text="BUTTON1"
+        android:text="BUTTON"
         android:textColor="@color/bottom_sheet_button_color"
         android:textSize="14sp"
         android:textStyle="bold"/>
@@ -45,7 +45,7 @@
         android:layout_height="1dp"
         android:layout_marginBottom="@dimen/dp_8"
         android:layout_marginTop="@dimen/md_bottom_sheet_separator_top_margin"
-        android:background="@color/black" />
+        android:background="@android:color/black" />
 
     <TextView
         android:id="@+id/tv_bottom_sheet_cancel"
