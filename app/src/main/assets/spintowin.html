@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="spintowin.js"></script>
+    <style type="text/css">
+         .center-container {
+           display: flex;
+           justify-content: center;
+           margin-top: 40px;
+          }
+          .form-submit-btn {
+            width: 60%;
+            height: 35px;
+            font-size: 20px;
+          }
+          .vl-form-submit-btn {
+            width: 60%;
+            height: 35px;
+            font-size: 20px;
+          }
+          #spin-to-win-box-close {
+            position: absolute; top: -60px; right: 40px; cursor: pointer; opacity: 0.7; z-index: 1; width: 50px; height: : 50px;
+          }
+      </style>
+</head>
+<body>
+<div id ="container">
+    <img id="spin-to-win-box-close" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA/tJREFUeNqEVG1oW2UUfm9u7k1z89HU5TtiiW4Thpo4EzT+q7RiWf3XBn+0ds2fWJxzQ7aBFEbxAxWHq0OabhQrbcekUEqnFNaMgnUW29QfCitLi2hrVtKPZGvTmdwkPZ73zU0ZM9oDD/feN+c873NOzjkc+X9TIQSEWvkuIvLKs6Jx/3FehbAgDkqSdNBisVhVaPfQ0un073i+iLiL2EHAforMiGP19fUDQ0NDS6urq1lQbGtrqzA5ObkaCoW+FwShA/2eeEh9RTJXTU3NqcHBwSVKkM/n4Ub0Bly+chl6I71w/bvrcH/rPiOfnZ1Neb3eixhzRCnLv8yKdmZmZiZNA3r7euGo/wWwOKxgtpvhgM3M3p99/jno/qCbXba5uVkMBAJ9GHtIEbRnWp7nm8fHx+9SsrffPQFE4EBj0ILFaQXb4/YSXHbQmfSAofDasUbY3t6G5eXlHAo5hxyPPUz4VHNz8ygl+6LnIi0ytLwRhA8//gi0Rgn0NQaoNptApeHheKgDznefB8ITaA+1s/R7enp+xZiXyippUV+fmppKYgpgddqYgktfXYLyBRyqpZcE8ZJisQjzv8yDwWQElaiCWz/dgnQqnTcajSfRR6KEOrvdfpbW5Nq311igRhJBZ5Bg+OowI/30s0+gJdgChXwBYvMxcLocIIhq5vvOyRPMp66u7gptNapOcDqdNrVaTeJ37rD8eY4nclYmoY4Okstmydkz5wjGkB+npwkSk7W1NSJJWpKXCyQeX2QxtbW1tG+raM6cmrKhoYJSRXfxFl4guZxMotGbpQngOHJ74TZJJteIKIgEdkuueVkuieD5Ehc9S6VSaXrodLlKXpjMg+zfJNgSJF8PDJDpH6ZJIvEXCYffQsUyOX361N58WC1W9kwmk/fwkaPvIlrr4tJSJh6PQ5WoARWngjfb2tgfMDc3B+YDZjzjYHi4VNO+SB9oq7SshpFIBGRZ3nU4HO/jt748z96urq4Z6ny8vZ05Xvj8Ap0GsNtswBEOBLUAGlGEkZERiEajoNFo4OlDhyGTycDY2NifGNNAMy/3oQkXwHsrKyu59fV18Ho8jNRUXQ1qFQ86VCMhRCTVSzoQeDUY9Aa4icS0OzweDx1Bx6NzfBj/+m9QPiQSCXi1oQGUTYIKCagIt/f9pNsNExMTLP1wODyJZ/5K8ywijjY2Nl7d2NgoUOfR0VFoa22FlwMB8Pt80NTUxEqBW4fVt7Ozk5K9Um7oSqah28Ptdnf39/cv7OzsFOERKxQKtGZ/+Hy+LxVl0n4LllcG/QgO/Yt+v/8Z2rTYZxyWIh2LxRZwIfyMv/+GWFc2+L4bu0ysVVpBq5zRPssgHtA5qBT0jwADAKOeG2u13ga9AAAAAElFTkSuQmCC";/>
+    <div id ="form-container">
+        <div id ="form-container-inner">
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+         var config = {};
+         config.id = "1";
+
+         config.actiondata = {
+               "slices": [
+                 {
+                   "displayName": "Promotion 1",
+                   "color": "#00bcd4",
+                   "code": "null",
+                   "type": "promotion"
+                 },
+                 {
+                   "displayName": "Promotion 2",
+                   "color": "#ff79ff",
+                   "code": "null",
+                   "type": "promotion"
+                 },
+                 {
+                   "displayName": "Static Code 1",
+                   "color": "#e4e65e",
+                   "code": "CF,CE,CD,CC,CB,CA",
+                   "type": "staticcode"
+                 },
+                 {
+                   "displayName": "Static Code 2",
+                   "color": "#6200ee",
+                   "code": "CF,CE,CD,CC,CB,CC",
+                   "type": "staticcode"
+                 },
+                 {
+                   "displayName": "Pass",
+                   "color": "#f50000",
+                   "code": "",
+                   "type": "pass"
+                 }
+               ],
+               "view_type": "Lightbox",
+               "mail_subscription": true,
+               "spin_to_win_content": {
+                 "title": "Lorem Ipsum",
+                 "message": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                 "placeholder": "Your e-mail",
+                 "button_label": "Start",
+                 "title_style": "",
+                 "message_style": "",
+                 "button_style": "",
+                 "consent_text": "I've read and accept Terms of Use.",
+                 "container_style": "", // "background-color:#e6e6e6",
+                 "invalid_email_message": "Please enter a valid E-Mail Address.",
+                 "input_style": "",
+                 "validation_message_style": "",
+                 "consent_text_container_style": "",
+                 "success_message": "Your e-mail address has been saved.",
+                 "success_message_style": "",
+                 "emailpermit_text": ""
+               },
+               "font_size": 30,
+               "circle_R": window.innerWidth / 2,
+               "waiting_time": 0,
+               "promoAuth": "51B3A13FE2948E3A19BC606617539A2476ADE08B493EE11F270626DD94E480A5",
+               "slice_count": "5",
+               "sendemail": false,
+               "esp_cmpid": "",
+               "courseofaction": "GetExistingPromoCode",
+               "Javascript": ""
+             };
+
+         var spinToWin = new SpinToWin(config);
+      </script>
+</body>
+</html>
