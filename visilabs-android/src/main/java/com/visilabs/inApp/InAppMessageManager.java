@@ -3,13 +3,21 @@ package com.visilabs.inApp;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import com.visilabs.InAppNotificationState;
+import com.visilabs.Visilabs;
+import com.visilabs.android.R;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.MailSubscriptionFormActivity;
@@ -102,6 +110,9 @@ public class InAppMessageManager {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
+                    int stateId = 0;
+                    VisilabsUpdateDisplayState visilabsUpdateDisplayState = null;
+
                     switch (inAppMessage.getType()) {
 
 
@@ -111,9 +122,9 @@ public class InAppMessageManager {
 
                         case MINI:
 
-                            int stateId = getStateId(parent, inAppMessage);
+                            stateId = getStateId(parent, inAppMessage);
 
-                            VisilabsUpdateDisplayState visilabsUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(stateId);
+                            visilabsUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(stateId);
 
                             if (visilabsUpdateDisplayState == null) {
                                 showDebugMessage("Notification's display proposal was already consumed, no notification will be shown.");
@@ -171,6 +182,25 @@ public class InAppMessageManager {
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
                             context.startActivity(intent);
+
+                            break;
+
+                        case ALERT:
+
+                            stateId = getStateId(parent, inAppMessage);
+
+                            visilabsUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(stateId);
+
+                            if (visilabsUpdateDisplayState == null) {
+                                showDebugMessage("Notification's display proposal was already consumed, no notification will be shown.");
+                            } else {
+                                if(inAppMessage.getAlertType() != null && inAppMessage.getAlertType().equals("actionSheet")) {
+                                    openInAppActionSheet(stateId, parent, visilabsUpdateDisplayState);
+                                } else {
+                                    openInAppAlert(stateId, parent, visilabsUpdateDisplayState);
+                                }
+                            }
+
 
                             break;
 
@@ -238,6 +268,37 @@ public class InAppMessageManager {
         intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, inAppData);
         parent.startActivity(intent);
     }
+
+    private void openInAppAlert(final int stateID, final Activity parent, VisilabsUpdateDisplayState visilabsUpdateDisplayState) {
+        if(visilabsUpdateDisplayState.getDisplayState() == null){
+            VisilabsUpdateDisplayState.releaseDisplayState(stateID);
+            return;
+        }
+        if(parent instanceof AppCompatActivity) {
+            InAppNotificationState state = (InAppNotificationState) visilabsUpdateDisplayState.getDisplayState();
+            AppCompatActivity appCompatActivity = (AppCompatActivity)parent;
+            VisilabsAlertDialogFragment visilabsAlertDialogFragment = VisilabsAlertDialogFragment.newInstance();
+            visilabsAlertDialogFragment.setCancelable(false);
+            visilabsAlertDialogFragment.setInAppState(stateID, state, parent);
+            visilabsAlertDialogFragment.show(appCompatActivity.getSupportFragmentManager(), "visilabs_alert_dialog_fragment");
+        }
+    }
+
+    private void openInAppActionSheet(final int stateID, final Activity parent, VisilabsUpdateDisplayState visilabsUpdateDisplayState) {
+        if(visilabsUpdateDisplayState.getDisplayState() == null){
+            VisilabsUpdateDisplayState.releaseDisplayState(stateID);
+            return;
+        }
+        if(parent instanceof AppCompatActivity) {
+            InAppNotificationState state = (InAppNotificationState) visilabsUpdateDisplayState.getDisplayState();
+            AppCompatActivity appCompatActivity = (AppCompatActivity)parent;
+            VisilabsBottomSheetDialogFragment visilabsBottomSheetDialogFragment = VisilabsBottomSheetDialogFragment.newInstance();
+            visilabsBottomSheetDialogFragment.setCancelable(false);
+            visilabsBottomSheetDialogFragment.setInAppState(stateID, state);
+            visilabsBottomSheetDialogFragment.show(appCompatActivity.getSupportFragmentManager(), "visilabs_bottom_sheet_dialog_fragment");
+        }
+    }
+
 
     private void showDebugMessage(String message) {
         if (VisilabsConstant.DEBUG) {

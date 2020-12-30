@@ -1,109 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:gravity="center"
-    android:background="@color/colorLight"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:background="@color/colorLight">
 
-    <com.visilabs.story.VisilabsRecyclerView
-        android:id="@+id/vrv_story"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <ImageView
-        android:id="@+id/iv_logo"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_margin="20dp"
-        android:visibility="visible"
-        android:src="@mipmap/ic_visilabs" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:text="Welcome to Visilabs Demo"
         android:gravity="center"
-        android:textColor="@color/colorPrimary"
-        android:layout_height="wrap_content"/>
-
-    <Button
-        android:id="@+id/btn_go_to_login"
-        android:layout_width="wrap_content"
+        android:background="@color/colorLight"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:padding="10dp"
-        android:background="@color/colorButton"
-        android:text="Go To Login Page"
-        android:textColor="@color/colorLight" />
+        android:orientation="vertical"
+        tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/btn_go_to_inapp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:padding="10dp"
-        android:background="@color/colorButton"
-        android:text="Go To InApp Page"
-        android:textColor="@color/colorLight" />
+        <com.visilabs.story.VisilabsRecyclerView
+            android:id="@+id/vrv_story"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:background="@android:drawable/bottom_bar"
-        android:paddingLeft="4.0dip"
-        android:paddingTop="5.0dip"
-        android:paddingRight="4.0dip"
-        android:paddingBottom="1.0dip"
-        android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_margin="20dp"
+            android:visibility="visible"
+            android:src="@mipmap/ic_visilabs" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:text="Welcome to Visilabs Demo"
+            android:gravity="center"
+            android:textColor="@color/colorPrimary"
+            android:layout_height="wrap_content"/>
 
         <Button
-            android:id="@+id/customEvent1"
-            android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="Image Text Button"
-            android:layout_weight="1.0" />
+            android:id="@+id/btn_go_to_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:padding="10dp"
+            android:background="@color/colorButton"
+            android:text="Go To Login Page"
+            android:textColor="@color/colorLight" />
 
         <Button
-            android:id="@+id/customEvent2"
-            android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="Custom Event2"
-            android:layout_weight="1.0" />
+            android:id="@+id/btn_go_to_inapp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:padding="10dp"
+            android:background="@color/colorButton"
+            android:text="Go To InApp Page"
+            android:textColor="@color/colorLight" />
 
-        <Button
-            android:id="@+id/customEvent3"
-            android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="Custom Event3"
-            android:layout_weight="1.0" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:background="@android:drawable/bottom_bar"
+            android:paddingLeft="4.0dip"
+            android:paddingTop="5.0dip"
+            android:paddingRight="4.0dip"
+            android:paddingBottom="1.0dip"
+            android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/customEvent1"
+                android:layout_width="0.0dip" android:layout_height="fill_parent"
+                android:text="Image Text Button"
+                android:layout_weight="1.0" />
+
+            <Button
+                android:id="@+id/customEvent2"
+                android:layout_width="0.0dip" android:layout_height="fill_parent"
+                android:text="Custom Event2"
+                android:layout_weight="1.0" />
+
+            <Button
+                android:id="@+id/customEvent3"
+                android:layout_width="0.0dip" android:layout_height="fill_parent"
+                android:text="Custom Event3"
+                android:layout_weight="1.0" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:background="@android:drawable/bottom_bar"
+            android:paddingLeft="4.0dip"
+            android:paddingTop="5.0dip"
+            android:paddingRight="4.0dip"
+            android:paddingBottom="1.0dip"
+            android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/inApp1"
+                android:layout_width="0.0dip" android:layout_height="fill_parent"
+                android:text="image_text_button"
+                android:layout_weight="1.0" />
+
+            <Button
+                android:id="@+id/inApp2"
+                android:layout_width="0.0dip" android:layout_height="fill_parent"
+                android:text="mini"
+                android:layout_weight="1.0" />
+
+            <Button
+                android:id="@+id/inApp3"
+                android:layout_width="0.0dip" android:layout_height="fill_parent"
+                android:text="alert"
+                android:layout_weight="1.0" />
+
+        </LinearLayout>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:background="@android:drawable/bottom_bar"
-        android:paddingLeft="4.0dip"
-        android:paddingTop="5.0dip"
-        android:paddingRight="4.0dip"
-        android:paddingBottom="1.0dip"
-        android:layout_width="fill_parent" android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/inApp1"
-            android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="image_text_button"
-            android:layout_weight="1.0" />
-
-        <Button
-            android:id="@+id/inApp2"
-            android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="mini"
-            android:layout_weight="1.0" />
-
-        <Button
-            android:id="@+id/inApp3"
-            android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="full"
-            android:layout_weight="1.0" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

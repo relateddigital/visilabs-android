@@ -58,5 +58,13 @@ public enum InAppActionType {
         public String toString() {
             return "nps";
         }
+    },
+
+    ALERT {
+        @NonNull
+        @Override
+        public String toString() {
+            return "alert";
+        }
     }
 }

@@ -42,6 +42,9 @@ public class InAppMessage implements Parcelable {
     private String msg_body_textsize;
     private String close_button_color;
 
+    private String close_button_text; //Alert
+    private String alert_type; //Alert
+
     private final Context mContext;
 
     private static final String LOG_TAG = "VisilabsNotification";
@@ -75,6 +78,8 @@ public class InAppMessage implements Parcelable {
         button_text_color = in.readString();
         button_color = in.readString();
         close_button_color = in.readString();
+        close_button_text = in.readString();
+        alert_type = in.readString();
 
         mContext = null;
     }
@@ -105,6 +110,9 @@ public class InAppMessage implements Parcelable {
             close_button_color = actionData.getString("close_button_color");
             button_text_color = actionData.getString("button_text_color");
             button_color = actionData.getString("button_color");
+
+            close_button_text = actionData.optString("close_button_text");
+            alert_type = actionData.optString("alert_type");
 
             mContext = context;
 
@@ -139,21 +147,20 @@ public class InAppMessage implements Parcelable {
         if (InAppActionType.IMAGE_TEXT_BUTTON.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.IMAGE_TEXT_BUTTON;
         }
-
         if (InAppActionType.FULL_IMAGE.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.FULL_IMAGE;
         }
-
         if (InAppActionType.NPS.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.NPS;
         }
-
         if (InAppActionType.IMAGE_BUTTON.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.IMAGE_BUTTON;
         }
-
         if (InAppActionType.SMILE_RATING.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.SMILE_RATING;
+        }
+        if (InAppActionType.ALERT.toString().equals(msg_type.toLowerCase())) {
+            return InAppActionType.ALERT;
         }
         return InAppActionType.UNKNOWN;
     }
@@ -286,7 +293,8 @@ public class InAppMessage implements Parcelable {
         dest.writeString(button_text_color);
         dest.writeString(button_color);
         dest.writeString(close_button_color);
-
+        dest.writeString(close_button_text);
+        dest.writeString(alert_type);
     }
 
     public static final Parcelable.Creator<InAppMessage> CREATOR = new Parcelable.Creator<InAppMessage>() {
@@ -304,5 +312,13 @@ public class InAppMessage implements Parcelable {
 
     public String getCloseButton() {
         return close_button_color;
+    }
+
+    public String getCloseButtonText() {
+        return close_button_text;
+    }
+
+    public String getAlertType() {
+        return alert_type;
     }
 }

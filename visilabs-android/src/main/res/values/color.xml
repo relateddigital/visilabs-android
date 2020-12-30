@@ -7,4 +7,6 @@
 
     <color name="gray_scale">#8affffff</color>
     <color name="white">#fff</color>
+
+    <color name="bottom_sheet_button_color">#00897b</color>
 </resources>
