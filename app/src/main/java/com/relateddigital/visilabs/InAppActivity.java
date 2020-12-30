@@ -22,6 +22,7 @@ public class InAppActivity extends AppCompatActivity {
 
         Button btnShowAlert = findViewById(R.id.btn_show_alert);
         Button btnShowActionSheet = findViewById(R.id.btn_show_action_sheet);
+        Button btnShowSpinToWin = findViewById(R.id.btn_show_spin_to_win);
 
         alertDialogBuilder = new AlertDialog.Builder(this, R.style.AlertDialogStyle);
 
@@ -57,6 +58,13 @@ public class InAppActivity extends AppCompatActivity {
             public void onClick(View v) {
                 VisilabsBottomSheetDialogFragment visilabsBottomSheetDialogFragment = VisilabsBottomSheetDialogFragment.newInstance();
                 visilabsBottomSheetDialogFragment.show( getSupportFragmentManager(), "visilabs_dialog_fragment");
+            }
+        });
+
+        btnShowSpinToWin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }

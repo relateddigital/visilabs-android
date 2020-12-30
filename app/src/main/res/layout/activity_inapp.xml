@@ -28,4 +28,14 @@
         android:text="Show Action Sheet"
         android:textColor="@color/colorLight" />
 
+    <Button
+        android:id="@+id/btn_show_spin_to_win"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:padding="10dp"
+        android:background="@color/colorButton"
+        android:text="Show Spin To Win"
+        android:textColor="@color/colorLight" />
+
 </LinearLayout>
