@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".MainApplication"
@@ -14,6 +16,21 @@
         android:roundIcon="@mipmap/ic_visilabs"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
+
+
+        <meta-data android:name="VisilabsOrganizationID" android:value="676D325830564761676D453D" />
+        <meta-data android:name="VisilabsSiteID" android:value="356467332F6533766975593D" />
+        <meta-data android:name="VisilabsSegmentURL" android:value="http://lgr.visilabs.net" />
+        <meta-data android:name="VisilabsDataSource" android:value="visistore" />
+        <meta-data android:name="VisilabsRealTimeURL" android:value="http://rt.visilabs.net" />
+        <meta-data android:name="VisilabsChannel" android:value="Android" />
+        <meta-data android:name="VisilabsGeofenceURL" android:value="http://s.visilabs.net/geojson" />
+        <meta-data android:name="VisilabsGeofenceEnabled" android:value="true" />
+        <meta-data android:name="VisilabsRequestTimeoutInSeconds" android:value="30" />
+        <meta-data android:name="VisilabsRESTURL" android:value="VisilabsRESTURL" />
+        <meta-data android:name="VisilabsEncryptedDataSource" android:value="VisilabsEncryptedDataSource" />
+        <meta-data android:name="VisilabsTargetURL" android:value="http://s.visilabs.net/json" />
+        <meta-data android:name="VisilabsActionURL" android:value="http://s.visilabs.net/actjson" />
 
 
         <activity android:name=".MainActivity">
@@ -67,6 +84,24 @@
             android:name="com.visilabs.gps.geofence.GeofenceBroadcastReceiver"
             android:enabled="true"
             android:exported="true" />
+
+
+        <service
+            android:name="euromsg.com.euromobileandroid.service.EuroFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="euromsg.com.euromobileandroid.service.EuroHuaweiMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.huawei.push.action.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>
