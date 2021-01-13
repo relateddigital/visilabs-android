@@ -1,17 +1,49 @@
 //TODO: Arayüzde tanımlanan "Consent Text Not Checked Message" json'da gelmiyor.
+//TODO: Close button color yapılacak
+//TODO: Gereksiz this'leri kaldır
+//TODO: çarkıfelek çevir butonuna bastıktan sonra sunucuya request atılacak.
 
 function SpinToWin(config) {
 
-    this.wheelCanvas = {};
-    this.arrowCanvas = {};
-    this.wheelCanvasContext = {};
-    this.arrowCanvasContext = {};
-    this.submitButton = {};
-    this.closeButton = {};
-    this.emailInput = {};
+
+    this.container = document.getElementById("container");
+
+    this.canvasContainer = document.getElementById("canvas-container");
+    this.wheelCanvas = document.getElementById("wheel-canvas");
+    this.arrowCanvas = document.getElementById("arrow-canvas");
+    this.wheelCanvasContext = this.wheelCanvas.getContext("2d");
+    this.arrowCanvasContext = this.arrowCanvas.getContext("2d");
+    this.closeButton = document.getElementById("spin-to-win-box-close");
+    this.titleElement = document.getElementById("form-title");
+    this.messageElement = document.getElementById("form-message");
+    this.submitButton = document.getElementById("form-submit-btn");  
+    this.emailInput = document.getElementById("vl-form-input");
+
+
+    this.consentContainer = document.getElementById("vl-form-consent");
+    this.emailPermitContainer = document.getElementById("vl-permitform-email");
+    this.consentCheckbox = document.getElementById("vl-form-checkbox");
+    this.emailPermitCheckbox = document.getElementById("vl-form-checkbox-emailpermit");
+    this.consentText = document.getElementById("vl-form-consent-text");
+    this.emailPermitText = document.getElementById("vl-permitform-email-text");
+
+
+    this.couponCode = document.getElementById("coupon-code");
+    this.copyButton = document.getElementById("form-copy-btn"); 
+    this.warning = document.getElementById("vl-warning"); 
+
+
+    this.invalidEmailMessageLi = document.getElementById("invalid_email_message");
+
+    this.formValidation = {email: true, consent: true};
+    this.spinCompleted = false;
+
+
+
+
+
 
     var r = parseFloat(config.actiondata.circle_R);
-    this.config = config;
     this.config = config;
     this.config.language = config.actiondata.language;
     this.config.windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -38,8 +70,9 @@ function SpinToWin(config) {
     this.config.invalidEmailMessage = "Geçerli bir email adresi yazınız.";
     this.config.checkConsentMessage = "İzin Metnini onaylayınız.";
 
+
     if (this.config.htmlContent.invalid_email_message && this.config.htmlContent.invalid_email_message !== "")
-        this.config.invalidEmailMessage = this.config.invalid_email_message;
+        this.config.invalidEmailMessage = this.config.htmlContent.invalid_email_message;
 
     if (this.config.htmlContent.check_consent_message && this.config.htmlContent.check_consent_message !== "")
         this.config.checkConsentMessage = this.config.htmlContent.check_consent_message;
@@ -64,17 +97,17 @@ function SpinToWin(config) {
         }
     }
 
+    this.setContent();
+
     this.colorsHandler();
     this.textsHandler();
-    this.createHtmlElements();
+    //this.createHtmlElements();
     this.styleHandler();
     //TODO: buna gerek olmayabilir, webview'de resize ihtimali var mı? kalmasında da zarar yok.
     window.onresize = function () {
         window.spinToWin.styleHandler();
     }
 
-    this.wheelCanvasContext = this.wheelCanvas.getContext("2d");
-    this.arrowCanvasContext = this.arrowCanvas.getContext("2d");
     this.drawArrow();
 
 
@@ -83,10 +116,156 @@ function SpinToWin(config) {
         this.mobileTextTyper(i, config.slices[i].displayName, config.colors[i]);
     }
     this.midCircleDrawer(config.middleCircleColor, config.middleCircleR);
+    this.handleVisibility();
 
     window.spinToWin = this;
 }
 
+//promoAuth burada kullanılacak buna göre. hangi slice'in seçileceğine karar verilecek
+//response false döndüğü zaman ne yapılacak
+//_VTObjs["_VisilabsTarget_5"].Callback({"id":130,"success":false,"promocode":""})
+SpinToWin.prototype.miscJsonRequest = function() {
+    console.log("miscJsonRequest");
+    if(window.Android){
+        Android.miscJsonRequest(this.config.promoAuth);
+    }
+};
+
+SpinToWin.prototype.clickRequest = function() {
+    console.log("clickRequest");
+    if(window.Android){
+        Android.clickRequest(this.config.actid, "burada acttype da gönderilmeli");
+    }
+};
+
+//auth burada kullanılacak.
+SpinToWin.prototype.subscribeMail = function() {
+    console.log("close button clicked");
+    if(window.Android){
+        Android.subscribeMail(this.emailInput.value.trim(), this.config.auth);
+    }
+};
+
+SpinToWin.prototype.close = function() {
+    console.log("close button clicked");
+    if(window.Android){
+        Android.closeButtonClicked();
+    }
+};
+
+SpinToWin.prototype.copyToClipboard = function() {
+    console.log("copyToClipboard button clicked : " + this.couponCode.innerText);
+    if(window.Android){
+        Android.copyToClipboard(this.couponCode.innerText);
+    }
+};
+
+SpinToWin.prototype.setContent = function() {
+
+    this.container.style.backgroundColor = this.config.actiondata.background_color;
+
+    this.titleElement.innerText = this.config.actiondata.spin_to_win_content.title;
+    this.titleElement.style.color = this.config.actiondata.msg_title_color;
+    this.titleElement.style.fontFamily = this.config.actiondata.msg_title_font_family;
+    this.titleElement.style.fontSize = (this.config.actiondata.msg_title_textsize + 20) + "px";
+
+
+    
+    this.messageElement.innerText = this.config.actiondata.spin_to_win_content.message;
+    this.messageElement.style.color = this.config.actiondata.msg_body_color;
+    this.messageElement.style.fontFamily = this.config.actiondata.msg_body_font_family;
+    this.messageElement.style.fontSize = (this.config.actiondata.msg_body_textsize + 10) + "px";
+
+
+
+    this.submitButton.innerText = config.actiondata.spin_to_win_content.button_label;
+    this.submitButton.style.color = this.config.actiondata.button_text_color;
+    this.submitButton.style.backgroundColor = this.config.actiondata.button_color;
+    this.submitButton.style.fontFamily = this.config.actiondata.button_font_family;
+    this.submitButton.style.fontSize = (this.config.actiondata.button_textsize + 20) + "px";
+
+    this.emailInput.placeholder = config.htmlContent.placeholder;
+
+
+    this.consentText.innerText = this.config.actiondata.spin_to_win_content.consent_text;
+    this.consentText.style.fontSize = (this.config.actiondata.consent_text_textsize + 10) + "px";
+    this.consentText.style.fontFamily = this.config.actiondata.msg_body_font_family;
+
+    this.emailPermitText.innerText = this.config.actiondata.spin_to_win_content.emailpermit_text;
+    this.emailPermitText.style.fontSize = (this.config.actiondata.consent_text_textsize + 10) + "px";
+    this.emailPermitText.style.fontFamily = this.config.actiondata.msg_body_font_family;
+
+    this.copyButton.innerText = this.config.actiondata.copy_button_text;
+    this.copyButton.style.color = this.config.actiondata.copy_button_text_color;
+    this.copyButton.style.backgroundColor = this.config.actiondata.copy_button_color;
+    this.copyButton.style.fontFamily = this.config.actiondata.copy_button_font_family;
+    this.copyButton.style.fontSize = (this.config.actiondata.copy_button_textsize + 20) + "px";
+
+
+    this.invalidEmailMessageLi.innerText = this.config.invalidEmailMessage;
+
+
+
+
+    this.submitButton.addEventListener("click", this.submit);
+    this.closeButton.addEventListener("click", evt => this.close());
+    this.copyButton.addEventListener("click", evt => this.copyToClipboard());
+    
+};
+
+SpinToWin.prototype.validateForm = function() { 
+    var result = {email: true, consent: true};
+    if(!this.validateEmail(this.emailInput.value)) {
+        result.email = false;
+    }
+    if(!this.isNullOrWhitespace(this.consentText.innerText)) {
+        result.consent = this.consentCheckbox.checked;
+    }
+    if(result.consent) {
+        if(!this.isNullOrWhitespace(this.emailPermitText.innerText)) {
+            result.consent = this.emailPermitCheckbox.checked;
+        }
+    }
+    this.formValidation = result;
+    return result;
+};
+
+
+SpinToWin.prototype.handleVisibility = function() { 
+
+    if (this.spinCompleted) {
+        this.couponCode.style.display = "";
+        this.copyButton.style.display = "";
+        this.emailInput.style.display = "none";
+        this.submitButton.style.display = "none";
+        this.consentContainer.style.display = "none";
+        this.emailPermitContainer.style.display = "none";
+        this.warning.style.display = "none";
+        return;
+    } else {
+        this.couponCode.style.display = "none";
+        this.copyButton.style.display = "none";
+    }
+
+    
+    
+    this.warning.style.display = "none";
+
+    if(this.config.mailFormEnabled) {
+        if(!this.formValidation.email || !this.formValidation.consent) {
+            this.warning.style.display = "";
+        } else {
+            this.warning.style.display = "none";
+        }
+
+
+    } else {
+        this.emailInput.style.display = "none";
+        this.consentContainer.style.display = "none";
+        this.emailPermitContainer.style.display = "none";
+    }
+
+};
 
 //TODO: randomNumber çalışıyor mu bak?
 SpinToWin.prototype.colorsHandler = function() {
@@ -118,6 +297,26 @@ SpinToWin.prototype.textsHandler = function() {
 };
 
 SpinToWin.prototype.styleHandler = function() {
+
+    var wheelCanvasWidth  = (config.r * 2), wheelCanvasHeight = (config.r * 2);
+    this.wheelCanvas.width = wheelCanvasWidth;
+    this.wheelCanvas.height = wheelCanvasHeight;
+    var wheelCanvasStyle = {};
+    wheelCanvasStyle.transform = "translateX(0px) rotate(" + this.randomInt(0, 360) + "deg)";
+    wheelCanvasStyle.transitionProperty = "transform";
+    wheelCanvasStyle.transitionDuration = "0s";
+    wheelCanvasStyle.transitionTimingFunction = "ease-out";
+    wheelCanvasStyle.transitionDelay = "0s";
+    wheelCanvasStyle.borderRadius = "50%";
+    Object.assign(this.wheelCanvas.style, wheelCanvasStyle);
+
+
+    this.canvasContainer.style.position = "absolute";
+    this.canvasContainer.style.bottom = (- wheelCanvasHeight / 2 )+ "px";
+
+
+
+
     var arrowContainerTop = (config.r - (config.r /5.2)) + "px"; // R: 250 top: 205, R: 200 top: 162, R: 150 top: 121
     var styleEl = document.createElement("style"),
         titleStyle = config.htmlContent.title_style,
@@ -129,7 +328,7 @@ SpinToWin.prototype.styleHandler = function() {
         validationMessageStyle = config.htmlContent.validation_message_style,
         successMessageStyle = config.htmlContent.success_message_style,
         styleString = "#lightbox-outer{}" +
-            "#container{" + containerStyle + ";z-index:1000;border-radius: 10px;position:fixed;width:" + (config.r + 300) + "px;height:" + ((2 * config.r) + 40) + "px;top:calc(50% - " + ((2 * config.r) + 40) / 2 + "px);left:calc(50% - " + (config.r + 150) / 2 + "px);box-sizing:border-box}" +
+            //"#container{" + containerStyle + ";z-index:1000;border-radius: 10px;position:fixed;width:" + (config.r + 300) + "px;height:" + ((2 * config.r) + 40) + "px;top:calc(50% - " + ((2 * config.r) + 40) / 2 + "px);left:calc(50% - " + (config.r + 150) / 2 + "px);box-sizing:border-box}" +
             "#canvas-container{float:left;width:" + config.r + "px;height:" + (2 * config.r) + "px}" +
             "#wheel-container{float:left;height:" + (2 * config.r) + "px;width:" + config.r + "px;margin:20px 0;overflow:hidden}" +
             "#arrow-container{width:20px;height:30px;display:inline-block;position:absolute;box-sizing:border-box;top:calc(50% - 14px);left:" + (config.r - 10) + "px;z-index:1;transform:rotate(90deg)}" +
@@ -140,7 +339,7 @@ SpinToWin.prototype.styleHandler = function() {
             ".vl-successMessage{text-align:center;}" +
             "#form-title{" + titleStyle + "}" +
             "#form-desc{" + textStyle + "}" +
-            "#vl-form-input{" + inputStyle + ";border: 1px solid #ccc;display:block;width:60%;box-sizing:border-box;height:35px;font-size:16px;margin-top:10px;outline-color:#3b99fc;padding-left:5px}" +
+            //"#vl-form-input{" + inputStyle + ";border: 1px solid #ccc;display:block;width:60%;box-sizing:border-box;height:35px;font-size:16px;margin-top:10px;outline-color:#3b99fc;padding-left:5px}" +
             ".validationMessage{" + validationMessageStyle + "}" +
             "#warning{display:none; position: absolute; z-index: 3; background: #fcf6c1; font-size: 12px; border: 1px solid #ccc; top: 105%;width: 100%; box-sizing: border-box;}" +
             "#warning>ul{margin: 2px;padding-inline-start: 20px;}" +
@@ -174,7 +373,7 @@ SpinToWin.prototype.styleHandler = function() {
             ".form-submit-btn.disabled{filter: grayscale(100%);transition:.2s filter ease-in-out;}" +
             "@media only screen and (max-width:2500px){" +
             //"#container{width:100%;top:unset;bottom:-" + config.r + "px;left:unset;height:auto}" +
-            "#container{width:100%;top:unset;bottom:-" + config.r + "px;left:0px;height:auto}" +
+            //"#container{width:100%;top:unset;bottom:-" + config.r + "px;left:0px;height:auto}" +
             "#canvas-container{float:unset;width:100%;text-align:center;position:relative}" +
             "#wheel-container{width:" + (config.r * 2) + "px;margin:0 auto;float:unset;transform:rotate(-90deg)}" +
             "#arrow-container{top:" +  arrowContainerTop + ";transform:rotate(45deg);left:calc(50% - 10px)}" +
@@ -189,8 +388,9 @@ SpinToWin.prototype.styleHandler = function() {
     } else {
         document.getElementById("vl-styles").innerHTML = styleString;
     }
-    var formEl = document.querySelector("#form-container>div"), formHeight = parseFloat(getComputedStyle(formEl).height);
-    formEl.parentNode.style.height = formHeight + 450 + "px";
+    //var formEl = document.querySelector("#form-container>div"), formHeight = parseFloat(getComputedStyle(formEl).height);
+    //formEl.parentNode.style.height = formHeight + 250 + "px";
+    //formEl.parentNode.style.height = formHeight + 450 + "px"; //TODO: eski hali
 
 };
 
@@ -324,30 +524,34 @@ SpinToWin.prototype.createWheel = function() {
 
 SpinToWin.prototype.submit = function() {
     if (config.mailFormEnabled) {
+
+        window.spinToWin.formValidation = window.spinToWin.validateForm();
+        if(!window.spinToWin.formValidation.email || !window.spinToWin.formValidation.consent) {
+            window.spinToWin.handleVisibility();
+            return;
+        }
+        
         //TODO: burası değişecek
-        this.submitButton.removeEventListener("click", this.submit);
+        //TODO: burada neden 2 kez SendClickRequest çağırılmış? SendClickToGA niçin var?
+        window.spinToWin.submitButton.removeEventListener("click", window.spinToWin.submit);
         //VisilabsObject.SendClickRequest(27, window.visilabs_spin_to_win.id);
         //VisilabsObject.SendClickRequest(window.visilabs_spin_to_win.acttype, window.visilabs_spin_to_win.id);
-        var ga_value = JSON.parse(localStorage.getItem("act-" + this.config.id));
+        //var ga_value = JSON.parse(localStorage.getItem("act-" + this.config.id));
         //VisilabsObject.SendClickToGA(window.visilabs_spin_to_win.id, ga_value);
-        this.async_resultGenerator(this).then(function (data) {
+        window.spinToWin.async_resultGenerator(window.spinToWin).then(function (data) {
             window.spinToWin.spinHandler(data);
         });
     }
     else {
-        this.submitButton.removeEventListener("click", this.submit);
+         window.spinToWin.submitButton.removeEventListener("click", window.spinToWin.submit);
         //VisilabsObject.SendClickRequest(27, window.visilabs_spin_to_win.id);
         //VisilabsObject.SendClickRequest(window.visilabs_spin_to_win.acttype, window.visilabs_spin_to_win.id);
-        var ga_value = JSON.parse(localStorage.getItem("act-" + this.config.id));
+        //var ga_value = JSON.parse(localStorage.getItem("act-" + this.config.id));
         //VisilabsObject.SendClickToGA(window.visilabs_spin_to_win.id, ga_value);
-        this.async_resultGenerator(this).then(function (data) {
+        window.spinToWin.async_resultGenerator(window.spinToWin).then(function (data) {
             window.spinToWin.spinHandler(data);
         });
     }
-};
-
-SpinToWin.prototype.close = function() {
-    console.log("close button clicked");
 };
 
 SpinToWin.prototype.async_resultGenerator = function(spinToWinObject) {
@@ -495,11 +699,10 @@ SpinToWin.prototype.resultHandler = function(res) {
         + "<input class='vl-form-submit-btn' type='button' id='vl-copy' value='" + copyToClipboardButtonLabel + "' />"
         + "</div>" ;
 
-    var formEl = document.querySelector("#form-container>div");
-    formEl.innerHTML = resultText;
-    var clickCopy = document.getElementById("vl-copy");
-    clickCopy.addEventListener("click", function () { window.spinToWin.visiCopyTextToClipboard(res.code, window.spinToWin.config.language) }, false);
-
+    this.spinCompleted = true;
+    this.couponCode.innerText = res.code;
+    this.couponCode.value = res.code;
+    this.handleVisibility();
 };
 
 
@@ -604,6 +807,16 @@ SpinToWin.prototype.visiCopyTextToClipboard = function(text, language) {
     });
 };
 
+
+SpinToWin.prototype.isNullOrWhitespace = function(input) {
+    if (typeof input === 'undefined' || input == null) return true;
+    return input.replace(/\s/g, '').length < 1;
+};
+
+SpinToWin.prototype.validateEmail = function(email) {
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+};
 
 
 
