@@ -64,7 +64,7 @@ public class InAppActivity extends AppCompatActivity {
         btnShowSpinToWin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                WebViewDialogFragment.display(getSupportFragmentManager(), "spintowin.html");
             }
         });
     }
