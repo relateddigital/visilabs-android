@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Visilabs</string>
     <string name="page_view">Test Page View</string>
+    <string name="show_alert">Show Alert</string>
+    <string name="show_action_sheet">Show Action Sheet</string>
+    <string name="show_spin_to_win">Show Spin To Win</string>
 </resources>
