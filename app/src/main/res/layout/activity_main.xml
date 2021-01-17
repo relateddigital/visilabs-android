@@ -50,22 +50,32 @@
             android:layout_height="wrap_content">
             <Button
                 android:id="@+id/btn_go_to_login"
+                android:layout_margin="1.0dp"
                 android:layout_width="0.0dip"
                 android:layout_weight="1.0"
                 android:layout_height="fill_parent"
-                android:layout_margin="20dp"
                 android:background="@color/colorButton"
                 android:text="@string/go_to_login_page"
                 android:textColor="@color/colorLight" />
 
             <Button
                 android:id="@+id/btn_go_to_inapp"
+                android:layout_margin="1.0dp"
                 android:layout_width="0.0dip"
                 android:layout_weight="1.0"
                 android:layout_height="fill_parent"
-                android:layout_margin="20dp"
                 android:background="@color/colorButton"
                 android:text="@string/go_to_inapp_page"
+                android:textColor="@color/colorLight" />
+
+            <Button
+                android:id="@+id/btn_go_to_story"
+                android:layout_margin="1.0dp"
+                android:layout_width="0.0dip"
+                android:layout_weight="1.0"
+                android:layout_height="fill_parent"
+                android:background="@color/colorButton"
+                android:text="@string/go_to_story_page"
                 android:textColor="@color/colorLight" />
         </LinearLayout>
 
@@ -76,6 +86,7 @@
             android:paddingTop="5.0dip"
             android:paddingRight="4.0dip"
             android:paddingBottom="1.0dip"
+            android:layout_marginTop="@dimen/dp_16"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
