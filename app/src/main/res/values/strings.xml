@@ -4,4 +4,21 @@
     <string name="show_alert">Show Alert</string>
     <string name="show_action_sheet">Show Action Sheet</string>
     <string name="show_spin_to_win">Show Spin To Win</string>
+
+    <string name="visilabs_logo">Visilabs Logo</string>
+    <string name="welcome_to_visilabs_demo">Welcome to Visilabs Demo</string>
+    <string name="go_to_login_page">Go To Login Page</string>
+    <string name="go_to_inapp_page">Go To InApp Page</string>
+
+    <string name="image_text_button">Image Text Button</string>
+    <string name="custom_event_2">Custom Event 2</string>
+    <string name="custom_event_3">Custom Event 3</string>
+
+
+    <string name="mini">Mini</string>
+    <string name="alert">Alert</string>
+
+
+
+
 </resources>

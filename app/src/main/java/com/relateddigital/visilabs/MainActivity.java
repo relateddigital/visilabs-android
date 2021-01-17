@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnGoToLogin, btnGoToInApp;
     Button customEvent1, customEvent2, customEvent3, inApp1, inApp2, inApp3;
 
-    VisilabsRecyclerView visilabsRecyclerView;
+    VisilabsRecyclerView visilabsRecyclerView1, visilabsRecyclerView2;
 
     StoryItemClickListener storyItemClickListener;
 
@@ -46,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
         inApp2 = findViewById(R.id.inApp2);
         inApp3 = findViewById(R.id.inApp3);
 
-        visilabsRecyclerView = findViewById(R.id.vrv_story);
+        visilabsRecyclerView1 = findViewById(R.id.vrv_story1);
+        visilabsRecyclerView2 = findViewById(R.id.vrv_story2);
 
         storyItemClickListener = new StoryItemClickListener() {
             @Override
@@ -56,8 +57,9 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-       visilabsRecyclerView.setStoryAction(getApplicationContext(), storyItemClickListener);
-           //visilabsRecyclerView.setStoryActionId(getApplicationContext(), "305", null);
+       //visilabsRecyclerView1.setStoryAction(getApplicationContext(), storyItemClickListener);
+        visilabsRecyclerView1.setStoryActionId(getApplicationContext(), "305", storyItemClickListener);
+        visilabsRecyclerView2.setStoryActionId(getApplicationContext(), "4325", storyItemClickListener);
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-sdk");
