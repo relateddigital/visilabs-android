@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,8 +16,6 @@ import com.visilabs.api.VisilabsCallback;
 import com.visilabs.favs.FavsResponse;
 
 import com.visilabs.inApp.VisilabsActionRequest;
-import com.visilabs.story.VisilabsRecyclerView;
-import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.util.VisilabsConstant;
 
 import java.util.HashMap;
@@ -27,10 +24,6 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnGoToLogin, btnGoToInApp, btnGoToStory;
     Button customEvent1, customEvent2, customEvent3, inApp1, inApp2, inApp3;
-
-    VisilabsRecyclerView visilabsRecyclerView1, visilabsRecyclerView2;
-
-    StoryItemClickListener storyItemClickListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,21 +39,6 @@ public class MainActivity extends AppCompatActivity {
         inApp1 = findViewById(R.id.inApp1);
         inApp2 = findViewById(R.id.inApp2);
         inApp3 = findViewById(R.id.inApp3);
-
-        visilabsRecyclerView1 = findViewById(R.id.vrv_story1);
-        visilabsRecyclerView2 = findViewById(R.id.vrv_story2);
-
-        storyItemClickListener = new StoryItemClickListener() {
-            @Override
-            public void storyItemClicked(String storyLink) {
-                Toast.makeText(getApplicationContext(), storyLink, Toast.LENGTH_SHORT).show();
-                Log.i("link story", storyLink);
-            }
-        };
-
-       //visilabsRecyclerView1.setStoryAction(getApplicationContext(), storyItemClickListener);
-        visilabsRecyclerView1.setStoryActionId(getApplicationContext(), "305", storyItemClickListener);
-        visilabsRecyclerView2.setStoryActionId(getApplicationContext(), "4325", storyItemClickListener);
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-sdk");

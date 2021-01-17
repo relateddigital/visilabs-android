@@ -14,16 +14,6 @@
         android:orientation="vertical"
         tools:context=".MainActivity">
 
-        <com.visilabs.story.VisilabsRecyclerView
-            android:id="@+id/vrv_story1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <com.visilabs.story.VisilabsRecyclerView
-            android:id="@+id/vrv_story2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
         <ImageView
             android:id="@+id/iv_logo"
             android:layout_width="150dp"
@@ -50,7 +40,7 @@
             android:layout_height="wrap_content">
             <Button
                 android:id="@+id/btn_go_to_login"
-                android:layout_margin="1.0dp"
+                android:layout_margin="2.0dp"
                 android:layout_width="0.0dip"
                 android:layout_weight="1.0"
                 android:layout_height="fill_parent"
@@ -60,7 +50,7 @@
 
             <Button
                 android:id="@+id/btn_go_to_inapp"
-                android:layout_margin="1.0dp"
+                android:layout_margin="2.0dp"
                 android:layout_width="0.0dip"
                 android:layout_weight="1.0"
                 android:layout_height="fill_parent"
@@ -70,7 +60,7 @@
 
             <Button
                 android:id="@+id/btn_go_to_story"
-                android:layout_margin="1.0dp"
+                android:layout_margin="2.0dp"
                 android:layout_width="0.0dip"
                 android:layout_weight="1.0"
                 android:layout_height="fill_parent"

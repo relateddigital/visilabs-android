@@ -15,11 +15,9 @@
     <string name="custom_event_2">Custom Event 2</string>
     <string name="custom_event_3">Custom Event 3</string>
 
-
     <string name="mini">Mini</string>
     <string name="alert">Alert</string>
-
-
-
+    <string name="story_id_optional">Story ID (optional)</string>
+    <string name="show_story">Show Story</string>
 
 </resources>
