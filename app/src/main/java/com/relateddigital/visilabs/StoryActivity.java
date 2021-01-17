@@ -1,6 +1,5 @@
 package com.relateddigital.visilabs;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +23,7 @@ public class StoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_story);
+        setContentView(R.layout.activity_story_demo);
         etStoryId = findViewById(R.id.et_story_id);
         btnShowStory = findViewById(R.id.btn_show_story);
         visilabsRecyclerView = findViewById(R.id.vrv_story);
