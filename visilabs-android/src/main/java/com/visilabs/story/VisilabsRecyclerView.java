@@ -22,6 +22,8 @@ public class VisilabsRecyclerView extends RecyclerView {
 
     Context context;
 
+    //TODO: test change
+
     public static final String TAG = "VisilabsRecyclerView";
 
     StoryItemClickListener storyItemClickListener;
