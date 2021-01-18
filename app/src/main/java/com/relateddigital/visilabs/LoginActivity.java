@@ -49,8 +49,8 @@ public class LoginActivity extends AppCompatActivity {
                                 HashMap<String, String> parameters = new HashMap<>();
                                 parameters.put("OM.exVisitorID", "ogun.ozturk@euromsg.com");
                                 parameters.put("OM.sys.TokenID", token);
-                                parameters.put("OM.sys.AppID", "visilabs-login"); //
-                                Visilabs.CallAPI().customEvent("android-visilab", parameters, LoginActivity.this);
+                                parameters.put("OM.sys.AppID", "visilabs-android-test");
+                                Visilabs.CallAPI().customEvent("Login", parameters, LoginActivity.this);
 
                                 Toast.makeText(getApplicationContext(), "Login", Toast.LENGTH_LONG).show();
                             }
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().clear().apply();
 
                 HashMap<String, String> parameters = new HashMap<>();
-                parameters.put("OM.sys.AppID", "visilabs-logout");
+                parameters.put("OM.sys.AppID", "visilabs-android-test");
                 Visilabs.CallAPI().customEvent("Logout", parameters);
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);

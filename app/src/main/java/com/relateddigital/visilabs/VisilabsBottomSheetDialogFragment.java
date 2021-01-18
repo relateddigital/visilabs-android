@@ -20,10 +20,7 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        int a = R.style.AlertDialogStyle;
-
-        View view = inflater.inflate(R.layout.layout_bottom_sheet, container, false);
-        return view;
+        return inflater.inflate(R.layout.layout_bottom_sheet, container, false);
 
     }
 }

@@ -3,7 +3,6 @@ package com.relateddigital.visilabs;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -36,7 +35,6 @@ public class InAppActivity extends AppCompatActivity {
                         .setCancelable(false)
                         .setPositiveButton("button1", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                //finish(); //TODO:
                                 Toast.makeText(getApplicationContext(),"button1",
                                         Toast.LENGTH_SHORT).show();
                             }

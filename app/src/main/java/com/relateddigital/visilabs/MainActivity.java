@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(view);
 
         HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("OM.sys.AppID", "visilabs-android-sdk");
+        parameters.put("OM.sys.AppID", "visilabs-android-test");
         //parameters.put("OM.exVisitorID", "ogun.ozturk@euromsg.com");
         Visilabs.CallAPI().customEvent("android-visilab", parameters);
 
@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
                 HashMap<String, String> parameters = new HashMap<>();
                 parameters.put("OM.inapptype", "image_text_button");
                 Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
-                //Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this); // TODO: ikincisini kaldır sonra
             }
         });
 
@@ -74,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 HashMap<String, String> parameters = new HashMap<>();
+                //Add the parameters here
                 Visilabs.CallAPI().customEvent("test", parameters, MainActivity.this);
             }
         });
