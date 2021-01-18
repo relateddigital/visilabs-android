@@ -119,6 +119,7 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
             intent.putExtra(VisilabsConstant.STORY_POSITION, position);
             intent.putExtra(VisilabsConstant.STORY_ITEM_POSITION, 0);
             intent.putExtra(VisilabsConstant.ACTION_DATA, visilabsSkinBasedResponse.getStory().get(0).getActiondata());
+            intent.putExtra(VisilabsConstant.ACTION_ID, visilabsSkinBasedResponse.getStory().get(0).getActid());
             context.startActivity(intent);
         }
     }

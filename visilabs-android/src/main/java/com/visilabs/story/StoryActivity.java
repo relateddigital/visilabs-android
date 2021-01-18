@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.visilabs.story.model.skinbased.Items;
 import com.visilabs.story.model.skinbased.Stories;
 import com.visilabs.util.VisilabsConstant;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -41,6 +43,8 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
     Stories stories;
 
     Actiondata actiondata;
+
+    String actionid;
 
     Button btnStory;
 
@@ -70,6 +74,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         hideActionBar();
 
         actiondata = (Actiondata) getIntent().getSerializableExtra(VisilabsConstant.ACTION_DATA);
+        actionid = (String) getIntent().getSerializableExtra(VisilabsConstant.ACTION_ID);
         storyPosition = getIntent().getExtras().getInt(VisilabsConstant.STORY_POSITION);
         storyItemPosition = getIntent().getExtras().getInt(VisilabsConstant.STORY_ITEM_POSITION);
         stories = actiondata.getStories().get(storyPosition);
@@ -115,6 +120,12 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         storiesProgressView = findViewById(R.id.stories);
         reverse = findViewById(R.id.reverse);
         skip = findViewById(R.id.skip);
+
+        String title = stories.getTitle();
+
+        Log.i("StoryActivityShows ", actionid + " : " + stories.getTitle());
+
+
 
         storiesProgressView.setStoriesCount(stories.getItems().size());
         storiesProgressView.setStoryDuration(Integer.parseInt(stories.getItems().get(storyItemPosition).getDisplayTime()) * 1000);
@@ -216,6 +227,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         intent.putExtra(VisilabsConstant.STORY_ITEM_POSITION, itemPosition);
         intent.putExtra(VisilabsConstant.STORY_POSITION, storyPosition);
         intent.putExtra(VisilabsConstant.ACTION_DATA, actiondata);
+        intent.putExtra(VisilabsConstant.ACTION_ID, actionid);
         startActivity(intent);
     }
 

@@ -2,10 +2,14 @@ package com.visilabs.util;
 
 import android.content.Context;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PersistentTargetManager {
 
@@ -84,7 +88,6 @@ public class PersistentTargetManager {
         }
     }
 
-
     public HashMap<String, String> getParameters() {
         HashMap<String, String> parameters = new HashMap<>();
         for (VisilabsParameter visilabsParameter: VisilabsConstant.VISILABS_PARAMETERS) {
@@ -104,6 +107,14 @@ public class PersistentTargetManager {
         VisilabsLog.i(LOG_TAG, "Parameters cleared.");
     }
 
+    public synchronized void saveShownStory(String actId, String title) {
+
+    }
+
+    public synchronized void getShownStories() {
+        Type paramsType = new TypeToken<Map<String, String>>() {}.getType();
+
+    }
 
     private static class Builder {
         private final Context context;

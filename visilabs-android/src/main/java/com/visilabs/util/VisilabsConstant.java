@@ -130,6 +130,9 @@ public class VisilabsConstant {
     public static final String STORY_ITEM_POSITION = "story_item_position";
     public static final String STORY_POSITION = "position";
     public static final String ACTION_DATA = "action";
+    public static final String ACTION_ID = "action_id";
+
+    public static final String SHOWN_STORIES_STORE_KEY = "shownStories";
 
     private static final String LOG_TAG = "VisilabsConfig";
     public static final String FavoriteAttributeAction = "FavoriteAttributeAction";

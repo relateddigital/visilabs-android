@@ -21,7 +21,7 @@ import com.visilabs.story.model.storylookingbanners.VisilabsStoryLookingBannerRe
 public class VisilabsRecyclerView extends RecyclerView {
 
     Context context;
-    
+
     public static final String TAG = "VisilabsRecyclerView";
 
     StoryItemClickListener storyItemClickListener;
@@ -70,6 +70,11 @@ public class VisilabsRecyclerView extends RecyclerView {
             public void success(VisilabsResponse response) {
                 try {
                     VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse = new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
+
+                    if(visilabsStoryLookingBannerResponse.getStory().isEmpty()){
+                        Log.i(TAG, "There is no story to show.");
+                        return;
+                    }
 
                     if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals(VisilabsConstant.STORY_LOOKING_BANNERS)) {
 
