@@ -71,6 +71,11 @@ public class VisilabsRecyclerView extends RecyclerView {
                 try {
                     VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse = new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
 
+                    if(visilabsStoryLookingBannerResponse.getStory().isEmpty()){
+                        Log.i(TAG, "There is no story to show.");
+                        return;
+                    }
+
                     if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals(VisilabsConstant.STORY_LOOKING_BANNERS)) {
 
                         VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter = new VisilabsStoryLookingBannerAdapter(context, storyItemClickListener);
