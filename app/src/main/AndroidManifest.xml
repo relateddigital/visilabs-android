@@ -18,6 +18,7 @@
         android:theme="@style/Theme.AppCompat">
 
 
+        <meta-data android:name="AppAlias" android:value="visilabs-android-test" />
         <meta-data android:name="VisilabsOrganizationID" android:value="676D325830564761676D453D" />
         <meta-data android:name="VisilabsSiteID" android:value="356467332F6533766975593D" />
         <meta-data android:name="VisilabsSegmentURL" android:value="http://lgr.visilabs.net" />
