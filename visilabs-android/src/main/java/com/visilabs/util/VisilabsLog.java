@@ -1,7 +1,6 @@
 package com.visilabs.util;
 
 import android.util.Log;
-
 import com.visilabs.Visilabs;
 
 public class VisilabsLog {

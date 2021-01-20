@@ -9,9 +9,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-
 import androidx.annotation.IntDef;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
@@ -33,8 +31,8 @@ public abstract class BaseRating extends View {
 
     public static final int POINT_1 = 0;
     public static final int POINT_2 = 1;
-    public static final int COTROL_POINT_1 = 2;
-    public static final int COTROL_POINT_2 = 3;
+    public static final int CONTROL_POINT_1 = 2;
+    public static final int CONTROL_POINT_2 = 3;
 
 
     @Retention(RetentionPolicy.SOURCE)
@@ -44,7 +42,7 @@ public abstract class BaseRating extends View {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({POINT_1, POINT_2, COTROL_POINT_1, COTROL_POINT_2})
+    @IntDef({POINT_1, POINT_2, CONTROL_POINT_1, CONTROL_POINT_2})
     public @interface Coordinate {
 
     }
@@ -62,9 +60,9 @@ public abstract class BaseRating extends View {
     }
 
     protected static class Smileys {
-        private int mWidth;
-        private int mHeight;
-        private float mCenterY;
+        private final int mWidth;
+        private final int mHeight;
+        private final float mCenterY;
         protected float mCenterSmile;
         private Map<Integer, Eye> mEyes = new HashMap<>();
         private Map<Integer, Smile> mSmileys = new HashMap<>();
@@ -345,7 +343,7 @@ public abstract class BaseRating extends View {
         @EyeSide
         public int eyeSide;
         public float radius;
-        private RectF eyePosition = new RectF();
+        private final RectF eyePosition = new RectF();
 
         public RectF getEyePosition() {
             if (center != null) {
@@ -389,7 +387,7 @@ public abstract class BaseRating extends View {
         }
 
 
-        int mode = MIRROR;
+        int mMode;
         public Point START_POINT;
         public Point[] TOP_CURVE = new Point[3];
         public Point[] RIGHT_CURVE = new Point[3];
@@ -401,7 +399,7 @@ public abstract class BaseRating extends View {
         }
 
         public Smile(@Mode int mode) {
-            this.mode = mode;
+            mMode = mode;
         }
 
         public void transform(@Side int side, float x, float y) {

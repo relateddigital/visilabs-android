@@ -11,9 +11,9 @@
     <FrameLayout
         android:id="@+id/fl_circle"
         android:layout_width="wrap_content"
-        android:padding="2dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_circle_shadow">
+        android:background="@drawable/bg_circle_shadow"
+        android:padding="2dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/civ_story"
@@ -31,10 +31,10 @@
 
     <FrameLayout
         android:id="@+id/fl_rect"
-        android:padding="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_rectangle_shadow">
+        android:background="@drawable/bg_rectangle_shadow"
+        android:padding="2dp">
 
         <ImageView
             android:id="@+id/iv_story"
@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:gravity="center"
-        android:textSize="12sp"
         android:maxLines="1"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:textSize="12sp" />
 </LinearLayout>

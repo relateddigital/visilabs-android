@@ -7,33 +7,33 @@ public class VisilabsTargetFilter {
     private String mValue;
 
 
-    public VisilabsTargetFilter(String mAttribute, String mFilterType, String mValue) {
-        this.mAttribute = mAttribute;
-        this.mFilterType = mFilterType;
-        this.mValue = mValue;
+    public VisilabsTargetFilter(String attribute, String filterType, String value) {
+        mAttribute = attribute;
+        mFilterType = filterType;
+        mValue = value;
     }
 
     public String getAttribute() {
         return mAttribute;
     }
 
-    public void setAttribute(String mAttribute) {
-        this.mAttribute = mAttribute;
+    public void setAttribute(String attribute) {
+        mAttribute = attribute;
     }
 
     public String getFilterType() {
         return mFilterType;
     }
 
-    public void setFilterType(String mFilterType) {
-        this.mFilterType = mFilterType;
+    public void setFilterType(String filterType) {
+        mFilterType = filterType;
     }
 
     public String getValue() {
         return mValue;
     }
 
-    public void setValue(String mValue) {
-        this.mValue = mValue;
+    public void setValue(String value) {
+        mValue = value;
     }
 }

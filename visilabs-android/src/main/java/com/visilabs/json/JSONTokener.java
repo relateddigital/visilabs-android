@@ -48,7 +48,7 @@ public class JSONTokener {
     /**
      * The source string being tokenized.
      */
-    private String mySource;
+    private final String mySource;
 
     /**
      * Construct a JSONTokener from a string.
@@ -56,8 +56,8 @@ public class JSONTokener {
      * @param s A source string.
      */
     public JSONTokener(String s) {
-        this.myIndex = 0;
-        this.mySource = s;
+        myIndex = 0;
+        mySource = s;
     }
 
     /**
@@ -66,8 +66,8 @@ public class JSONTokener {
      * the next number or identifier.
      */
     public void back() {
-        if (this.myIndex > 0) {
-            this.myIndex -= 1;
+        if (myIndex > 0) {
+            myIndex -= 1;
         }
     }
 
@@ -98,7 +98,7 @@ public class JSONTokener {
      * @return true if not yet at the end of the source.
      */
     public boolean more() {
-        return this.myIndex < this.mySource.length();
+        return myIndex < mySource.length();
     }
 
     /**
@@ -108,8 +108,8 @@ public class JSONTokener {
      */
     public char next() {
         if (more()) {
-            char c = this.mySource.charAt(this.myIndex);
-            this.myIndex += 1;
+            char c = mySource.charAt(myIndex);
+            myIndex += 1;
             return c;
         }
         return 0;
@@ -142,13 +142,13 @@ public class JSONTokener {
      *             n characters remaining in the source string.
      */
     public String next(int n) throws JSONException {
-        int i = this.myIndex;
+        int i = myIndex;
         int j = i + n;
-        if (j >= this.mySource.length()) {
+        if (j >= mySource.length()) {
             throw syntaxError("Substring bounds error");
         }
-        this.myIndex += n;
-        return this.mySource.substring(i, j);
+        myIndex += n;
+        return mySource.substring(i, j);
     }
 
     /**
@@ -208,7 +208,7 @@ public class JSONTokener {
      */
     public String nextString(char quote) throws JSONException {
         char c;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (;;) {
             c = next();
             switch (c) {
@@ -261,7 +261,7 @@ public class JSONTokener {
      * @return A string.
      */
     public String nextTo(char d) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (;;) {
             char c = next();
             if (c == d || c == 0 || c == '\n' || c == '\r') {
@@ -283,7 +283,7 @@ public class JSONTokener {
      */
     public String nextTo(String delimiters) {
         char c;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (;;) {
             c = next();
             if (delimiters.indexOf(c) >= 0 || c == 0 ||
@@ -330,7 +330,7 @@ public class JSONTokener {
          * formatting character.
          */
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         char b = c;
         while (c >= ' ' && ",:]}/\\\"[{;=#".indexOf(c) < 0) {
             sb.append(c);
@@ -369,27 +369,27 @@ public class JSONTokener {
                 if (s.length() > 2 &&
                         (s.charAt(1) == 'x' || s.charAt(1) == 'X')) {
                     try {
-                        return new Integer(Integer.parseInt(s.substring(2),
-                                16));
+                        return Integer.parseInt(s.substring(2),
+                                16);
                     } catch (Exception e) {
                         /* Ignore the error */
                     }
                 } else {
                     try {
-                        return new Integer(Integer.parseInt(s, 8));
+                        return Integer.parseInt(s, 8);
                     } catch (Exception e) {
                         /* Ignore the error */
                     }
                 }
             }
             try {
-                return new Integer(s);
+                return Integer.valueOf(s);
             } catch (Exception e) {
                 try {
-                    return new Long(s);
+                    return Long.valueOf(s);
                 } catch (Exception f) {
                     try {
-                        return new Double(s);
+                        return Double.valueOf(s);
                     } catch (Exception g) {
                         return s;
                     }
@@ -409,11 +409,11 @@ public class JSONTokener {
      */
     public char skipTo(char to) {
         char c;
-        int index = this.myIndex;
+        int index = myIndex;
         do {
             c = next();
             if (c == 0) {
-                this.myIndex = index;
+                myIndex = index;
                 return c;
             }
         } while (c != to);
@@ -428,11 +428,11 @@ public class JSONTokener {
      * @param to A string to skip past.
      */
     public void skipPast(String to) {
-        this.myIndex = this.mySource.indexOf(to, this.myIndex);
-        if (this.myIndex < 0) {
-            this.myIndex = this.mySource.length();
+        myIndex = mySource.indexOf(to, myIndex);
+        if (myIndex < 0) {
+            myIndex = mySource.length();
         } else {
-            this.myIndex += to.length();
+            myIndex += to.length();
         }
     }
 
@@ -452,6 +452,6 @@ public class JSONTokener {
      * @return " at character [this.myIndex] of [this.mySource]"
      */
     public String toString() {
-        return " at character " + this.myIndex + " of " + this.mySource;
+        return " at character " + myIndex + " of " + mySource;
     }
 }

@@ -2,8 +2,9 @@
 <resources>
 
 
-    <style name="light" parent="Base.Theme.AppCompat.Light.Dialog.Alert"/>
-    <style name="dark" parent="Base.Theme.AppCompat.Dialog.Alert"/>
+    <style name="light" parent="Base.Theme.AppCompat.Light.Dialog.Alert" />
+
+    <style name="dark" parent="Base.Theme.AppCompat.Dialog.Alert" />
 
     <declare-styleable name="SmileRating">
         <attr name="angryColor" format="color" />

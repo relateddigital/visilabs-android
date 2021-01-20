@@ -9,9 +9,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,15 +23,15 @@ public class VisilabsAlertDialogFragment extends DialogFragment {
 
     private static final String LOG_TAG = "VisilabsAlertDialog";
     private int mInAppStateId;
-    private InAppNotificationState inAppNotificationState;
-    private Activity parent;
+    private InAppNotificationState mInAppNotificationState;
+    private Activity mParent;
 
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        final InAppMessage inAppMessage = inAppNotificationState.getInAppMessage();
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(parent, R.style.AlertDialogStyle);
+        final InAppMessage inAppMessage = mInAppNotificationState.getInAppMessage();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mParent, R.style.AlertDialogStyle);
         alertDialogBuilder.setTitle(inAppMessage.getTitle().replace("\\n","\n"))
                 .setMessage(inAppMessage.getBody().replace("\\n","\n"))
                 .setCancelable(false)
@@ -46,7 +43,7 @@ public class VisilabsAlertDialogFragment extends DialogFragment {
                             try {
                                 uri = Uri.parse(uriString);
                                 Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                                parent.startActivity(viewIntent);
+                                mParent.startActivity(viewIntent);
                             } catch (IllegalArgumentException e) {
                                 Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
                             } catch (ActivityNotFoundException e) {
@@ -70,9 +67,8 @@ public class VisilabsAlertDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (inAppNotificationState == null) {
+        if (mInAppNotificationState == null) {
             cleanUp();
-            return;
         }
     }
 
@@ -88,8 +84,8 @@ public class VisilabsAlertDialogFragment extends DialogFragment {
 
     public void setInAppState(int stateId, InAppNotificationState inAppState, Activity parent) {
         this.mInAppStateId = stateId;
-        this.inAppNotificationState = inAppState;
-        this.parent = parent;
+        mInAppNotificationState = inAppState;
+        mParent = parent;
     }
 
     private void cleanUp() {

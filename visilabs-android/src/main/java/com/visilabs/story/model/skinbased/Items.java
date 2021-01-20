@@ -87,7 +87,10 @@ public class Items implements Serializable {
 
     @Override
     public String toString() {
-        return "Items [ fileSrc = " + fileSrc + ", buttonText = " + buttonText + ", displayTime = " + displayTime + ", buttonColor = " + buttonColor + ", filePreview = " + filePreview + ", buttonTextColor = " + buttonTextColor + ", targetUrl = " + targetUrl + ", fileType = " + fileType + "]";
+        return "Items [ fileSrc = " + fileSrc + ", buttonText = " + buttonText +
+                ", displayTime = " + displayTime + ", buttonColor = " + buttonColor +
+                ", filePreview = " + filePreview + ", buttonTextColor = " + buttonTextColor +
+                ", targetUrl = " + targetUrl + ", fileType = " + fileType + "]";
     }
 }
 

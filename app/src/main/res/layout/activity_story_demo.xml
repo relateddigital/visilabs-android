@@ -8,40 +8,40 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:gravity="center"
-        android:background="@color/colorLight"
         android:layout_height="wrap_content"
+        android:background="@color/colorLight"
+        android:gravity="center"
         android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_16"
+            android:orientation="horizontal"
             android:paddingLeft="4.0dip"
             android:paddingTop="5.0dip"
             android:paddingRight="4.0dip"
-            android:paddingBottom="1.0dip"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:paddingBottom="1.0dip">
 
             <EditText
                 android:id="@+id/et_story_id"
-                android:layout_margin="2.0dp"
                 android:layout_width="0.0dip"
-                android:layout_weight="1.0"
                 android:layout_height="fill_parent"
+                android:layout_margin="2.0dp"
+                android:layout_weight="1.0"
+                android:autofillHints="@string/story_id_optional"
+                android:hint="@string/story_id_optional"
+                android:inputType="number"
                 android:textColor="@color/colorAccent"
                 android:textColorHint="@color/colorAccent"
-                android:hint="@string/story_id_optional"
-                android:autofillHints="@string/story_id_optional"
-                android:inputType="number"
                 tools:ignore="LabelFor" />
 
             <Button
                 android:id="@+id/btn_show_story"
-                android:layout_margin="2.0dp"
                 android:layout_width="0.0dip"
-                android:layout_weight="1.0"
                 android:layout_height="fill_parent"
+                android:layout_margin="2.0dp"
+                android:layout_weight="1.0"
                 android:background="@color/colorButton"
                 android:text="@string/show_story"
                 android:textColor="@color/colorLight" />
@@ -51,7 +51,7 @@
         <com.visilabs.story.VisilabsRecyclerView
             android:id="@+id/vrv_story"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 </ScrollView>

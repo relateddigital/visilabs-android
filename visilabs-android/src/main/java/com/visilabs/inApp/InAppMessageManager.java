@@ -3,21 +3,11 @@ package com.visilabs.inApp;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
-
 import com.visilabs.InAppNotificationState;
-import com.visilabs.Visilabs;
-import com.visilabs.android.R;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.MailSubscriptionFormActivity;
@@ -28,14 +18,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class InAppMessageManager {
 
-    private final String _cookieID;
-    private final String _dataSource;
-
     private final String LOG_TAG = "InAppManager";
 
+    private final String mCookieID;
+    private final String mDataSource;
+
     public InAppMessageManager(String cookieID, String dataSource) {
-        this._cookieID = cookieID;
-        this._dataSource = dataSource;
+        mCookieID = cookieID;
+        mDataSource = dataSource;
     }
 
     public void showMailSubscriptionForm(final MailSubscriptionForm mailSubscriptionForm, final Activity parent) {
@@ -86,7 +76,7 @@ public class InAppMessageManager {
                 ReentrantLock lock = VisilabsUpdateDisplayState.getLockObject();
                 lock.lock();
                 try {
-                    Boolean willShowInApp = true;
+                    boolean willShowInApp = true;
                     if (VisilabsUpdateDisplayState.hasCurrentProposal()) {
                         showDebugMessage("DisplayState is locked, will not show notifications");
                         willShowInApp = false;
@@ -95,7 +85,8 @@ public class InAppMessageManager {
                         showDebugMessage("No in app available, will not show.");
                         willShowInApp = false;
                     }
-                    if (inAppMessage.getType() == InAppActionType.FULL && !VisilabsConstant.checkNotificationActivityAvailable(parent.getApplicationContext())) {
+                    if (inAppMessage.getType() == InAppActionType.FULL &&
+                            !VisilabsConstant.checkNotificationActivityAvailable(parent.getApplicationContext())) {
                         showDebugMessage("Application is not configured to show full screen in app, none will be shown.");
                         willShowInApp = false;
                     }
@@ -110,8 +101,8 @@ public class InAppMessageManager {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
-                    int stateId = 0;
-                    VisilabsUpdateDisplayState visilabsUpdateDisplayState = null;
+                    int stateId;
+                    VisilabsUpdateDisplayState visilabsUpdateDisplayState;
 
                     switch (inAppMessage.getType()) {
 
@@ -143,30 +134,12 @@ public class InAppMessageManager {
 
                         case FULL_IMAGE:
 
-                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
-
-                            context.startActivity(intent);
-
-                            break;
-
                         case SMILE_RATING:
-
-                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
-
-                            context.startActivity(intent);
-
-                            break;
 
                         case NPS:
 
-
-                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
-
-                            context.startActivity(intent);
-
-                            break;
-
                         case IMAGE_TEXT_BUTTON:
+
 
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
@@ -223,7 +196,7 @@ public class InAppMessageManager {
 
         InAppNotificationState inAppNotificationState =  new InAppNotificationState(mailSubscriptionForm, highlightColor);
 
-        int stateID = VisilabsUpdateDisplayState.proposeDisplay(inAppNotificationState, _cookieID, _dataSource);
+        int stateID = VisilabsUpdateDisplayState.proposeDisplay(inAppNotificationState, mCookieID, mDataSource);
 
         if (stateID <= 0) {
             Log.e(LOG_TAG, "DisplayState Lock in inconsistent state!");
@@ -237,7 +210,7 @@ public class InAppMessageManager {
 
         InAppNotificationState inAppNotificationState =  new InAppNotificationState(inAppMessage, highlightColor);
 
-        int stateID = VisilabsUpdateDisplayState.proposeDisplay(inAppNotificationState, _cookieID, _dataSource);
+        int stateID = VisilabsUpdateDisplayState.proposeDisplay(inAppNotificationState, mCookieID, mDataSource);
 
         if (stateID <= 0) {
             Log.e(LOG_TAG, "DisplayState Lock in inconsistent state!");

@@ -9,10 +9,10 @@ import com.visilabs.json.JSONObject;
 
 public class VisilabsResponse {
 
-    private JSONObject mResults;
-    private JSONArray mResultArray;
-    private Throwable mError;
-    private String mErrorMessage;
+    private final JSONObject mResults;
+    private final JSONArray mResultArray;
+    private final Throwable mError;
+    private final String mErrorMessage;
 
     public VisilabsResponse(JSONObject pResults, JSONArray pResultArray, Throwable e, String pError) {
         mResults = pResults;

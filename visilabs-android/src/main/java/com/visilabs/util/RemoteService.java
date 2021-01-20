@@ -1,7 +1,6 @@
 package com.visilabs.util;
 
 import android.content.Context;
-
 import java.io.IOException;
 import java.util.Map;
 import javax.net.ssl.SSLSocketFactory;

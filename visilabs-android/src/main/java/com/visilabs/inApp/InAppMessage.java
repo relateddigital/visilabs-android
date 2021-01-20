@@ -6,9 +6,6 @@ import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-
-import java.util.regex.Pattern;
-
 import com.visilabs.exceptions.VisilabsNotificationException;
 import com.visilabs.json.JSONObject;
 import com.visilabs.json.JSONException;
@@ -18,37 +15,36 @@ public class InAppMessage implements Parcelable {
 
     private Bitmap mImage;
 
-    private JSONObject mDescription;
-    private int mId;
+    private final JSONObject mDescription;
+    private final int mId;
     private String msg_type;
-    private String img;
-    private String visitor_data;
-    private String visit_data;
-    private String qs;
+    private final String img;
+    private final String visitor_data;
+    private final String visit_data;
+    private final String qs;
 
-    private String font_family;
-    private String background;
+    private final String font_family;
+    private final String background;
 
-    private String btn_text;
-    private String mButtonURL;
-    private String button_color;
-    private String button_text_color;
+    private final String btn_text;
+    private final String mButtonURL;
+    private final String button_color;
+    private final String button_text_color;
 
-    private String msg_title;
-    private String msg_title_color;
+    private final String msg_title;
+    private final String msg_title_color;
 
-    private String msg_body;
-    private String msg_body_color;
+    private final String msg_body;
+    private final String msg_body_color;
     private String msg_body_textsize;
-    private String close_button_color;
+    private final String close_button_color;
 
-    private String close_button_text; //Alert
-    private String alert_type; //Alert
+    private final String close_button_text; //Alert
+    private final String alert_type; //Alert
 
     private final Context mContext;
 
     private static final String LOG_TAG = "VisilabsNotification";
-    private static final Pattern FILE_EXTENSION_PATTERN = Pattern.compile("(\\.[^./]+$)");
 
     public InAppMessage(Parcel in) {
         JSONObject temp = new JSONObject();
@@ -225,7 +221,7 @@ public class InAppMessage implements Parcelable {
         if (FontFamily.Monospace.toString().equals(font_family.toLowerCase())) {
             return Typeface.MONOSPACE;
         }
-        if (FontFamily.SansaSerif.toString().equals(font_family.toLowerCase())) {
+        if (FontFamily.SansSerif.toString().equals(font_family.toLowerCase())) {
             return Typeface.SANS_SERIF;
         }
         if (FontFamily.Serif.toString().equals(font_family.toLowerCase())) {

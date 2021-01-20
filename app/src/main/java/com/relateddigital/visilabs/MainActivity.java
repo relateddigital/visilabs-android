@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,8 +14,8 @@ import com.relateddigital.visilabs.databinding.ActivityMainBinding;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsCallback;
-import com.visilabs.favs.FavsResponse;
 
+import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.util.VisilabsConstant;
 
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 properties.put("utm_source","euromsg");
                 properties.put("utm_medium","push");
                 Visilabs.CallAPI().sendCampaignParameters(properties);
+                Toast.makeText(getApplicationContext(), "The campaign parameters are sent.", Toast.LENGTH_LONG).show();
             }
         });
 

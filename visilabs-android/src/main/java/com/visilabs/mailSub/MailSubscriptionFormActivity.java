@@ -1,8 +1,6 @@
 package com.visilabs.mailSub;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -16,61 +14,39 @@ import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.gson.Gson;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
+import com.visilabs.android.databinding.ActivityMailSubscriptionFormBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.inApp.FontFamily;
-import com.visilabs.inApp.InAppMessage;
-import com.visilabs.util.StringUtils;
-
 import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MailSubscriptionFormActivity extends AppCompatActivity {
 
-    MailSubscriptionForm mailSubscriptionForm;
-    ExtendedProps extendedProps;
-
-    private VisilabsUpdateDisplayState mUpdateDisplayState;
-
-    private int mIntentId = -1;
-
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
 
-    LinearLayout llTextContainer;
-    ImageButton ibClose;
-    TextView tvBody, tvTitle;
-    EditText etEmail;
-    TextView tvInvalidEmailMessage;
-    LinearLayout llEmailPermit;
-    CheckBox cbEmailPermit;
-    TextView tvEmailPermit;
-    LinearLayout llConsent;
-    CheckBox cbConsent;
-    TextView tvConsent;
-    TextView tvCheckConsentMessage;
-    Button btn;
+    MailSubscriptionForm mMailSubscriptionForm;
+    ExtendedProps mExtendedProps;
+    private VisilabsUpdateDisplayState mUpdateDisplayState;
+    private int mIntentId = -1;
+    private ActivityMailSubscriptionFormBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityMailSubscriptionFormBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
-        mailSubscriptionForm = getMailSubscriptionForm();
+        mMailSubscriptionForm = getMailSubscriptionForm();
         try {
-            extendedProps = new Gson().fromJson(new java.net.URI(mailSubscriptionForm.getActiondata().getExtendedProps()).getPath(), ExtendedProps.class);
+            mExtendedProps = new Gson().fromJson(new java.net.URI(mMailSubscriptionForm.
+                    getActiondata().getExtendedProps()).getPath(), ExtendedProps.class);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -79,45 +55,27 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
             return;
         }
 
-
-        setContentView( R.layout.activity_mail_subscription_form);
+        setContentView(view);
         this.setFinishOnTouchOutside(false);
 
-
-        llTextContainer = findViewById(R.id.ll_text_container);
-        ibClose = findViewById(R.id.ib_close);
-        tvBody = findViewById(R.id.tv_body);
-        tvTitle = findViewById(R.id.tv_title);
-        etEmail = findViewById(R.id.et_email);
-        etEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        binding.etEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     hideKeyboard(v);
-                    if(checkEmail(etEmail.getText().toString())) {
-                        tvInvalidEmailMessage.setVisibility(View.GONE);
+                    if(checkEmail(binding.etEmail.getText().toString())) {
+                        binding.tvInvalidEmailMessage.setVisibility(View.GONE);
                     } else {
-                        tvInvalidEmailMessage.setVisibility(View.VISIBLE);
+                        binding.tvInvalidEmailMessage.setVisibility(View.VISIBLE);
                     }
                 }
             }
         });
-        tvInvalidEmailMessage = findViewById(R.id.tv_invalid_email_message);
-        llEmailPermit = findViewById(R.id.ll_email_permit);
-        cbEmailPermit = findViewById(R.id.cb_email_permit);
-        tvEmailPermit = findViewById(R.id.tv_email_permit);
-        tvEmailPermit.setMovementMethod(LinkMovementMethod.getInstance());
 
-        llConsent = findViewById(R.id.ll_consent);
-        cbConsent = findViewById(R.id.cb_consent);
-        tvConsent = findViewById(R.id.tv_consent);
-        tvConsent.setMovementMethod(LinkMovementMethod.getInstance());
-        tvCheckConsentMessage = findViewById(R.id.tv_check_consent_message);
-        btn = findViewById(R.id.btn);
+        binding.tvEmailPermit.setMovementMethod(LinkMovementMethod.getInstance());
+        binding.tvConsent.setMovementMethod(LinkMovementMethod.getInstance());
 
-
-
-        if (isShowingInApp() && mailSubscriptionForm != null) {
+        if (isShowingInApp() && mMailSubscriptionForm != null) {
             setUpView();
         } else {
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
@@ -126,7 +84,7 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
     }
 
     private void setUpView() {
-        llTextContainer.setBackgroundColor(Color.parseColor(extendedProps.getBackground_color()));
+        binding.llTextContainer.setBackgroundColor(Color.parseColor(mExtendedProps.getBackground_color()));
         setCloseButton();
         setTitle();
         setBody();
@@ -138,8 +96,8 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
     }
 
     public void setCloseButton() {
-        ibClose.setBackgroundResource(getCloseIcon());
-        ibClose.setOnClickListener(new View.OnClickListener() {
+        binding.ibClose.setBackgroundResource(getCloseIcon());
+        binding.ibClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
@@ -149,66 +107,70 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
     }
 
     private void setTitle() {
-        tvTitle.setTypeface(getFont_family(extendedProps.getTitle_font_family()), Typeface.BOLD);
-        tvTitle.setText(mailSubscriptionForm.getActiondata().getTitle().replace("\\n","\n"));
-        tvTitle.setTextColor(Color.parseColor(extendedProps.getTitle_text_color()));
-        tvTitle.setTextSize(Float.parseFloat(extendedProps.getTitle_text_size()) + 12);
+        binding.tvTitle.setTypeface(getFont_family(mExtendedProps.getTitle_font_family()), Typeface.BOLD);
+        binding.tvTitle.setText(mMailSubscriptionForm.getActiondata().getTitle().replace("\\n","\n"));
+        binding.tvTitle.setTextColor(Color.parseColor(mExtendedProps.getTitle_text_color()));
+        binding.tvTitle.setTextSize(Float.parseFloat(mExtendedProps.getTitle_text_size()) + 12);
     }
 
     private void setBody() {
-        tvBody.setText(mailSubscriptionForm.getActiondata().getMessage().replace("\\n","\n"));
-        tvBody.setTypeface(getFont_family(extendedProps.getText_font_family()));
-        tvBody.setTextColor(Color.parseColor(extendedProps.getText_color()));
-        tvBody.setTextSize(Float.parseFloat(extendedProps.getText_size()) + 8);
+        binding.tvBody.setText(mMailSubscriptionForm.getActiondata().getMessage().replace("\\n","\n"));
+        binding.tvBody.setTypeface(getFont_family(mExtendedProps.getText_font_family()));
+        binding.tvBody.setTextColor(Color.parseColor(mExtendedProps.getText_color()));
+        binding.tvBody.setTextSize(Float.parseFloat(mExtendedProps.getText_size()) + 8);
     }
 
     private void setEmail() {
-        etEmail.setHint(mailSubscriptionForm.getActiondata().getPlaceholder());
+        binding.etEmail.setHint(mMailSubscriptionForm.getActiondata().getPlaceholder());
     }
 
     private void setInvalidEmailMessage(){
-        tvInvalidEmailMessage.setText(mailSubscriptionForm.getActiondata().getInvalid_email_message());
-        tvInvalidEmailMessage.setTextSize(Float.parseFloat(extendedProps.getText_size()) + 8);
-        tvInvalidEmailMessage.setTextColor(Color.RED);
+        binding.tvInvalidEmailMessage.setText(mMailSubscriptionForm.getActiondata().getInvalid_email_message());
+        binding.tvInvalidEmailMessage.setTextSize(Float.parseFloat(mExtendedProps.getText_size()) + 8);
+        binding.tvInvalidEmailMessage.setTextColor(Color.RED);
     }
 
     private void setCheckBoxes() {
-        if (mailSubscriptionForm.getActiondata().getEmailpermit_text() == null || mailSubscriptionForm.getActiondata().getEmailpermit_text().isEmpty()) {
-            llEmailPermit.setVisibility(View.GONE);
+        if (mMailSubscriptionForm.getActiondata().getEmailpermit_text() == null || mMailSubscriptionForm
+                .getActiondata().getEmailpermit_text().isEmpty()) {
+            binding.llEmailPermit.setVisibility(View.GONE);
         } else {
-            tvEmailPermit.setText(createHtml(mailSubscriptionForm.getActiondata().getEmailpermit_text(), extendedProps.getEmailpermit_text_url() ));
-            tvEmailPermit.setTextSize(Float.parseFloat(extendedProps.getEmailpermit_text_size()) + 8);
+            binding.tvEmailPermit.setText(createHtml(mMailSubscriptionForm.getActiondata()
+                    .getEmailpermit_text(), mExtendedProps.getEmailpermit_text_url() ));
+            binding.tvEmailPermit.setTextSize(Float.parseFloat(mExtendedProps.getEmailpermit_text_size()) + 8);
         }
-        if (mailSubscriptionForm.getActiondata().getConsent_text() == null || mailSubscriptionForm.getActiondata().getConsent_text().isEmpty()) {
-            llConsent.setVisibility(View.GONE);
+        if (mMailSubscriptionForm.getActiondata().getConsent_text() == null || mMailSubscriptionForm
+                .getActiondata().getConsent_text().isEmpty()) {
+            binding.llConsent.setVisibility(View.GONE);
         } else {
-            tvConsent.setText(createHtml(mailSubscriptionForm.getActiondata().getConsent_text(), extendedProps.getConsent_text_url() ));
-            tvConsent.setTextSize(Float.parseFloat(extendedProps.getConsent_text_size()) + 8);
+            binding.tvConsent.setText(createHtml(mMailSubscriptionForm.getActiondata().getConsent_text(),
+                    mExtendedProps.getConsent_text_url() ));
+            binding.tvConsent.setTextSize(Float.parseFloat(mExtendedProps.getConsent_text_size()) + 8);
         }
     }
 
     private void setCheckConsentMessage(){
-        tvCheckConsentMessage.setText(mailSubscriptionForm.getActiondata().getCheck_consent_message());
-        tvCheckConsentMessage.setTextSize(Float.parseFloat(extendedProps.getText_size()) + 8);
-        tvCheckConsentMessage.setTextColor(Color.RED);
+        binding.tvCheckConsentMessage.setText(mMailSubscriptionForm.getActiondata().getCheck_consent_message());
+        binding.tvCheckConsentMessage.setTextSize(Float.parseFloat(mExtendedProps.getText_size()) + 8);
+        binding.tvCheckConsentMessage.setTextColor(Color.RED);
     }
 
     private void setButton() {
-        btn.setText(mailSubscriptionForm.getActiondata().getButton_label());
-        btn.setTypeface(getFont_family(extendedProps.getButton_font_family()));
-        btn.setTextColor(Color.parseColor(extendedProps.getButton_text_color()));
-        btn.setBackgroundColor(Color.parseColor(extendedProps.getButton_color()));
-        btn.setTextSize(Float.parseFloat(extendedProps.getButton_text_size()) + 8);
-        btn.setOnClickListener(new View.OnClickListener() {
+        binding.btn.setText(mMailSubscriptionForm.getActiondata().getButton_label());
+        binding.btn.setTypeface(getFont_family(mExtendedProps.getButton_font_family()));
+        binding.btn.setTextColor(Color.parseColor(mExtendedProps.getButton_text_color()));
+        binding.btn.setBackgroundColor(Color.parseColor(mExtendedProps.getButton_color()));
+        binding.btn.setTextSize(Float.parseFloat(mExtendedProps.getButton_text_size()) + 8);
+        binding.btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String email = etEmail.getText().toString();
+                String email = binding.etEmail.getText().toString();
 
                 if(checkEmail(email)) {
-                    tvInvalidEmailMessage.setVisibility(View.GONE);
+                    binding.tvInvalidEmailMessage.setVisibility(View.GONE);
                 } else {
-                    tvInvalidEmailMessage.setVisibility(View.VISIBLE);
+                    binding.tvInvalidEmailMessage.setVisibility(View.VISIBLE);
                     return;
                 }
 
@@ -216,13 +178,14 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
                     return;
                 }
 
-                Visilabs.CallAPI().trackMailSubscriptionFormClick(mailSubscriptionForm.getActiondata().getReport());
+                Visilabs.CallAPI().trackMailSubscriptionFormClick(mMailSubscriptionForm.getActiondata().getReport());
 
-                Visilabs.CallAPI().createSubsJsonRequest(mailSubscriptionForm.getActid(), mailSubscriptionForm.getActiondata().getAuth(), email);
+                Visilabs.CallAPI().createSubsJsonRequest(mMailSubscriptionForm.getActid(),
+                        mMailSubscriptionForm.getActiondata().getAuth(), email);
 
-                tvCheckConsentMessage.setVisibility(View.VISIBLE);
-                tvCheckConsentMessage.setTextColor(Color.GREEN);
-                tvCheckConsentMessage.setText(mailSubscriptionForm.getActiondata().getSuccess_message());
+                binding.tvCheckConsentMessage.setVisibility(View.VISIBLE);
+                binding.tvCheckConsentMessage.setTextColor(Color.GREEN);
+                binding.tvCheckConsentMessage.setText(mMailSubscriptionForm.getActiondata().getSuccess_message());
 
 
                 final Handler handler = new Handler(Looper.getMainLooper());
@@ -240,26 +203,26 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
     }
 
     private Boolean checkCheckBoxes() {
-        Boolean isCheckboxesOk = true;
+        boolean isCheckboxesOk = true;
 
-        if(llEmailPermit.getVisibility() != View.GONE){
-            if(!cbEmailPermit.isChecked()) {
+        if(binding.llEmailPermit.getVisibility() != View.GONE){
+            if(!binding.cbEmailPermit.isChecked()) {
                 isCheckboxesOk = false;
-                tvCheckConsentMessage.setVisibility(View.VISIBLE);
+                binding.tvCheckConsentMessage.setVisibility(View.VISIBLE);
                 return isCheckboxesOk;
             } else {
                 isCheckboxesOk = true;
-                tvCheckConsentMessage.setVisibility(View.GONE);
+                binding.tvCheckConsentMessage.setVisibility(View.GONE);
             }
         }
-        if(llConsent.getVisibility() != View.GONE){
-            if(!cbConsent.isChecked()) {
+        if(binding.llConsent.getVisibility() != View.GONE){
+            if(!binding.cbConsent.isChecked()) {
                 isCheckboxesOk = false;
-                tvCheckConsentMessage.setVisibility(View.VISIBLE);
+                binding.tvCheckConsentMessage.setVisibility(View.VISIBLE);
                 return isCheckboxesOk;
             } else {
                 isCheckboxesOk = true;
-                tvCheckConsentMessage.setVisibility(View.GONE);
+                binding.tvCheckConsentMessage.setVisibility(View.GONE);
             }
         }
 
@@ -277,7 +240,7 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
         }
         Pattern pattern = Pattern.compile("<LINK>(.+?)</LINK>");
         Matcher matcher = pattern.matcher(text);
-        Boolean linkMatched = false;
+        boolean linkMatched = false;
         while (matcher.find()) {
             linkMatched = true;
             String outerHtml = matcher.group(0);
@@ -298,7 +261,7 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
         if (FontFamily.Monospace.toString().equals(font_family.toLowerCase())) {
             return Typeface.MONOSPACE;
         }
-        if (FontFamily.SansaSerif.toString().equals(font_family.toLowerCase())) {
+        if (FontFamily.SansSerif.toString().equals(font_family.toLowerCase())) {
             return Typeface.SANS_SERIF;
         }
         if (FontFamily.Serif.toString().equals(font_family.toLowerCase())) {
@@ -313,7 +276,7 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
 
 
     private int getCloseIcon() {
-        switch (extendedProps.getClose_button_color()) {
+        switch (mExtendedProps.getClose_button_color()) {
             case "white":
                 return R.drawable.ic_close_white_24dp;
 

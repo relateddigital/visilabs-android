@@ -19,12 +19,11 @@ final class PausableProgressBar extends FrameLayout {
 
     private static final int DEFAULT_PROGRESS_DURATION = 2000;
 
-    private View frontProgressView;
-    private View maxProgressView;
-
-    private PausableScaleAnimation animation;
-    private long duration = DEFAULT_PROGRESS_DURATION;
-    private Callback callback;
+    private final View mFrontProgressView;
+    private final View mMaxProgressView;
+    private PausableScaleAnimation mAnimation;
+    private long mDuration = DEFAULT_PROGRESS_DURATION;
+    private Callback mCallback;
 
     interface Callback {
         void onStartProgress();
@@ -42,16 +41,16 @@ final class PausableProgressBar extends FrameLayout {
     public PausableProgressBar(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         LayoutInflater.from(context).inflate(R.layout.pausable_progress, this);
-        frontProgressView = findViewById(R.id.front_progress);
-        maxProgressView = findViewById(R.id.max_progress); // work around
+        mFrontProgressView = findViewById(R.id.front_progress);
+        mMaxProgressView = findViewById(R.id.max_progress); // work around
     }
 
     public void setDuration(long duration) {
-        this.duration = duration;
+        mDuration = duration;
     }
 
     public void setCallback(@NonNull Callback callback) {
-        this.callback = callback;
+        mCallback = callback;
     }
 
     void setMax() {
@@ -63,48 +62,49 @@ final class PausableProgressBar extends FrameLayout {
     }
 
     void setMinWithoutCallback() {
-        maxProgressView.setBackgroundResource(R.color.progress_secondary);
+        mMaxProgressView.setBackgroundResource(R.color.progress_secondary);
 
-        maxProgressView.setVisibility(VISIBLE);
-        if (animation != null) {
-            animation.setAnimationListener(null);
-            animation.cancel();
+        mMaxProgressView.setVisibility(VISIBLE);
+        if (mAnimation != null) {
+            mAnimation.setAnimationListener(null);
+            mAnimation.cancel();
         }
     }
 
     void setMaxWithoutCallback() {
-        maxProgressView.setBackgroundResource(R.color.progress_max_active);
+        mMaxProgressView.setBackgroundResource(R.color.progress_max_active);
 
-        maxProgressView.setVisibility(VISIBLE);
-        if (animation != null) {
-            animation.setAnimationListener(null);
-            animation.cancel();
+        mMaxProgressView.setVisibility(VISIBLE);
+        if (mAnimation != null) {
+            mAnimation.setAnimationListener(null);
+            mAnimation.cancel();
         }
     }
 
     private void finishProgress(boolean isMax) {
-        if (isMax) maxProgressView.setBackgroundResource(R.color.progress_max_active);
-        maxProgressView.setVisibility(isMax ? VISIBLE : GONE);
-        if (animation != null) {
-            animation.setAnimationListener(null);
-            animation.cancel();
-            if (callback != null) {
-                callback.onFinishProgress();
+        if (isMax) mMaxProgressView.setBackgroundResource(R.color.progress_max_active);
+        mMaxProgressView.setVisibility(isMax ? VISIBLE : GONE);
+        if (mAnimation != null) {
+            mAnimation.setAnimationListener(null);
+            mAnimation.cancel();
+            if (mCallback != null) {
+                mCallback.onFinishProgress();
             }
         }
     }
 
     public void startProgress() {
-        maxProgressView.setVisibility(GONE);
+        mMaxProgressView.setVisibility(GONE);
 
-        animation = new PausableScaleAnimation(0, 1, 1, 1, Animation.ABSOLUTE, 0, Animation.RELATIVE_TO_SELF, 0);
-        animation.setDuration(duration);
-        animation.setInterpolator(new LinearInterpolator());
-        animation.setAnimationListener(new Animation.AnimationListener() {
+        mAnimation = new PausableScaleAnimation(0, 1, 1, 1,
+                Animation.ABSOLUTE, 0, Animation.RELATIVE_TO_SELF, 0);
+        mAnimation.setDuration(mDuration);
+        mAnimation.setInterpolator(new LinearInterpolator());
+        mAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                frontProgressView.setVisibility(View.VISIBLE);
-                if (callback != null) callback.onStartProgress();
+                mFrontProgressView.setVisibility(View.VISIBLE);
+                if (mCallback != null) mCallback.onStartProgress();
             }
 
             @Override
@@ -113,34 +113,34 @@ final class PausableProgressBar extends FrameLayout {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (callback != null) callback.onFinishProgress();
+                if (mCallback != null) mCallback.onFinishProgress();
             }
         });
-        animation.setFillAfter(true);
-        frontProgressView.startAnimation(animation);
+        mAnimation.setFillAfter(true);
+        mFrontProgressView.startAnimation(mAnimation);
     }
 
     public void pauseProgress() {
-        if (animation != null) {
-            animation.pause();
+        if (mAnimation != null) {
+            mAnimation.pause();
         }
     }
 
     public void resumeProgress() {
-        if (animation != null) {
-            animation.resume();
+        if (mAnimation != null) {
+            mAnimation.resume();
         }
     }
 
     void clear() {
-        if (animation != null) {
-            animation.setAnimationListener(null);
-            animation.cancel();
-            animation = null;
+        if (mAnimation != null) {
+            mAnimation.setAnimationListener(null);
+            mAnimation.cancel();
+            mAnimation = null;
         }
     }
 
-    private class PausableScaleAnimation extends ScaleAnimation {
+    private static class PausableScaleAnimation extends ScaleAnimation {
 
         private long mElapsedAtPause = 0;
         private boolean mPaused = false;

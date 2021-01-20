@@ -1,6 +1,7 @@
 package com.visilabs.util;
 
 import android.content.Context;
+import android.provider.Settings.Secure;
 
 public class Device {
 
@@ -21,9 +22,7 @@ public class Device {
      */
     public static String getDeviceId(Context context) {
         if (mDeviceId == null) {
-            mDeviceId = android.provider.Settings.Secure.getString(
-                    context.getContentResolver(),
-                    android.provider.Settings.Secure.ANDROID_ID);
+            mDeviceId = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
         }
         return mDeviceId;
     }

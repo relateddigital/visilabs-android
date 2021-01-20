@@ -8,7 +8,6 @@ import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,34 +17,27 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
 import com.visilabs.Visilabs;
+import com.visilabs.android.databinding.FragmentInAppMiniBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.AnimationManager;
 
 public class VisilabsInAppFragment extends Fragment {
 
+    private static final String LOG_TAG = "VisilabsFragment";
+    private static final int MINI_REMOVE_TIME = 10000;
+
     private Activity mParent;
     private GestureDetector mDetector;
     private Handler mHandler;
     private int mInAppStateId;
-    private InAppNotificationState inAppNotificationState;
+    private InAppNotificationState mInAppNotificationState;
     private Runnable mRemover, mDisplayMini;
     private boolean mCleanedUp;
-
-    private static final String LOG_TAG = "VisilabsFragment";
-    private static final int MINI_REMOVE_TIME = 10000;
-
-    TextView tvInAppTitleMini;
-    ImageView ivInAppImageMini;
-
-    View rootView;
+    private FragmentInAppMiniBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,33 +48,29 @@ public class VisilabsInAppFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        binding = FragmentInAppMiniBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
+        if (mInAppNotificationState != null) {
+            InAppMessage inApp = mInAppNotificationState.getInAppMessage();
 
+            binding.tvInAppTitleMini.setText(inApp.getTitle().replace("\\n","\n"));
 
-        if (inAppNotificationState != null) {
-
-            rootView = inflater.inflate(R.layout.fragment_in_app_mini, container, false);
-
-            tvInAppTitleMini = rootView.findViewById(R.id.tv_in_app_title_mini);
-            ivInAppImageMini = rootView.findViewById(R.id.iv_in_app_image_mini);
-            InAppMessage inApp = inAppNotificationState.getInAppMessage();
-
-            tvInAppTitleMini.setText(inApp.getTitle().replace("\\n","\n"));
-
-            Picasso.get().load(inApp.getImageUrl()).into(ivInAppImageMini);
+            Picasso.get().load(inApp.getImageUrl()).into(binding.ivInAppImageMini);
 
             mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
 
         } else {
             cleanUp();
+            view = null;
         }
 
-        return rootView;
+        return view;
     }
 
     public void setInAppState(int stateId, InAppNotificationState inAppState) {
-        this.mInAppStateId = stateId;
-        this.inAppNotificationState = inAppState;
+        mInAppStateId = stateId;
+        mInAppNotificationState = inAppState;
     }
 
     @Override
@@ -111,7 +99,7 @@ public class VisilabsInAppFragment extends Fragment {
         super.onAttach(activity);
 
         mParent = activity;
-        if (inAppNotificationState == null) {
+        if (mInAppNotificationState == null) {
             cleanUp();
             return;
         }
@@ -133,7 +121,7 @@ public class VisilabsInAppFragment extends Fragment {
             @Override
             public void run() {
                 getView().setVisibility(View.VISIBLE);
-                getView().setBackgroundColor(inAppNotificationState.getHighlightColor());
+                getView().setBackgroundColor(mInAppNotificationState.getHighlightColor());
                 getView().setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View view, MotionEvent event) {
@@ -143,7 +131,7 @@ public class VisilabsInAppFragment extends Fragment {
 
                 getView().startAnimation(AnimationManager.getMiniTranslateAnimation(getActivity()));
 
-                ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
+                binding.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
             }
         };
     }
@@ -181,7 +169,7 @@ public class VisilabsInAppFragment extends Fragment {
 
             @Override
             public boolean onSingleTapUp(MotionEvent event) {
-                final InAppMessage inApp = inAppNotificationState.getInAppMessage();
+                final InAppMessage inApp = mInAppNotificationState.getInAppMessage();
 
                 final String uriString = inApp.getButtonURL();
                 if (uriString != null && uriString.length() > 0) {

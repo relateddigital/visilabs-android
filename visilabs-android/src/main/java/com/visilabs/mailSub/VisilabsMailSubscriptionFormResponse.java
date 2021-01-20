@@ -1,9 +1,7 @@
 package com.visilabs.mailSub;
 
 import com.visilabs.story.model.storylookingbanners.Story;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class VisilabsMailSubscriptionFormResponse implements Serializable {
@@ -51,14 +49,9 @@ public class VisilabsMailSubscriptionFormResponse implements Serializable {
 
     public void setMailSubscriptionForm(List<MailSubscriptionForm> MailSubscriptionForm) {
         this.MailSubscriptionForm = MailSubscriptionForm;
-        List<String> list = new ArrayList<String>();
-        list.add("A");
-        list.add("B");
     }
 
     public List<MailSubscriptionForm> getMailSubscriptionForm() {
         return this.MailSubscriptionForm;
     }
-
-
 }

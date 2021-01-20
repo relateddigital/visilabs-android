@@ -37,7 +37,7 @@ public class Story implements Serializable {
     }
 
     public void setActiondata(Actiondata Actiondata) {
-        this.actiondata = actiondata;
+        this.actiondata = Actiondata;
     }
 
     public Actiondata getActiondata() {

@@ -17,7 +17,6 @@ public class GeofenceMonitorConnection implements ServiceConnection {
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        //Cast Error Can be
         try{
             GeofenceMonitor geofenceMonitor = ((GeofenceMonitor.GeofenceMonitorBinder) service).getService();
             GpsManager gpsManager = Injector.INSTANCE.getGpsManager();

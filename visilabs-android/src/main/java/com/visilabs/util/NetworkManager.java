@@ -8,7 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class NetworkManager {
-    private Context mContext;
+    private final Context mContext;
     private boolean mIsOnline;
     private boolean mIsListenerRegistered;
     private NetworkReceiver mReceiver;
@@ -18,7 +18,7 @@ public class NetworkManager {
     private static NetworkManager mInstance;
 
     public NetworkManager(Context pContext) {
-        this.mContext = pContext;
+        mContext = pContext;
     }
 
     public void registerNetworkListener() {

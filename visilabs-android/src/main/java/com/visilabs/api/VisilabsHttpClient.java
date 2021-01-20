@@ -19,10 +19,10 @@ import cz.msebera.android.httpclient.entity.StringEntity;
 
 public class VisilabsHttpClient {
 
-    private static AsyncHttpClient mClient = new AsyncHttpClient();
-    private static SyncHttpClient mSyncClient = new SyncHttpClient();
-
     private static final String LOG_TAG = "VisilabsAPI.VisilabsHttpClient";
+
+    private static final AsyncHttpClient mClient = new AsyncHttpClient();
+    private static final SyncHttpClient mSyncClient = new SyncHttpClient();
 
     public static void put(
             String pUrl,
@@ -187,39 +187,37 @@ public class VisilabsHttpClient {
 
     static class FHJsonHttpResponseHandler extends JsonHttpResponseHandler {
 
-        private VisilabsCallback callback;
+        private final VisilabsCallback mCallback;
 
         public FHJsonHttpResponseHandler(VisilabsCallback pCallback) {
             super();
-            callback = pCallback;
+            mCallback = pCallback;
         }
 
         @Override
         public void onSuccess(int pStatusCode, Header[] pHeaders, org.json.JSONObject pRes) {
             VisilabsLog.v(LOG_TAG, "Got response : " + pRes.toString());
-            if (callback != null) {
+            if (mCallback != null) {
                 VisilabsResponse fhres = new VisilabsResponse(new JSONObject(pRes.toString()), null, null, null);
-                callback.success(fhres);
+                mCallback.success(fhres);
             }
         }
 
         @Override
         public void onSuccess(int pStatusCode, Header[] pHeaders, org.json.JSONArray pRes) {
             VisilabsLog.v(LOG_TAG, "Got response : " + pRes.toString());
-            if (callback != null) {
+            if (mCallback != null) {
                 VisilabsResponse fhres = new VisilabsResponse(null, new JSONArray(pRes.toString()), null, null);
-                callback.success(fhres);
+                mCallback.success(fhres);
             }
         }
 
         @Override
         public void onFailure(int pStatusCode, Header[] pHeaders, String pContent, Throwable pError) {
-            /*
             VisilabsLog.e(LOG_TAG, pError.getMessage(), pError);
-            */
-            if (callback != null) {
+            if (mCallback != null) {
                 VisilabsResponse fhres = new VisilabsResponse(null, null, pError, pContent);
-                callback.fail(fhres);
+                mCallback.fail(fhres);
             }
         }
 
@@ -229,28 +227,28 @@ public class VisilabsHttpClient {
                 Header[] pHeaders,
                 Throwable pError,
                 org.json.JSONObject pErrorResponse) {
-            //VisilabsLog.e(LOG_TAG, pError.getMessage(), pError);
+            VisilabsLog.e(LOG_TAG, pError.getMessage(), pError);
             String errorResponse = (pErrorResponse != null) ? pErrorResponse.toString() : "{}";
-            if (callback != null) {
+            if (mCallback != null) {
                 VisilabsResponse fhres = new VisilabsResponse(
                         new JSONObject(errorResponse),
                         null,
                         pError,
                         errorResponse);
-                callback.fail(fhres);
+                mCallback.fail(fhres);
             }
         }
 
         @Override
         public void onFailure(int pStatusCode, Header[] pHeaders, Throwable pError, org.json.JSONArray pErrorResponse) {
             VisilabsLog.e(LOG_TAG, pError.getMessage(), pError);
-            if (callback != null) {
+            if (mCallback != null) {
                 VisilabsResponse fhres = new VisilabsResponse(
                         null,
                         new JSONArray(pErrorResponse.toString()),
                         pError,
                         pErrorResponse.toString());
-                callback.fail(fhres);
+                mCallback.fail(fhres);
             }
         }
     }

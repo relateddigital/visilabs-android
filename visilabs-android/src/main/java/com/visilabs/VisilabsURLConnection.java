@@ -10,34 +10,34 @@ import java.util.List;
 import java.util.Map;
 
 public class VisilabsURLConnection {
-    private static VisilabsURLConnection _connector;
-    private static Visilabs _apiContext;
-    private static VisilabsURLConnectionCallbackInterface _callback;
-
-    private static boolean _isConnected = false;
+    private static VisilabsURLConnection mConnector;
+    private static Visilabs mApiContext;
+    private static VisilabsURLConnectionCallbackInterface mCallback;
+    private static boolean mIsConnected = false;
 
     private VisilabsURLConnection(Visilabs context, VisilabsURLConnectionCallbackInterface callback) {
-        _apiContext = context;
-        _callback = callback;
+        mApiContext = context;
+        mCallback = callback;
     }
 
     public static VisilabsURLConnection initializeConnector(Visilabs context) {
-        if (_connector == null)
-            _connector = new VisilabsURLConnection(context, context);
-        return _connector;
+        if (mConnector == null)
+            mConnector = new VisilabsURLConnection(context, context);
+        return mConnector;
     }
 
     public static VisilabsURLConnection initializeConnector(Visilabs context, VisilabsURLConnectionCallbackInterface callback) {
-        if (_connector == null)
-            _connector = new VisilabsURLConnection(context, callback);
-        return _connector;
+        if (mConnector == null)
+            mConnector = new VisilabsURLConnection(context, callback);
+        return mConnector;
     }
 
     public void connectURL(final String requestURL, final String userAgent, final int timeOutSeconds, final String loadBalanceCookieKey
             , final String loadBalanceCookieValue, final String OM3rdCookieValue) {
-        if (_isConnected || requestURL == null || requestURL.length() == 0) return;
+        if (mIsConnected || requestURL == null || requestURL.length() == 0)
+            return;
 
-        _isConnected = true;
+        mIsConnected = true;
         new Thread(new Runnable() {
             public void run() {
 
@@ -105,7 +105,6 @@ public class VisilabsURLConnection {
                                 if (fields[0].toLowerCase().contains(VisilabsConstant.OM_3_KEY.toLowerCase())) {
                                     String[] cookieKeyValue = fields[0].split("=");
                                     if (cookieKeyValue.length > 1 || Visilabs.CallAPI().getCookie() != null) {
-                                        String cookieKey = cookieKeyValue[0];
                                         String cookieValue = cookieKeyValue[1];
 
                                         if (requestURL.contains(VisilabsConstant.LOGGER_URL) && Visilabs.CallAPI().getCookie() != null) {
@@ -121,33 +120,33 @@ public class VisilabsURLConnection {
                     }
                     connection.connect();
                 } catch (Exception e) {
-                    if (_apiContext.getSendQueue() != null && _apiContext.getSendQueue().size() > 0)
-                        _apiContext.getSendQueue().remove(0);
+                    if (mApiContext.getSendQueue() != null && mApiContext.getSendQueue().size() > 0)
+                        mApiContext.getSendQueue().remove(0);
                     Log.w("VisilabsAPI", requestURL + " " + e.toString());
                 } finally {
-                    _isConnected = false;
+                    mIsConnected = false;
                 }
 
                 if (statusCode == 200 || statusCode == 304) {
-                    if (_apiContext.getSendQueue() != null && _apiContext.getSendQueue().size() > 0)
-                        _apiContext.getSendQueue().remove(0);
+                    if (mApiContext.getSendQueue() != null && mApiContext.getSendQueue().size() > 0)
+                        mApiContext.getSendQueue().remove(0);
                 } else if (statusCode >= 400 && statusCode <= 500) {
-                    //String failedURL = _apiContext.getSendQueue().get(0);
-                    if (_apiContext.getSendQueue() != null && _apiContext.getSendQueue().size() > 0)
-                        _apiContext.getSendQueue().remove(0);
+                    //String failedURL = mApiContext.getSendQueue().get(0);
+                    if (mApiContext.getSendQueue() != null && mApiContext.getSendQueue().size() > 0)
+                        mApiContext.getSendQueue().remove(0);
                     Log.e("VL", statusCode + " CODE -" + requestURL);
                 }
-                if (_callback != null)
-                    _callback.finished(statusCode);
+                if (mCallback != null)
+                    mCallback.finished(statusCode);
             }
         }).start();
     }
 
     public static Visilabs getApiContext() {
-        return _apiContext;
+        return mApiContext;
     }
 
     public static void setApiContext(Visilabs apiContext) {
-        VisilabsURLConnection._apiContext = apiContext;
+        VisilabsURLConnection.mApiContext = apiContext;
     }
 }

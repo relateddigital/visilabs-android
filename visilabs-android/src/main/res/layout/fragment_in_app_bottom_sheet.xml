@@ -1,20 +1,19 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/dp_8"
     android:layout_marginTop="@dimen/dp_8"
+    android:layout_marginBottom="@dimen/dp_8"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/dp_40"
-        android:lineHeight="@dimen/dp_40"
-        android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
         android:gravity="center_vertical"
+        android:lineHeight="@dimen/dp_40"
+        android:minHeight="@dimen/dp_40"
         android:text="@string/title"
         android:textColor="@android:color/black"
         android:textSize="20sp" />
@@ -23,11 +22,11 @@
         android:id="@+id/tv_body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/dp_32"
-        android:lineHeight="@dimen/dp_32"
-        android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
         android:gravity="center_vertical"
+        android:lineHeight="@dimen/dp_32"
+        android:minHeight="@dimen/dp_32"
         android:text="@string/body"
         android:textColor="@android:color/black"
         android:textSize="16sp" />
@@ -36,31 +35,31 @@
         android:id="@+id/tv_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_48"
-        android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
         android:gravity="start|center_vertical"
         android:text="@string/button"
         android:textColor="@color/bottom_sheet_button_color"
         android:textSize="14sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginBottom="@dimen/dp_8"
         android:layout_marginTop="@dimen/md_bottom_sheet_separator_top_margin"
+        android:layout_marginBottom="@dimen/dp_8"
         android:background="@android:color/black" />
 
     <TextView
         android:id="@+id/tv_close"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_48"
-        android:layout_marginEnd="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
         android:gravity="start|center_vertical"
         android:text="@string/close"
         android:textColor="@color/bottom_sheet_button_color"
         android:textSize="14sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
 </LinearLayout>

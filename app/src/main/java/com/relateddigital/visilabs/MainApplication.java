@@ -1,15 +1,24 @@
 package com.relateddigital.visilabs;
 
+import android.Manifest;
 import android.app.Application;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.huawei.agconnect.config.AGConnectServicesConfig;
+import com.huawei.hms.aaid.HmsInstanceId;
+import com.huawei.hms.common.ApiException;
 import com.visilabs.Visilabs;
+import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
 import java.util.HashMap;
 import euromsg.com.euromobileandroid.EuroMobileManager;
@@ -54,12 +63,26 @@ public class MainApplication extends Application {
             );
         }
 
+        //Check if the location permission is granted
+        //If not, warn the user that it is needed to start gps.
+        if(bundle.getBoolean("VisilabsGeofenceEnabled", false)
+                && !StringUtils.isNullOrWhiteSpace(bundle.getString("VisilabsGeofenceURL", ""))){
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Location permission is needed to start geofence!", Toast.LENGTH_LONG).show();
+            }
+        }
+
         VisilabsConstant.DEBUG = true;
 
 
         euroMobileManager = EuroMobileManager.init(appAlias, null, getApplicationContext());
         euroMobileManager.registerToFCM(getBaseContext());
         setExistingFirebaseTokenToEuroMessage();
+
+        if (!EuroMobileManager.checkPlayService(getApplicationContext())) {
+            setHuaweiTokenToEuromessage();
+        }
     }
 
     private void setExistingFirebaseTokenToEuroMessage() {
@@ -79,5 +102,26 @@ public class MainApplication extends Application {
                         euroMobileManager.subscribe(token, getApplicationContext());
                     }
                 });
+    }
+
+    private void setHuaweiTokenToEuromessage() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    String appId = AGConnectServicesConfig.fromContext(getApplicationContext()).getString("client/app_id");
+                    final String token = HmsInstanceId.getInstance(getApplicationContext()).getToken(appId, "HCM");
+
+                    HashMap<String, String> parameters= new HashMap<String, String>();
+                    parameters.put("OM.sys.TokenID", token);
+                    parameters.put("OM.sys.AppID", appAlias);
+                    Visilabs.CallAPI().customEvent("Register Token", parameters);
+                    euroMobileManager.subscribe(token, getApplicationContext());
+
+                } catch (ApiException e) {
+                    Log.e("Huawei Token", "get token failed, " + e);
+                }
+            }
+        }.start();
     }
 }

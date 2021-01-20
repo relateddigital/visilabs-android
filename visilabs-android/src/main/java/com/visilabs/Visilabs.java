@@ -8,10 +8,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
-
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.google.gson.Gson;
 import com.visilabs.api.VisilabsAction;
 import com.visilabs.api.VisilabsCallback;
@@ -30,10 +27,6 @@ import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.Report;
 import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
-import com.visilabs.story.VisilabsSkinBasedAdapter;
-import com.visilabs.story.VisilabsStoryLookingBannerAdapter;
-import com.visilabs.story.model.skinbased.VisilabsSkinBasedResponse;
-import com.visilabs.story.model.storylookingbanners.VisilabsStoryLookingBannerResponse;
 import com.visilabs.util.Device;
 import com.visilabs.util.NetworkManager;
 import com.visilabs.util.PersistentTargetManager;
@@ -43,7 +36,6 @@ import com.visilabs.util.VisilabsConstant;
 import com.visilabs.util.VisilabsEncoder;
 import com.visilabs.util.VisilabsLog;
 import com.visilabs.util.VisilabsParameter;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -58,32 +50,31 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
     private static final String LOG_TAG = "VisilabsAPI";
     private static int mLogLevel = VisilabsConstant.LOG_LEVEL_VERBOSE;
     private static boolean mIsCreated = false;
-    private static boolean mReady = false;
     private static String mDeviceUserAgent;
     private static String mTargetURL;
     private static String mActionURL;
     private List<String> mSendQueue;
 
     private static Visilabs visilabs = null;
-    private String _organizationID;
-    private String _siteID;
-    private String _segmentURL;
-    private String _realTimeURL;
+    private String mOrganizationID;
+    private String mSiteID;
+    private String mSegmentURL;
+    private String mRealTimeURL;
 
-    private String _dataSource;
-    private String _exVisitorID;
-    private String _cookieID;
-    private String _channel;
-    private Context _context;
-    private String _userAgent;
-    private int _requestTimeoutSeconds = 30;
-    private String _RESTURL;
-    private String _encryptedDataSource;
+    private String mDataSource;
+    private String mExVisitorID;
+    private String mCookieID;
+    private String mChannel;
+    private Context mContext;
+    private String mUserAgent;
+    private int mRequestTimeoutSeconds = 30;
+    private String mRESTURL;
+    private String mEncryptedDataSource;
 
     private String mVisitData = "";
     private String mVisitorData = "";
 
-    private Cookie cookie;
+    private Cookie mCookie;
 
     private Boolean mCheckForNotificationsOnLoggerRequest;
 
@@ -95,6 +86,9 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
     private String mSysAppID;
     private String mSysTokenID;
 
+    private GpsManager gpsManager = null;
+    private GpsManagerMoreThanOreo gpsManagerMoreThanOreo = null;
+
 
     private Visilabs(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
             , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource, String targetURL, String actionURL, String geofenceURL, boolean geofenceEnabled) {
@@ -102,93 +96,111 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             return;
         }
 
-        this.mGeofenceURL = geofenceURL;
-        this.mGeofenceEnabled = geofenceEnabled;
+        mGeofenceURL = geofenceURL;
+        mGeofenceEnabled = geofenceEnabled;
 
-        this.mCheckForNotificationsOnLoggerRequest = true;
+        mCheckForNotificationsOnLoggerRequest = true;
 
-        this._context = context;
+        mContext = context;
 
         if (requestTimeoutSeconds > 0) {
-            this._requestTimeoutSeconds = requestTimeoutSeconds;
+            mRequestTimeoutSeconds = requestTimeoutSeconds;
         }
-        this._RESTURL = RESTURL;
-        this._encryptedDataSource = encryptedDataSource;
-        this._organizationID = VisilabsEncoder.encode(organizationID);
-        this._siteID = VisilabsEncoder.encode(siteID);
-        this._channel = (channel != null) ? channel : "ANDROID";
-        this._userAgent = System.getProperty("http.agent");
+        mRESTURL = RESTURL;
+        mEncryptedDataSource = encryptedDataSource;
+        mOrganizationID = VisilabsEncoder.encode(organizationID);
+        mSiteID = VisilabsEncoder.encode(siteID);
+        mChannel = (channel != null) ? channel : "ANDROID";
+        mUserAgent = System.getProperty("http.agent");
         mDeviceUserAgent = Device.getUserAgent();
 
         initVisilabsParameters();
 
-        this._segmentURL = segmentURL;
-        this._dataSource = dataSource;
-        this._realTimeURL = realTimeURL;
+        mSegmentURL = segmentURL;
+        mDataSource = dataSource;
+        mRealTimeURL = realTimeURL;
         mTargetURL = targetURL;
         mActionURL = actionURL;
 
-        this._exVisitorID = Prefs.getFromPrefs(this._context, VisilabsConstant.EXVISITORID_PREF, VisilabsConstant.EXVISITORID_PREF_KEY, null);
-        this._cookieID = Prefs.getFromPrefs(this._context, VisilabsConstant.COOKIEID_PREF, VisilabsConstant.COOKIEID_PREF_KEY, null);
+        mExVisitorID = Prefs.getFromPrefs(mContext, VisilabsConstant.EXVISITORID_PREF,
+                VisilabsConstant.EXVISITORID_PREF_KEY, null);
+        mCookieID = Prefs.getFromPrefs(mContext, VisilabsConstant.COOKIEID_PREF,
+                VisilabsConstant.COOKIEID_PREF_KEY, null);
 
-        this.mSysTokenID = Prefs.getFromPrefs(this._context, VisilabsConstant.TOKENID_PREF, VisilabsConstant.TOKENID_PREF_KEY, null);
-        this.mSysAppID = Prefs.getFromPrefs(this._context, VisilabsConstant.APPID_PREF, VisilabsConstant.APPID_PREF_KEY, null);
+        mSysTokenID = Prefs.getFromPrefs(mContext, VisilabsConstant.TOKENID_PREF,
+                VisilabsConstant.TOKENID_PREF_KEY, null);
+        mSysAppID = Prefs.getFromPrefs(mContext, VisilabsConstant.APPID_PREF,
+                VisilabsConstant.APPID_PREF_KEY, null);
 
 
-        this.mVisitorData = Prefs.getFromPrefs(this._context, VisilabsConstant.VISITOR_DATA_PREF, VisilabsConstant.VISITOR_DATA_PREF_KEY, null);
+        mVisitorData = Prefs.getFromPrefs(mContext, VisilabsConstant.VISITOR_DATA_PREF,
+                VisilabsConstant.VISITOR_DATA_PREF_KEY, null);
 
-        if (this._cookieID == null) {
-            this.setCookieID(null);
+        if (mCookieID == null) {
+            setCookieID(null);
         }
 
-        this.mSendQueue = new ArrayList<>();
+        mSendQueue = new ArrayList<>();
 
         if (!mIsCreated) {
-            checkNetworkStatus(this._context);
+            checkNetworkStatus(mContext);
             mIsCreated = true;
-            mReady = true;
         }
     }
 
-    public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context) {
+    public static synchronized Visilabs CreateAPI(String organizationID, String siteID,
+                                                  String segmentURL, String dataSource,
+                                                  String realTimeURL, String channel, Context context) {
         if (visilabs == null) {
-            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel, context, 30
-                    , null, null, null, null, null, false);
+            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource,
+                    realTimeURL, channel, context, 30
+                    , null, null, null, null,
+                    null, false);
         }
         return visilabs;
     }
 
-    public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
+    public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
+                                                  String dataSource, String realTimeURL, String channel, Context context
             , int requestTimeoutSeconds) {
         if (visilabs == null) {
-            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel, context, requestTimeoutSeconds
-                    , null, null, null, null, null, false);
+            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL,
+                    channel, context, requestTimeoutSeconds
+                    , null, null, null, null,
+                    null, false);
         }
         return visilabs;
     }
 
-    public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
+    public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
+                                                  String dataSource, String realTimeURL, String channel, Context context
             , int requestTimeoutSeconds, String targetURL) {
         if (visilabs == null) {
-            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel, context, requestTimeoutSeconds
-                    , null, null, targetURL, null, null, false);
+            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL,
+                    channel, context, requestTimeoutSeconds
+                    , null, null, targetURL, null, null,
+                    false);
         }
         return visilabs;
     }
 
-    public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
+    public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
+                                                  String dataSource, String realTimeURL, String channel, Context context
             , String targetURL, String actionURL, int requestTimeoutSeconds) {
         if (visilabs == null) {
-            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel, context, requestTimeoutSeconds
+            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
+                    context, requestTimeoutSeconds
                     , null, null, targetURL, actionURL, null, false);
         }
         return visilabs;
     }
 
-    public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
+    public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
+                                                  String dataSource, String realTimeURL, String channel, Context context
             , String targetURL, String actionURL, int requestTimeoutSeconds, String geofenceURL, boolean geofenceEnabled) {
         if (visilabs == null) {
-            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel, context, requestTimeoutSeconds
+            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
+                    context, requestTimeoutSeconds
                     , null, null, targetURL, actionURL, geofenceURL, geofenceEnabled);
             if (geofenceEnabled && !StringUtils.isNullOrWhiteSpace(geofenceURL)) {
                 Visilabs.CallAPI().startGpsManager();
@@ -198,10 +210,12 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         return visilabs;
     }
 
-    public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
+    public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
+                                                  String dataSource, String realTimeURL, String channel, Context context
             , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource) {
         if (visilabs == null) {
-            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel, context, requestTimeoutSeconds
+            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
+                    context, requestTimeoutSeconds
                     , RESTURL, encryptedDataSource, null, null, null, false);
         }
         return visilabs;
@@ -224,7 +238,8 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             boolean geofenceEnabled = false;
 
             try {
-                ApplicationInfo ai = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+                ApplicationInfo ai = context.getPackageManager().getApplicationInfo(context.getPackageName(),
+                        PackageManager.GET_META_DATA);
                 organizationID = ai.metaData.getString(VisilabsConstant.VISILABS_ORGANIZATION_ID);
                 siteID = ai.metaData.getString(VisilabsConstant.VISILABS_SITE_ID);
                 segmentURL = ai.metaData.getString(VisilabsConstant.VISILABS_SEGMENT_URL);
@@ -233,7 +248,8 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 channel = ai.metaData.getString(VisilabsConstant.VISILABS_CHANNEL);
 
                 try {
-                    requestTimeoutSeconds = ai.metaData.getInt(VisilabsConstant.VISILABS_REQUEST_TIMEOUT_IN_SECONDS, 30);
+                    requestTimeoutSeconds = ai.metaData.getInt(VisilabsConstant.VISILABS_REQUEST_TIMEOUT_IN_SECONDS,
+                            30);
                 } catch (Exception ex) {
                     Log.d("CreateApi", ex.toString());
                 }
@@ -263,7 +279,8 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                     Log.d("CreateApi", ex.toString());
                 }
                 try {
-                    geofenceEnabled = ai.metaData.getBoolean(VisilabsConstant.VISILABS_GEOFENCE_ENABLED, false);
+                    geofenceEnabled = ai.metaData.getBoolean(VisilabsConstant.VISILABS_GEOFENCE_ENABLED,
+                            false);
                 } catch (Exception ex) {
                     Log.d("CreateApi", ex.toString());
                 }
@@ -272,7 +289,8 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             } catch (Exception e) {
                 Log.d("CreateApi", e.toString());
             }
-            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel, context, requestTimeoutSeconds
+            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
+                    context, requestTimeoutSeconds
                     , RESTURL, encryptedDataSource, targetURL, actionURL, geofenceURL, geofenceEnabled);
             if (geofenceEnabled && !StringUtils.isNullOrWhiteSpace(geofenceURL)) {
                 Visilabs.CallAPI().startGpsManager();
@@ -288,11 +306,11 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         return visilabs;
     }
 
-    public void setmIdentifierForAdvertising(String mIdentifierForAdvertising) {
-        this.mIdentifierForAdvertising = mIdentifierForAdvertising;
+    public void setIdentifierForAdvertising(String identifierForAdvertising) {
+        mIdentifierForAdvertising = identifierForAdvertising;
     }
 
-    public String getmIdentifierForAdvertising() {
+    public String getIdentifierForAdvertising() {
         return mIdentifierForAdvertising;
     }
 
@@ -302,11 +320,11 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
 
     public Cookie getCookie() {
-        return cookie;
+        return mCookie;
     }
 
     public void setCookie(Cookie cookie) {
-        this.cookie = cookie;
+        mCookie = cookie;
     }
 
     public void trackInAppMessageClick(InAppMessage inAppMessage, String rating) {
@@ -318,17 +336,17 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         long timeOfEvent = System.currentTimeMillis() / 1000;
         String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.uri=%s&OM.cookieID=%s&OM.vchannel=%s&OM.domain=%s"
-                , VisilabsEncoder.encode(this._organizationID)
-                , VisilabsEncoder.encode(this._siteID)
+                , VisilabsEncoder.encode(mOrganizationID)
+                , VisilabsEncoder.encode(mSiteID)
                 , timeOfEvent
                 , VisilabsEncoder.encode("/OM_evt.gif")
-                , VisilabsEncoder.encode(this._cookieID)
-                , VisilabsEncoder.encode(this._channel)
-                , VisilabsEncoder.encode(this._dataSource + "_Android"));
+                , VisilabsEncoder.encode(mCookieID)
+                , VisilabsEncoder.encode(mChannel)
+                , VisilabsEncoder.encode(mDataSource + "_Android"));
 
 
-        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
-            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        if (mExVisitorID != null && mExVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(mExVisitorID));
         }
 
         query += String.format("&%s", inAppMessage.getQueryString());
@@ -338,12 +356,12 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
 
-        String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;
+        String segURL = mSegmentURL + "/" + mDataSource + "/om.gif?" + query;
         String realURL = "";
 
 
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            realURL = this._realTimeURL + "/" + this._dataSource + "/om.gif?" + query;
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            realURL = mRealTimeURL + "/" + mDataSource + "/om.gif?" + query;
         }
 
 
@@ -354,15 +372,15 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         synchronized (this) {
             addUrlToQueue(segURL);
-            if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 addUrlToQueue(realURL);
             }
         }
 
-        this.send();
+        send();
 
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            this.send();
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            send();
         }
     }
 
@@ -370,28 +388,28 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         long timeOfEvent = System.currentTimeMillis() / 1000;
         String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.uri=%s&OM.cookieID=%s&OM.vchannel=%s&OM.domain=%s"
-                , VisilabsEncoder.encode(this._organizationID)
-                , VisilabsEncoder.encode(this._siteID)
+                , VisilabsEncoder.encode(mOrganizationID)
+                , VisilabsEncoder.encode(mSiteID)
                 , timeOfEvent
                 , VisilabsEncoder.encode("/OM_evt.gif")
-                , VisilabsEncoder.encode(this._cookieID)
-                , VisilabsEncoder.encode(this._channel)
-                , VisilabsEncoder.encode(this._dataSource + "_Android"));
+                , VisilabsEncoder.encode(mCookieID)
+                , VisilabsEncoder.encode(mChannel)
+                , VisilabsEncoder.encode(mDataSource + "_Android"));
 
 
-        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
-            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        if (mExVisitorID != null && mExVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(mExVisitorID));
         }
 
-        query += String.format("&"+report);
+        query += "&"+report;
 
 
-        String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;
+        String segURL = mSegmentURL + "/" + mDataSource + "/om.gif?" + query;
         String realURL = "";
 
 
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            realURL = this._realTimeURL + "/" + this._dataSource + "/om.gif?" + query;
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            realURL = mRealTimeURL + "/" + mDataSource + "/om.gif?" + query;
         }
 
 
@@ -402,15 +420,15 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         synchronized (this) {
             addUrlToQueue(segURL);
-            if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 addUrlToQueue(realURL);
             }
         }
 
-        this.send();
+        send();
 
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            this.send();
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            send();
         }
     }
 
@@ -419,28 +437,28 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         long timeOfEvent = System.currentTimeMillis() / 1000;
         String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.uri=%s&OM.cookieID=%s&OM.vchannel=%s&OM.domain=%s"
-                , VisilabsEncoder.encode(this._organizationID)
-                , VisilabsEncoder.encode(this._siteID)
+                , VisilabsEncoder.encode(mOrganizationID)
+                , VisilabsEncoder.encode(mSiteID)
                 , timeOfEvent
                 , VisilabsEncoder.encode("/OM_evt.gif")
-                , VisilabsEncoder.encode(this._cookieID)
-                , VisilabsEncoder.encode(this._channel)
-                , VisilabsEncoder.encode(this._dataSource + "_Android"));
+                , VisilabsEncoder.encode(mCookieID)
+                , VisilabsEncoder.encode(mChannel)
+                , VisilabsEncoder.encode(mDataSource + "_Android"));
 
 
-        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
-            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        if (mExVisitorID != null && mExVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(mExVisitorID));
         }
 
-        query += String.format("&"+report);
+        query += "&"+report;
 
 
-        String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;
+        String segURL = mSegmentURL + "/" + mDataSource + "/om.gif?" + query;
         String realURL = "";
 
 
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            realURL = this._realTimeURL + "/" + this._dataSource + "/om.gif?" + query;
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            realURL = mRealTimeURL + "/" + mDataSource + "/om.gif?" + query;
         }
 
 
@@ -451,15 +469,15 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         synchronized (this) {
             addUrlToQueue(segURL);
-            if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 addUrlToQueue(realURL);
             }
         }
 
-        this.send();
+        send();
 
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            this.send();
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            send();
         }
     }
 
@@ -482,10 +500,13 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             @Override
             public void success(VisilabsResponse response) {
                 try {
-                    VisilabsMailSubscriptionFormResponse visilabsMailSubscriptionFormResponse = new Gson().fromJson(response.getRawResponse(), VisilabsMailSubscriptionFormResponse.class);
-                    if(visilabsMailSubscriptionFormResponse != null && !visilabsMailSubscriptionFormResponse.getMailSubscriptionForm().isEmpty()) {
-                        MailSubscriptionForm mailSubscriptionForm = visilabsMailSubscriptionFormResponse.getMailSubscriptionForm().get(0);
-                        new InAppMessageManager(_cookieID, _dataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
+                    VisilabsMailSubscriptionFormResponse visilabsMailSubscriptionFormResponse =
+                            new Gson().fromJson(response.getRawResponse(), VisilabsMailSubscriptionFormResponse.class);
+                    if(visilabsMailSubscriptionFormResponse != null && !visilabsMailSubscriptionFormResponse.
+                            getMailSubscriptionForm().isEmpty()) {
+                        MailSubscriptionForm mailSubscriptionForm = visilabsMailSubscriptionFormResponse.
+                                getMailSubscriptionForm().get(0);
+                        new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
                     }
                 } catch (Exception ex) {
                     Log.e(LOG_TAG, ex.getMessage(), ex);
@@ -508,27 +529,27 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         long timeOfEvent = System.currentTimeMillis() / 1000;
         String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.uri=%s&OM.cookieID=%s&OM.vchannel=%s&OM.domain=%s"
-                , VisilabsEncoder.encode(this._organizationID)
-                , VisilabsEncoder.encode(this._siteID)
+                , VisilabsEncoder.encode(mOrganizationID)
+                , VisilabsEncoder.encode(mSiteID)
                 , timeOfEvent
                 , VisilabsEncoder.encode("/OM_evt.gif")
-                , VisilabsEncoder.encode(this._cookieID)
-                , VisilabsEncoder.encode(this._channel)
-                , VisilabsEncoder.encode(this._dataSource + "_Android"));
+                , VisilabsEncoder.encode(mCookieID)
+                , VisilabsEncoder.encode(mChannel)
+                , VisilabsEncoder.encode(mDataSource + "_Android"));
 
 
-        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
-            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        if (mExVisitorID != null && mExVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(mExVisitorID));
         }
 
         query += String.format("&%s", report.getClick());
 
-        String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;
+        String segURL = mSegmentURL + "/" + mDataSource + "/om.gif?" + query;
         String realURL = "";
 
 
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            realURL = this._realTimeURL + "/" + this._dataSource + "/om.gif?" + query;
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            realURL = mRealTimeURL + "/" + mDataSource + "/om.gif?" + query;
         }
 
 
@@ -539,36 +560,36 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         synchronized (this) {
             addUrlToQueue(segURL);
-            if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 addUrlToQueue(realURL);
             }
         }
 
-        this.send();
+        send();
 
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            this.send();
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            send();
         }
     }
 
     public void createSubsJsonRequest(String actId, String auth, String email) {
         long timeOfEvent = System.currentTimeMillis() / 1000;
         String query = String.format("OM.oid=%s&OM.siteID=%s&&OM.cookieID=%s&type=%s&actionid=%s&auth=%s&OM.subsemail=%s"
-                , VisilabsEncoder.encode(this._organizationID)
-                , VisilabsEncoder.encode(this._siteID)
-                , VisilabsEncoder.encode(this._cookieID)
+                , VisilabsEncoder.encode(mOrganizationID)
+                , VisilabsEncoder.encode(mSiteID)
+                , VisilabsEncoder.encode(mCookieID)
                 , "subscription_email"
                 , actId
                 , auth
                 , email);
-        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
-            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        if (mExVisitorID != null && mExVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(mExVisitorID));
         }
         String mailSubsURL = VisilabsConstant.SUBSJSON_ENDPOINT + "?" + query;
         synchronized (this) {
             addUrlToQueue(mailSubsURL);
         }
-        this.send();
+        send();
     }
 
     public void showNotification(String pageName, Activity parent) {
@@ -590,17 +611,17 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             Log.e(LOG_TAG, "Action URL is empty.");
         }
 
-        VisilabsActionRequest request = new VisilabsActionRequest(_context);
+        VisilabsActionRequest request = new VisilabsActionRequest(mContext);
         request.setApiVer("Android");
         request.setPageName(pageName);
         request.setPath(null);
         request.setHeaders(null);
         request.setMethod(VisilabsActionRequest.Methods.GET);
         request.setRequestArgs(null);
-        request.setTimeOutInSeconds(this._requestTimeoutSeconds);
+        request.setTimeOutInSeconds(mRequestTimeoutSeconds);
 
-        request.setVisitorData(this.mVisitorData);
-        request.setVisitData(this.mVisitData);
+        request.setVisitorData(mVisitorData);
+        request.setVisitData(mVisitData);
         request.setProperties(properties);
 
         try {
@@ -629,7 +650,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                         ArrayList<InAppMessage> inAppMessageList = new ArrayList<>();
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject obj = (JSONObject) array.get(i);
-                            InAppMessage inAppMessage = new InAppMessage(obj, _context);
+                            InAppMessage inAppMessage = new InAppMessage(obj, mContext);
                             if (inAppMessage != null) {
                                 inAppMessageList.add(inAppMessage);
                             }
@@ -659,7 +680,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
                         if (inAppMessage != null) {
 
-                            new InAppMessageManager(_cookieID, _dataSource).showInAppMessage(inAppMessage, parent);
+                            new InAppMessageManager(mCookieID, mDataSource).showInAppMessage(inAppMessage, parent);
 
                             if (inAppMessage.getVisitData() != null && !inAppMessage.getVisitData().equals("")) {
                                 Log.v("mVisitData", inAppMessage.getVisitData());
@@ -667,7 +688,8 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                             }
 
                             if (inAppMessage.getVisitorData() != null && !inAppMessage.getVisitorData().equals("")) {
-                                Prefs.saveToPrefs(parent, VisilabsConstant.VISITOR_DATA_PREF, VisilabsConstant.VISITOR_DATA_PREF_KEY, inAppMessage.getVisitorData());
+                                Prefs.saveToPrefs(parent, VisilabsConstant.VISITOR_DATA_PREF,
+                                        VisilabsConstant.VISITOR_DATA_PREF_KEY, inAppMessage.getVisitorData());
 
                                 mVisitorData = inAppMessage.getVisitorData();
 
@@ -702,12 +724,13 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         request.setHeaders(null);
         request.setMethod(VisilabsTargetRequest.Methods.GET);
         request.setRequestArgs(null);
-        request.setTimeOutInSeconds(this._requestTimeoutSeconds);
+        request.setTimeOutInSeconds(mRequestTimeoutSeconds);
         request.setApiVer("Android");
         return request;
     }
 
-    public VisilabsTargetRequest buildTargetRequest(String zoneID, String productCode, HashMap<String, String> properties, List<VisilabsTargetFilter> filters)
+    public VisilabsTargetRequest buildTargetRequest(String zoneID, String productCode, HashMap<String,
+            String> properties, List<VisilabsTargetFilter> filters)
             throws Exception {
         VisilabsTargetRequest request = (VisilabsTargetRequest) buildAction();
         request.setZoneID(zoneID);
@@ -716,7 +739,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         request.setHeaders(null);
         request.setMethod(VisilabsTargetRequest.Methods.GET);
         request.setRequestArgs(null);
-        request.setTimeOutInSeconds(this._requestTimeoutSeconds);
+        request.setTimeOutInSeconds(mRequestTimeoutSeconds);
         request.setFilters(filters);
         request.setProperties(properties);
         request.setApiVer("Android");
@@ -725,50 +748,50 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
     public VisilabsActionRequest requestActionType(String actionType) throws Exception {
 
-        VisilabsActionRequest request = new VisilabsActionRequest(_context);
+        VisilabsActionRequest request = new VisilabsActionRequest(mContext);
         request.setApiVer("Android");
         request.setPath(null);
         request.setHeaders(null);
         request.setMethod(VisilabsActionRequest.Methods.GET);
         request.setRequestArgs(null);
-        request.setTimeOutInSeconds(this._requestTimeoutSeconds);
+        request.setTimeOutInSeconds(mRequestTimeoutSeconds);
         request.setActionType(actionType);
 
-        request.setVisitorData(this.mVisitorData);
-        request.setVisitData(this.mVisitData);
+        request.setVisitorData(mVisitorData);
+        request.setVisitData(mVisitData);
 
         return request;
     }
 
     public VisilabsActionRequest requestActionId(String actionId) throws Exception {
 
-        VisilabsActionRequest request = new VisilabsActionRequest(_context);
+        VisilabsActionRequest request = new VisilabsActionRequest(mContext);
         request.setApiVer("Android");
         request.setPath(null);
         request.setHeaders(null);
         request.setMethod(VisilabsActionRequest.Methods.GET);
         request.setRequestArgs(null);
-        request.setTimeOutInSeconds(this._requestTimeoutSeconds);
+        request.setTimeOutInSeconds(mRequestTimeoutSeconds);
         request.setActionId(actionId);
-        request.setVisitorData(this.mVisitorData);
-        request.setVisitData(this.mVisitData);
+        request.setVisitorData(mVisitorData);
+        request.setVisitData(mVisitData);
 
         return request;
     }
 
     public VisilabsActionRequest requestAction(String actionType) throws Exception {
 
-        VisilabsActionRequest request = new VisilabsActionRequest(_context);
+        VisilabsActionRequest request = new VisilabsActionRequest(mContext);
         request.setApiVer("Android");
         request.setPath(null);
         request.setHeaders(null);
         request.setMethod(VisilabsActionRequest.Methods.GET);
         request.setRequestArgs(null);
-        request.setTimeOutInSeconds(this._requestTimeoutSeconds);
+        request.setTimeOutInSeconds(mRequestTimeoutSeconds);
         request.setActionType(actionType);
 
-        request.setVisitorData(this.mVisitorData);
-        request.setVisitData(this.mVisitData);
+        request.setVisitorData(mVisitorData);
+        request.setVisitData(mVisitData);
 
         return request;
     }
@@ -777,13 +800,12 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         if (!mIsCreated) {
             throw new VisilabsNotReadyException();
         }
-        return new VisilabsTargetRequest(_context);
+        return new VisilabsTargetRequest(mContext);
     }
 
     public void signUp(String exVisitorID, HashMap<String, String> properties) {
         if (StringUtils.isNullOrWhiteSpace(exVisitorID)) {
             VisilabsLog.w(LOG_TAG, "Attempted to use null or empty exVisitorID. Ignoring.");
-            return;
         } else {
             if (properties == null) {
                 properties = new HashMap<>();
@@ -798,7 +820,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
     public void login(String exVisitorID, HashMap<String, String> properties) {
         if (StringUtils.isNullOrWhiteSpace(exVisitorID)) {
             VisilabsLog.w(LOG_TAG, "Attempted to use null or empty exVisitorID. Ignoring.");
-            return;
         } else {
             if (properties == null) {
                 properties = new HashMap<>();
@@ -818,51 +839,51 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         exVisitorID = VisilabsEncoder.encode(exVisitorID);
         long timeOfEvent = System.currentTimeMillis() / 1000;
 
-        if (this._exVisitorID != null && !this._exVisitorID.equals(exVisitorID)) {
-            this.setCookieID(null);
+        if (mExVisitorID != null && !mExVisitorID.equals(exVisitorID)) {
+            setCookieID(null);
         }
 
 
         String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.uri=LoginPage&OM.b_login=Login&Login=%s&OM.exVisitorID=%s&OM.cookieID=%s&OM.vchannel=%s&OM.mappl=%s"
-                , VisilabsEncoder.encode(this._organizationID)
-                , VisilabsEncoder.encode(this._siteID)
+                , VisilabsEncoder.encode(mOrganizationID)
+                , VisilabsEncoder.encode(mSiteID)
                 , timeOfEvent
                 , VisilabsEncoder.encode(exVisitorID)
                 , VisilabsEncoder.encode(exVisitorID)
-                , VisilabsEncoder.encode(this._cookieID)
-                , VisilabsEncoder.encode(this._channel)
+                , VisilabsEncoder.encode(mCookieID)
+                , VisilabsEncoder.encode(mChannel)
                 , VisilabsEncoder.encode("true"));
 
-        if (this.mIdentifierForAdvertising != null) {
-            query = String.format("%s&OM.m_adid=%s", query, VisilabsEncoder.encode(this.mIdentifierForAdvertising));
+        if (mIdentifierForAdvertising != null) {
+            query = String.format("%s&OM.m_adid=%s", query, VisilabsEncoder.encode(mIdentifierForAdvertising));
         }
 
-        if (this.mSysTokenID != null && this.mSysTokenID.length() > 0) {
-            query += String.format("&OM.sys.TokenID=%s", VisilabsEncoder.encode(this.mSysTokenID));
+        if (mSysTokenID != null && mSysTokenID.length() > 0) {
+            query += String.format("&OM.sys.TokenID=%s", VisilabsEncoder.encode(mSysTokenID));
         }
 
-        if (this.mSysAppID != null && this.mSysAppID.length() > 0) {
-            query += String.format("&OM.sys.AppID=%s", VisilabsEncoder.encode(this.mSysAppID));
+        if (mSysAppID != null && mSysAppID.length() > 0) {
+            query += String.format("&OM.sys.AppID=%s", VisilabsEncoder.encode(mSysAppID));
         }
 
-        String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;
+        String segURL = mSegmentURL + "/" + mDataSource + "/om.gif?" + query;
 
         String realURL = "";
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            realURL = this._realTimeURL + "/" + this._dataSource + "/om.gif?" + query;
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            realURL = mRealTimeURL + "/" + mDataSource + "/om.gif?" + query;
         }
 
         synchronized (this) {
-            this.setExVisitorID(exVisitorID);
+            setExVisitorID(exVisitorID);
             addUrlToQueue(segURL);
-            if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 addUrlToQueue(realURL);
             }
         }
 
-        this.send();
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            this.send();
+        send();
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            send();
         }
     }
 
@@ -877,8 +898,8 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             e.printStackTrace();
         }
 
-        if (this._exVisitorID != null && !this._exVisitorID.equals(exVisitorID)) {
-            this.setCookieID(null);
+        if (mExVisitorID != null && !mExVisitorID.equals(exVisitorID)) {
+            setCookieID(null);
         }
 
 
@@ -886,25 +907,25 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         String query = "";
         try {
             query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.uri=SignUpPage&OM.b_sgnp=SignUp&SignUp=%s&OM.exVisitorID=%s&OM.cookieID=%s&OM.vchannel=%s&OM.mappl=%s"
-                    , URLEncoder.encode(this._organizationID, "UTF-8").replace("+", "%20")
-                    , URLEncoder.encode(this._siteID, "UTF-8").replace("+", "%20")
+                    , URLEncoder.encode(mOrganizationID, "UTF-8").replace("+", "%20")
+                    , URLEncoder.encode(mSiteID, "UTF-8").replace("+", "%20")
                     , timeOfEvent
                     , URLEncoder.encode(exVisitorID, "UTF-8").replace("+", "%20")
                     , URLEncoder.encode(exVisitorID, "UTF-8").replace("+", "%20")
-                    , URLEncoder.encode(this._cookieID, "UTF-8").replace("+", "%20")
-                    , URLEncoder.encode(this._channel, "UTF-8").replace("+", "%20")
+                    , URLEncoder.encode(mCookieID, "UTF-8").replace("+", "%20")
+                    , URLEncoder.encode(mChannel, "UTF-8").replace("+", "%20")
                     , VisilabsEncoder.encode("true"));
 
-            if (this.mIdentifierForAdvertising != null) {
-                query = String.format("%s&OM.m_adid=%s", query, VisilabsEncoder.encode(this.mIdentifierForAdvertising));
+            if (mIdentifierForAdvertising != null) {
+                query = String.format("%s&OM.m_adid=%s", query, VisilabsEncoder.encode(mIdentifierForAdvertising));
             }
 
-            if (this.mSysTokenID != null && this.mSysTokenID.length() > 0) {
-                query += String.format("&OM.sys.TokenID=%s", VisilabsEncoder.encode(this.mSysTokenID));
+            if (mSysTokenID != null && mSysTokenID.length() > 0) {
+                query += String.format("&OM.sys.TokenID=%s", VisilabsEncoder.encode(mSysTokenID));
             }
 
-            if (this.mSysAppID != null && this.mSysAppID.length() > 0) {
-                query += String.format("&OM.sys.AppID=%s", VisilabsEncoder.encode(this.mSysAppID));
+            if (mSysAppID != null && mSysAppID.length() > 0) {
+                query += String.format("&OM.sys.AppID=%s", VisilabsEncoder.encode(mSysAppID));
             }
 
         } catch (Exception e) {
@@ -912,23 +933,23 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
 
-        String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;
+        String segURL = mSegmentURL + "/" + mDataSource + "/om.gif?" + query;
 
         String realURL = "";
-        if (this._realTimeURL != null && !this._realTimeURL .equals("")) {
-            realURL = this._realTimeURL + "/" + this._dataSource + "/om.gif?" + query;
+        if (mRealTimeURL != null && !mRealTimeURL .equals("")) {
+            realURL = mRealTimeURL + "/" + mDataSource + "/om.gif?" + query;
         }
 
         synchronized (this) {
-            this.setExVisitorID(exVisitorID);
+            setExVisitorID(exVisitorID);
             addUrlToQueue(segURL);
-            if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 addUrlToQueue(realURL);
             }
         }
-        this.send();
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            this.send();
+        send();
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            send();
         }
     }
 
@@ -941,43 +962,43 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
     }
 
     private void sendEvent(HashMap<String, String> properties){
-        Context context = this._context;
+        Context context = mContext;
 
         if (properties != null) {
             if (properties.containsKey("OM.cookieID")) {
-                this._cookieID = properties.get("OM.cookieID");
-                this.setCookieID(properties.get("OM.cookieID"));
+                mCookieID = properties.get("OM.cookieID");
+                setCookieID(properties.get("OM.cookieID"));
                 properties.remove("OM.cookieID");
             }
             if (properties.containsKey("OM.exVisitorID")) {
-                if (this._exVisitorID != null && !this._exVisitorID.equals(properties.get("OM.exVisitorID"))) {
-                    this.setCookieID(null);
+                if (mExVisitorID != null && !mExVisitorID.equals(properties.get("OM.exVisitorID"))) {
+                    setCookieID(null);
                 }
 
-                this._exVisitorID = properties.get("OM.exVisitorID");
-                this.setExVisitorID(this._exVisitorID);
-                if (!this._exVisitorID.equals("")) {
+                mExVisitorID = properties.get("OM.exVisitorID");
+                setExVisitorID(mExVisitorID);
+                if (!mExVisitorID.equals("")) {
                     properties.remove("OM.exVisitorID");
                 }
             }
             if (properties.containsKey("OM.vchannel")) {
                 if (properties.get("OM.vchannel") != null) {
-                    this._channel = properties.get("OM.vchannel");
+                    mChannel = properties.get("OM.vchannel");
                 }
                 properties.remove("OM.vchannel");
             }
 
             if (properties.containsKey("OM.sys.TokenID")) {
                 if (properties.get("OM.sys.TokenID") != null) {
-                    this.mSysTokenID = properties.get("OM.sys.TokenID");
-                    this.setTokenID(properties.get("OM.sys.TokenID"));
+                    mSysTokenID = properties.get("OM.sys.TokenID");
+                    setTokenID(properties.get("OM.sys.TokenID"));
                 }
                 properties.remove("OM.sys.TokenID");
             }
             if (properties.containsKey("OM.sys.AppID")) {
                 if (properties.get("OM.sys.AppID") != null) {
-                    this.mSysAppID = properties.get("OM.sys.AppID");
-                    this.setAppID(properties.get("OM.sys.AppID"));
+                    mSysAppID = properties.get("OM.sys.AppID");
+                    setAppID(properties.get("OM.sys.AppID"));
                 }
                 properties.remove("OM.sys.AppID");
             }
@@ -991,22 +1012,23 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         long timeOfEvent = System.currentTimeMillis() / 1000;
         String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.cookieID=%s&OM.vchannel=%s&OM.mappl=%s"
-                , VisilabsEncoder.encode(this._organizationID)
-                , VisilabsEncoder.encode(this._siteID)
+                , VisilabsEncoder.encode(mOrganizationID)
+                , VisilabsEncoder.encode(mSiteID)
                 , timeOfEvent
-                , VisilabsEncoder.encode(this._cookieID)
-                , VisilabsEncoder.encode(this._channel)
+                , VisilabsEncoder.encode(mCookieID)
+                , VisilabsEncoder.encode(mChannel)
                 , VisilabsEncoder.encode("true"));
 
-        if (this.mIdentifierForAdvertising != null) {
-            query = String.format("%s&OM.m_adid=%s", query, VisilabsEncoder.encode(this.mIdentifierForAdvertising));
+        if (mIdentifierForAdvertising != null) {
+            query = String.format("%s&OM.m_adid=%s", query, VisilabsEncoder.encode(mIdentifierForAdvertising));
         }
 
         if (properties != null) {
             StringBuilder additionalURL = new StringBuilder();
             for (int i = 0; i < properties.keySet().size(); i++) {
                 String key = (String) properties.keySet().toArray()[i];
-                additionalURL.append(VisilabsEncoder.encode(key)).append("=").append(VisilabsEncoder.encode(properties.get(key)));
+                additionalURL.append(VisilabsEncoder.encode(key)).append("=").append(VisilabsEncoder.
+                        encode(properties.get(key)));
 
                 if (i < properties.keySet().size() - 1) {
                     additionalURL.append("&");
@@ -1017,36 +1039,36 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             }
         }
 
-        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
-            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        if (mExVisitorID != null && mExVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(mExVisitorID));
         }
 
-        if (this.mSysTokenID != null && this.mSysTokenID.length() > 0) {
-            query += String.format("&OM.sys.TokenID=%s", VisilabsEncoder.encode(this.mSysTokenID));
+        if (mSysTokenID != null && mSysTokenID.length() > 0) {
+            query += String.format("&OM.sys.TokenID=%s", VisilabsEncoder.encode(mSysTokenID));
         }
 
-        if (this.mSysAppID != null && this.mSysAppID.length() > 0) {
-            query += String.format("&OM.sys.AppID=%s", VisilabsEncoder.encode(this.mSysAppID));
+        if (mSysAppID != null && mSysAppID.length() > 0) {
+            query += String.format("&OM.sys.AppID=%s", VisilabsEncoder.encode(mSysAppID));
         }
 
-        String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;
+        String segURL = mSegmentURL + "/" + mDataSource + "/om.gif?" + query;
         String realURL = "";
 
-        if (this._realTimeURL != null && this._realTimeURL != "") {
-            realURL = this._realTimeURL + "/" + this._dataSource + "/om.gif?" + query;
+        if (mRealTimeURL != null && mRealTimeURL != "") {
+            realURL = mRealTimeURL + "/" + mDataSource + "/om.gif?" + query;
         }
 
         synchronized (this) {
             addUrlToQueue(segURL);
-            if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 addUrlToQueue(realURL);
             }
         }
 
-        this.send();
+        send();
 
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            this.send();
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            send();
         }
 
     }
@@ -1069,40 +1091,40 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             return;
         }
 
-        Context context = this._context;
+        Context context = mContext;
 
         if (properties != null) {
             if (properties.containsKey("OM.cookieID")) {
-                this._cookieID = properties.get("OM.cookieID");
-                this.setCookieID(properties.get("OM.cookieID"));
+                mCookieID = properties.get("OM.cookieID");
+                setCookieID(properties.get("OM.cookieID"));
                 properties.remove("OM.cookieID");
             }
             if (properties.containsKey("OM.exVisitorID")) {
-                if (this._exVisitorID != null && !this._exVisitorID.equals(properties.get("OM.exVisitorID"))) {
-                    this.setCookieID(null);
+                if (mExVisitorID != null && !mExVisitorID.equals(properties.get("OM.exVisitorID"))) {
+                    setCookieID(null);
                 }
-                this._exVisitorID = properties.get("OM.exVisitorID");
-                this.setExVisitorID(this._exVisitorID);
+                mExVisitorID = properties.get("OM.exVisitorID");
+                setExVisitorID(mExVisitorID);
                 properties.remove("OM.exVisitorID");
             }
             if (properties.containsKey("OM.vchannel")) {
                 if (properties.get("OM.vchannel") != null) {
-                    this._channel = properties.get("OM.vchannel");
+                    mChannel = properties.get("OM.vchannel");
                 }
                 properties.remove("OM.vchannel");
             }
 
             if (properties.containsKey("OM.sys.TokenID")) {
                 if (properties.get("OM.sys.TokenID") != null) {
-                    this.mSysTokenID = properties.get("OM.sys.TokenID");
-                    this.setTokenID(properties.get("OM.sys.TokenID"));
+                    mSysTokenID = properties.get("OM.sys.TokenID");
+                    setTokenID(properties.get("OM.sys.TokenID"));
                 }
                 properties.remove("OM.sys.TokenID");
             }
             if (properties.containsKey("OM.sys.AppID")) {
                 if (properties.get("OM.sys.AppID") != null) {
-                    this.mSysAppID = properties.get("OM.sys.AppID");
-                    this.setAppID(properties.get("OM.sys.AppID"));
+                    mSysAppID = properties.get("OM.sys.AppID");
+                    setAppID(properties.get("OM.sys.AppID"));
                 }
                 properties.remove("OM.sys.AppID");
             }
@@ -1116,23 +1138,24 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
         long timeOfEvent = System.currentTimeMillis() / 1000;
         String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.uri=%s&OM.cookieID=%s&OM.vchannel=%s&OM.mappl=%s"
-                , VisilabsEncoder.encode(this._organizationID)
-                , VisilabsEncoder.encode(this._siteID)
+                , VisilabsEncoder.encode(mOrganizationID)
+                , VisilabsEncoder.encode(mSiteID)
                 , timeOfEvent
                 , VisilabsEncoder.encode(pageName)
-                , VisilabsEncoder.encode(this._cookieID)
-                , VisilabsEncoder.encode(this._channel)
+                , VisilabsEncoder.encode(mCookieID)
+                , VisilabsEncoder.encode(mChannel)
                 , VisilabsEncoder.encode("true"));
 
-        if (this.mIdentifierForAdvertising != null) {
-            query = String.format("%s&OM.m_adid=%s", query, VisilabsEncoder.encode(this.mIdentifierForAdvertising));
+        if (mIdentifierForAdvertising != null) {
+            query = String.format("%s&OM.m_adid=%s", query, VisilabsEncoder.encode(mIdentifierForAdvertising));
         }
 
         if (properties != null) {
             StringBuilder additionalURL = new StringBuilder();
             for (int i = 0; i < properties.keySet().size(); i++) {
                 String key = (String) properties.keySet().toArray()[i];
-                additionalURL.append(VisilabsEncoder.encode(key)).append("=").append(VisilabsEncoder.encode(properties.get(key)));
+                additionalURL.append(VisilabsEncoder.encode(key)).append("=").append(VisilabsEncoder.
+                        encode(properties.get(key)));
 
                 if (i < properties.keySet().size() - 1) {
                     additionalURL.append("&");
@@ -1143,56 +1166,56 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             }
         }
 
-        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
-            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        if (mExVisitorID != null && mExVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(mExVisitorID));
         }
 
-        if (this.mSysTokenID != null && this.mSysTokenID.length() > 0) {
-            query += String.format("&OM.sys.TokenID=%s", VisilabsEncoder.encode(this.mSysTokenID));
+        if (mSysTokenID != null && mSysTokenID.length() > 0) {
+            query += String.format("&OM.sys.TokenID=%s", VisilabsEncoder.encode(mSysTokenID));
         }
 
-        if (this.mSysAppID != null && this.mSysAppID.length() > 0) {
-            query += String.format("&OM.sys.AppID=%s", VisilabsEncoder.encode(this.mSysAppID));
+        if (mSysAppID != null && mSysAppID.length() > 0) {
+            query += String.format("&OM.sys.AppID=%s", VisilabsEncoder.encode(mSysAppID));
         }
 
-        String segURL = this._segmentURL + "/" + this._dataSource + "/om.gif?" + query;
+        String segURL = mSegmentURL + "/" + mDataSource + "/om.gif?" + query;
         String realURL = "";
 
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            realURL = this._realTimeURL + "/" + this._dataSource + "/om.gif?" + query;
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            realURL = mRealTimeURL + "/" + mDataSource + "/om.gif?" + query;
         }
 
 
         synchronized (this) {
             addUrlToQueue(segURL);
-            if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
+            if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 addUrlToQueue(realURL);
             }
         }
 
 
         if (mCheckForNotificationsOnLoggerRequest && mActionURL != null) {
-            this.showNotification(pageName, parent, properties);
-            this.showMailSubscriptionForm(pageName, parent, properties);
+            showNotification(pageName, parent, properties);
+            showMailSubscriptionForm(pageName, parent, properties);
         }
 
-        this.send();
+        send();
 
-        if (this._realTimeURL != null && !this._realTimeURL.equals("")) {
-            this.send();
+        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+            send();
         }
     }
 
     public void send() {
         synchronized (this) {
-            if (this.mSendQueue.size() == 0) {
+            if (mSendQueue.size() == 0) {
                 return;
             }
-            String nextAPICall = this.mSendQueue.get(0);
+            String nextAPICall = mSendQueue.get(0);
 
             if (nextAPICall == null) {
-                if (this.mSendQueue != null && this.mSendQueue.size() > 0)
-                    this.mSendQueue.remove(0);
+                if (mSendQueue != null && mSendQueue.size() > 0)
+                    mSendQueue.remove(0);
                 return;
             }
 
@@ -1202,17 +1225,17 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             String loadBalanceCookieValue = "";
             String OM3rdCookieValue = "";
 
-            if (nextAPICall.contains(VisilabsConstant.LOGGER_URL) && this.cookie != null) {
-                loadBalanceCookieKey = this.cookie.getLoggerCookieKey();
-                loadBalanceCookieValue = this.cookie.getLoggerCookieValue();
-                OM3rdCookieValue = this.cookie.getLoggerOM3rdCookieValue();
-            } else if (nextAPICall.contains(VisilabsConstant.REAL_TIME_URL) && this.cookie != null) {
-                loadBalanceCookieKey = this.cookie.getRealTimeCookieKey();
-                loadBalanceCookieValue = this.cookie.getRealTimeCookieValue();
-                OM3rdCookieValue = this.cookie.getRealOM3rdTimeCookieValue();
+            if (nextAPICall.contains(VisilabsConstant.LOGGER_URL) && mCookie != null) {
+                loadBalanceCookieKey = mCookie.getLoggerCookieKey();
+                loadBalanceCookieValue = mCookie.getLoggerCookieValue();
+                OM3rdCookieValue = mCookie.getLoggerOM3rdCookieValue();
+            } else if (nextAPICall.contains(VisilabsConstant.REAL_TIME_URL) && mCookie != null) {
+                loadBalanceCookieKey = mCookie.getRealTimeCookieKey();
+                loadBalanceCookieValue = mCookie.getRealTimeCookieValue();
+                OM3rdCookieValue = mCookie.getRealOM3rdTimeCookieValue();
             }
 
-            connector.connectURL(nextAPICall, this._userAgent, this._requestTimeoutSeconds, loadBalanceCookieKey
+            connector.connectURL(nextAPICall, mUserAgent, mRequestTimeoutSeconds, loadBalanceCookieKey
                     , loadBalanceCookieValue, OM3rdCookieValue);
         }
     }
@@ -1222,40 +1245,44 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         if (cookieID == null || cookieID.equals("")) {
             cookieID = UUID.randomUUID().toString();
         }
-        this._cookieID = cookieID;
+        mCookieID = cookieID;
 
-        String previousCookieID = Prefs.getFromPrefs(this._context, VisilabsConstant.COOKIEID_PREF, VisilabsConstant.COOKIEID_PREF_KEY, null);
+        String previousCookieID = Prefs.getFromPrefs(mContext, VisilabsConstant.COOKIEID_PREF,
+                VisilabsConstant.COOKIEID_PREF_KEY, null);
         if (previousCookieID != null && previousCookieID.equals(cookieID)) {
-            PersistentTargetManager.with(this._context).clearParameters();
+            PersistentTargetManager.with(mContext).clearParameters();
         }
 
-        Prefs.saveToPrefs(this._context, VisilabsConstant.COOKIEID_PREF, VisilabsConstant.COOKIEID_PREF_KEY, this._cookieID);
+        Prefs.saveToPrefs(mContext, VisilabsConstant.COOKIEID_PREF, VisilabsConstant.COOKIEID_PREF_KEY, mCookieID);
     }
 
     synchronized private void setExVisitorID(String exVisitorID) {
-        this._exVisitorID = exVisitorID;
+        mExVisitorID = exVisitorID;
 
-        String previousExVisitorID = Prefs.getFromPrefs(this._context, VisilabsConstant.EXVISITORID_PREF, VisilabsConstant.EXVISITORID_PREF_KEY, null);
+        String previousExVisitorID = Prefs.getFromPrefs(mContext, VisilabsConstant.EXVISITORID_PREF,
+                VisilabsConstant.EXVISITORID_PREF_KEY, null);
         if (previousExVisitorID != null && !previousExVisitorID.equals(exVisitorID)) {
-            PersistentTargetManager.with(this._context).clearParameters();
+            PersistentTargetManager.with(mContext).clearParameters();
         }
 
-        Prefs.saveToPrefs(this._context, VisilabsConstant.EXVISITORID_PREF, VisilabsConstant.EXVISITORID_PREF_KEY, this._exVisitorID);
+        Prefs.saveToPrefs(mContext, VisilabsConstant.EXVISITORID_PREF, VisilabsConstant.EXVISITORID_PREF_KEY, mExVisitorID);
     }
 
     synchronized private void setTokenID(String tokenID) {
-        this.mSysTokenID = tokenID;
-        String previousTokenID = Prefs.getFromPrefs(this._context, VisilabsConstant.TOKENID_PREF, VisilabsConstant.TOKENID_PREF_KEY, null);
+        mSysTokenID = tokenID;
+        String previousTokenID = Prefs.getFromPrefs(mContext, VisilabsConstant.TOKENID_PREF,
+                VisilabsConstant.TOKENID_PREF_KEY, null);
         if (previousTokenID == null || !previousTokenID.equals(tokenID)) {
-            Prefs.saveToPrefs(this._context, VisilabsConstant.TOKENID_PREF, VisilabsConstant.TOKENID_PREF_KEY, this.mSysTokenID);
+            Prefs.saveToPrefs(mContext, VisilabsConstant.TOKENID_PREF, VisilabsConstant.TOKENID_PREF_KEY, mSysTokenID);
         }
     }
 
     synchronized private void setAppID(String appID) {
-        this.mSysAppID = appID;
-        String previousAppID = Prefs.getFromPrefs(this._context, VisilabsConstant.APPID_PREF, VisilabsConstant.APPID_PREF_KEY, null);
+        mSysAppID = appID;
+        String previousAppID = Prefs.getFromPrefs(mContext, VisilabsConstant.APPID_PREF,
+                VisilabsConstant.APPID_PREF_KEY, null);
         if (previousAppID == null || !previousAppID.equals(appID)) {
-            Prefs.saveToPrefs(this._context, VisilabsConstant.APPID_PREF, VisilabsConstant.APPID_PREF_KEY, this.mSysAppID);
+            Prefs.saveToPrefs(mContext, VisilabsConstant.APPID_PREF, VisilabsConstant.APPID_PREF_KEY, mSysAppID);
         }
     }
 
@@ -1281,16 +1308,17 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
         long timeOfEvent = System.currentTimeMillis() / 1000;
-        String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.cookieID=%s", this._organizationID, this._siteID, timeOfEvent, this._cookieID);
+        String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.cookieID=%s", mOrganizationID,
+                mSiteID, timeOfEvent, mCookieID);
 
-        if (this._exVisitorID != null) {
-            query = query + String.format("&OM.exVisitorID=%s", this._exVisitorID);
+        if (mExVisitorID != null) {
+            query = query + String.format("&OM.exVisitorID=%s", mExVisitorID);
         }
 
         query += "&" + additionalURL;
         String theURL = null;
         try {
-            theURL = new URI(this._segmentURL, null, this._dataSource, query, null).toASCIIString();
+            theURL = new URI(mSegmentURL, null, mDataSource, query, null).toASCIIString();
         } catch (URISyntaxException e) {
             Log.w(LOG_TAG, "Failed to set properties");
             return;
@@ -1299,17 +1327,17 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         synchronized (this) {
             addUrlToQueue(theURL);
         }
-        this.send();
+        send();
     }
 
     private void addUrlToQueue(String url) {
         if (null != url) {
-            this.mSendQueue.add(url);
+            mSendQueue.add(url);
         }
     }
 
     public void finished(int statusCode) {
-        this.send();
+        send();
     }
 
     List<String> getSendQueue() {
@@ -1334,14 +1362,14 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         long timeOfEvent = System.currentTimeMillis() / 1000;
         String pageName = "/Push";
         String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.uri=%s&OM.vchannel=%s"
-                , VisilabsEncoder.encode(this._organizationID)
-                , VisilabsEncoder.encode(this._siteID)
+                , VisilabsEncoder.encode(mOrganizationID)
+                , VisilabsEncoder.encode(mSiteID)
                 , timeOfEvent
                 , VisilabsEncoder.encode(pageName)
-                , VisilabsEncoder.encode(this._channel));
+                , VisilabsEncoder.encode(mChannel));
 
-        if (this._exVisitorID != null && this._exVisitorID.length() > 0) {
-            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(this._exVisitorID));
+        if (mExVisitorID != null && mExVisitorID.length() > 0) {
+            query += String.format("&OM.exVisitorID=%s", VisilabsEncoder.encode(mExVisitorID));
         }
         if (source != null && source.length() > 0) {
             query += String.format("&utm_source=%s", VisilabsEncoder.encode(source));
@@ -1356,7 +1384,7 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             query += String.format("&utm_content=%s", VisilabsEncoder.encode(content));
         }
 
-        return this._RESTURL + "/" + this._encryptedDataSource + "/" + this._dataSource + "/" + this._cookieID + "?" + query;
+        return mRESTURL + "/" + mEncryptedDataSource + "/" + mDataSource + "/" + mCookieID + "?" + query;
 
 
     }
@@ -1400,11 +1428,11 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
     }
 
     public String getExVisitorID() {
-        return _exVisitorID;
+        return mExVisitorID;
     }
 
     public String getCookieID() {
-        return _cookieID;
+        return mCookieID;
     }
 
     public String getSysTokenID() {
@@ -1417,11 +1445,11 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
 
     public String getOrganizationID() {
-        return _organizationID;
+        return mOrganizationID;
     }
 
     public String getSiteID() {
-        return _siteID;
+        return mSiteID;
     }
 
     public static boolean isOnline() {
@@ -1468,15 +1496,9 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         VisilabsConstant.VISILABS_PARAMETERS = visilabsParameters;
     }
 
-
-    private GpsManager gpsManager = null;
-    private GpsManagerMoreThanOreo gpsManagerMoreThanOreo = null;
-
     public void startGpsManager() {
-        //if (ContextCompat.checkSelfPermission(application, Manifest.permission.ACCESS_FINE_LOCATION)
-
+        int per = ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int per = ContextCompat.checkSelfPermission(this._context, Manifest.permission.ACCESS_FINE_LOCATION);
             if (per != PackageManager.PERMISSION_GRANTED) {
                 Timer timer = new Timer("startGpsManager", false);
                 TimerTask task = new TimerTask() {
@@ -1488,10 +1510,9 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 timer.schedule(task, 5000);
                 return;
             }
-            gpsManagerMoreThanOreo = GpsFactory2.createManager(this._context);
+            gpsManagerMoreThanOreo = GpsFactory2.createManager(mContext);
             gpsManagerMoreThanOreo.start();
         } else {
-            int per = ContextCompat.checkSelfPermission(this._context, Manifest.permission.ACCESS_FINE_LOCATION);
             if (per != PackageManager.PERMISSION_GRANTED) {
                 Timer timer = new Timer("startGpsManager", false);
                 TimerTask task = new TimerTask() {
@@ -1503,22 +1524,22 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 timer.schedule(task, 5000);
                 return;
             }
-            gpsManager = GpsFactory.createManager(this._context);
+            gpsManager = GpsFactory.createManager(mContext);
             gpsManager.start();
         }
 
     }
 
     public Context getContext() {
-        return this._context;
+        return mContext;
     }
 
 
     public String getGeofenceURL() {
-        return this.mGeofenceURL;
+        return mGeofenceURL;
     }
 
     public void setExVisitorIDToNull() {
-        this._exVisitorID = null;
+        mExVisitorID = null;
     }
 }
