@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
@@ -20,16 +19,16 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
 import com.visilabs.android.R;
 
 public class AnimationManager {
 
-    static GradientDrawable gradientDrawable;
+    static GradientDrawable mGradientDrawable;
 
     public static Animation getScaleAnimation() {
         ScaleAnimation scale = new ScaleAnimation(
-                .95f, 1.0f, .95f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 1.0f);
+                .95f, 1.0f, .95f, 1.0f, Animation.RELATIVE_TO_SELF,
+                0.5f, Animation.RELATIVE_TO_SELF, 1.0f);
         scale.setDuration(200);
         return scale;
     }
@@ -37,7 +36,8 @@ public class AnimationManager {
 
     public static TranslateAnimation getMiniTranslateAnimation(Context context) {
 
-        float heightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 75, context.getResources().getDisplayMetrics());
+        float heightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 75,
+                context.getResources().getDisplayMetrics());
         TranslateAnimation translate = new TranslateAnimation(0, 0, heightPx, 0);
         translate.setInterpolator(new DecelerateInterpolator());
         translate.setDuration(200);
@@ -93,7 +93,7 @@ public class AnimationManager {
     }
 
     public static GradientDrawable getGradientDrawable() {
-        return gradientDrawable;
+        return mGradientDrawable;
     }
 
     public static void setNoDropShadowBackgroundToView(View inAppImageView, Bitmap inAppImage) {
@@ -118,18 +118,16 @@ public class AnimationManager {
     }
 
     public static void setBackgroundGradient(View v, Drawable d) {
-        if (Build.VERSION.SDK_INT < 16) {
-            v.setBackgroundDrawable(d);
-        } else {
-            v.setBackground(d);
-        }
+        v.setBackground(d);
     }
 
     public static Animation getMiniScaleAnimation(Context context) {
 
-        float heightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 75, context.getResources().getDisplayMetrics());
+        float heightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                75, context.getResources().getDisplayMetrics());
 
-        ScaleAnimation scale = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, heightPx / 2, heightPx / 2);
+        ScaleAnimation scale = new ScaleAnimation(0.0f, 1.0f, 0.0f,
+                1.0f, heightPx / 2, heightPx / 2);
         scale.setInterpolator(new SineBounceInterpolator());
         scale.setDuration(400);
         scale.setStartOffset(200);

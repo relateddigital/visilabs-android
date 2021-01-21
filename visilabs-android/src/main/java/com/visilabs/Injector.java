@@ -9,7 +9,6 @@ public enum Injector {
 
     private GpsManager gpsManager;
     private GpsManagerMoreThanOreo gpsManagerMoreThanOreo;
-    //private GeofenceForegroundServiceHandler geofenceForegroundServiceHandler;
 
     Injector(){
     }

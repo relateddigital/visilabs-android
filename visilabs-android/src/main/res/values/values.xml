@@ -4,16 +4,20 @@
     <string name="com_visilabs_android_close">Close</string>
     <string name="com_visilabs_android_done">Done</string>
     <string name="com_visilabs_android_notification_image">Image not displayed</string>
+
     <style name="com_visilabs_android_VisilabsNotificationActivity">
         <item name="android:windowEnterAnimation">@anim/anim_fade_in</item>
         <item name="android:windowExitAnimation">@anim/anim_fade_out</item>
     </style>
+
     <style name="com_visilabs_android_VisilabsNotificationActivityTheme" parent="android:Theme">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:windowAnimationStyle">@style/com_visilabs_android_VisilabsNotificationActivity</item>
+        <item name="android:windowAnimationStyle">
+            @style/com_visilabs_android_VisilabsNotificationActivity
+        </item>
     </style>
 </resources>

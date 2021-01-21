@@ -25,7 +25,7 @@ ext {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion '30.0.2'
+    buildToolsVersion '30.0.3'
 
     defaultConfig {
         minSdkVersion 16
@@ -39,6 +39,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildFeatures {
+        viewBinding true
+        dataBinding true
+    }
 }
 
 dependencies {
@@ -48,6 +53,7 @@ dependencies {
     api 'com.loopj.android:android-async-http:1.4.9'
     api 'com.google.code.gson:gson:2.8.6'
     api 'com.squareup.picasso:picasso:2.71828'
+    api 'androidx.multidex:multidex:2.0.1'
 
     api 'de.hdodenhof:circleimageview:3.1.0'
     api 'androidx.recyclerview:recyclerview:1.1.0'

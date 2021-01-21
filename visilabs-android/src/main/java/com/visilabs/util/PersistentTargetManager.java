@@ -1,9 +1,7 @@
 package com.visilabs.util;
 
 import android.content.Context;
-
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -66,7 +64,7 @@ public class PersistentTargetManager {
                     }
                 }else if(count > 1){
                     String previousParameterValue = Prefs.getFromPrefs(mContext, VisilabsConstant.TARGET_PREF, storeKey, null);
-                    String parameterValueToStore = parameterValue + "|" + sdf.format(now);
+                    StringBuilder parameterValueToStore = new StringBuilder(parameterValue + "|" + sdf.format(now));
                     if(previousParameterValue != null && previousParameterValue.length() > 0) {
                         //String decodedPreviousParameterValue = VisilabsEncoder.decode(previousParameterValue);
                         //String[] decodedPreviousParameterValueParts = decodedPreviousParameterValue.split("~");
@@ -77,12 +75,12 @@ public class PersistentTargetManager {
                             }
                             String decodedPreviousParameterValuePart =previousParameterValueParts[i];
                             if(decodedPreviousParameterValuePart.split("\\|").length == 2){
-                                parameterValueToStore = parameterValueToStore + "~" + decodedPreviousParameterValuePart;
+                                parameterValueToStore.append("~").append(decodedPreviousParameterValuePart);
                             }
                         }
                     }
                     //Prefs.saveToPrefs(mContext, VisilabsConfig.TARGET_PREF , storeKey, VisilabsEncoder.encode(parameterValueToStore));
-                    Prefs.saveToPrefs(mContext, VisilabsConstant.TARGET_PREF , storeKey, parameterValueToStore);
+                    Prefs.saveToPrefs(mContext, VisilabsConstant.TARGET_PREF , storeKey, parameterValueToStore.toString());
                 }
             }
         }
@@ -93,7 +91,7 @@ public class PersistentTargetManager {
         for (VisilabsParameter visilabsParameter: VisilabsConstant.VISILABS_PARAMETERS) {
             String storeKey = visilabsParameter.getStoreKey();
             String value = Prefs.getFromPrefs(mContext, VisilabsConstant.TARGET_PREF, storeKey, null);
-            if(value != null && value != ""){
+            if(value != null && !value.equals("")){
                 parameters.put(storeKey, value);
             }
         }

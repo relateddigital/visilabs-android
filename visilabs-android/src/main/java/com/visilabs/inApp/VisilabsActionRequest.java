@@ -178,44 +178,44 @@ public class VisilabsActionRequest extends VisilabsRemote {
         Uri.Builder uriBuilder = Uri.parse(url).buildUpon();
         if(url != null && url.length() > 0){
 
-            if(Visilabs.CallAPI().getOrganizationID() != null && Visilabs.CallAPI().getOrganizationID() != "" ){
+            if(Visilabs.CallAPI().getOrganizationID() != null && !Visilabs.CallAPI().getOrganizationID().equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConstant.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
             }
-            if(Visilabs.CallAPI().getSiteID() != null && Visilabs.CallAPI().getSiteID() != "" ){
+            if(Visilabs.CallAPI().getSiteID() != null && !Visilabs.CallAPI().getSiteID().equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConstant.SITEID_KEY, Visilabs.CallAPI().getSiteID());
             }
 
-            if(Visilabs.CallAPI().getCookieID() != null && Visilabs.CallAPI().getCookieID() != "" ){
+            if(Visilabs.CallAPI().getCookieID() != null && !Visilabs.CallAPI().getCookieID().equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConstant.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
             }
-            if(Visilabs.CallAPI().getExVisitorID() != null && Visilabs.CallAPI().getExVisitorID() != "" ){
+            if(Visilabs.CallAPI().getExVisitorID() != null && !Visilabs.CallAPI().getExVisitorID().equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
             }
 
-            if(Visilabs.CallAPI().getSysTokenID() != null && Visilabs.CallAPI().getSysTokenID() != "" ){
+            if(Visilabs.CallAPI().getSysTokenID() != null && !Visilabs.CallAPI().getSysTokenID().equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConstant.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
             }
-            if(Visilabs.CallAPI().getSysAppID() != null && Visilabs.CallAPI().getSysAppID() != "" ){
+            if(Visilabs.CallAPI().getSysAppID() != null && !Visilabs.CallAPI().getSysAppID().equals("")){
                 uriBuilder.appendQueryParameter(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
             }
 
-            if(mApiVer != null && mApiVer != ""){
+            if(mApiVer != null && !mApiVer.equals("")){
                 uriBuilder.appendQueryParameter("OM.apiver", mApiVer);
             }else{
                 uriBuilder.appendQueryParameter("OM.apiver", "Android");
             }
 
-            if(mPageName != null && mPageName != ""){
+            if(mPageName != null && !mPageName.equals("")){
                 uriBuilder.appendQueryParameter("OM.uri", mPageName);
             }else{
                 uriBuilder.appendQueryParameter("OM.uri", "");
             }
 
-            if(mVisitorData != null && mVisitorData != ""){
+            if(mVisitorData != null && !mVisitorData.equals("")){
                 uriBuilder.appendQueryParameter("OM.viscap", mVisitorData);
             }
 
-            if(mVisitData != null && mVisitData != ""){
+            if(mVisitData != null && !mVisitData.equals("")){
                 uriBuilder.appendQueryParameter("OM.vcap", mVisitData);
             }
         }
@@ -226,7 +226,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
                 uriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
             }
 
-            if(mProperties != null && mProperties.containsKey(entry.getKey())){
+            if(mProperties != null){
                 mProperties.remove(entry.getKey());
             }
 
@@ -236,9 +236,10 @@ public class VisilabsActionRequest extends VisilabsRemote {
             for (Map.Entry<String, String> entry : mProperties.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                if(key == VisilabsConstant.COOKIEID_KEY || key == "OM.siteID" || key == "OM.oid" || key == "OM.apiver"
-                        || key == "OM.uri" || key == VisilabsConstant.EXVISITORID_KEY
-                        || key == VisilabsConstant.APPID_KEY || key == VisilabsConstant.TOKENID_KEY){
+                if(key.equals(VisilabsConstant.COOKIEID_KEY) || key.equals("OM.siteID")
+                        || key.equals("OM.oid") || key.equals("OM.apiver")
+                        || key.equals("OM.uri") || key.equals(VisilabsConstant.EXVISITORID_KEY)
+                        || key.equals(VisilabsConstant.APPID_KEY) || key.equals(VisilabsConstant.TOKENID_KEY)){
                     continue;
                 }
 
@@ -320,7 +321,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
                 uriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
             }
 
-            if(mProperties != null && mProperties.containsKey(entry.getKey())){
+            if(mProperties != null){
                 mProperties.remove(entry.getKey());
             }
 

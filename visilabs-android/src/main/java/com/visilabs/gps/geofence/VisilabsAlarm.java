@@ -16,10 +16,10 @@ import com.visilabs.gps.manager.GpsManagerMoreThanOreo;
 
 
 public class VisilabsAlarm extends BroadcastReceiver {
-    static VisilabsAlarm alarm = new VisilabsAlarm();
+    static VisilabsAlarm mAlarm = new VisilabsAlarm();
 
     public static VisilabsAlarm getSingleton() {
-        return alarm;
+        return mAlarm;
     }
 
     @Override

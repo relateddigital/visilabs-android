@@ -11,8 +11,6 @@ import cz.msebera.android.httpclient.Header;
 
 public abstract class VisilabsRemote implements VisilabsAction {
 
-    public static final String PATH_PREFIX = "/box/srv/1.1/";
-
     protected static String LOG_TAG = "VisilabsRemote";
 
     protected VisilabsCallback mCallback;
@@ -63,8 +61,6 @@ public abstract class VisilabsRemote implements VisilabsAction {
 
     protected String getApiURL() {
         return Visilabs.getTargetURL();
-//        String apiUrl = StringUtils.removeTrailingSlash(AppProps.getInstance().getHost());
-//        return apiUrl + PATH_PREFIX + getPath();
     }
 
     protected abstract String getPath();

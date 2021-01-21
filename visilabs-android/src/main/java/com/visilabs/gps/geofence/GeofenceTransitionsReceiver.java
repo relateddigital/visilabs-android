@@ -15,7 +15,6 @@ import com.visilabs.api.VisilabsCallback;
 import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
 import com.visilabs.gps.manager.GpsManager;
 import com.visilabs.gps.util.GeoFencesUtils;
-import com.visilabs.json.JSONArray;
 
 import java.util.List;
 
@@ -47,7 +46,9 @@ public class GeofenceTransitionsReceiver extends BroadcastReceiver {
                 Geofence closestGeofence = getClosestTriggeredGoefence(gpsManager, triggerList);
 
                 try {
-                    geoFenceTriggered(closestGeofence.getRequestId(), geoFenceEvent.getGeofenceTransition(), gpsManager.getLastKnownLocation().getLatitude(), gpsManager.getLastKnownLocation().getLongitude());
+                    geoFenceTriggered(closestGeofence.getRequestId(),
+                            gpsManager.getLastKnownLocation().getLatitude(),
+                            gpsManager.getLastKnownLocation().getLongitude());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -58,7 +59,7 @@ public class GeofenceTransitionsReceiver extends BroadcastReceiver {
         }
     }
 
-    private void geoFenceTriggered(String geofence_guid, int transition, double lati, double longi) throws Exception {
+    private void geoFenceTriggered(String geofence_guid, double lati, double longi) throws Exception {
         Log.i(TAG, geofence_guid);
 
         VisilabsGeofenceRequest request = new VisilabsGeofenceRequest(Visilabs.CallAPI().getContext());
@@ -99,8 +100,10 @@ public class GeofenceTransitionsReceiver extends BroadcastReceiver {
             Geofence triggeredGeofence = null;
             double minDistance = Double.MAX_VALUE;
             for (Geofence geofence : triggerList) {
-                for (VisilabsGeoFenceEntity geoFenceEntity : gpsManager.activeGeoFenceEntityList) {
-                    double distance = GeoFencesUtils.haversine(gpsManager.getLastKnownLocation().getLatitude(), gpsManager.getLastKnownLocation().getLongitude(), Double.parseDouble(geoFenceEntity.lat), Double.parseDouble(geoFenceEntity.lng));
+                for (VisilabsGeoFenceEntity geoFenceEntity : gpsManager.mActiveGeoFenceEntityList) {
+                    double distance = GeoFencesUtils.haversine(gpsManager.getLastKnownLocation().getLatitude(),
+                            gpsManager.getLastKnownLocation().getLongitude(),
+                            Double.parseDouble(geoFenceEntity.getLatitude()), Double.parseDouble(geoFenceEntity.getLongitude()));
                     if (distance < minDistance) {
                         triggeredGeofence = geofence;
                         minDistance = distance;

@@ -15,84 +15,96 @@ import java.util.concurrent.locks.ReentrantLock;
 @TargetApi(VisilabsConstant.UI_FEATURES_MIN_API)
 public class VisilabsUpdateDisplayState implements Parcelable {
 
+    private static final String LOG_TAG = "VisilabsUpdateDisplaySt";
 
     private final String mDistinctId;
     private final String mToken;
     private final DisplayState mDisplayState;
 
-    private static final ReentrantLock sUpdateDisplayLock = new ReentrantLock();
-    private static long sUpdateDisplayLockMillis = -1;
-    private static VisilabsUpdateDisplayState sUpdateDisplayState = null;
-    private static int sNextIntentId = 0;
-    private static int sShowingIntentId = -1;
+    private static final ReentrantLock mUpdateDisplayLock = new ReentrantLock();
+    private static long mUpdateDisplayLockMillis = -1;
+    private static VisilabsUpdateDisplayState mUpdateDisplayState = null;
+    private static int mNextIntentId = 0;
+    private static int mShowingIntentId = -1;
 
-    private static final String LOGTAG = "VisilabsUpdateDisplaySt";
     private static final long MAX_LOCK_TIME_MILLIS = 12 * 60 * 60 * 1000; // Twelve hour timeout on notification activities
 
-    private static final String DISTINCT_ID_BUNDLE_KEY = "VisilabsUpdateDisplayState.DISTINCT_ID_BUNDLE_KEY";
-    private static final String TOKEN_BUNDLE_KEY = "VisilabsUpdateDisplayState.TOKEN_BUNDLE_KEY";
-    private static final String DISPLAYSTATE_BUNDLE_KEY = "VisilabsUpdateDisplayState.DISPLAYSTATE_BUNDLE_KEY";
+    private static final String DISTINCT_ID_BUNDLE_KEY = "VisilabmUpdateDisplayState.DISTINCT_ID_BUNDLE_KEY";
+    private static final String TOKEN_BUNDLE_KEY = "VisilabmUpdateDisplayState.TOKEN_BUNDLE_KEY";
+    private static final String DISPLAYSTATE_BUNDLE_KEY = "VisilabmUpdateDisplayState.DISPLAYSTATE_BUNDLE_KEY";
+
+    private VisilabsUpdateDisplayState(DisplayState displayState, String distinctId, String token) {
+        mDistinctId = distinctId;
+        mToken = token;
+        mDisplayState = displayState;
+    }
+
+    private VisilabsUpdateDisplayState(Bundle read) {
+        mDistinctId = read.getString(DISTINCT_ID_BUNDLE_KEY);
+        mToken = read.getString(TOKEN_BUNDLE_KEY);
+        mDisplayState = read.getParcelable(DISPLAYSTATE_BUNDLE_KEY);
+    }
 
     public static ReentrantLock getLockObject() {
-        return sUpdateDisplayLock;
+        return mUpdateDisplayLock;
     }
 
     public static boolean hasCurrentProposal() {
-        if (!sUpdateDisplayLock.isHeldByCurrentThread()) throw new AssertionError();
+        if (!mUpdateDisplayLock.isHeldByCurrentThread()) throw new AssertionError();
 
         long currentTime = System.currentTimeMillis();
-        long deltaTime = currentTime - sUpdateDisplayLockMillis;
+        long deltaTime = currentTime - mUpdateDisplayLockMillis;
 
-        if (sNextIntentId > 0 && deltaTime > MAX_LOCK_TIME_MILLIS) {
-            Log.i(LOGTAG, "UpdateDisplayState set long, long ago, without showing. Update state will be cleared.");
-            sUpdateDisplayState = null;
+        if (mNextIntentId > 0 && deltaTime > MAX_LOCK_TIME_MILLIS) {
+            Log.i(LOG_TAG, "UpdateDisplayState set long, long ago, without showing. Update state will be cleared.");
+            mUpdateDisplayState = null;
         }
-        return null != sUpdateDisplayState;
+        return null != mUpdateDisplayState;
     }
 
     public static int proposeDisplay(DisplayState state, final String distinctId, final String token) {
         int ret = -1;
 
-        if (!sUpdateDisplayLock.isHeldByCurrentThread()) throw new AssertionError();
+        if (!mUpdateDisplayLock.isHeldByCurrentThread()) throw new AssertionError();
 
         if (!hasCurrentProposal()) {
-            sUpdateDisplayLockMillis = System.currentTimeMillis();
-            sUpdateDisplayState = new VisilabsUpdateDisplayState(state, distinctId, token);
-            sNextIntentId++;
-            ret = sNextIntentId;
+            mUpdateDisplayLockMillis = System.currentTimeMillis();
+            mUpdateDisplayState = new VisilabsUpdateDisplayState(state, distinctId, token);
+            mNextIntentId++;
+            ret = mNextIntentId;
         } else {
-            Log.v(LOGTAG, "Already showing a Visilabs update, declining to show another.");
+            Log.v(LOG_TAG, "Already showing a Visilabs update, declining to show another.");
         }
 
         return ret;
     }
 
     public static void releaseDisplayState(int intentId) {
-        sUpdateDisplayLock.lock();
+        mUpdateDisplayLock.lock();
         try {
-            if (intentId == sShowingIntentId) {
-                sShowingIntentId = -1;
-                sUpdateDisplayState = null;
+            if (intentId == mShowingIntentId) {
+                mShowingIntentId = -1;
+                mUpdateDisplayState = null;
             }
         } finally {
-            sUpdateDisplayLock.unlock();
+            mUpdateDisplayLock.unlock();
         }
     }
 
     public static VisilabsUpdateDisplayState claimDisplayState(int intentId) {
-        sUpdateDisplayLock.lock();
+        mUpdateDisplayLock.lock();
         try {
-            if (sShowingIntentId > 0 && sShowingIntentId != intentId) {
+            if (mShowingIntentId > 0 && mShowingIntentId != intentId) {
                 return null;
-            } else if (sUpdateDisplayState == null) {
+            } else if (mUpdateDisplayState == null) {
                 return null;
             } else {
-                sUpdateDisplayLockMillis = System.currentTimeMillis();
-                sShowingIntentId = intentId;
-                return sUpdateDisplayState;
+                mUpdateDisplayLockMillis = System.currentTimeMillis();
+                mShowingIntentId = intentId;
+                return mUpdateDisplayState;
             }
         } finally {
-            sUpdateDisplayLock.unlock();
+            mUpdateDisplayLock.unlock();
         }
     }
 
@@ -134,18 +146,6 @@ public class VisilabsUpdateDisplayState implements Parcelable {
 
     public String getToken() {
         return mToken;
-    }
-
-    private VisilabsUpdateDisplayState(DisplayState displayState, String distinctId, String token) {
-        mDistinctId = distinctId;
-        mToken = token;
-        mDisplayState = displayState;
-    }
-
-    private VisilabsUpdateDisplayState(Bundle read) {
-        mDistinctId = read.getString(DISTINCT_ID_BUNDLE_KEY);
-        mToken = read.getString(TOKEN_BUNDLE_KEY);
-        mDisplayState = read.getParcelable(DISPLAYSTATE_BUNDLE_KEY);
     }
 }
 

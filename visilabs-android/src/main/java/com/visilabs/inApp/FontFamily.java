@@ -1,7 +1,5 @@
 package com.visilabs.inApp;
 
-import androidx.annotation.NonNull;
-
 public enum FontFamily {
 
 
@@ -11,7 +9,7 @@ public enum FontFamily {
             return "monospace";
         }
     },
-    SansaSerif {
+    SansSerif {
         @Override
         public String toString() {
             return "sansserif";

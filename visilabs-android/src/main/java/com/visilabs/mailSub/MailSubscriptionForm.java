@@ -2,8 +2,6 @@ package com.visilabs.mailSub;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-
 import java.io.Serializable;
 
 public class MailSubscriptionForm implements Serializable, Parcelable {
@@ -40,7 +38,7 @@ public class MailSubscriptionForm implements Serializable, Parcelable {
     }
 
     public void setActiondata(Actiondata Actiondata) {
-        this.actiondata = actiondata;
+        this.actiondata = Actiondata;
     }
 
     public Actiondata getActiondata() {

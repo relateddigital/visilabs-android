@@ -1,6 +1,5 @@
 package com.visilabs.story.model.storylookingbanners;
 
-
 import java.io.Serializable;
 
 public class ExtendedProps implements Serializable {
@@ -57,6 +56,10 @@ public class ExtendedProps implements Serializable {
 
     @Override
     public String toString() {
-        return "ExtendedProps [storylb_img_borderWidth = " + storylb_img_borderWidth + ", storylb_img_borderRadius = " + storylb_img_borderRadius + ", storylb_img_boxShadow = " + storylb_img_boxShadow + ", storylb_img_borderColor = " + storylb_img_borderColor + ", storylb_label_color = " + storylb_label_color + "]";
+        return "ExtendedProps [storylb_img_borderWidth = " + storylb_img_borderWidth +
+                ", storylb_img_borderRadius = " + storylb_img_borderRadius +
+                ", storylb_img_boxShadow = " + storylb_img_boxShadow +
+                ", storylb_img_borderColor = " + storylb_img_borderColor +
+                ", storylb_label_color = " + storylb_label_color + "]";
     }
 }

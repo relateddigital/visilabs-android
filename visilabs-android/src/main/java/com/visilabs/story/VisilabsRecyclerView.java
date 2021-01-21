@@ -3,16 +3,13 @@ package com.visilabs.story;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.gson.Gson;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.story.model.skinbased.VisilabsSkinBasedResponse;
 import com.visilabs.util.VisilabsConstant;
-
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.story.model.StoryItemClickListener;
@@ -20,15 +17,14 @@ import com.visilabs.story.model.storylookingbanners.VisilabsStoryLookingBannerRe
 
 public class VisilabsRecyclerView extends RecyclerView {
 
-    Context context;
-
     public static final String TAG = "VisilabsRecyclerView";
 
-    StoryItemClickListener storyItemClickListener;
+    Context mContext;
+    StoryItemClickListener mStoryItemClickListener;
 
     public VisilabsRecyclerView(Context context) {
         super(context);
-        this.context = context;
+        mContext = context;
     }
 
     public VisilabsRecyclerView(Context context, AttributeSet attrs) {
@@ -40,7 +36,7 @@ public class VisilabsRecyclerView extends RecyclerView {
     }
 
     public void setStoryAction(Context context, StoryItemClickListener storyItemClickListener) {
-        this.storyItemClickListener = storyItemClickListener;
+        mStoryItemClickListener = storyItemClickListener;
         VisilabsActionRequest visilabsActionRequest;
         try {
             visilabsActionRequest = Visilabs.CallAPI().requestAction("Story");
@@ -52,7 +48,7 @@ public class VisilabsRecyclerView extends RecyclerView {
     }
 
     public void setStoryActionId(Context context, String actionId, StoryItemClickListener storyItemClickListener) {
-        this.storyItemClickListener = storyItemClickListener;
+        mStoryItemClickListener = storyItemClickListener;
         VisilabsActionRequest visilabsActionRequest;
         try {
             visilabsActionRequest = Visilabs.CallAPI().requestActionId(actionId);
@@ -69,33 +65,40 @@ public class VisilabsRecyclerView extends RecyclerView {
             @Override
             public void success(VisilabsResponse response) {
                 try {
-                    VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse = new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
+                    VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse =
+                            new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
 
                     if(visilabsStoryLookingBannerResponse.getStory().isEmpty()){
                         Log.i(TAG, "There is no story to show.");
                         return;
                     }
 
-                    if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals(VisilabsConstant.STORY_LOOKING_BANNERS)) {
+                    if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata()
+                            .getTaTemplate().equals(VisilabsConstant.STORY_LOOKING_BANNERS)) {
 
-                        VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter = new VisilabsStoryLookingBannerAdapter(context, storyItemClickListener);
+                        VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter =
+                                new VisilabsStoryLookingBannerAdapter(context, mStoryItemClickListener);
 
-                        visilabsStoryLookingBannerAdapter.setStoryList(visilabsStoryLookingBannerResponse, visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getExtendedProps());
+                        visilabsStoryLookingBannerAdapter.setStoryList(visilabsStoryLookingBannerResponse,
+                                visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getExtendedProps());
 
                         setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
                         setHasFixedSize(true);
 
                         setAdapter(visilabsStoryLookingBannerAdapter);
 
-                    } else if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getTaTemplate().equals(VisilabsConstant.STORY_SKIN_BASED)) {
+                    } else if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata()
+                            .getTaTemplate().equals(VisilabsConstant.STORY_SKIN_BASED)) {
                         {
-                            VisilabsSkinBasedResponse skinBased = new Gson().fromJson(response.getRawResponse(), VisilabsSkinBasedResponse.class);
+                            VisilabsSkinBasedResponse skinBased = new Gson().fromJson(response
+                                    .getRawResponse(), VisilabsSkinBasedResponse.class);
 
                             VisilabsSkinBasedAdapter visilabsSkinBasedAdapter = new VisilabsSkinBasedAdapter(context);
 
-                            visilabsSkinBasedAdapter.setStoryListener(storyItemClickListener);
+                            visilabsSkinBasedAdapter.setStoryListener(mStoryItemClickListener);
 
-                            visilabsSkinBasedAdapter.setStoryList(skinBased, skinBased.getStory().get(0).getActiondata().getExtendedProps());
+                            visilabsSkinBasedAdapter.setStoryList(skinBased, skinBased.getStory()
+                                    .get(0).getActiondata().getExtendedProps());
 
                             setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
                             setHasFixedSize(true);

@@ -38,33 +38,30 @@ public class VisilabsTargetRequest extends VisilabsRemote {
     protected static final String LOG_TAG = "VisilabsTargetRequest";
 
     private String mApiVer = "Android";
-
     private String mZoneID;
-//    private String mContentID;
     private String mProductCode;
-
     private String mPath = "";
     private Methods mMethod = Methods.GET;
     private Header[] mHeaders = null;
     private JSONObject mArgs = new JSONObject();
     private int mTimeOutInSeconds;
-    private HashMap<String,String> mProperties = new HashMap<String, String>();
-    private List<VisilabsTargetFilter> mFilters = new ArrayList<VisilabsTargetFilter>();
+    private HashMap<String,String> mProperties = new HashMap<>();
+    private List<VisilabsTargetFilter> mFilters = new ArrayList<>();
 
     public List<VisilabsTargetFilter> getFilters() {
         return mFilters;
     }
 
-    public void setFilters(List<VisilabsTargetFilter> mFilters) {
-        this.mFilters = mFilters;
+    public void setFilters(List<VisilabsTargetFilter> filters) {
+        mFilters = filters;
     }
 
     public HashMap<String, String> getProperties() {
         return mProperties;
     }
 
-    public void setProperties(HashMap<String, String> mProperties) {
-        this.mProperties = mProperties;
+    public void setProperties(HashMap<String, String> properties) {
+        mProperties = properties;
     }
 
     public VisilabsTargetRequest(Context context) {
@@ -164,12 +161,11 @@ public class VisilabsTargetRequest extends VisilabsRemote {
         if(this.mProperties != null && this.mProperties.size() > 0){
             for (String key : this.mProperties.keySet()) {
                 if(!StringUtils.isNullOrWhiteSpace(key)){
-                    if(key != VisilabsConstant.ORGANIZATIONID_KEY && key != VisilabsConstant.SITEID_KEY && key != VisilabsConstant.EXVISITORID_KEY && key != VisilabsConstant.COOKIEID_KEY
-                            && key != VisilabsConstant.ZONE_ID_KEY && key != VisilabsConstant.BODY_KEY && key != VisilabsConstant.TOKENID_KEY && key != VisilabsConstant.APPID_KEY
-                            && key != VisilabsConstant.APIVER_KEY && key != VisilabsConstant.FILTER_KEY){
-                        continue;
-                    }
-                    else{
+                    if(!(!key.equals(VisilabsConstant.ORGANIZATIONID_KEY) && !key.equals(VisilabsConstant.SITEID_KEY)
+                            && !key.equals(VisilabsConstant.EXVISITORID_KEY) && !key.equals(VisilabsConstant.COOKIEID_KEY)
+                            && !key.equals(VisilabsConstant.ZONE_ID_KEY) && !key.equals(VisilabsConstant.BODY_KEY)
+                            && !key.equals(VisilabsConstant.TOKENID_KEY) && !key.equals(VisilabsConstant.APPID_KEY)
+                            && !key.equals(VisilabsConstant.APIVER_KEY) && !key.equals(VisilabsConstant.FILTER_KEY))){
                         this.mProperties.remove(key);
                     }
                 }else{
@@ -233,17 +229,14 @@ public class VisilabsTargetRequest extends VisilabsRemote {
                     for (VisilabsTargetFilter filter : this.mFilters) {
                         if (!StringUtils.isNullOrWhiteSpace(filter.getAttribute()) && !StringUtils.isNullOrWhiteSpace(filter.getFilterType())
                                 && !StringUtils.isNullOrWhiteSpace(filter.getValue())) {
-                            //TODO:JSON CONVERT
                             JSONObject filterJSON = new JSONObject();
                             filterJSON.put("attr", filter.getAttribute());
                             filterJSON.put("ft", filter.getFilterType());
                             filterJSON.put("fv", filter.getValue());
                             jsonArray.put(filterJSON);
-                            //uriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
                         }
                     }
                     String jsonString =  jsonArray.toString();
-                    //TODO: kontrol et
                     uriBuilder.appendQueryParameter(VisilabsConstant.FILTER_KEY, jsonString);
                 }
             }

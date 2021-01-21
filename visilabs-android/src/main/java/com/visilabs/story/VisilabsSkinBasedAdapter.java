@@ -12,32 +12,24 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.android.R;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.skinbased.VisilabsSkinBasedResponse;
-
 import com.visilabs.story.model.skinbased.ExtendedProps;
 import com.visilabs.util.VisilabsConstant;
-
 import java.net.URISyntaxException;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-
 public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinBasedAdapter.StoryHolder> {
 
-    Context context;
-
-    VisilabsSkinBasedResponse visilabsSkinBasedResponse;
-
-    String extendsProps;
+    Context mContext;
+    VisilabsSkinBasedResponse mVisilabsSkinBasedResponse;
+    String mExtendsProps;
 
     public VisilabsSkinBasedAdapter(Context context) {
-        this.context = context;
+        mContext = context;
     }
 
     @Override
@@ -50,14 +42,14 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
     @Override
     public void onBindViewHolder(StoryHolder storyHolder, final int position) {
-        String storyName = visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getTitle();
-        String storyImage = visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getThumbnail();
+        String storyName = mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getTitle();
+        String storyImage = mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getThumbnail();
         storyHolder.tvStoryName.setText(storyName);
 
         Picasso.get().load(storyImage).fit().into(storyHolder.ivStory);
         Picasso.get().load(storyImage).fit().into(storyHolder.civStory);
 
-        String extendedPropsEncoded = extendsProps;
+        String extendedPropsEncoded = mExtendsProps;
 
         ExtendedProps extendedProps = null;
 
@@ -110,28 +102,28 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
     private void clickEvent(int position) {
 
-        if (visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getItems().size() != 0) {
+        if (mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getItems().size() != 0) {
 
             StoryActivity story = new StoryActivity();
-            Intent intent = new Intent(context, story.getClass());
+            Intent intent = new Intent(mContext, story.getClass());
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
             intent.putExtra(VisilabsConstant.STORY_POSITION, position);
             intent.putExtra(VisilabsConstant.STORY_ITEM_POSITION, 0);
-            intent.putExtra(VisilabsConstant.ACTION_DATA, visilabsSkinBasedResponse.getStory().get(0).getActiondata());
-            intent.putExtra(VisilabsConstant.ACTION_ID, visilabsSkinBasedResponse.getStory().get(0).getActid());
-            context.startActivity(intent);
+            intent.putExtra(VisilabsConstant.ACTION_DATA, mVisilabsSkinBasedResponse.getStory().get(0).getActiondata());
+            intent.putExtra(VisilabsConstant.ACTION_ID, mVisilabsSkinBasedResponse.getStory().get(0).getActid());
+            mContext.startActivity(intent);
         }
     }
 
     @Override
     public int getItemCount() {
-        return visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().size();
+        return mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().size();
     }
 
     public void setStoryList(VisilabsSkinBasedResponse visilabsSkinBasedResponse, String extendsProps) {
-        this.extendsProps = extendsProps;
-        this.visilabsSkinBasedResponse = visilabsSkinBasedResponse;
+        mExtendsProps = extendsProps;
+        mVisilabsSkinBasedResponse = visilabsSkinBasedResponse;
     }
 
     public void setStoryListener(StoryItemClickListener storyItemClickListener) {
@@ -156,10 +148,11 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
             llStoryContainer = itemView.findViewById(R.id.ll_story);
             frameLayout = itemView.findViewById(R.id.fl_circle);
 
-            String extendedPropsEncoded = extendsProps;
+            String extendedPropsEncoded = mExtendsProps;
 
             try {
-                extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
+                extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded)
+                        .getPath(), ExtendedProps.class);
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }

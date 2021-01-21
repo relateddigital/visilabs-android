@@ -1,61 +1,40 @@
 package com.visilabs.inApp;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
 import com.visilabs.Visilabs;
+import com.visilabs.android.databinding.ActivityInAppFullBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
-import com.visilabs.util.AnimationManager;
 import com.visilabs.util.StringUtils;
-import com.visilabs.view.FadingImageView;
 
 
 public class VisilabsInAppActivity extends AppCompatActivity implements IVisilabs {
 
-    InAppMessage inApp;
-
-    private VisilabsUpdateDisplayState mUpdateDisplayState;
-
-    TextView tvInAppSubtitle, tvInAppTitle;
-    private int mIntentId = -1;
-
-    Button btnInApp;
-
-    FadingImageView fivInAppImage;
-
-    LinearLayout llClose;
-
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
+
+    InAppMessage mInApp;
+    private VisilabsUpdateDisplayState mUpdateDisplayState;
+    private int mIntentId = -1;
+    private ActivityInAppFullBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityInAppFullBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        setContentView(R.layout.activity_in_app_full);
-
-        tvInAppSubtitle = findViewById(R.id.tv_in_app_subtitle);
-        tvInAppTitle = findViewById(R.id.tv_in_app_title);
-        btnInApp = findViewById(R.id.btn_in_app);
-        fivInAppImage = findViewById(R.id.fiv_in_app_image);
-        llClose = findViewById(R.id.ll_close);
+        setContentView(view);
 
         mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
         mUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(mIntentId);
@@ -81,7 +60,7 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
         InAppNotificationState inAppNotificationState =
                 (InAppNotificationState) mUpdateDisplayState.getDisplayState();
 
-        inApp = inAppNotificationState.getInAppMessage();
+        mInApp = inAppNotificationState.getInAppMessage();
 
         setInAppData();
 
@@ -91,27 +70,27 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
     private void setInAppData() {
 
 
-        tvInAppTitle.setText(inApp.getTitle().replace("\\n","\n"));
-        tvInAppSubtitle.setText(inApp.getBody().replace("\\n","\n"));
+        binding.tvInAppTitle.setText(mInApp.getTitle().replace("\\n","\n"));
+        binding.tvInAppSubtitle.setText(mInApp.getBody().replace("\\n","\n"));
 
-        if (inApp.getButtonText() != null && inApp.getButtonText().length() > 0) {
-            btnInApp.setText(inApp.getButtonText());
+        if (mInApp.getButtonText() != null && mInApp.getButtonText().length() > 0) {
+            binding.btnInApp.setText(mInApp.getButtonText());
         }
-        Picasso.get().load(inApp.getImageUrl()).into(fivInAppImage);
+        Picasso.get().load(mInApp.getImageUrl()).into(binding.fivInAppImage);
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void clickEvents() {
 
-        btnInApp.setOnClickListener(new View.OnClickListener() {
+        binding.btnInApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (inApp.getButtonURL() != null && inApp.getButtonURL().length() > 0) {
+                if (mInApp.getButtonURL() != null && mInApp.getButtonURL().length() > 0) {
 
                     try {
-                        Visilabs.CallAPI().trackInAppMessageClick(inApp, null);
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(inApp.getButtonURL()));
+                        Visilabs.CallAPI().trackInAppMessageClick(mInApp, null);
+                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInApp.getButtonURL()));
                         VisilabsInAppActivity.this.startActivity(viewIntent);
 
                     } catch (final ActivityNotFoundException e) {
@@ -124,7 +103,7 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
         });
 
 
-        btnInApp.setOnTouchListener(new View.OnTouchListener() {
+        binding.btnInApp.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -136,7 +115,7 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
             }
         });
 
-        llClose.setOnClickListener(new View.OnClickListener() {
+        binding.llClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();

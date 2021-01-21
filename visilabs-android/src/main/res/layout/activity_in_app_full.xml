@@ -28,13 +28,12 @@
     </LinearLayout>
 
 
-
     <LinearLayout
         android:id="@+id/ll_in_app_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
         android:layout_above="@id/ll_details"
+        android:layout_marginTop="50dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingBottom="20dp">

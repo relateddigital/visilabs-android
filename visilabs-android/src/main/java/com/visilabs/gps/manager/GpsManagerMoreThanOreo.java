@@ -43,46 +43,48 @@ import java.util.List;
 public class GpsManagerMoreThanOreo {
 
     private final String TAG = "Visilabs GpsManager2";
-    public final List<VisilabsGeoFenceEntity> activeGeoFenceEntityList = new ArrayList<>();
-    private final List<VisilabsGeoFenceEntity> allGeoFenceEntityList = new ArrayList<>();
-    private final List<VisilabsGeoFenceEntity> toAddGeoFenceEntityList = new ArrayList<>();
-    private final List<VisilabsGeoFenceEntity> toRemoveGeoFenceEntityList = new ArrayList<>();
-    private final Context application;
-    public boolean isManagerActive = false;
-    public boolean isManagerStarting = false;
-    private Location lastKnownLocation = null;
-    private boolean firstServerCheck = false;
-    private Calendar lastServerCheck = Calendar.getInstance();
+    public final List<VisilabsGeoFenceEntity> mActiveGeoFenceEntityList = new ArrayList<>();
+    private final List<VisilabsGeoFenceEntity> mAllGeoFenceEntityList = new ArrayList<>();
+    private final List<VisilabsGeoFenceEntity> mToAddGeoFenceEntityList = new ArrayList<>();
+    private final List<VisilabsGeoFenceEntity> mToRemoveGeoFenceEntityList = new ArrayList<>();
+    private final Context mApplication;
+    public boolean mIsManagerActive = false;
+    public boolean mIsManagerStarting = false;
+    private Location mLastKnownLocation = null;
+    private boolean mFirstServerCheck = false;
+    private Calendar mLastServerCheck = Calendar.getInstance();
     private GeofencingClient mGeofencingClient;
     private FusedLocationProviderClient mFusedLocationClient;
     private PendingIntent mGeofencePendingIntent;
 
     public GpsManagerMoreThanOreo(Context context) {
         Injector.INSTANCE.initGpsManager(this);
-        this.application = context;
+        mApplication = context;
     }
 
     public void start() {
-        if (isManagerActive || isManagerStarting)
+        if (mIsManagerActive || mIsManagerStarting)
             return;
 
-        isManagerStarting = true;
+        mIsManagerStarting = true;
         initGpsService();
         startGpsService();
-        VisilabsAlarm.getSingleton().setAlarmCheckIn(this.application);
+        VisilabsAlarm.getSingleton().setAlarmCheckIn(mApplication);
 
     }
 
     private void initGpsService() {
-        mGeofencingClient = LocationServices.getGeofencingClient(this.application);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this.application);
+        mGeofencingClient = LocationServices.getGeofencingClient(mApplication);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mApplication);
     }
 
     @SuppressLint("MissingPermission")
     public void startGpsService() {
 
-        boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(this.application, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        boolean accessCoarseLocationPermission = ContextCompat.checkSelfPermission(this.application, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(mApplication,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean accessCoarseLocationPermission = ContextCompat.checkSelfPermission(mApplication,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
         if (accessFineLocationPermission || accessCoarseLocationPermission) {
 
@@ -90,7 +92,7 @@ public class GpsManagerMoreThanOreo {
                 @Override
                 public void onSuccess(Location location) {
                     if (location != null) {
-                        setLastKnownLocation(location);
+                        setmLastKnownLocation(location);
                     }
                 }
             });
@@ -98,70 +100,55 @@ public class GpsManagerMoreThanOreo {
     }
 
     private boolean GeoFenceEntitiesAreTheSame(VisilabsGeoFenceEntity geoFenceEntity1, VisilabsGeoFenceEntity geoFenceEntity2) {
-        if (!geoFenceEntity1.lat.equals(geoFenceEntity2.lat))
+        if (!geoFenceEntity1.getLatitude().equals(geoFenceEntity2.getLatitude()))
             return false;
 
-        if (!geoFenceEntity1.lng.equals(geoFenceEntity2.lng))
+        if (!geoFenceEntity1.getLongitude().equals(geoFenceEntity2.getLongitude()))
             return false;
 
-        if (geoFenceEntity1.radius != geoFenceEntity2.radius)
+        if (geoFenceEntity1.getRadius() != geoFenceEntity2.getRadius())
             return false;
 
-        if (!geoFenceEntity1.name.equals(geoFenceEntity2.name))
+        if (!geoFenceEntity1.getName().equals(geoFenceEntity2.getName()))
             return false;
 
-        if (!geoFenceEntity1.type.equals(geoFenceEntity2.type))
-            return false;
-
-        return true;
+        return geoFenceEntity1.getType().equals(geoFenceEntity2.getType());
     }
 
-    public void setLastKnownLocation(Location location) {
+    public void setmLastKnownLocation(Location location) {
 
         Calendar fifteenMinutesBefore = Calendar.getInstance(); // current date/time
         fifteenMinutesBefore.add(Calendar.MINUTE, -15);
 
-        if (lastKnownLocation == null && location == null)
+        if (mLastKnownLocation == null && location == null)
             return;
 
-        if (lastKnownLocation == null) {
-            lastKnownLocation = location;
+        if (mLastKnownLocation == null) {
+            mLastKnownLocation = location;
 
-
-            if (!firstServerCheck || lastServerCheck.before(fifteenMinutesBefore)) {
-                setupGeofences();
-                lastServerCheck = Calendar.getInstance();
-                firstServerCheck = true;
-            }
 
         } else {
-            if (location == null) {
-                if (!firstServerCheck || lastServerCheck.before(fifteenMinutesBefore)) {
-                    setupGeofences();
-                    lastServerCheck = Calendar.getInstance();
-                    firstServerCheck = true;
-                }
-            } else {
-                double lat1 = lastKnownLocation.getLatitude();
-                double long1 = lastKnownLocation.getLongitude();
+            if (location != null) {
+                double lat1 = mLastKnownLocation.getLatitude();
+                double long1 = mLastKnownLocation.getLongitude();
                 double lat2 = location.getLatitude();
                 double long2 = location.getLongitude();
                 if (GeoFencesUtils.haversine(lat1, long1, lat2, long2) > 1) {
-                    lastKnownLocation = location;
-                }
-                if (!firstServerCheck || lastServerCheck.before(fifteenMinutesBefore)) {
-                    setupGeofences();
-                    lastServerCheck = Calendar.getInstance();
-                    firstServerCheck = true;
+                    mLastKnownLocation = location;
                 }
             }
+        }
+        if (!mFirstServerCheck || mLastServerCheck.before(fifteenMinutesBefore)) {
+            setupGeofences();
+            mLastServerCheck = Calendar.getInstance();
+            mFirstServerCheck = true;
         }
     }
 
     private void setupGeofences() {
-        final VisilabsGeofenceRequest request = (VisilabsGeofenceRequest) new VisilabsGeofenceRequest(this.application);
-        double lat = lastKnownLocation.getLatitude();
-        double lon = lastKnownLocation.getLongitude();
+        final VisilabsGeofenceRequest request = new VisilabsGeofenceRequest(mApplication);
+        double lat = mLastKnownLocation.getLatitude();
+        double lon = mLastKnownLocation.getLongitude();
 
         request.setLatitude(lat);
         request.setLongitude(lon);
@@ -171,7 +158,6 @@ public class GpsManagerMoreThanOreo {
         final VisilabsCallback callback = new VisilabsCallback() {
             @Override
             public void success(VisilabsResponse response) {
-                String rawResponse = response.getRawResponse();
                 try {
                     List<VisilabsGeoFenceEntity> geoFences = new ArrayList<>();
                     JSONArray array = response.getArray();
@@ -191,13 +177,13 @@ public class GpsManagerMoreThanOreo {
                                     int geoid = geoJson.getInt("id");
 
                                     VisilabsGeoFenceEntity visilabsGeoFenceEntity = new VisilabsGeoFenceEntity();
-                                    visilabsGeoFenceEntity.guid = actid + "_" + j + "_" + geoid;
-                                    visilabsGeoFenceEntity.lat = Double.toString(latitude);
-                                    visilabsGeoFenceEntity.lng = Double.toString(longitude);
-                                    visilabsGeoFenceEntity.radius = radius;
-                                    visilabsGeoFenceEntity.type = trgevt;
-                                    visilabsGeoFenceEntity.durationInSeconds = dis;
-                                    visilabsGeoFenceEntity.geoid = geoid;
+                                    visilabsGeoFenceEntity.setGuid(actid + "_" + j + "_" + geoid);
+                                    visilabsGeoFenceEntity.setLatitude(Double.toString(latitude));
+                                    visilabsGeoFenceEntity.setLongitude(Double.toString(longitude));
+                                    visilabsGeoFenceEntity.setRadius(radius);
+                                    visilabsGeoFenceEntity.setType(trgevt);
+                                    visilabsGeoFenceEntity.setDurationInSeconds(dis);
+                                    visilabsGeoFenceEntity.setGeoid(geoid);
 
                                     geoFences.add(visilabsGeoFenceEntity);
                                 }
@@ -213,7 +199,6 @@ public class GpsManagerMoreThanOreo {
 
             @Override
             public void fail(VisilabsResponse response) {
-                String rawResponse = response.getRawResponse();
                 try {
                     JSONArray array = response.getArray();
                 } catch (Exception ex) {
@@ -251,44 +236,43 @@ public class GpsManagerMoreThanOreo {
             return;
         }
 
-        allGeoFenceEntityList.clear();
-        for (VisilabsGeoFenceEntity visilabsGeoFenceEntity : geoFences) {
-            allGeoFenceEntityList.add(visilabsGeoFenceEntity);
+        mAllGeoFenceEntityList.clear();
+        mAllGeoFenceEntityList.addAll(geoFences);
+
+        double lat1 = mLastKnownLocation.getLatitude();
+        double long1 = mLastKnownLocation.getLongitude();
+        for (VisilabsGeoFenceEntity entity : mAllGeoFenceEntityList) {
+            entity.setDistance(GeoFencesUtils.haversine(lat1, long1, Double.parseDouble(entity.getLatitude()),
+                    Double.parseDouble(entity.getLongitude()))); //difference btw two points
         }
-
-        double lat1 = lastKnownLocation.getLatitude();
-        double long1 = lastKnownLocation.getLongitude();
-        for (VisilabsGeoFenceEntity entity : allGeoFenceEntityList) {
-            entity.distance = GeoFencesUtils.haversine(lat1, long1, Double.parseDouble(entity.lat), Double.parseDouble(entity.lng)); //difference btw two points
-        }
-        Collections.sort(allGeoFenceEntityList, new GpsManagerMoreThanOreo.DistanceComparator());
-        toAddGeoFenceEntityList.clear();
-        toRemoveGeoFenceEntityList.clear();
+        Collections.sort(mAllGeoFenceEntityList, new DistanceComparator());
+        mToAddGeoFenceEntityList.clear();
+        mToRemoveGeoFenceEntityList.clear();
 
 
-        if (!activeGeoFenceEntityList.isEmpty()) {
+        if (!mActiveGeoFenceEntityList.isEmpty()) {
             if (mGeofencingClient != null)
-                removeGeofences(activeGeoFenceEntityList);
-            activeGeoFenceEntityList.clear();
+                removeGeofences(mActiveGeoFenceEntityList);
+            mActiveGeoFenceEntityList.clear();
         }
 
-        if (activeGeoFenceEntityList.isEmpty()) {
-            if (allGeoFenceEntityList.size() > 100) {
-                toAddGeoFenceEntityList.addAll(allGeoFenceEntityList.subList(0, 100));
+        if (mActiveGeoFenceEntityList.isEmpty()) {
+            if (mAllGeoFenceEntityList.size() > 100) {
+                mToAddGeoFenceEntityList.addAll(mAllGeoFenceEntityList.subList(0, 100));
             } else {
-                toAddGeoFenceEntityList.addAll(allGeoFenceEntityList);
+                mToAddGeoFenceEntityList.addAll(mAllGeoFenceEntityList);
             }
         }
 
         if (mGeofencingClient == null)
             return;
 
-        if (!toRemoveGeoFenceEntityList.isEmpty()) {
-            removeGeofences(toRemoveGeoFenceEntityList);
-            Iterator<VisilabsGeoFenceEntity> it = activeGeoFenceEntityList.iterator();
+        if (!mToRemoveGeoFenceEntityList.isEmpty()) {
+            removeGeofences(mToRemoveGeoFenceEntityList);
+            Iterator<VisilabsGeoFenceEntity> it = mActiveGeoFenceEntityList.iterator();
             while (it.hasNext()) {
                 VisilabsGeoFenceEntity geofence = it.next();
-                for (VisilabsGeoFenceEntity entityToRemove : toRemoveGeoFenceEntityList) {
+                for (VisilabsGeoFenceEntity entityToRemove : mToRemoveGeoFenceEntityList) {
                     if (GeoFenceEntitiesAreTheSame(geofence, entityToRemove)) {
                         it.remove();
                     }
@@ -296,16 +280,16 @@ public class GpsManagerMoreThanOreo {
             }
         }
 
-        if (!toAddGeoFenceEntityList.isEmpty()) {
-            addGeofences(toAddGeoFenceEntityList);
-            activeGeoFenceEntityList.addAll(toAddGeoFenceEntityList);
+        if (!mToAddGeoFenceEntityList.isEmpty()) {
+            addGeofences(mToAddGeoFenceEntityList);
+            mActiveGeoFenceEntityList.addAll(mToAddGeoFenceEntityList);
         }
     }
 
     private void removeGeofences(final List<VisilabsGeoFenceEntity> geoFencesToRemove) {
         final List<String> IdsToRemove = new ArrayList<>();
         for (VisilabsGeoFenceEntity geofenceEntity : geoFencesToRemove) {
-            IdsToRemove.add(geofenceEntity.guid);
+            IdsToRemove.add(geofenceEntity.getGuid());
         }
 
         if (IdsToRemove.isEmpty())
@@ -334,13 +318,13 @@ public class GpsManagerMoreThanOreo {
 
     @SuppressLint("MissingPermission")
     private void addGeofences(final List<VisilabsGeoFenceEntity> geoFencesToAdd) {
-         List<Geofence> geofences = new ArrayList<>();
+        List<Geofence> geofences = new ArrayList<>();
         for (VisilabsGeoFenceEntity geoFenceEntity : geoFencesToAdd) {
             Geofence newGf = geoFenceEntity.toGeofence();
             geofences.add(newGf);
         }
 
-        boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(this.application, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(mApplication, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
         if (accessFineLocationPermission) {
             mGeofencingClient.addGeofences(getAddGeofencingRequest(geofences), getGeofencePendingIntent())
@@ -363,22 +347,22 @@ public class GpsManagerMoreThanOreo {
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
-        Intent intent = new Intent(this.application, GeofenceBroadcastReceiver.class);
-        mGeofencePendingIntent = PendingIntent.getBroadcast(this.application, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(mApplication, GeofenceBroadcastReceiver.class);
+        mGeofencePendingIntent = PendingIntent.getBroadcast(mApplication, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return mGeofencePendingIntent;
     }
 
-    private class DistanceComparator implements Comparator<VisilabsGeoFenceEntity> {
+    private static class DistanceComparator implements Comparator<VisilabsGeoFenceEntity> {
         @Override
         public int compare(VisilabsGeoFenceEntity object1, VisilabsGeoFenceEntity object2) {
             double position1, position2;
-            position1 = object1.distance;
-            position2 = object2.distance;
+            position1 = object1.getDistance();
+            position2 = object2.getDistance();
             return Double.compare(position1, position2);
         }
     }
 
     public Location getLastKnownLocation() {
-        return lastKnownLocation;
+        return mLastKnownLocation;
     }
 }

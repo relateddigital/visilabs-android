@@ -1,7 +1,5 @@
 package com.visilabs.story.model.skinbased;
 
-
-
 import java.io.Serializable;
 import java.util.List;
 

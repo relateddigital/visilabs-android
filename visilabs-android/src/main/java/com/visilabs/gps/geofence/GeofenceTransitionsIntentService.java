@@ -18,7 +18,6 @@ import com.visilabs.api.VisilabsCallback;
 import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
 import com.visilabs.gps.manager.GpsManagerMoreThanOreo;
 import com.visilabs.gps.util.GeoFencesUtils;
-import com.visilabs.json.JSONArray;
 
 import java.util.List;
 
@@ -26,11 +25,9 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
 
     private static final String TAG = "GeofenceTIService";
 
-    GpsManagerMoreThanOreo gpsManager;
-
-    List<Geofence> triggerList;
-
-    GeofencingEvent geoFenceEvent;
+    GpsManagerMoreThanOreo mGpsManager;
+    List<Geofence> mTriggerList;
+    GeofencingEvent mGeoFenceEvent;
 
     public static void enqueueWork(Context context, Intent intent) {
         enqueueWork(context, GeofenceTransitionsIntentService.class, 573, intent);
@@ -58,17 +55,17 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
 
     private void setGeofenceEvent(Intent intent) {
 
-        geoFenceEvent = GeofencingEvent.fromIntent(intent);
+        mGeoFenceEvent = GeofencingEvent.fromIntent(intent);
 
-        if (geoFenceEvent.hasError()) {
-            int errorCode = geoFenceEvent.getErrorCode();
+        if (mGeoFenceEvent.hasError()) {
+            int errorCode = mGeoFenceEvent.getErrorCode();
             Log.e(TAG, "Location Services error: " + errorCode);
         } else {
-            gpsManager = Injector.INSTANCE.getGpsManagerMoreThanOreo();
-            if (gpsManager == null)
+            mGpsManager = Injector.INSTANCE.getGpsManagerMoreThanOreo();
+            if (mGpsManager == null)
                 return;
 
-            triggerList = geoFenceEvent.getTriggeringGeofences();
+            mTriggerList = mGeoFenceEvent.getTriggeringGeofences();
 
             if (Looper.myLooper() == null)
                 Looper.prepare();
@@ -78,11 +75,13 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
                 @Override
                 public void run() {
                     try {
-                        Geofence closestGeofence = getClosestTriggeredGoefence(gpsManager, triggerList);
+                        Geofence closestGeofence = getClosestTriggeredGoefence(mGpsManager, mTriggerList);
 
                         if (closestGeofence != null) {
                             Log.d(TAG, "Triggered req id : " + closestGeofence.getRequestId());
-                            geoFenceTriggered(closestGeofence.getRequestId(), geoFenceEvent.getGeofenceTransition(), gpsManager.getLastKnownLocation().getLatitude(), gpsManager.getLastKnownLocation().getLongitude());
+                            geoFenceTriggered(closestGeofence.getRequestId(),
+                                    mGpsManager.getLastKnownLocation().getLatitude(),
+                                    mGpsManager.getLastKnownLocation().getLongitude());
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -95,7 +94,7 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
         }
     }
 
-    private void geoFenceTriggered(String geofence_guid, int transition, double lati, double longi) throws Exception {
+    private void geoFenceTriggered(String geofence_guid, double lati, double longi) throws Exception {
 
         Log.i(TAG, geofence_guid);
         VisilabsGeofenceRequest request = new VisilabsGeofenceRequest(Visilabs.CallAPI().getContext());
@@ -112,15 +111,12 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
             VisilabsCallback callback = new VisilabsCallback() {
                 @Override
                 public void success(VisilabsResponse response) {
-                    String rawResponse = response.getRawResponse();
                     Log.i(TAG, "Geofence Triggered");
                 }
 
                 @Override
                 public void fail(VisilabsResponse response) {
-                    String rawResponse = response.getRawResponse();
-                    JSONArray array = response.getArray();
-                    Log.e(TAG, rawResponse);
+                    Log.e(TAG, response.getRawResponse());
                 }
             };
             request.executeAsync(callback);
@@ -137,8 +133,10 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
             Geofence triggeredGeofence = null;
             double minDistance = Double.MAX_VALUE;
             for (Geofence geofence : triggerList) {
-                for (VisilabsGeoFenceEntity geoFenceEntity : gpsManager.activeGeoFenceEntityList) {
-                    double distance = GeoFencesUtils.haversine(gpsManager.getLastKnownLocation().getLatitude(), gpsManager.getLastKnownLocation().getLongitude(), Double.parseDouble(geoFenceEntity.lat), Double.parseDouble(geoFenceEntity.lng));
+                for (VisilabsGeoFenceEntity geoFenceEntity : gpsManager.mActiveGeoFenceEntityList) {
+                    double distance = GeoFencesUtils.haversine(gpsManager.getLastKnownLocation().getLatitude(),
+                            gpsManager.getLastKnownLocation().getLongitude(), Double.parseDouble(geoFenceEntity.getLatitude()),
+                            Double.parseDouble(geoFenceEntity.getLongitude()));
                     if (distance < minDistance) {
                         triggeredGeofence = geofence;
                         minDistance = distance;

@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,53 +13,44 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.relateddigital.visilabs.databinding.ActivityLoginBinding;
 import com.visilabs.Visilabs;
 
 import java.util.HashMap;
-import java.util.Random;
 
 public class LoginActivity extends AppCompatActivity {
 
-    EditText exvisitorIdEt;
-
-    String exVisitor;
+    private ActivityLoginBinding binding;
+    private String exVisitor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
-        Button btnLogin = findViewById(R.id.btn_login);
+        exVisitor = Math.random() + "test@gmail.com";
+        binding.tvExvisitorId.setText(exVisitor);
 
-        Button btnLogout = findViewById(R.id.btn_logout);
-
-         exvisitorIdEt = findViewById(R.id.tv_exvisitor_id);
-
-         exVisitor = Math.random() + "test@gmail.com";
-         exvisitorIdEt.setText(exVisitor);
-
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseInstanceId.getInstance().getInstanceId()
-                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                FirebaseMessaging.getInstance().getToken()
+                        .addOnCompleteListener(new OnCompleteListener<String>() {
                             @Override
-                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                            public void onComplete(@NonNull Task<String> task) {
                                 if (!task.isSuccessful()) {
                                     Log.e("token", "getInstanceId failed", task.getException());
-
                                     return;
                                 }
-
-                                String token = task.getResult().getToken();
-
+                                String token = task.getResult();
                                 HashMap<String, String> parameters = new HashMap<>();
                                 parameters.put("OM.exVisitorID", "ogun.ozturk@euromsg.com");
                                 parameters.put("OM.sys.TokenID", token);
-                                parameters.put("OM.sys.AppID", "visilabs-login"); //
-                                Visilabs.CallAPI().customEvent("android-visilab", parameters, LoginActivity.this);
+                                parameters.put("OM.sys.AppID", "visilabs-android-test");
+                                Visilabs.CallAPI().customEvent("Login", parameters, LoginActivity.this);
 
                                 Toast.makeText(getApplicationContext(), "Login", Toast.LENGTH_LONG).show();
                             }
@@ -69,13 +58,13 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        btnLogout.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().clear().apply();
 
                 HashMap<String, String> parameters = new HashMap<>();
-                parameters.put("OM.sys.AppID", "visilabs-logout");
+                parameters.put("OM.sys.AppID", "visilabs-android-test");
                 Visilabs.CallAPI().customEvent("Logout", parameters);
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);

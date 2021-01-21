@@ -11,7 +11,7 @@ public class Actiondata implements Serializable {
     private String taTemplate;
 
     private String ExtendedProps;
-    
+
     private Report report;
 
     public void setStories(List<Stories> stories) {

@@ -41,11 +41,11 @@
     <Button
         android:id="@+id/btn_story"
         android:layout_width="wrap_content"
-        android:padding="5dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_marginBottom="20dp"
         android:background="@drawable/bg_oval_transparent"
+        android:padding="5dp"
         android:text="Click" />
 
     <com.visilabs.story.action.StoriesProgressView

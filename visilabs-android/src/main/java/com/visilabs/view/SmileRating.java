@@ -19,12 +19,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.StringRes;
-
 import com.visilabs.android.R;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,37 +39,32 @@ public class SmileRating extends BaseRating {
     private int mTextSelectedColor = Color.BLACK;
     private int mTextNonSelectedColor = Color.parseColor("#AEB3B5");
     private int mPlaceholderBackgroundColor = Color.parseColor("#161616");
-
-    private String[] mNames = getResources().getStringArray(R.array.names);
-
-    private Face[] mFaces = new Face[SMILES_LIST.length];
-    private Map<Integer, Point> mTouchPoints = new HashMap<>();
+    private final String[] mNames = getResources().getStringArray(R.array.names);
+    private final Face[] mFaces = new Face[SMILES_LIST.length];
+    private final Map<Integer, Point> mTouchPoints = new HashMap<>();
     private float mSmileGap;
     private boolean mShowLine = true;
     private float mMainSmileyTransformaFraction = 1;
-    private Paint mPathPaint = new Paint();
-    private Paint mBackgroundPaint = new Paint();
-
-    private Paint mPointPaint1 = new Paint();
-    private Paint mPointPaint2 = new Paint();
-    //    private Path mEyePathLeft = new Path();
-//    private Path mEyePathRight = new Path();
-    private Point mFaceCenter = new Point();
-    private Path mSmilePath = new Path();
-    private Paint mPlaceHolderFacePaint = new Paint();
-    private Paint mPlaceholderLinePaint = new Paint();
-    private Paint mPlaceHolderCirclePaint = new Paint();
+    private final Paint mPathPaint = new Paint();
+    private final Paint mBackgroundPaint = new Paint();
+    private final Paint mPointPaint1 = new Paint();
+    private final Paint mPointPaint2 = new Paint();
+    private final Point mFaceCenter = new Point();
+    private final Path mSmilePath = new Path();
+    private final Paint mPlaceHolderFacePaint = new Paint();
+    private final Paint mPlaceholderLinePaint = new Paint();
+    private final Paint mPlaceHolderCirclePaint = new Paint();
     private float divisions;
-    private ValueAnimator mValueAnimator = new ValueAnimator();
-    private FloatEvaluator mFloatEvaluator = new FloatEvaluator();
-    private ArgbEvaluator mColorEvaluator = new ArgbEvaluator();
-    private OvershootInterpolator mInterpolator = new OvershootInterpolator();
+    private final ValueAnimator mValueAnimator = new ValueAnimator();
+    private final FloatEvaluator mFloatEvaluator = new FloatEvaluator();
+    private final ArgbEvaluator mColorEvaluator = new ArgbEvaluator();
+    private final OvershootInterpolator mInterpolator = new OvershootInterpolator();
     private ClickAnalyser mClickAnalyser;
-    private Matrix mScaleMatrix = new Matrix();
-    private RectF mScaleRect = new RectF();
-    private RectF mTouchBounds = new RectF();
-    private Path mDummyDrawPah = new Path();
-    private Paint mTextPaint = new Paint();
+    private final Matrix mScaleMatrix = new Matrix();
+    private final RectF mScaleRect = new RectF();
+    private final RectF mTouchBounds = new RectF();
+    private final Path mDummyDrawPah = new Path();
+    private final Paint mTextPaint = new Paint();
 
     @Smiley
     private int mSelectedSmile = NONE;
@@ -84,7 +76,6 @@ public class SmileRating extends BaseRating {
     @Smiley
     private int mPendingActionSmile = NONE;
     private Smileys mSmileys;
-    // private float mTranslation = 0;
     private float mWidth;
     private float mHeight;
     private float mCenterY;
@@ -175,7 +166,7 @@ public class SmileRating extends BaseRating {
         mValueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
     }
 
-    private ValueAnimator.AnimatorUpdateListener mAnimatorUpdateListener
+    private final ValueAnimator.AnimatorUpdateListener mAnimatorUpdateListener
             = new ValueAnimator.AnimatorUpdateListener() {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
@@ -192,7 +183,7 @@ public class SmileRating extends BaseRating {
         }
     };
 
-    private Animator.AnimatorListener mAnimatorListener = new Animator.AnimatorListener() {
+    private final Animator.AnimatorListener mAnimatorListener = new Animator.AnimatorListener() {
         @Override
         public void onAnimationStart(Animator animation) {
             if (NONE != mSelectedSmile) {
@@ -252,8 +243,6 @@ public class SmileRating extends BaseRating {
         setMeasuredDimension(Math.round(mWidth), (int) Math.round(mHeight + (mHeight * 0.48)));
         createTouchPoints();
         mPlaceholderLinePaint.setStrokeWidth(mHeight * 0.05f);
-        /*getSmiley(mSmileys, 0.5f, divisions, mFromRange, mToRange,
-                mFaceCenter, mSmilePath, mCenterY);*/
         setSelectedSmile(mPendingActionSmile, mTouchPoints.get(mPendingActionSmile), false, false);
         Log.i(TAG, "Selected smile:" + getSmileName(mPendingActionSmile));
     }
@@ -557,11 +546,7 @@ public class SmileRating extends BaseRating {
         }
         if (mSelectedSmile == NONE) {
             mSmileyNotSelectedPreviously = true;
-        } else if (smile == NONE) {
-            mSmileyNotSelectedPreviously = true;
-        } else {
-            mSmileyNotSelectedPreviously = false;
-        }
+        } else mSmileyNotSelectedPreviously = smile == NONE;
         mSelectedSmile = smile;
         if (mFaceCenter == null) {
             return;

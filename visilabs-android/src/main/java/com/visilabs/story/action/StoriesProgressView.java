@@ -19,21 +19,18 @@ public class StoriesProgressView extends LinearLayout {
 
     private static final String TAG = StoriesProgressView.class.getSimpleName();
 
-    private final LayoutParams PROGRESS_BAR_LAYOUT_PARAM = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1);
-    private final LayoutParams SPACE_LAYOUT_PARAM = new LayoutParams(5, LayoutParams.WRAP_CONTENT);
-
-    private final List<PausableProgressBar> progressBars = new ArrayList<>();
-
-    private int storiesCount = -1;
+    private final LayoutParams mProgressBarLayoutParam = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1);
+    private final LayoutParams mSpaceLayoutParam = new LayoutParams(5, LayoutParams.WRAP_CONTENT);
+    private final List<PausableProgressBar> mProgressBars = new ArrayList<>();
+    private int mStoriesCount = -1;
     /**
      * pointer of running animation
      */
-    private int current = -1;
-    private StoriesListener storiesListener;
-    boolean isComplete;
-
-    private boolean isSkipStart;
-    private boolean isReverseStart;
+    private int mCurrent = -1;
+    private StoriesListener mStoriesListener;
+    boolean mIsComplete;
+    private boolean mIsSkipStart;
+    private boolean mIsReverseStart;
 
     public interface StoriesListener {
         void onNext();
@@ -66,20 +63,20 @@ public class StoriesProgressView extends LinearLayout {
     private void init(Context context, @Nullable AttributeSet attrs) {
         setOrientation(LinearLayout.HORIZONTAL);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.StoriesProgressView);
-        storiesCount = typedArray.getInt(R.styleable.StoriesProgressView_progressCount, 0);
+        mStoriesCount = typedArray.getInt(R.styleable.StoriesProgressView_progressCount, 0);
         typedArray.recycle();
         bindViews();
     }
 
     private void bindViews() {
-        progressBars.clear();
+        mProgressBars.clear();
         removeAllViews();
 
-        for (int i = 0; i < storiesCount; i++) {
+        for (int i = 0; i < mStoriesCount; i++) {
             final PausableProgressBar p = createProgressBar();
-            progressBars.add(p);
+            mProgressBars.add(p);
             addView(p);
-            if ((i + 1) < storiesCount) {
+            if ((i + 1) < mStoriesCount) {
                 addView(createSpace());
             }
         }
@@ -87,13 +84,13 @@ public class StoriesProgressView extends LinearLayout {
 
     private PausableProgressBar createProgressBar() {
         PausableProgressBar p = new PausableProgressBar(getContext());
-        p.setLayoutParams(PROGRESS_BAR_LAYOUT_PARAM);
+        p.setLayoutParams(mProgressBarLayoutParam);
         return p;
     }
 
     private View createSpace() {
         View v = new View(getContext());
-        v.setLayoutParams(SPACE_LAYOUT_PARAM);
+        v.setLayoutParams(mSpaceLayoutParam);
         return v;
     }
 
@@ -103,7 +100,7 @@ public class StoriesProgressView extends LinearLayout {
      * @param storiesCount story count
      */
     public void setStoriesCount(int storiesCount) {
-        this.storiesCount = storiesCount;
+        mStoriesCount = storiesCount;
         bindViews();
     }
 
@@ -113,18 +110,18 @@ public class StoriesProgressView extends LinearLayout {
      * @param storiesListener StoriesListener
      */
     public void setStoriesListener(StoriesListener storiesListener) {
-        this.storiesListener = storiesListener;
+        mStoriesListener = storiesListener;
     }
 
     /**
      * Skip current story
      */
     public void skip() {
-        if (isSkipStart || isReverseStart) return;
-        if (isComplete) return;
-        if (current < 0) return;
-        PausableProgressBar p = progressBars.get(current);
-        isSkipStart = true;
+        if (mIsSkipStart || mIsReverseStart) return;
+        if (mIsComplete) return;
+        if (mCurrent < 0) return;
+        PausableProgressBar p = mProgressBars.get(mCurrent);
+        mIsSkipStart = true;
         p.setMax();
     }
 
@@ -132,11 +129,11 @@ public class StoriesProgressView extends LinearLayout {
      * Reverse current story
      */
     public void reverse() {
-        if (isSkipStart || isReverseStart) return;
-        if (isComplete) return;
-        if (current < 0) return;
-        PausableProgressBar p = progressBars.get(current);
-        isReverseStart = true;
+        if (mIsSkipStart || mIsReverseStart) return;
+        if (mIsComplete) return;
+        if (mCurrent < 0) return;
+        PausableProgressBar p = mProgressBars.get(mCurrent);
+        mIsReverseStart = true;
         p.setMin();
     }
 
@@ -146,9 +143,9 @@ public class StoriesProgressView extends LinearLayout {
      * @param duration millisecond
      */
     public void setStoryDuration(long duration) {
-        for (int i = 0; i < progressBars.size(); i++) {
-            progressBars.get(i).setDuration(duration);
-            progressBars.get(i).setCallback(callback(i));
+        for (int i = 0; i < mProgressBars.size(); i++) {
+            mProgressBars.get(i).setDuration(duration);
+            mProgressBars.get(i).setCallback(callback(i));
         }
     }
 
@@ -158,11 +155,11 @@ public class StoriesProgressView extends LinearLayout {
      * @param durations milli
      */
     public void setStoriesCountWithDurations(@NonNull long[] durations) {
-        storiesCount = durations.length;
+        mStoriesCount = durations.length;
         bindViews();
-        for (int i = 0; i < progressBars.size(); i++) {
-            progressBars.get(i).setDuration(durations[i]);
-            progressBars.get(i).setCallback(callback(i));
+        for (int i = 0; i < mProgressBars.size(); i++) {
+            mProgressBars.get(i).setDuration(durations[i]);
+            mProgressBars.get(i).setCallback(callback(i));
         }
     }
 
@@ -170,32 +167,32 @@ public class StoriesProgressView extends LinearLayout {
         return new PausableProgressBar.Callback() {
             @Override
             public void onStartProgress() {
-                current = index;
+                mCurrent = index;
             }
 
             @Override
             public void onFinishProgress() {
-                if (isReverseStart) {
-                    if (storiesListener != null) storiesListener.onPrev();
-                    if (0 <= (current - 1)) {
-                        PausableProgressBar p = progressBars.get(current - 1);
+                if (mIsReverseStart) {
+                    if (mStoriesListener != null) mStoriesListener.onPrev();
+                    if (0 <= (mCurrent - 1)) {
+                        PausableProgressBar p = mProgressBars.get(mCurrent - 1);
                         p.setMinWithoutCallback();
-                        progressBars.get(--current).startProgress();
+                        mProgressBars.get(--mCurrent).startProgress();
                     } else {
-                        progressBars.get(current).startProgress();
+                        mProgressBars.get(mCurrent).startProgress();
                     }
-                    isReverseStart = false;
+                    mIsReverseStart = false;
                     return;
                 }
-                int next = current + 1;
-                if (next <= (progressBars.size() - 1)) {
-                    if (storiesListener != null) storiesListener.onNext();
-                    progressBars.get(next).startProgress();
+                int next = mCurrent + 1;
+                if (next <= (mProgressBars.size() - 1)) {
+                    if (mStoriesListener != null) mStoriesListener.onNext();
+                    mProgressBars.get(next).startProgress();
                 } else {
-                    isComplete = true;
-                    if (storiesListener != null) storiesListener.onComplete();
+                    mIsComplete = true;
+                    if (mStoriesListener != null) mStoriesListener.onComplete();
                 }
-                isSkipStart = false;
+                mIsSkipStart = false;
             }
         };
     }
@@ -204,7 +201,7 @@ public class StoriesProgressView extends LinearLayout {
      * Start progress animation
      */
     public void startStories() {
-        progressBars.get(0).startProgress();
+        mProgressBars.get(0).startProgress();
     }
 
     /**
@@ -212,16 +209,16 @@ public class StoriesProgressView extends LinearLayout {
      */
     public void startStories(int from) {
         for (int i = 0; i < from; i++) {
-            progressBars.get(i).setMaxWithoutCallback();
+            mProgressBars.get(i).setMaxWithoutCallback();
         }
-        progressBars.get(from).startProgress();
+        mProgressBars.get(from).startProgress();
     }
 
     /**
      * Need to call when Activity or Fragment destroy
      */
     public void destroy() {
-        for (PausableProgressBar p : progressBars) {
+        for (PausableProgressBar p : mProgressBars) {
             p.clear();
         }
     }
@@ -230,15 +227,15 @@ public class StoriesProgressView extends LinearLayout {
      * Pause story
      */
     public void pause() {
-        if (current < 0) return;
-        progressBars.get(current).pauseProgress();
+        if (mCurrent < 0) return;
+        mProgressBars.get(mCurrent).pauseProgress();
     }
 
     /**
      * Resume story
      */
     public void resume() {
-        if (current < 0) return;
-        progressBars.get(current).resumeProgress();
+        if (mCurrent < 0) return;
+        mProgressBars.get(mCurrent).resumeProgress();
     }
 }

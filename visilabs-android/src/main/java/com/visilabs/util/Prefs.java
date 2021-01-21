@@ -17,7 +17,7 @@ public class Prefs {
         SharedPreferences prefs = context.getSharedPreferences(name, Activity.MODE_PRIVATE);
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key,value);
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -46,6 +46,6 @@ public class Prefs {
         SharedPreferences prefs = context.getSharedPreferences(name, Activity.MODE_PRIVATE);
         final SharedPreferences.Editor editor = prefs.edit();
         editor.remove(key);
-        editor.commit();
+        editor.apply();
     }
 }

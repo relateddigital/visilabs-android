@@ -9,11 +9,11 @@ import android.os.IBinder;
  */
 public class VisilabsIntentService extends IntentService {
     public static final String TAG = "TxtSaver";
-    public String name = "";
+    public String mName = "";
 
     public VisilabsIntentService(String name) {
         super(name);
-        this.name = name;
+        mName = name;
     }
 
     @Override

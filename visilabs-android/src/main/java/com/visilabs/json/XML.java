@@ -42,31 +42,31 @@ import java.util.Iterator;
 public class XML {
 
     /** The Character '&amp;'. */
-    public static final Character AMP = new Character('&');
+    public static final Character AMP = '&';
 
     /** The Character '''. */
-    public static final Character APOS = new Character('\'');
+    public static final Character APOS = '\'';
 
     /** The Character '!'. */
-    public static final Character BANG = new Character('!');
+    public static final Character BANG = '!';
 
     /** The Character '='. */
-    public static final Character EQ = new Character('=');
+    public static final Character EQ = '=';
 
     /** The Character '&gt;'. */
-    public static final Character GT = new Character('>');
+    public static final Character GT = '>';
 
     /** The Character '&lt;'. */
-    public static final Character LT = new Character('<');
+    public static final Character LT = '<';
 
     /** The Character '?'. */
-    public static final Character QUEST = new Character('?');
+    public static final Character QUEST = '?';
 
     /** The Character '"'. */
-    public static final Character QUOT = new Character('"');
+    public static final Character QUOT = '"';
 
     /** The Character '/'. */
-    public static final Character SLASH = new Character('/');
+    public static final Character SLASH = '/';
 
     /**
      * Replace special characters with XML escapes:
@@ -81,7 +81,7 @@ public class XML {
      * @return The escaped string.
      */
     public static String escape(String string) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0, len = string.length(); i < len; i++) {
             char c = string.charAt(i);
             switch (c) {
@@ -118,7 +118,7 @@ public class XML {
         char c;
         int i;
         String n;
-        JSONObject o = null;
+        JSONObject o;
         String s;
         Object t;
 
@@ -311,7 +311,7 @@ public class XML {
      */
     public static String toString(Object o, String tagName)
             throws JSONException {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         int i;
         JSONArray ja;
         JSONObject jo;

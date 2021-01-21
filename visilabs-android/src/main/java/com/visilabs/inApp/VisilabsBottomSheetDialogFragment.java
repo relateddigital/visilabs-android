@@ -2,6 +2,7 @@ package com.visilabs.inApp;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -20,17 +20,16 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
-import com.visilabs.android.R;
+import com.visilabs.android.databinding.FragmentInAppBottomSheetBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 
 public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
     private static final String LOG_TAG = "VisilabsBottomSheet";
-    private Activity mParent;
+    private Context mParent;
     private int mInAppStateId;
-    private InAppNotificationState inAppNotificationState;
-
-    TextView tvTitle, tvBody, tvButton, tvClose;
+    private InAppNotificationState mInAppNotificationState;
+    private FragmentInAppBottomSheetBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,19 +40,16 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_in_app_bottom_sheet, container, false);
-        if (inAppNotificationState == null) {
+        binding = FragmentInAppBottomSheetBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+        if (mInAppNotificationState == null) {
             return view;
         }
-        InAppMessage inApp = inAppNotificationState.getInAppMessage();
-        tvTitle = view.findViewById(R.id.tv_title);
-        tvBody = view.findViewById(R.id.tv_body);
-        tvButton = view.findViewById(R.id.tv_button);
-        tvClose = view.findViewById(R.id.tv_close);
-        tvTitle.setText(inApp.getTitle().replace("\\n","\n"));
-        tvBody.setText(inApp.getBody().replace("\\n","\n"));
-        tvButton.setText(inApp.getButtonText().toUpperCase());
-        tvClose.setText(inApp.getCloseButtonText().toUpperCase());
+        InAppMessage inApp = mInAppNotificationState.getInAppMessage();
+        binding.tvTitle.setText(inApp.getTitle().replace("\\n","\n"));
+        binding.tvBody.setText(inApp.getBody().replace("\\n","\n"));
+        binding.tvButton.setText(inApp.getButtonText().toUpperCase());
+        binding.tvClose.setText(inApp.getCloseButtonText().toUpperCase());
         setListeners();
         return view;
     }
@@ -75,12 +71,11 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mParent = activity;
-        if (inAppNotificationState == null) {
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mParent = context;
+        if (mInAppNotificationState == null) {
             cleanUp();
-            return;
         }
     }
 
@@ -95,15 +90,15 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
     }
 
     public void setInAppState(int stateId, InAppNotificationState inAppState) {
-        this.mInAppStateId = stateId;
-        this.inAppNotificationState = inAppState;
+        mInAppStateId = stateId;
+        mInAppNotificationState = inAppState;
     }
 
     private void setListeners() {
-        tvButton.setOnClickListener(new View.OnClickListener() {
+        binding.tvButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final InAppMessage inAppMessage = inAppNotificationState.getInAppMessage();
+                final InAppMessage inAppMessage = mInAppNotificationState.getInAppMessage();
                 final String uriString = inAppMessage.getButtonURL();
                 Uri uri = null;
                 if (uriString != null && uriString.length() > 0) {
@@ -121,7 +116,7 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
                 cleanUp();
             }
         });
-        tvClose.setOnClickListener(new View.OnClickListener() {
+        binding.tvClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cleanUp();

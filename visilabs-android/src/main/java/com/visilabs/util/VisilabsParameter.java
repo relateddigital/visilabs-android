@@ -12,7 +12,7 @@ public class VisilabsParameter {
         mKey = key;
         mStoreKey = storeKey;
         mCount = count;
-        mRelatedKeys =relatedKeys;
+        mRelatedKeys = relatedKeys;
     }
 
     public String getKey() {

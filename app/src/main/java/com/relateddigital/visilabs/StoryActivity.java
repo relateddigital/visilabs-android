@@ -3,30 +3,25 @@ package com.relateddigital.visilabs;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.visilabs.story.VisilabsRecyclerView;
+import com.relateddigital.visilabs.databinding.ActivityStoryDemoBinding;
 import com.visilabs.story.model.StoryItemClickListener;
 
 public class StoryActivity extends AppCompatActivity {
 
-    EditText etStoryId;
-    Button btnShowStory;
-    VisilabsRecyclerView visilabsRecyclerView;
-    StoryItemClickListener storyItemClickListener;
+    private ActivityStoryDemoBinding binding;
+    private StoryItemClickListener storyItemClickListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_story_demo);
-        etStoryId = findViewById(R.id.et_story_id);
-        btnShowStory = findViewById(R.id.btn_show_story);
-        visilabsRecyclerView = findViewById(R.id.vrv_story);
+        binding = ActivityStoryDemoBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         storyItemClickListener = new StoryItemClickListener() {
             @Override
@@ -36,7 +31,7 @@ public class StoryActivity extends AppCompatActivity {
             }
         };
 
-        btnShowStory.setOnClickListener(new View.OnClickListener() {
+        binding.btnShowStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showStory();
@@ -45,11 +40,11 @@ public class StoryActivity extends AppCompatActivity {
     }
 
     private void showStory() {
-        String storyId = etStoryId.getText().toString().trim();
+        String storyId = binding.etStoryId.getText().toString().trim();
         if(storyId.isEmpty()) {
-            visilabsRecyclerView.setStoryAction(getApplicationContext(), storyItemClickListener);
+            binding.vrvStory.setStoryAction(getApplicationContext(), storyItemClickListener);
         } else {
-            visilabsRecyclerView.setStoryActionId(getApplicationContext(), storyId, storyItemClickListener);
+            binding.vrvStory.setStoryActionId(getApplicationContext(), storyId, storyItemClickListener);
         }
     }
 

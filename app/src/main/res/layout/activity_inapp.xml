@@ -2,9 +2,9 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:gravity="center"
-    android:background="@color/colorLight"
     android:layout_height="match_parent"
+    android:background="@color/colorLight"
+    android:gravity="center"
     android:orientation="vertical">
 
     <Button
@@ -12,8 +12,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:padding="10dp"
         android:background="@color/colorButton"
+        android:padding="10dp"
         android:text="@string/show_alert"
         android:textColor="@color/colorLight" />
 
@@ -23,8 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:padding="10dp"
         android:background="@color/colorButton"
+        android:padding="10dp"
         android:text="@string/show_action_sheet"
         android:textColor="@color/colorLight" />
 
@@ -33,8 +33,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:padding="10dp"
         android:background="@color/colorButton"
+        android:padding="10dp"
         android:text="@string/show_spin_to_win"
         android:textColor="@color/colorLight" />
 

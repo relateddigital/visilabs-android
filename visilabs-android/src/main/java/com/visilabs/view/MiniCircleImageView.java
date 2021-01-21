@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.widget.ImageView;
 
 public class MiniCircleImageView extends androidx.appcompat.widget.AppCompatImageView {
     public MiniCircleImageView(Context context) {
@@ -25,7 +24,6 @@ public class MiniCircleImageView extends androidx.appcompat.widget.AppCompatImag
         init();
     }
 
-    @SuppressWarnings("deprecation")
     private void init() {
         mWhitePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         if (Build.VERSION.SDK_INT >= 23) {
@@ -43,8 +41,8 @@ public class MiniCircleImageView extends androidx.appcompat.widget.AppCompatImag
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        final float centerX = mCanvasWidth / 2;
-        final float centerY = mCanvasHeight / 2;
+        final float centerX = (float)mCanvasWidth / (float)2;
+        final float centerY = (float)mCanvasHeight / (float)2;
         final float radius = 0.7f * Math.min(centerX, centerY);
         canvas.drawCircle(centerX, centerY, radius, mWhitePaint);
     }
