@@ -2,30 +2,26 @@ package com.visilabs.gps.geofence;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
-
-
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.visilabs.Visilabs;
 import com.visilabs.Injector;
 import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
@@ -38,13 +34,13 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class GeofenceMonitor extends VisilabsIntentService {
 
     private static final String TAG = "Visi GeoMonitor";
     private GpsManager mGpsManager;
     private final IBinder mBinder = new GeofenceMonitorBinder();
     private Context mContext;
-    private GoogleApiClient mGoogleApiClient;
+    private GeofencingClient mGeofencingClient;
     private final List<VisilabsGeoFenceEntity> mPulGeoFenceEntitiesList = new ArrayList<>();
     private final LocationRequest mLocationRequest = new LocationRequest();
     private int mGpsPowerLevel;
@@ -126,24 +122,10 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
                 mGpsManager = Injector.INSTANCE.getGpsManager();
             }
 
-            mGoogleApiClient = new GoogleApiClient.Builder(mContext)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
-            mGoogleApiClient.connect();
+            mGeofencingClient = LocationServices.getGeofencingClient(mContext);
         }catch (Exception e){
             VisilabsLog.e(TAG, e.getMessage(), e);
         }
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        setMediumPowerGPS();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
     }
 
     private void cleanupService() {
@@ -158,13 +140,8 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
         }
     }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
-
     public void removeGeofences(final List<VisilabsGeoFenceEntity> geoFencesToRemove) {
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+        if (mGeofencingClient != null) {
             final List<String> IdsToRemove = new ArrayList<>();
             for (VisilabsGeoFenceEntity geofenceEntity : geoFencesToRemove) {
                 IdsToRemove.add(geofenceEntity.getGuid());
@@ -176,7 +153,7 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
             new Thread(new Runnable() {
                 public void run() {
                     try{
-                        LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, IdsToRemove).await();
+                        mGeofencingClient.removeGeofences(IdsToRemove);
                     }catch (Exception ex){
                         Log.e(TAG, ex.getMessage(), ex);
                     }
@@ -192,7 +169,7 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
     }
 
     public void addGeofences(final List<VisilabsGeoFenceEntity> geoFencesToAdd) {
-        if (mGoogleApiClient.isConnected()) {
+        if (mGeofencingClient!=null) {
             final List<Geofence> geofences = new ArrayList<>();
             for (VisilabsGeoFenceEntity geoFenceEntity : geoFencesToAdd) {
                 Geofence newGf = geoFenceEntity.toGeofence();
@@ -202,17 +179,20 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
             if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 final PendingIntent geoFenceIntent = GeoFencesUtils.getTransitionPendingIntent(mContext);
-                @SuppressLint("MissingPermission") PendingResult<Status> result = LocationServices.GeofencingApi.addGeofences(mGoogleApiClient, getAddGeofencingRequest(geofences), geoFenceIntent);
-                result.setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        if (status.isSuccess()) {
-                            Log.d("Registering geofence", String.valueOf(true));
-                        } else {
-                            Log.e(TAG, "Registering geofence failed: " + status.getStatusMessage() + " : " + status.getStatusCode());
-                        }
-                    }
-                });
+
+                mGeofencingClient.addGeofences(getAddGeofencingRequest(geofences), geoFenceIntent)
+                        .addOnSuccessListener((Activity) mContext, new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("Registering geofence : ", "Successful");
+                            }
+                        })
+                        .addOnFailureListener((Activity) mContext, new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("Registering geofence : ", "Failed -> " + e.getMessage());
+                            }
+                        });
             }
 
 
@@ -226,26 +206,26 @@ public class GeofenceMonitor extends VisilabsIntentService implements GoogleApiC
         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED)
             return;
-        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected())
+        if (mGeofencingClient == null)
             return;
         if (mGpsPowerLevel == 2)
             return;
         mGpsPowerLevel = 2;
-        if (Looper.myLooper() == null)
-            Looper.prepare();
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                Log.v(TAG, "onLocationChanged");
+                mGpsManager.setLastKnownLocation(locationResult.getLastLocation());
+            }
+        };
+        LocationServices.getFusedLocationProviderClient(mContext).removeLocationUpdates(locationCallback);
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this);
-        if (Looper.myLooper() == null)
-            Looper.loop();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.v(TAG, "onLocationChanged");
-        mGpsManager.setLastKnownLocation(location);
+        LocationServices.getFusedLocationProviderClient(mContext).requestLocationUpdates(mLocationRequest,
+                locationCallback, Looper.getMainLooper());
     }
 }

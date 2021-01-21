@@ -65,11 +65,13 @@ public class MainApplication extends Application {
 
         //Check if the location permission is granted
         //If not, warn the user that it is needed to start gps.
-        if(bundle.getBoolean("VisilabsGeofenceEnabled", false)
-                && !StringUtils.isNullOrWhiteSpace(bundle.getString("VisilabsGeofenceURL", ""))){
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Location permission is needed to start geofence!", Toast.LENGTH_LONG).show();
+        if(bundle!=null) {
+            if (bundle.getBoolean("VisilabsGeofenceEnabled", false)
+                    && !StringUtils.isNullOrWhiteSpace(bundle.getString("VisilabsGeofenceURL", ""))) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Location permission is needed to start geofence!", Toast.LENGTH_LONG).show();
+                }
             }
         }
 

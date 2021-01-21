@@ -2,6 +2,7 @@ package com.visilabs.inApp;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,7 +26,7 @@ import com.visilabs.api.VisilabsUpdateDisplayState;
 public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
     private static final String LOG_TAG = "VisilabsBottomSheet";
-    private Activity mParent;
+    private Context mParent;
     private int mInAppStateId;
     private InAppNotificationState mInAppNotificationState;
     private FragmentInAppBottomSheetBinding binding;
@@ -70,9 +71,9 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mParent = activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mParent = context;
         if (mInAppNotificationState == null) {
             cleanUp();
         }
