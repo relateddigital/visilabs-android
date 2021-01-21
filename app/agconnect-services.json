@@ -1,12 +1,14 @@
 {
 	"client":{
+		"appType":"1",
 		"cp_id":"890090000023106263",
-		"product_id":"736430079244494692",
-		"client_id":"378063343241397376",
-		"client_secret":"BA19117EDCD24917D86863C58A65419EAF865A2C8DDBCE55D4FA01E1484A0DC0",
-		"app_id":"102350987",
-		"package_name":"com.relateddigital.euromessage",
-		"api_key":"CV8Be5sSfx0djjA+TtilUyA6e4ZT6F5EUwnq/qjYZwuVmGUGOBKXQUSVEpSACZNRsX4o1fzd5Ch4MkxE39K0S/VBOWBi"
+		"product_id":"736430079244790290",
+		"client_id":"544771828057387392",
+		"client_secret":"2050A374254832253A4CA7EEF08BBD5752346CA57BD4CFF184757C1977A22B92",
+		"project_id":"736430079244790290",
+		"app_id":"103725897",
+		"api_key":"CgB6e3x9hLTJKixqYtlCsxnx1X4cxYwwX+ZGv7837Abcj86W9viZ5+FXZU8GcmDa1SoBtHX0dzwS05ZlqGleXYII",
+		"package_name":"com.relateddigital.visilabs"
 	},
 	"configuration_version":"1.0"
 }

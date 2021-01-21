@@ -80,9 +80,9 @@ public class MainApplication extends Application {
         euroMobileManager.registerToFCM(getBaseContext());
         setExistingFirebaseTokenToEuroMessage();
 
-        /*if (!EuroMobileManager.checkPlayService(getApplicationContext())) {
+        if (!EuroMobileManager.checkPlayService(getApplicationContext())) {
             setHuaweiTokenToEuromessage();
-        }*/
+        }
     }
 
     private void setExistingFirebaseTokenToEuroMessage() {
@@ -104,7 +104,7 @@ public class MainApplication extends Application {
                 });
     }
 
-    /*private void setHuaweiTokenToEuromessage() {
+    private void setHuaweiTokenToEuromessage() {
         new Thread() {
             @Override
             public void run() {
@@ -123,5 +123,5 @@ public class MainApplication extends Application {
                 }
             }
         }.start();
-    }*/
+    }
 }

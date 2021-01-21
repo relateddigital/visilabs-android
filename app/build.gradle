@@ -36,6 +36,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.firebase:firebase-analytics:18.0.1'
     implementation 'com.google.firebase:firebase-messaging:21.0.1'
+    implementation 'com.huawei.agconnect:agconnect-core:1.4.2.301'
 
     implementation 'com.google.android.material:material:1.2.1'
 
@@ -53,5 +54,5 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
-//apply plugin: 'com.huawei.agconnect'
+apply plugin: 'com.huawei.agconnect'
 apply plugin: 'com.android.application'
