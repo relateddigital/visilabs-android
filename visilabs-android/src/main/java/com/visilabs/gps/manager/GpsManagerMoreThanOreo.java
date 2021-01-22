@@ -92,7 +92,7 @@ public class GpsManagerMoreThanOreo {
                 @Override
                 public void onSuccess(Location location) {
                     if (location != null) {
-                        setmLastKnownLocation(location);
+                        setLastKnownLocation(location);
                     }
                 }
             });
@@ -115,7 +115,7 @@ public class GpsManagerMoreThanOreo {
         return geoFenceEntity1.getType().equals(geoFenceEntity2.getType());
     }
 
-    public void setmLastKnownLocation(Location location) {
+    public void setLastKnownLocation(Location location) {
 
         Calendar fifteenMinutesBefore = Calendar.getInstance(); // current date/time
         fifteenMinutesBefore.add(Calendar.MINUTE, -15);

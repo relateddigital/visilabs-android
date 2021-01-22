@@ -37,7 +37,7 @@ public class GpsManager {
     private final IVisilabsGeofenceListener mGeofenceListener = null;
     private Intent mGpsServiceIntent;
     private GeofenceMonitor mVisilabsGpsService;
-    private GeofenceMonitorConnection mmVisilabsGpsServiceConnection;
+    private GeofenceMonitorConnection mVisilabsGpsServiceConnection;
     private boolean mFirstServerCheck = false;
     private Calendar mLastServerCheck = Calendar.getInstance();
 
@@ -65,8 +65,8 @@ public class GpsManager {
     }
 
     private void bindGpsService() {
-        mmVisilabsGpsServiceConnection = new GeofenceMonitorConnection();
-        mApplication.bindService(mGpsServiceIntent, mmVisilabsGpsServiceConnection, Context.BIND_AUTO_CREATE);
+        mVisilabsGpsServiceConnection = new GeofenceMonitorConnection();
+        mApplication.bindService(mGpsServiceIntent, mVisilabsGpsServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void setGeoMonitorReference(GeofenceMonitor geoMonitor) {

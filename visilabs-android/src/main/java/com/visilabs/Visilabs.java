@@ -574,9 +574,10 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
 
     public void createSubsJsonRequest(String actId, String auth, String email) {
         long timeOfEvent = System.currentTimeMillis() / 1000;
-        String query = String.format("OM.oid=%s&OM.siteID=%s&&OM.cookieID=%s&type=%s&actionid=%s&auth=%s&OM.subsemail=%s"
+        String query = String.format("OM.oid=%s&OM.siteID=%s&dat=%d&OM.cookieID=%s&type=%s&actionid=%s&auth=%s&OM.subsemail=%s"
                 , VisilabsEncoder.encode(mOrganizationID)
                 , VisilabsEncoder.encode(mSiteID)
+                , timeOfEvent
                 , VisilabsEncoder.encode(mCookieID)
                 , "subscription_email"
                 , actId

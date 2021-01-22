@@ -29,9 +29,9 @@ public class VisilabsUpdateDisplayState implements Parcelable {
 
     private static final long MAX_LOCK_TIME_MILLIS = 12 * 60 * 60 * 1000; // Twelve hour timeout on notification activities
 
-    private static final String DISTINCT_ID_BUNDLE_KEY = "VisilabmUpdateDisplayState.DISTINCT_ID_BUNDLE_KEY";
-    private static final String TOKEN_BUNDLE_KEY = "VisilabmUpdateDisplayState.TOKEN_BUNDLE_KEY";
-    private static final String DISPLAYSTATE_BUNDLE_KEY = "VisilabmUpdateDisplayState.DISPLAYSTATE_BUNDLE_KEY";
+    private static final String DISTINCT_ID_BUNDLE_KEY = "VisilabsUpdateDisplayState.DISTINCT_ID_BUNDLE_KEY";
+    private static final String TOKEN_BUNDLE_KEY = "VisilabsUpdateDisplayState.TOKEN_BUNDLE_KEY";
+    private static final String DISPLAYSTATE_BUNDLE_KEY = "VisilabsUpdateDisplayState.DISPLAYSTATE_BUNDLE_KEY";
 
     private VisilabsUpdateDisplayState(DisplayState displayState, String distinctId, String token) {
         mDistinctId = distinctId;
