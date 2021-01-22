@@ -94,27 +94,84 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, String> parameters = new HashMap<>();
-                parameters.put("OM.inapptype", "image_text_button");
-                Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
+                sendInAppRequest("full");
             }
         });
 
         binding.inApp2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, String> parameters = new HashMap<>();
-                parameters.put("OM.inapptype", "mini");
-                Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
+                sendInAppRequest("mini");
             }
         });
 
         binding.inApp3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, String> parameters = new HashMap<>();
-                parameters.put("OM.inapptype", "alert");
-                Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
+                sendInAppRequest("full_image");
+            }
+        });
+
+        binding.inApp4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("image_button");
+            }
+        });
+
+        binding.inApp5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("image_text_button");
+            }
+        });
+
+        binding.inApp6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("smile_rating");
+            }
+        });
+
+        binding.inApp7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("nps_with_numbers");
+            }
+        });
+
+        binding.inApp8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("nps");
+            }
+        });
+
+        binding.inApp9.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("alert_native");
+            }
+        });
+
+        binding.inApp10.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("alert_actionsheet");
+            }
+        });
+
+        binding.inApp11.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("mailsubsform");
+            }
+        });
+
+        binding.inApp12.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("mailsubsform");
             }
         });
 
@@ -124,6 +181,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void sendInAppRequest(String type) {
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("OM.inapptype", type);
+        Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
     }
 
     public VisilabsCallback getVisilabsCallback() {
