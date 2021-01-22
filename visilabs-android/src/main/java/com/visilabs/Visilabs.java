@@ -10,7 +10,11 @@ import android.os.Build;
 import android.util.Log;
 import androidx.core.content.ContextCompat;
 import com.google.gson.Gson;
+import com.visilabs.api.LoggerApiClient;
+import com.visilabs.api.RealTimeApiClient;
+import com.visilabs.api.SApiClient;
 import com.visilabs.api.VisilabsAction;
+import com.visilabs.api.VisilabsApiMethods;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.api.VisilabsTargetFilter;
 import com.visilabs.api.VisilabsTargetRequest;
@@ -46,7 +50,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-public class Visilabs implements VisilabsURLConnectionCallbackInterface {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class Visilabs {
     private static final String LOG_TAG = "VisilabsAPI";
     private static int mLogLevel = VisilabsConstant.LOG_LEVEL_VERBOSE;
     private static boolean mIsCreated = false;
@@ -89,12 +97,20 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
     private GpsManager gpsManager = null;
     private GpsManagerMoreThanOreo gpsManagerMoreThanOreo = null;
 
+    private VisilabsApiMethods mVisilabsLoggerApiInterface;
+    private VisilabsApiMethods mVisilabsRealTimeApiInterface;
+    private VisilabsApiMethods mVisilabsSApiInterface;
+
 
     private Visilabs(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
             , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource, String targetURL, String actionURL, String geofenceURL, boolean geofenceEnabled) {
         if (context == null) {
             return;
         }
+
+        mVisilabsLoggerApiInterface = LoggerApiClient.getClient(requestTimeoutSeconds).create(VisilabsApiMethods.class);
+        mVisilabsRealTimeApiInterface = RealTimeApiClient.getClient(requestTimeoutSeconds).create(VisilabsApiMethods.class);
+        mVisilabsSApiInterface = SApiClient.getClient(requestTimeoutSeconds).create(VisilabsApiMethods.class);
 
         mGeofenceURL = geofenceURL;
         mGeofenceEnabled = geofenceEnabled;
@@ -378,10 +394,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
         send();
-
-        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
-            send();
-        }
     }
 
     public void trackStoryClick(String report) {
@@ -426,10 +438,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
         send();
-
-        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
-            send();
-        }
     }
 
 
@@ -475,10 +483,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
         send();
-
-        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
-            send();
-        }
     }
 
 
@@ -566,10 +570,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
         send();
-
-        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
-            send();
-        }
     }
 
     public void createSubsJsonRequest(String actId, String auth, String email) {
@@ -883,9 +883,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
         send();
-        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
-            send();
-        }
     }
 
     public void signUp(String exVisitorID) {
@@ -949,9 +946,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
             }
         }
         send();
-        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
-            send();
-        }
     }
 
     public void sendCampaignParameters(HashMap<String, String> properties) {
@@ -1067,11 +1061,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
         send();
-
-        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
-            send();
-        }
-
     }
 
     public void customEvent(String pageName, HashMap<String, String> properties) {
@@ -1201,10 +1190,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
 
         send();
-
-        if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
-            send();
-        }
     }
 
     public void send() {
@@ -1220,24 +1205,55 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
                 return;
             }
 
-            VisilabsURLConnection connector = VisilabsURLConnection.initializeConnector(this);
-
             String loadBalanceCookieKey = "";
             String loadBalanceCookieValue = "";
             String OM3rdCookieValue = "";
+
+            HashMap<String, String> headers = new HashMap<>();
+            if(mUserAgent!=null) {
+                headers.put("User-Agent", mUserAgent);
+            }
 
             if (nextAPICall.contains(VisilabsConstant.LOGGER_URL) && mCookie != null) {
                 loadBalanceCookieKey = mCookie.getLoggerCookieKey();
                 loadBalanceCookieValue = mCookie.getLoggerCookieValue();
                 OM3rdCookieValue = mCookie.getLoggerOM3rdCookieValue();
+
+                String cookieString = "";
+                if (loadBalanceCookieKey != null && loadBalanceCookieValue != null
+                        && !loadBalanceCookieKey.equals("") && !loadBalanceCookieValue.equals("")) {
+                    cookieString = loadBalanceCookieKey + "=" + loadBalanceCookieValue;
+                }
+                if (OM3rdCookieValue != null && !OM3rdCookieValue.equals("")) {
+                    if (!cookieString.equals("")) {
+                        cookieString = cookieString + ";";
+                    }
+                    cookieString = cookieString + VisilabsConstant.OM_3_KEY + "=" + OM3rdCookieValue;
+                }
+
+                if (!cookieString.equals("")) {
+                    headers.put("Cookie", cookieString);
+                }
+
+                Call<Void> call = mVisilabsLoggerApiInterface.sendLogs(headers);
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        //LOG
+                        send();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        //LOG
+                        send();
+                    }
+                });
             } else if (nextAPICall.contains(VisilabsConstant.REAL_TIME_URL) && mCookie != null) {
                 loadBalanceCookieKey = mCookie.getRealTimeCookieKey();
                 loadBalanceCookieValue = mCookie.getRealTimeCookieValue();
                 OM3rdCookieValue = mCookie.getRealOM3rdTimeCookieValue();
             }
-
-            connector.connectURL(nextAPICall, mUserAgent, mRequestTimeoutSeconds, loadBalanceCookieKey
-                    , loadBalanceCookieValue, OM3rdCookieValue);
         }
     }
 
@@ -1335,10 +1351,6 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         if (null != url) {
             mSendQueue.add(url);
         }
-    }
-
-    public void finished(int statusCode) {
-        send();
     }
 
     List<String> getSendQueue() {
