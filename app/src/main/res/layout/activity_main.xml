@@ -202,7 +202,6 @@
 
         </LinearLayout>
 
-
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -235,7 +234,6 @@
                 android:text="@string/mail_subscription_form" />
 
         </LinearLayout>
-
 
     </LinearLayout>
 </ScrollView>
