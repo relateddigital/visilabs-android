@@ -79,7 +79,7 @@
 
                     <TextView
                         android:id="@+id/tv_coupon_code"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:gravity="center"
@@ -88,12 +88,13 @@
                         android:paddingTop="5dp"
                         android:paddingRight="10dp"
                         android:paddingBottom="5dp"
-                        android:drawableTint="@color/cardview_dark_background"
-                        android:src="@drawable/content_copy_24"
                         android:drawableRight="@drawable/content_copy_24"
-                        android:text="@string/coupon_code"/>
+                        android:drawableEnd="@drawable/content_copy_24"
+                        android:text="@string/coupon_code" />
 
                 </LinearLayout>
+
+
 
             </LinearLayout>
 

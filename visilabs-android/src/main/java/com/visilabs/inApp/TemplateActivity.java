@@ -96,6 +96,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
                 setTitle();
                 setBody();
                 setButton();
+                setPromotionCode();
                 binding.ratingBar.setVisibility(View.GONE);
                 binding.smileRating.setVisibility(View.GONE);
 
@@ -208,6 +209,21 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
                 finish();
             }
         });
+    }
+
+    private void setPromotionCode() {
+        if(!StringUtils.isNullOrWhiteSpace(mInAppMessage.getPromotionCode())){
+            binding.llCouponContainer.setVisibility(View.VISIBLE);
+            binding.llCouponContainer.setBackgroundColor(Color.parseColor(mInAppMessage.getPromoCodeBackgroundColor()));
+            binding.tvCouponCode.setText(mInAppMessage.getPromotionCode());
+            binding.tvCouponCode.setTextColor(Color.parseColor(mInAppMessage.getPromoCodeTextColor()));
+            binding.llCouponContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO: copy to clipboard
+                }
+            });
+        }
     }
 
     private String getRateReport() {

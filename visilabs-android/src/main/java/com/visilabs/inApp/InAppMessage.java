@@ -47,9 +47,9 @@ public class InAppMessage implements Parcelable {
     private final String close_button_text; //Alert
     private final String alert_type; //Alert
 
-    private String promotion_code;
-    private String promocode_text_color;
-    private String promocode_background_color;
+    private final String promotion_code;
+    private final String promocode_text_color;
+    private final String promocode_background_color;
     private List<String> number_colors;
 
     private final Context mContext;
