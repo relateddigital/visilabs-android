@@ -64,9 +64,13 @@ public class MainActivity extends AppCompatActivity {
         binding.customEvent1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, String> parameters = new HashMap<>();
-                parameters.put("OM.inapptype", "image_text_button");
-                Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
+                HashMap<String, String> parameters= new HashMap<String, String>();
+                parameters.put("OM.pv","Product Code");
+                parameters.put("OM.pn","Product Name");
+                parameters.put("OM.ppr","10.0");
+                parameters.put("OM.pv.1","Brand");
+                parameters.put("OM.inv","3");
+                Visilabs.CallAPI().customEvent("Product View", parameters);
             }
         });
 

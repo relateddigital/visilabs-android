@@ -488,6 +488,8 @@ public class Visilabs implements VisilabsURLConnectionCallbackInterface {
         }
         try {
             VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm");
+            visilabsActionRequest.setPageName(pageName);
+            visilabsActionRequest.setProperties(properties);
             visilabsActionRequest.executeAsyncAction(getVisilabsMailSubscriptionFormCallback(parent));
         } catch (Exception e) {
             e.printStackTrace();
