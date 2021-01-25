@@ -74,9 +74,8 @@
                     android:id="@+id/ll_coupon_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/tv_coupon_code"
@@ -92,7 +91,7 @@
                         android:drawableTint="@color/cardview_dark_background"
                         android:src="@drawable/content_copy_24"
                         android:drawableRight="@drawable/content_copy_24"
-                        android:text="COUPON"/>
+                        android:text="@string/coupon_code"/>
 
                 </LinearLayout>
 
