@@ -12,6 +12,8 @@ public class Stories implements Serializable
 
     private List<Items> items;
 
+    private boolean shown;
+
     public String getThumbnail ()
     {
         return thumbnail;
@@ -40,6 +42,14 @@ public class Stories implements Serializable
     public void setItems (List<Items> items)
     {
         this.items = items;
+    }
+
+    public Boolean getShown() {
+        return shown;
+    }
+
+    public void setShown(Boolean shown) {
+        this.shown = shown;
     }
 
     @Override

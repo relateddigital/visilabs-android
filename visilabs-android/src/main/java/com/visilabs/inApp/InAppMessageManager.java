@@ -177,6 +177,10 @@ public class InAppMessageManager {
 
                             break;
 
+                        case NPS_WITH_NUMBERS:
+
+                            break;
+
                         default:
                             Log.e(LOG_TAG, "Unrecognized notification type " + inAppMessage.getType() + " can't be shown");
                     }
