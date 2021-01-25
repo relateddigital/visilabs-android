@@ -18,6 +18,8 @@
     <string name="smile_rating_good">İyi</string>
     <string name="smile_rating_great">Harika</string>
 
+    <string name="OK">OK</string>
+
     <string-array name="names">
         <item>@string/smile_rating_terrible</item>
         <item>@string/smile_rating_bad</item>

@@ -30,5 +30,6 @@
     <string name="alert">Alert</string>
     <string name="story_id_optional">Story ID (optional)</string>
     <string name="show_story">Show Story</string>
+    <string name="clear_story_cache">Clear Story Cache</string>
 
 </resources>
