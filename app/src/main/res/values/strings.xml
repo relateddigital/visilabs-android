@@ -11,13 +11,25 @@
     <string name="go_to_inapp_page">Go To InApp Page</string>
     <string name="go_to_story_page">Go To Story Page</string>
 
-    <string name="image_text_button">Image Text Button</string>
+    <string name="custom_event_1">Custom Event 1</string>
     <string name="custom_event_2">Custom Event 2</string>
     <string name="custom_event_3">Custom Event 3</string>
 
     <string name="mini">Mini</string>
+    <string name="full">Full</string>
+    <string name="full_image">Full Image</string>
+    <string name="image_button">Image Button</string>
+    <string name="image_text_button">Image Text Button</string>
+    <string name="smile_rating">Smile Rating</string>
+    <string name="nps_with_numbers">NPS With Numbers</string>
+    <string name="nps">NPS</string>
+    <string name="alert_native">Alert Native</string>
+    <string name="alert_actionsheet">Alert Action Sheet</string>
+    <string name="mail_subscription_form">Mail Subscription Form</string>
+
     <string name="alert">Alert</string>
     <string name="story_id_optional">Story ID (optional)</string>
     <string name="show_story">Show Story</string>
+    <string name="clear_story_cache">Clear Story Cache</string>
 
 </resources>

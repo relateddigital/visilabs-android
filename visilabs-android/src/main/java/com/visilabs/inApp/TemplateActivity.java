@@ -1,6 +1,9 @@
 package com.visilabs.inApp;
 
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -10,8 +13,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
@@ -21,6 +27,7 @@ import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.StringUtils;
 import com.visilabs.view.BaseRating;
 import com.visilabs.view.SmileRating;
+
 
 public class TemplateActivity extends AppCompatActivity implements SmileRating.OnSmileySelectionListener, SmileRating.OnRatingSelectedListener {
 
@@ -96,6 +103,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
                 setTitle();
                 setBody();
                 setButton();
+                setPromotionCode();
                 binding.ratingBar.setVisibility(View.GONE);
                 binding.smileRating.setVisibility(View.GONE);
 
@@ -210,6 +218,28 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
         });
     }
 
+    private void setPromotionCode() {
+        if(!StringUtils.isNullOrWhiteSpace(mInAppMessage.getPromotionCode())
+                && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getPromoCodeBackgroundColor())
+                && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getPromoCodeTextColor())){
+            binding.llCouponContainer.setVisibility(View.VISIBLE);
+            binding.llCouponContainer.setBackgroundColor(Color.parseColor(mInAppMessage.getPromoCodeBackgroundColor()));
+            binding.tvCouponCode.setText(mInAppMessage.getPromotionCode());
+            binding.tvCouponCode.setTextColor(Color.parseColor(mInAppMessage.getPromoCodeTextColor()));
+            binding.llCouponContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), mInAppMessage.getPromotionCode());
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            binding.llCouponContainer.setVisibility(View.GONE);
+        }
+    }
+
     private String getRateReport() {
         switch (mInAppMessage.getType()) {
             case SMILE_RATING:
@@ -301,14 +331,12 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
         VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
         finish();
     }
 
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
         super.onDestroy();
         VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
     }

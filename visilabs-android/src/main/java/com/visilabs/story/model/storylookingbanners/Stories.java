@@ -9,6 +9,8 @@ public class Stories implements Serializable {
 
     private String link;
 
+    private boolean shown;
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -31,5 +33,13 @@ public class Stories implements Serializable {
 
     public String getLink() {
         return this.link;
+    }
+
+    public Boolean getShown() {
+        return shown;
+    }
+
+    public void setShown(Boolean shown) {
+        this.shown = shown;
     }
 }

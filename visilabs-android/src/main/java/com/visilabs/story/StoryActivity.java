@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -22,6 +24,7 @@ import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.skinbased.Actiondata;
 import com.visilabs.story.model.skinbased.Items;
 import com.visilabs.story.model.skinbased.Stories;
+import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.VisilabsConstant;
 import java.util.Objects;
 
@@ -44,9 +47,18 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
     int mStoryPosition;
     View.OnTouchListener mOnTouchListener;
     static StoryItemClickListener mStoryItemClickListener;
+    static RecyclerView mRecyclerView;
+    static VisilabsSkinBasedAdapter mVisilabsSkinBasedAdapter;
 
     public static void setStoryItemClickListener(StoryItemClickListener storyItemClickListener) {
         mStoryItemClickListener = storyItemClickListener;
+    }
+
+    public static void setRecyclerView(RecyclerView recyclerView) {
+        mRecyclerView = recyclerView;
+    }
+    public static void setVisilabsSkinBasedAdapter(VisilabsSkinBasedAdapter visilabsSkinBasedAdapter) {
+        mVisilabsSkinBasedAdapter = visilabsSkinBasedAdapter;
     }
 
     @Override
@@ -109,6 +121,9 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         String title = mStories.getTitle();
 
         Log.i("StoryActivityShows ", mActionId + " : " + mStories.getTitle());
+        PersistentTargetManager.with(getApplicationContext()).saveShownStory(mActionId, mStories.getTitle());
+        mVisilabsSkinBasedAdapter.setStoryList(mVisilabsSkinBasedAdapter.mVisilabsSkinBasedResponse, mVisilabsSkinBasedAdapter.mExtendsProps);
+        mRecyclerView.getAdapter().notifyDataSetChanged();
 
         mStoriesProgressView.setStoriesCount(mStories.getItems().size());
         mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()

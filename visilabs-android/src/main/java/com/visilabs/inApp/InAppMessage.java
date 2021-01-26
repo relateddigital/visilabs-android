@@ -7,9 +7,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import com.visilabs.exceptions.VisilabsNotificationException;
+import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
 import com.visilabs.json.JSONException;
 import com.visilabs.util.SizeUtil;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class InAppMessage implements Parcelable {
 
@@ -41,6 +46,11 @@ public class InAppMessage implements Parcelable {
 
     private final String close_button_text; //Alert
     private final String alert_type; //Alert
+
+    private final String promotion_code;
+    private final String promocode_text_color;
+    private final String promocode_background_color;
+    private List<String> number_colors;
 
     private final Context mContext;
 
@@ -76,6 +86,10 @@ public class InAppMessage implements Parcelable {
         close_button_color = in.readString();
         close_button_text = in.readString();
         alert_type = in.readString();
+        promotion_code = in.readString();
+        promocode_text_color = in.readString();
+        promocode_background_color = in.readString();
+        in.readStringList(number_colors);
 
         mContext = null;
     }
@@ -110,8 +124,18 @@ public class InAppMessage implements Parcelable {
             close_button_text = actionData.optString("close_button_text");
             alert_type = actionData.optString("alert_type");
 
-            mContext = context;
+            promotion_code = actionData.optString("promotion_code");
+            promocode_text_color = actionData.optString("promocode_text_color");
+            promocode_background_color = actionData.optString("promocode_background_color");
 
+            number_colors = new ArrayList<>();
+
+            JSONArray numberColorsJsonArray = actionData.optJSONArray("number_colors");
+            if(numberColorsJsonArray != null) {
+                number_colors = Arrays.asList(numberColorsJsonArray.toStringArray());
+            }
+
+            mContext = context;
 
         } catch (final JSONException e) {
             throw new VisilabsNotificationException("Notification JSON was unexpected or bad", e);
@@ -157,6 +181,9 @@ public class InAppMessage implements Parcelable {
         }
         if (InAppActionType.ALERT.toString().equals(msg_type.toLowerCase())) {
             return InAppActionType.ALERT;
+        }
+        if (InAppActionType.NPS_WITH_NUMBERS.toString().equals(msg_type.toLowerCase())) {
+            return InAppActionType.NPS_WITH_NUMBERS;
         }
         return InAppActionType.UNKNOWN;
     }
@@ -291,6 +318,10 @@ public class InAppMessage implements Parcelable {
         dest.writeString(close_button_color);
         dest.writeString(close_button_text);
         dest.writeString(alert_type);
+        dest.writeString(promotion_code);
+        dest.writeString(promocode_text_color);
+        dest.writeString(promocode_background_color);
+        dest.writeList(number_colors);
     }
 
     public static final Parcelable.Creator<InAppMessage> CREATOR = new Parcelable.Creator<InAppMessage>() {
@@ -316,5 +347,21 @@ public class InAppMessage implements Parcelable {
 
     public String getAlertType() {
         return alert_type;
+    }
+
+    public String getPromotionCode() {
+        return promotion_code;
+    }
+
+    public String getPromoCodeTextColor() {
+        return promocode_text_color;
+    }
+
+    public String getPromoCodeBackgroundColor() {
+        return promocode_background_color;
+    }
+
+    public List<String> getNumberColors(){
+        return number_colors;
     }
 }

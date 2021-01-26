@@ -39,6 +39,7 @@ public class VisilabsConstant {
     public static final String TOKENID_PREF = "VisilabsTokenIDPreferences";
     public static final String APPID_PREF = "VisilabsAppIDPreferences";
     public static final String TARGET_PREF = "VisilabsTargetPreferences";
+    public static final String SHOWN_STORIES_PREF = "VisilabsShownStories";
 
     public static final String VISITOR_DATA_PREF = "VisilabsVisitorDataPreferences";
     public static final String VISITOR_DATA_PREF_KEY = "visitorData";
@@ -47,6 +48,7 @@ public class VisilabsConstant {
     public static final String EXVISITORID_PREF_KEY = "exVisitorID";
     public static final String TOKENID_PREF_KEY = "sysTokenID";
     public static final String APPID_PREF_KEY = "sysAppID";
+    public static final String SHOWN_STORIES_PREF_KEY = "shownStories";
 
     public static final String VISILABS_ENCODING_CHARSET = "UTF-8";
     public static List<VisilabsParameter> VISILABS_PARAMETERS;
@@ -128,8 +130,6 @@ public class VisilabsConstant {
     public static final String STORY_POSITION = "position";
     public static final String ACTION_DATA = "action";
     public static final String ACTION_ID = "action_id";
-
-    public static final String SHOWN_STORIES_STORE_KEY = "shownStories";
 
     private static final String LOG_TAG = "VisilabsConfig";
     public static final String FavoriteAttributeAction = "FavoriteAttributeAction";
