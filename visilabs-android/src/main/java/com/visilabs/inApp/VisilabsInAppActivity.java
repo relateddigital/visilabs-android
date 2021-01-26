@@ -2,12 +2,18 @@ package com.visilabs.inApp;
 
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
@@ -63,7 +69,7 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
         mInApp = inAppNotificationState.getInAppMessage();
 
         setInAppData();
-
+        setPromotionCode();
         clickEvents();
     }
 
@@ -77,6 +83,28 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
             binding.btnInApp.setText(mInApp.getButtonText());
         }
         Picasso.get().load(mInApp.getImageUrl()).into(binding.fivInAppImage);
+    }
+
+    private void setPromotionCode() {
+        if(!StringUtils.isNullOrWhiteSpace(mInApp.getPromotionCode())
+                && !StringUtils.isNullOrWhiteSpace(mInApp.getPromoCodeBackgroundColor())
+                && !StringUtils.isNullOrWhiteSpace(mInApp.getPromoCodeTextColor())){
+            binding.llCouponContainer.setVisibility(View.VISIBLE);
+            binding.llCouponContainer.setBackgroundColor(Color.parseColor(mInApp.getPromoCodeBackgroundColor()));
+            binding.tvCouponCode.setText(mInApp.getPromotionCode());
+            binding.tvCouponCode.setTextColor(Color.parseColor(mInApp.getPromoCodeTextColor()));
+            binding.llCouponContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), mInApp.getPromotionCode());
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            binding.llCouponContainer.setVisibility(View.GONE);
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
