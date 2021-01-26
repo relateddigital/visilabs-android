@@ -154,4 +154,11 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
         }
         super.onBackPressed();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+    }
+
 }

@@ -331,14 +331,12 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
         VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
         finish();
     }
 
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
         super.onDestroy();
         VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
     }

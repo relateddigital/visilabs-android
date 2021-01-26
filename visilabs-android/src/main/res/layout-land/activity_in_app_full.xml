@@ -30,7 +30,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="50"
@@ -45,7 +45,7 @@
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/com_visilabs_android_notification_image"
                     android:scaleType="fitCenter" />
-            </RelativeLayout>
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="0dp"
@@ -100,7 +100,7 @@
                         android:textSize="18sp" />
 
                     <Button
-                        android:id="@+id/btn_notification"
+                        android:id="@+id/btn_in_app"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/cta_button"
