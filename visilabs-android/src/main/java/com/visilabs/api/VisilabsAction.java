@@ -24,6 +24,8 @@ public interface VisilabsAction {
 
     void executeAsync(VisilabsCallback pCallback) throws Exception;
 
+    void executeAsync(VisilabsInAppMessageCallback pCallback);
+
     void executeAsyncAction(VisilabsCallback pCallback) throws Exception;
 
     void execute(VisilabsCallback pCallback) throws Exception;

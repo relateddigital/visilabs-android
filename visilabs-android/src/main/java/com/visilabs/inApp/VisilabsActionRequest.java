@@ -5,7 +5,10 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.visilabs.Visilabs;
+import com.visilabs.api.SApiClient;
+import com.visilabs.api.VisilabsApiMethods;
 import com.visilabs.api.VisilabsHttpClient;
+import com.visilabs.api.VisilabsInAppMessageCallback;
 import com.visilabs.api.VisilabsRemote;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.json.JSONObject;
@@ -15,9 +18,13 @@ import com.visilabs.util.VisilabsConstant;
 import com.visilabs.util.VisilabsLog;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class VisilabsActionRequest extends VisilabsRemote {
 
@@ -46,15 +53,17 @@ public class VisilabsActionRequest extends VisilabsRemote {
     private JSONObject mArgs = new JSONObject();
     private int mTimeOutInSeconds;
 
-
     private String mVisitorData = "";
     private String mVisitData = "";
 
-
     private HashMap<String, String> mProperties;
+
+    private VisilabsApiMethods mVisilabsSApiInterface;
 
     public VisilabsActionRequest(Context context) {
         super(context);
+        mVisilabsSApiInterface = SApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds())
+                .create(VisilabsApiMethods.class);
     }
 
     public void setPath(String pPath) {
@@ -138,6 +147,33 @@ public class VisilabsActionRequest extends VisilabsRemote {
             VisilabsLog.e(LOG_TAG, e.getMessage(), e);
             throw e;
         }
+    }
+
+    @Override
+    public void executeAsync(final VisilabsInAppMessageCallback pCallback) {
+
+        HashMap<String, String> headers = new HashMap<>();
+        HashMap<String, String> queryParameters = new HashMap<>();
+
+        //Put headers
+        fillHeaderMap(headers);
+
+        //Put query parameters
+        fillQueryMap(queryParameters);
+
+        Call<List<InAppMessage>> call = mVisilabsSApiInterface.getInAppRequestJsonResponse(headers, queryParameters);
+        call.enqueue(new Callback<List<InAppMessage>>() {
+            @Override
+            public void onResponse(Call<List<InAppMessage>> call, Response<List<InAppMessage>> response) {
+                List<InAppMessage> inAppMessages = response.body();
+                pCallback.success(inAppMessages, response.raw().request().url().toString());
+            }
+
+            @Override
+            public void onFailure(Call<List<InAppMessage>> call, Throwable t) {
+                pCallback.fail(t, call.request().url().toString());
+            }
+        });
     }
 
     @Override
@@ -355,5 +391,93 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
     protected Header[] buildHeaders(Header[] pHeaders) throws Exception {
         return  null;
+    }
+
+    private void fillHeaderMap(HashMap<String, String> headerMap){
+        if(mHeaders != null && mHeaders.length > 0){
+            for (Header mHeader : mHeaders) {
+                headerMap.put(mHeader.getName(), mHeader.getValue());
+            }
+        }
+
+        headerMap.put("User-Agent", Visilabs.getUserAgent());
+    }
+
+    private void fillQueryMap(HashMap<String, String> queryMap){
+        if(Visilabs.CallAPI().getOrganizationID() != null && !Visilabs.CallAPI().getOrganizationID().equals("")){
+            queryMap.put(VisilabsConstant.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
+        }
+
+        if(Visilabs.CallAPI().getSiteID() != null && !Visilabs.CallAPI().getSiteID().equals("")){
+            queryMap.put(VisilabsConstant.SITEID_KEY, Visilabs.CallAPI().getSiteID());
+        }
+
+        if(Visilabs.CallAPI().getCookieID() != null && !Visilabs.CallAPI().getCookieID().equals("")){
+            queryMap.put(VisilabsConstant.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
+        }
+
+        if(Visilabs.CallAPI().getExVisitorID() != null && !Visilabs.CallAPI().getExVisitorID().equals("")){
+            queryMap.put(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
+        }
+
+        if(Visilabs.CallAPI().getSysTokenID() != null && !Visilabs.CallAPI().getSysTokenID().equals("")){
+            queryMap.put(VisilabsConstant.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
+        }
+
+        if(Visilabs.CallAPI().getSysAppID() != null && !Visilabs.CallAPI().getSysAppID().equals("")){
+            queryMap.put(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
+        }
+
+        if(mApiVer != null && !mApiVer.equals("")){
+            queryMap.put(VisilabsConstant.APIVER_KEY, mApiVer);
+        }else{
+            queryMap.put(VisilabsConstant.APIVER_KEY, "Android");
+        }
+
+        if(mPageName != null && !mPageName.equals("")){
+            queryMap.put(VisilabsConstant.URI_KEY, mPageName);
+        }else{
+            queryMap.put(VisilabsConstant.URI_KEY, "");
+        }
+
+        if(mVisitorData != null && !mVisitorData.equals("")){
+            queryMap.put(VisilabsConstant.VIS_CAP_KEY, mVisitorData);
+        }
+
+        if(mVisitData != null && !mVisitData.equals("")){
+            queryMap.put(VisilabsConstant.V_CAP_KEY, mVisitData);
+        }
+
+        HashMap<String, String> parameters = PersistentTargetManager.with(mContext).getParameters();
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            if(!StringUtils.isNullOrWhiteSpace(entry.getKey()) && !StringUtils.isNullOrWhiteSpace(entry.getValue())){
+                queryMap.put(entry.getKey(), entry.getValue());
+            }
+
+            if(mProperties != null){
+                mProperties.remove(entry.getKey());
+            }
+        }
+
+        if(mProperties != null){
+            for (Map.Entry<String, String> entry : mProperties.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if(key.equals(VisilabsConstant.COOKIEID_KEY) ||
+                        key.equals(VisilabsConstant.SITEID_KEY) ||
+                        key.equals(VisilabsConstant.ORGANIZATIONID_KEY) ||
+                        key.equals(VisilabsConstant.APIVER_KEY) ||
+                        key.equals(VisilabsConstant.URI_KEY) ||
+                        key.equals(VisilabsConstant.EXVISITORID_KEY) ||
+                        key.equals(VisilabsConstant.APPID_KEY) ||
+                        key.equals(VisilabsConstant.TOKENID_KEY)){
+                    continue;
+                }
+
+                if(value != null && value.length() > 0){
+                    queryMap.put(key, value);
+                }
+            }
+        }
     }
 }

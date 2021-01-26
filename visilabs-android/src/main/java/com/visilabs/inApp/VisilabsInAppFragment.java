@@ -54,9 +54,9 @@ public class VisilabsInAppFragment extends Fragment {
         if (mInAppNotificationState != null) {
             InAppMessage inApp = mInAppNotificationState.getInAppMessage();
 
-            binding.tvInAppTitleMini.setText(inApp.getTitle().replace("\\n","\n"));
+            binding.tvInAppTitleMini.setText(inApp.getActionData().getMsgTitle().replace("\\n","\n"));
 
-            Picasso.get().load(inApp.getImageUrl()).into(binding.ivInAppImageMini);
+            Picasso.get().load(inApp.getActionData().getImg()).into(binding.ivInAppImageMini);
 
             mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
 
@@ -171,7 +171,7 @@ public class VisilabsInAppFragment extends Fragment {
             public boolean onSingleTapUp(MotionEvent event) {
                 final InAppMessage inApp = mInAppNotificationState.getInAppMessage();
 
-                final String uriString = inApp.getButtonURL();
+                final String uriString = inApp.getActionData().getAndroidLnk();
                 if (uriString != null && uriString.length() > 0) {
                     Uri uri;
                     try {

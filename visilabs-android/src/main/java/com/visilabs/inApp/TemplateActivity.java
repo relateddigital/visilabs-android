@@ -74,7 +74,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     }
 
     private void setUpView() {
-        Picasso.get().load(mInAppMessage.getImageUrl()).into(binding.ivTemplate);
+        Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivTemplate);
 
         binding.smileRating.setOnSmileySelectionListener(this);
         binding.smileRating.setOnRatingSelectedListener(this);
@@ -89,7 +89,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
         //llOverlay.setBackgroundColor(Color.parseColor(inAppMessage.getBackground()));
         binding.ibClose.setBackgroundResource(getCloseIcon());
 
-        switch (mInAppMessage.getType()) {
+        switch (mInAppMessage.getActionData().getMsgType()) {
 
             case IMAGE_TEXT_BUTTON:
 
@@ -111,12 +111,12 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
                 binding.ivTemplate.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (mInAppMessage.getButtonURL() != null && mInAppMessage.getButtonURL().length() > 0) {
+                        if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
 
                             try {
 
                                 Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
-                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getButtonURL()));
+                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
                                 startActivity(viewIntent);
 
                             } catch (final ActivityNotFoundException e) {
@@ -164,37 +164,37 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     private void setTitle() {
 
         binding.tvTitle.setVisibility(View.VISIBLE);
-        binding.tvTitle.setTypeface(mInAppMessage.getFont_family(), Typeface.BOLD);
-        binding.tvTitle.setText(mInAppMessage.getTitle().replace("\\n","\n"));
-        binding.tvTitle.setTextColor(Color.parseColor(mInAppMessage.getMsg_title_color()));
-        binding.tvTitle.setTextSize(Float.parseFloat(mInAppMessage.getMsg_body_textsize()) + 12);
+        binding.tvTitle.setTypeface(mInAppMessage.getActionData().getFontFamily(), Typeface.BOLD);
+        binding.tvTitle.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n","\n"));
+        binding.tvTitle.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+        binding.tvTitle.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgBodyTextSize()) + 12);
     }
 
     private void setBody() {
-        binding.tvBody.setText(mInAppMessage.getBody().replace("\\n","\n"));
-        binding.tvBody.setTypeface(mInAppMessage.getFont_family());
+        binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n","\n"));
+        binding.tvBody.setTypeface(mInAppMessage.getActionData().getFontFamily());
         binding.tvBody.setVisibility(View.VISIBLE);
-        binding.tvBody.setTextColor(Color.parseColor(mInAppMessage.getMsg_body_color()));
-        binding.tvBody.setTextSize(Float.parseFloat(mInAppMessage.getMsg_body_textsize()) + 8);
+        binding.tvBody.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyColor()));
+        binding.tvBody.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgBodyTextSize()) + 8);
     }
 
     private void setButton() {
 
-        binding.btnTemplate.setTypeface(mInAppMessage.getFont_family());
+        binding.btnTemplate.setTypeface(mInAppMessage.getActionData().getFontFamily());
         binding.btnTemplate.setVisibility(View.VISIBLE);
-        binding.btnTemplate.setText(mInAppMessage.getButtonText());
-        binding.btnTemplate.setTextColor(Color.parseColor(mInAppMessage.getButton_text_color()));
-        binding.btnTemplate.setBackgroundColor(Color.parseColor(mInAppMessage.getButton_color()));
+        binding.btnTemplate.setText(mInAppMessage.getActionData().getBtnText());
+        binding.btnTemplate.setTextColor(Color.parseColor(mInAppMessage.getActionData().getButtonTextColor()));
+        binding.btnTemplate.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getButtonColor()));
 
         binding.btnTemplate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mInAppMessage.getButtonURL() != null && mInAppMessage.getButtonURL().length() > 0) {
+                if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
 
                     try {
 
                         Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getButtonURL()));
+                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
                         startActivity(viewIntent);
 
                     } catch (final ActivityNotFoundException e) {
@@ -211,12 +211,12 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     }
 
     private String getRateReport() {
-        switch (mInAppMessage.getType()) {
+        switch (mInAppMessage.getActionData().getMsgType()) {
             case SMILE_RATING:
-                return "&OM.s_point=" + binding.smileRating.getRating() + "&OM.s_cat=" + mInAppMessage.getType() + "&OM.s_page=act-" + mInAppMessage.getId();
+                return "OM.s_point=" + binding.smileRating.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId();
 
             case NPS:
-                return "&OM.s_point=" + binding.ratingBar.getRating() + "&OM.s_cat=" + mInAppMessage.getType() + "&OM.s_page=act-" + mInAppMessage.getId();
+                return "OM.s_point=" + binding.ratingBar.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId();
         }
 
         return "";
@@ -249,7 +249,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
 
     private int getCloseIcon() {
 
-        switch (mInAppMessage.getCloseButton()) {
+        switch (mInAppMessage.getActionData().getCloseButtonColor()) {
 
             case "white":
                 return R.drawable.ic_close_white_24dp;

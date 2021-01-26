@@ -68,6 +68,24 @@ public class VisilabsConstant {
     public static final String FILTER_KEY = "OM.w.f";
     public static final String APIVER_KEY = "OM.apiver";
 
+    public static final String DATE_KEY = "dat";
+    public static final String URI_KEY = "OM.uri";
+    public static final String CHANNEL_KEY = "OM.vchannel";
+    public static final String DOMAIN_KEY = "OM.domain";
+    public static final String TYPE_KEY = "type";
+    public static final String ACTION_ID_KEY = "actionid";
+    public static final String AUTH_KEY = "auth";
+    public static final String SUBS_EMAIL_KEY = "OM.subsemail";
+    public static final String SIGN_UP_KEY = "SignUp";
+    public static final String B_SIGN_UP_KEY = "OM.b_sgnp";
+    public static final String LOGIN_KEY = "Login";
+    public static final String B_LOGIN_KEY = "OM.b_login";
+    public static final String MAPPL_KEY = "OM.mappl";
+    public static final String ADVERTISER_ID_KEY = "OM.m_adid";
+    public static final String USER_AGENT_KEY = "User-Agent";
+    public static final String VIS_CAP_KEY = "OM.viscap";
+    public static final String V_CAP_KEY = "OM.vcap";
+
     //geofence için
     public static final String ACT_ID_KEY = "actid";
     public static final String ACT_KEY = "act";

@@ -1,5 +1,8 @@
 package com.visilabs.api;
 
+import com.visilabs.inApp.InAppMessage;
+
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -26,6 +29,12 @@ public interface VisilabsApiMethods {
 
     @GET("subsjson")
     Call<Void> sendSubsJsonRequestToS(
+            @HeaderMap Map<String, String> headers,
+            @QueryMap Map<String, String> queryParameters
+    );
+
+    @GET("actjson")
+    Call<List<InAppMessage>> getInAppRequestJsonResponse(
             @HeaderMap Map<String, String> headers,
             @QueryMap Map<String, String> queryParameters
     );
