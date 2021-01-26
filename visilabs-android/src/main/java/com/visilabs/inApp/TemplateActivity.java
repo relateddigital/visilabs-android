@@ -219,7 +219,9 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
     }
 
     private void setPromotionCode() {
-        if(!StringUtils.isNullOrWhiteSpace(mInAppMessage.getPromotionCode())){
+        if(!StringUtils.isNullOrWhiteSpace(mInAppMessage.getPromotionCode())
+                && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getPromoCodeBackgroundColor())
+                && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getPromoCodeTextColor())){
             binding.llCouponContainer.setVisibility(View.VISIBLE);
             binding.llCouponContainer.setBackgroundColor(Color.parseColor(mInAppMessage.getPromoCodeBackgroundColor()));
             binding.tvCouponCode.setText(mInAppMessage.getPromotionCode());
