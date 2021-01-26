@@ -19,6 +19,7 @@
             android:id="@+id/iv_not_display"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#000"
             android:contentDescription="@string/com_visilabs_android_notification_image"
             android:paddingEnd="50dp"
             android:paddingRight="50dp" />
@@ -83,6 +84,7 @@
                         android:gravity="center_horizontal"
                         android:paddingLeft="20dp"
                         android:paddingRight="20dp"
+                        android:text="@string/title"
                         android:textColor="#ffffff"
                         android:textSize="22sp"
                         android:textStyle="bold" />
@@ -96,6 +98,7 @@
                         android:paddingTop="10dp"
                         android:paddingRight="20dp"
                         android:paddingBottom="20dp"
+                        android:text="@string/com_visilabs_android_done"
                         android:textColor="#a9b5c5"
                         android:textSize="18sp" />
 
