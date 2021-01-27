@@ -12,9 +12,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
@@ -26,7 +24,7 @@ import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MailSubscriptionFormActivity extends AppCompatActivity {
+public class MailSubscriptionFormActivity extends Activity {
 
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
 
@@ -41,7 +39,6 @@ public class MailSubscriptionFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMailSubscriptionFormBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
         mMailSubscriptionForm = getMailSubscriptionForm();
         try {

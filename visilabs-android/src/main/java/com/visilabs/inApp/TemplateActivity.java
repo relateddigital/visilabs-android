@@ -1,5 +1,6 @@
 package com.visilabs.inApp;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -12,10 +13,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.squareup.picasso.Picasso;
@@ -29,7 +28,7 @@ import com.visilabs.view.BaseRating;
 import com.visilabs.view.SmileRating;
 
 
-public class TemplateActivity extends AppCompatActivity implements SmileRating.OnSmileySelectionListener, SmileRating.OnRatingSelectedListener {
+public class TemplateActivity extends Activity implements SmileRating.OnSmileySelectionListener, SmileRating.OnRatingSelectedListener {
 
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
     InAppMessage mInAppMessage;
@@ -42,7 +41,7 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
         super.onCreate(savedInstanceState);
         binding = ActivityTemplateBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        //supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
 
         mInAppMessage = getInAppMessage();
@@ -57,8 +56,6 @@ public class TemplateActivity extends AppCompatActivity implements SmileRating.O
             finish();
         }
 
-
-        //TODO: daha sonra bu kısım opsiyonel olabilir. Burada releaseDisplayState metodu da çağırılmalı
         this.setFinishOnTouchOutside(true);
     }
 

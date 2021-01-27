@@ -1,6 +1,7 @@
 package com.visilabs.inApp;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -11,10 +12,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
@@ -24,7 +23,7 @@ import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.StringUtils;
 
 
-public class VisilabsInAppActivity extends AppCompatActivity implements IVisilabs {
+public class VisilabsInAppActivity extends Activity implements IVisilabs {
 
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
 
@@ -38,7 +37,6 @@ public class VisilabsInAppActivity extends AppCompatActivity implements IVisilab
         super.onCreate(savedInstanceState);
         binding = ActivityInAppFullBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(view);
 
