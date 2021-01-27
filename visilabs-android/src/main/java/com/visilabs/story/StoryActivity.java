@@ -1,11 +1,10 @@
 
 package com.visilabs.story;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -26,10 +25,8 @@ import com.visilabs.story.model.skinbased.Items;
 import com.visilabs.story.model.skinbased.Stories;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.VisilabsConstant;
-import java.util.Objects;
 
-
-public class StoryActivity extends AppCompatActivity implements StoriesProgressView.StoriesListener {
+public class StoryActivity extends Activity implements StoriesProgressView.StoriesListener {
 
     private StoriesProgressView mStoriesProgressView;
     private ImageView mIvStory;
@@ -67,8 +64,6 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         overridePendingTransition(R.anim.anim_fade_in, R.anim.anim_fade_out);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_story);
-
-        hideActionBar();
 
         mActionData = (Actiondata) getIntent().getSerializableExtra(VisilabsConstant.ACTION_DATA);
         mActionId = (String) getIntent().getSerializableExtra(VisilabsConstant.ACTION_ID);
@@ -170,13 +165,6 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         });
 
         mReverse.setOnTouchListener(mOnTouchListener);
-    }
-
-    private void hideActionBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
-            getSupportActionBar().hide();
-        }
     }
 
     @Override
