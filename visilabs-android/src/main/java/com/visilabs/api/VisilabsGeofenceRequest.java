@@ -136,26 +136,13 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     }
 
     @Override
-    public void execute(VisilabsCallback pCallback) throws Exception {
-        try {
-            switch (mMethod) {
-                case GET:
-                    VisilabsHttpClient.get(getURL(), buildHeaders(mHeaders), mArgs, pCallback, true, mTimeOutInSeconds);
-                    break;
-                case PUT:
-                    VisilabsHttpClient.put(getURL(), buildHeaders(mHeaders), mArgs, pCallback, true, mTimeOutInSeconds);
-                    break;
-                case POST:
-                    VisilabsHttpClient.post(getURL(), buildHeaders(mHeaders), mArgs, pCallback, true, mTimeOutInSeconds);
-                    break;
-                case DELETE:
-                    VisilabsHttpClient.delete(getURL(), buildHeaders(mHeaders), mArgs, pCallback, true, mTimeOutInSeconds);
-                    break;
-            }
-        } catch (Exception e) {
-            VisilabsLog.e(LOG_TAG, e.getMessage(), e);
-            throw e;
-        }
+    public void executeAsyncAction(VisilabsMailSubsFormRequestCallback pCallback){
+
+    }
+
+    @Override
+    public void executeAsyncAction(VisilabsFavsRequestCallback pCallback) {
+
     }
 
     public String getURL() {

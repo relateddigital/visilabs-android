@@ -146,6 +146,7 @@ public class VisilabsConstant {
     public static final String STORY_POSITION = "position";
     public static final String ACTION_DATA = "action";
     public static final String ACTION_ID = "action_id";
+    public static final String ACTION_TYPE = "action_type";
 
     public static final String SHOWN_STORIES_STORE_KEY = "shownStories";
 

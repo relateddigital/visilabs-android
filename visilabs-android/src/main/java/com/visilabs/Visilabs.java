@@ -17,6 +17,7 @@ import com.visilabs.api.VisilabsAction;
 import com.visilabs.api.VisilabsApiMethods;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.api.VisilabsInAppMessageCallback;
+import com.visilabs.api.VisilabsMailSubsFormRequestCallback;
 import com.visilabs.api.VisilabsTargetFilter;
 import com.visilabs.api.VisilabsTargetRequest;
 import com.visilabs.exceptions.VisilabsNotReadyException;
@@ -500,28 +501,23 @@ public class Visilabs {
         }
     }
 
-    public VisilabsCallback getVisilabsMailSubscriptionFormCallback(final Activity parent) {
+    public VisilabsMailSubsFormRequestCallback getVisilabsMailSubscriptionFormCallback(final Activity parent) {
 
-        return new VisilabsCallback() {
+        return new VisilabsMailSubsFormRequestCallback() {
             @Override
-            public void success(VisilabsResponse response) {
-                try {
-                    VisilabsMailSubscriptionFormResponse visilabsMailSubscriptionFormResponse =
-                            new Gson().fromJson(response.getRawResponse(), VisilabsMailSubscriptionFormResponse.class);
-                    if(visilabsMailSubscriptionFormResponse != null && !visilabsMailSubscriptionFormResponse.
-                            getMailSubscriptionForm().isEmpty()) {
-                        MailSubscriptionForm mailSubscriptionForm = visilabsMailSubscriptionFormResponse.
-                                getMailSubscriptionForm().get(0);
-                        new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
-                    }
-                } catch (Exception ex) {
-                    Log.e(LOG_TAG, ex.getMessage(), ex);
+            public void success(VisilabsMailSubscriptionFormResponse response, String url) {
+                Log.i(LOG_TAG, "Success Request : " + url);
+
+                if(response != null && !response.getMailSubscriptionForm().isEmpty()) {
+                    MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm)response.getMailSubscriptionForm().get(0);
+                    new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
                 }
             }
 
             @Override
-            public void fail(VisilabsResponse response) {
-                Log.e(LOG_TAG, response.getRawResponse());
+            public void fail(Throwable t, String url) {
+                Log.e(LOG_TAG, "Fail Request : " + url);
+                Log.e(LOG_TAG, "Fail Request Message : " + t.getMessage());
             }
         };
     }
@@ -625,7 +621,6 @@ public class Visilabs {
         request.setPageName(pageName);
         request.setPath(null);
         request.setHeaders(null);
-        request.setMethod(VisilabsActionRequest.Methods.GET);
         request.setRequestArgs(null);
         request.setTimeOutInSeconds(mRequestTimeoutSeconds);
 
@@ -734,7 +729,6 @@ public class Visilabs {
         request.setApiVer("Android");
         request.setPath(null);
         request.setHeaders(null);
-        request.setMethod(VisilabsActionRequest.Methods.GET);
         request.setRequestArgs(null);
         request.setTimeOutInSeconds(mRequestTimeoutSeconds);
         request.setActionType(actionType);
@@ -751,7 +745,6 @@ public class Visilabs {
         request.setApiVer("Android");
         request.setPath(null);
         request.setHeaders(null);
-        request.setMethod(VisilabsActionRequest.Methods.GET);
         request.setRequestArgs(null);
         request.setTimeOutInSeconds(mRequestTimeoutSeconds);
         request.setActionId(actionId);
@@ -767,7 +760,6 @@ public class Visilabs {
         request.setApiVer("Android");
         request.setPath(null);
         request.setHeaders(null);
-        request.setMethod(VisilabsActionRequest.Methods.GET);
         request.setRequestArgs(null);
         request.setTimeOutInSeconds(mRequestTimeoutSeconds);
         request.setActionType(actionType);

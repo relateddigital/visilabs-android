@@ -1,6 +1,5 @@
 package com.visilabs.api;
 
-import com.visilabs.VisilabsResponse;
 import com.visilabs.inApp.InAppMessage;
 
 import java.util.List;
@@ -13,7 +12,7 @@ public interface VisilabsInAppMessageCallback {
     /**
      * Will be run if the target call is successful
      *
-     * @param message the response data
+     * @param messages the response data
      * @param url requested url
      */
     void success(List<InAppMessage> messages, String url);

@@ -28,5 +28,7 @@ public interface VisilabsAction {
 
     void executeAsyncAction(VisilabsCallback pCallback) throws Exception;
 
-    void execute(VisilabsCallback pCallback) throws Exception;
+    void executeAsyncAction(VisilabsMailSubsFormRequestCallback pCallback);
+
+    void executeAsyncAction(VisilabsFavsRequestCallback pCallback);
 }

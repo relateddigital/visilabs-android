@@ -36,16 +36,6 @@ public abstract class VisilabsRemote implements VisilabsAction {
     }
 
     @Override
-    public void execute(VisilabsCallback pCallback) throws Exception {
-        try {
-            VisilabsHttpClient.post(getApiURL(), buildHeaders(null), getRequestArgs(), pCallback, true, 10);
-        } catch (Exception e) {
-            VisilabsLog.e(LOG_TAG, e.getMessage(), e);
-            throw e;
-        }
-    }
-
-    @Override
     public void executeAsyncAction(VisilabsCallback pCallback) throws Exception {
         try {
             VisilabsHttpClient.post(getApiURL(), buildHeaders(null), getRequestArgs(), pCallback, false, 10);

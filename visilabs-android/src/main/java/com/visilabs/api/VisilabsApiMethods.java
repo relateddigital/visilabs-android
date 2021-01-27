@@ -1,10 +1,14 @@
 package com.visilabs.api;
 
+import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.InAppMessage;
+import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
+import com.visilabs.story.model.storylookingbanners.VisilabsStoryLookingBannerResponse;
 
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.HeaderMap;
@@ -33,9 +37,39 @@ public interface VisilabsApiMethods {
             @QueryMap Map<String, String> queryParameters
     );
 
+    //////////////////////////////////////////////////////
+
     @GET("actjson")
-    Call<List<InAppMessage>> getInAppRequestJsonResponse(
+    Call<ResponseBody> getGeneralRequestJsonResponse(
             @HeaderMap Map<String, String> headers,
             @QueryMap Map<String, String> queryParameters
     );
+
+    @GET("actjson")
+    Call<List<InAppMessage>> getInAppRequestResponse(
+            @HeaderMap Map<String, String> headers,
+            @QueryMap Map<String, String> queryParameters
+    );
+
+    //////////////////////////////////////////////////////
+
+    @GET("mobile")
+    Call<ResponseBody> getGeneralActionRequestJsonResponse(
+            @HeaderMap Map<String, String> headers,
+            @QueryMap Map<String, String> queryParameters
+    );
+
+    @GET("mobile")
+    Call<VisilabsMailSubscriptionFormResponse> getMailSubsRequestResponse(
+            @HeaderMap Map<String, String> headers,
+            @QueryMap Map<String, String> queryParameters
+    );
+
+    @GET("mobile")
+    Call<FavsResponse> getFavsRequestResponse(
+            @HeaderMap Map<String, String> headers,
+            @QueryMap Map<String, String> queryParameters
+    );
+
+    //////////////////////////////////////////////////////
 }
