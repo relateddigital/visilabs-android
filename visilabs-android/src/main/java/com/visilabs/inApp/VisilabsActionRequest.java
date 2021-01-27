@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import cz.msebera.android.httpclient.Header;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,7 +38,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
     private String mActionId = "";
 
     private String mPath = "";
-    private Header[] mHeaders = null;
+    private HashMap<String, String> mHeaders = new HashMap<>();
     private JSONObject mArgs = new JSONObject();
     private int mTimeOutInSeconds;
 
@@ -60,8 +59,12 @@ public class VisilabsActionRequest extends VisilabsRemote {
         mPath = pPath;
     }
 
-    public void setHeaders(Header[] pHeaders) {
-        mHeaders = pHeaders;
+    public void setHeaders(HashMap<String, String> pHeaders) {
+        if(pHeaders != null && pHeaders.size() > 0) {
+            for (int i = 0; i < pHeaders.size(); i++) {
+                mHeaders.put((String) pHeaders.keySet().toArray()[i], pHeaders.get(pHeaders.keySet().toArray()[i]));
+            }
+        }
     }
 
     public void setRequestArgs(JSONObject pArgs) {
@@ -108,6 +111,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
     @Override
     protected JSONObject getRequestArgs() {
         return mArgs;
+    }
+
+    @Override
+    public void executeAsync() throws Exception {
+
     }
 
     @Override
@@ -272,14 +280,10 @@ public class VisilabsActionRequest extends VisilabsRemote {
         });
     }
 
-    protected Header[] buildHeaders(Header[] pHeaders) throws Exception {
-        return  null;
-    }
-
     private void fillHeaderMap(HashMap<String, String> headerMap){
-        if(mHeaders != null && mHeaders.length > 0){
-            for (Header mHeader : mHeaders) {
-                headerMap.put(mHeader.getName(), mHeader.getValue());
+        if(mHeaders != null && mHeaders.size() > 0){
+            for (int i = 0 ; i < mHeaders.size() ; i++){
+                headerMap.put((String)mHeaders.keySet().toArray()[i], mHeaders.get(mHeaders.keySet().toArray()[i]));
             }
         }
 

@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import cz.msebera.android.httpclient.Header;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,7 +28,7 @@ public class VisilabsTargetRequest extends VisilabsRemote {
     private String mZoneID;
     private String mProductCode;
     private String mPath = "";
-    private Header[] mHeaders = null;
+    private HashMap<String, String> mHeaders = new HashMap<>();
     private JSONObject mArgs = new JSONObject();
     private int mTimeOutInSeconds;
     private HashMap<String,String> mProperties = new HashMap<>();
@@ -63,8 +61,12 @@ public class VisilabsTargetRequest extends VisilabsRemote {
         mPath = pPath;
     }
 
-    public void setHeaders(Header[] pHeaders) {
-        mHeaders = pHeaders;
+    public void setHeaders(HashMap<String, String> pHeaders) {
+        if(pHeaders != null && pHeaders.size() > 0) {
+            for (int i = 0; i < pHeaders.size(); i++) {
+                mHeaders.put((String) pHeaders.keySet().toArray()[i], pHeaders.get(pHeaders.keySet().toArray()[i]));
+            }
+        }
     }
 
     public void setRequestArgs(JSONObject pArgs) {
@@ -94,6 +96,11 @@ public class VisilabsTargetRequest extends VisilabsRemote {
     @Override
     protected JSONObject getRequestArgs() {
         return mArgs;
+    }
+
+    @Override
+    public void executeAsync() throws Exception {
+
     }
 
     @Override
@@ -146,6 +153,11 @@ public class VisilabsTargetRequest extends VisilabsRemote {
     }
 
     @Override
+    public void executeAsyncAction(VisilabsCallback pCallback) throws Exception {
+
+    }
+
+    @Override
     public void executeAsyncAction(VisilabsMailSubsFormRequestCallback pCallback) {
 
     }
@@ -174,9 +186,9 @@ public class VisilabsTargetRequest extends VisilabsRemote {
     }
 
     private void fillHeaderMap(HashMap<String, String> headerMap){
-        if(mHeaders != null && mHeaders.length > 0){
-            for (Header mHeader : mHeaders) {
-                headerMap.put(mHeader.getName(), mHeader.getValue());
+        if(mHeaders != null && mHeaders.size() > 0){
+            for (int i = 0 ; i < mHeaders.size() ; i++){
+                headerMap.put((String)mHeaders.keySet().toArray()[i], mHeaders.get(mHeaders.keySet().toArray()[i]));
             }
         }
 
@@ -259,9 +271,5 @@ public class VisilabsTargetRequest extends VisilabsRemote {
                 queryMap.put(entry.getKey(), entry.getValue());
             }
         }
-    }
-
-    protected Header[] buildHeaders(Header[] pHeaders) throws Exception {
-        return  null;
     }
 }

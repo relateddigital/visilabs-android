@@ -1,20 +1,16 @@
 package com.visilabs.api;
 
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
-import com.visilabs.inApp.InAppMessage;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
-import com.visilabs.util.VisilabsEncoder;
-import com.visilabs.util.VisilabsLog;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -22,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cz.msebera.android.httpclient.Header;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,7 +31,7 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     private String mAction;
     private String mActionID;
     private String mPath = "";
-    private Header[] mHeaders = null;
+    private HashMap<String, String> mHeaders = new HashMap<>();
     private JSONObject mArgs = new JSONObject();
     private int mTimeOutInSeconds;
     private String mApiVer = "Android";
@@ -56,8 +51,12 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
         mPath = pPath;
     }
 
-    public void setHeaders(Header[] pHeaders) {
-        mHeaders = pHeaders;
+    public void setHeaders(HashMap<String, String> pHeaders) {
+        if(pHeaders != null && pHeaders.size() > 0) {
+            for (int i = 0; i < pHeaders.size(); i++) {
+                mHeaders.put((String) pHeaders.keySet().toArray()[i], pHeaders.get(pHeaders.keySet().toArray()[i]));
+            }
+        }
     }
 
     public void setRequestArgs(JSONObject pArgs) {
@@ -99,6 +98,11 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     @Override
     protected JSONObject getRequestArgs() {
         return mArgs;
+    }
+
+    @Override
+    public void executeAsync() throws Exception {
+
     }
 
     @Override
@@ -172,6 +176,11 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     }
 
     @Override
+    public void executeAsyncAction(VisilabsCallback pCallback) throws Exception {
+
+    }
+
+    @Override
     public void executeAsync(VisilabsInAppMessageCallback pCallback) {
 
     }
@@ -187,9 +196,9 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     }
 
     private void fillHeaderMap(HashMap<String, String> headerMap){
-        if(mHeaders != null && mHeaders.length > 0){
-            for (Header mHeader : mHeaders) {
-                headerMap.put(mHeader.getName(), mHeader.getValue());
+        if(mHeaders != null && mHeaders.size() > 0){
+            for (int i = 0 ; i < mHeaders.size() ; i++){
+                headerMap.put((String)mHeaders.keySet().toArray()[i], mHeaders.get(mHeaders.keySet().toArray()[i]));
             }
         }
 
@@ -256,9 +265,5 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
                 queryMap.put(entry.getKey(), entry.getValue());
             }
         }
-    }
-
-    protected Header[] buildHeaders(Header[] pHeaders) throws Exception {
-        return  null;
     }
 }

@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -22,19 +20,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.visilabs.Injector;
-import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsGeofenceGetListCallback;
 import com.visilabs.api.VisilabsGeofenceRequest;
-import com.visilabs.api.VisilabsCallback;
 import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
 import com.visilabs.gps.geofence.GeofenceBroadcastReceiver;
 import com.visilabs.gps.geofence.VisilabsAlarm;
 import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
 import com.visilabs.gps.util.GeoFencesUtils;
-import com.visilabs.inApp.VisilabsActionRequest;
-import com.visilabs.json.JSONArray;
-import com.visilabs.json.JSONObject;
-import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
 import com.visilabs.util.VisilabsLog;
 
 import java.util.ArrayList;

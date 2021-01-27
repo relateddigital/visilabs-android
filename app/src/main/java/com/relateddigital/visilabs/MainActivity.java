@@ -9,11 +9,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.gson.Gson;
 import com.relateddigital.visilabs.databinding.ActivityMainBinding;
 import com.visilabs.Visilabs;
-import com.visilabs.VisilabsResponse;
-import com.visilabs.api.VisilabsCallback;
 
 import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.favs.FavsResponse;

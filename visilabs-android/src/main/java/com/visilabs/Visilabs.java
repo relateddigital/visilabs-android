@@ -9,13 +9,11 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 import androidx.core.content.ContextCompat;
-import com.google.gson.Gson;
 import com.visilabs.api.LoggerApiClient;
 import com.visilabs.api.RealTimeApiClient;
 import com.visilabs.api.SApiClient;
 import com.visilabs.api.VisilabsAction;
 import com.visilabs.api.VisilabsApiMethods;
-import com.visilabs.api.VisilabsCallback;
 import com.visilabs.api.VisilabsInAppMessageCallback;
 import com.visilabs.api.VisilabsMailSubsFormRequestCallback;
 import com.visilabs.api.VisilabsTargetFilter;
@@ -26,14 +24,11 @@ import com.visilabs.gps.factory.GpsFactory2;
 import com.visilabs.gps.manager.GpsManager;
 import com.visilabs.gps.manager.GpsManagerMoreThanOreo;
 import com.visilabs.inApp.InAppMessageManager;
-import com.visilabs.json.JSONArray;
-import com.visilabs.json.JSONObject;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.Report;
 import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
-import com.visilabs.util.Device;
 import com.visilabs.util.NetworkManager;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.Prefs;
@@ -666,20 +661,22 @@ public class Visilabs {
                     message = messages.get(0);
                 }
 
-                new InAppMessageManager(mCookieID, mDataSource).showInAppMessage(message, parent);
+                if(message != null) {
+                    new InAppMessageManager(mCookieID, mDataSource).showInAppMessage(message, parent);
 
-                if (message.getActionData().getVisitData() != null && !message.getActionData().getVisitData().equals("")) {
-                    Log.v("mVisitData", message.getActionData().getVisitData());
-                    mVisitData = message.getActionData().getVisitData();
-                }
+                    if (message.getActionData().getVisitData() != null && !message.getActionData().getVisitData().equals("")) {
+                        Log.v("mVisitData", message.getActionData().getVisitData());
+                        mVisitData = message.getActionData().getVisitData();
+                    }
 
-                if (message.getActionData().getVisitorData() != null && !message.getActionData().getVisitorData().equals("")) {
-                    Prefs.saveToPrefs(parent, VisilabsConstant.VISITOR_DATA_PREF,
-                            VisilabsConstant.VISITOR_DATA_PREF_KEY, message.getActionData().getVisitorData());
+                    if (message.getActionData().getVisitorData() != null && !message.getActionData().getVisitorData().equals("")) {
+                        Prefs.saveToPrefs(parent, VisilabsConstant.VISITOR_DATA_PREF,
+                                VisilabsConstant.VISITOR_DATA_PREF_KEY, message.getActionData().getVisitorData());
 
-                    mVisitorData = message.getActionData().getVisitorData();
+                        mVisitorData = message.getActionData().getVisitorData();
 
-                    Log.v("mVisitorData", message.getActionData().getVisitorData());
+                        Log.v("mVisitorData", message.getActionData().getVisitorData());
+                    }
                 }
             }
 

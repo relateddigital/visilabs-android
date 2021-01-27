@@ -1,6 +1,5 @@
 package com.visilabs.api;
 
-import com.visilabs.favs.FavsResponse;
 import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
 
 import java.util.List;

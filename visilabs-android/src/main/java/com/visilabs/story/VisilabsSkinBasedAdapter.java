@@ -1,6 +1,5 @@
 package com.visilabs.story;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -22,6 +21,7 @@ import com.visilabs.story.model.skinbased.ExtendedProps;
 import com.visilabs.util.VisilabsConstant;
 import java.net.URISyntaxException;
 import de.hdodenhof.circleimageview.CircleImageView;
+
 public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinBasedAdapter.StoryHolder> {
 
     Context mContext;

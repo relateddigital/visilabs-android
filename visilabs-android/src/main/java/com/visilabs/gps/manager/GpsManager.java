@@ -5,10 +5,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.util.Log;
 
-import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsGeofenceGetListCallback;
 import com.visilabs.api.VisilabsGeofenceRequest;
-import com.visilabs.api.VisilabsCallback;
 import com.visilabs.Injector;
 import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
 import com.visilabs.gps.geofence.GeofenceMonitor;
@@ -16,8 +14,6 @@ import com.visilabs.gps.geofence.GeofenceMonitorConnection;
 import com.visilabs.gps.listener.IVisilabsGeofenceListener;
 import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
 import com.visilabs.gps.util.GeoFencesUtils;
-import com.visilabs.json.JSONArray;
-import com.visilabs.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
