@@ -699,7 +699,6 @@ public class Visilabs {
         request.setProductCode(productCode);
         request.setPath(null);
         request.setHeaders(null);
-        request.setMethod(VisilabsTargetRequest.Methods.GET);
         request.setRequestArgs(null);
         request.setTimeOutInSeconds(mRequestTimeoutSeconds);
         request.setApiVer("Android");
@@ -714,7 +713,6 @@ public class Visilabs {
         request.setProductCode(productCode);
         request.setPath(null);
         request.setHeaders(null);
-        request.setMethod(VisilabsTargetRequest.Methods.GET);
         request.setRequestArgs(null);
         request.setTimeOutInSeconds(mRequestTimeoutSeconds);
         request.setFilters(filters);

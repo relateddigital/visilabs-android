@@ -11,12 +11,14 @@ public class VisilabsResponse {
 
     private final JSONObject mResults;
     private final JSONArray mResultArray;
+    private final String mResultOtherThanJSON;
     private final Throwable mError;
     private final String mErrorMessage;
 
-    public VisilabsResponse(JSONObject pResults, JSONArray pResultArray, Throwable e, String pError) {
+    public VisilabsResponse(JSONObject pResults, JSONArray pResultArray, String resultOtherThanJSON, Throwable e, String pError) {
         mResults = pResults;
         mResultArray = pResultArray;
+        mResultOtherThanJSON = resultOtherThanJSON;
         mError = e;
         mErrorMessage = pError;
     }
@@ -27,6 +29,10 @@ public class VisilabsResponse {
 
     public JSONArray getArray() {
         return mResultArray;
+    }
+
+    public String getResultOtherThanJSON() {
+        return mResultOtherThanJSON;
     }
 
     public Throwable getError() {
@@ -42,6 +48,8 @@ public class VisilabsResponse {
             return mResults.toString();
         } else if (mResultArray != null) {
             return mResultArray.toString();
+        } else if (mResultOtherThanJSON != null && !mResultOtherThanJSON.equals("")) {
+            return mResultOtherThanJSON;
         } else {
             return mErrorMessage;
         }

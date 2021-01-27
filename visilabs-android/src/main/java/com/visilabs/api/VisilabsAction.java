@@ -26,6 +26,8 @@ public interface VisilabsAction {
 
     void executeAsync(VisilabsInAppMessageCallback pCallback);
 
+    void executeAsync(VisilabsGeofenceGetListCallback pCallback);
+
     void executeAsyncAction(VisilabsCallback pCallback) throws Exception;
 
     void executeAsyncAction(VisilabsMailSubsFormRequestCallback pCallback);

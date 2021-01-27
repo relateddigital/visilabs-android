@@ -23,14 +23,18 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.visilabs.Injector;
 import com.visilabs.VisilabsResponse;
+import com.visilabs.api.VisilabsGeofenceGetListCallback;
 import com.visilabs.api.VisilabsGeofenceRequest;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
 import com.visilabs.gps.geofence.GeofenceBroadcastReceiver;
 import com.visilabs.gps.geofence.VisilabsAlarm;
+import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
 import com.visilabs.gps.util.GeoFencesUtils;
+import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
+import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
 import com.visilabs.util.VisilabsLog;
 
 import java.util.ArrayList;
@@ -155,80 +159,48 @@ public class GpsManagerMoreThanOreo {
 
         request.setAction("getlist");
         request.setApiVer("Android");
-        final VisilabsCallback callback = new VisilabsCallback() {
+        final VisilabsGeofenceGetListCallback callback = new VisilabsGeofenceGetListCallback() {
             @Override
-            public void success(VisilabsResponse response) {
-                try {
-                    List<VisilabsGeoFenceEntity> geoFences = new ArrayList<>();
-                    JSONArray array = response.getArray();
-                    if (array != null) {
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject action = (JSONObject) array.get(i);
-                            String trgevt = action.getString("trgevt");
-                            int actid = action.getInt("actid");
-                            int dis = action.getInt("dis");
-                            JSONArray geoJsons = action.getJSONArray("geo");
-                            if (geoJsons != null) {
-                                for (int j = 0; j < geoJsons.length(); j++) {
-                                    JSONObject geoJson = (JSONObject) geoJsons.get(j);
-                                    double latitude = geoJson.getDouble("lat");
-                                    double longitude = geoJson.getDouble("long");
-                                    int radius = geoJson.getInt("rds");
-                                    int geoid = geoJson.getInt("id");
+            public void success(List<VisilabsGeofenceGetListResponse> response, String url) {
+                Log.i(TAG, "Success Request : " + url);
 
-                                    VisilabsGeoFenceEntity visilabsGeoFenceEntity = new VisilabsGeoFenceEntity();
-                                    visilabsGeoFenceEntity.setGuid(actid + "_" + j + "_" + geoid);
-                                    visilabsGeoFenceEntity.setLatitude(Double.toString(latitude));
-                                    visilabsGeoFenceEntity.setLongitude(Double.toString(longitude));
-                                    visilabsGeoFenceEntity.setRadius(radius);
-                                    visilabsGeoFenceEntity.setType(trgevt);
-                                    visilabsGeoFenceEntity.setDurationInSeconds(dis);
-                                    visilabsGeoFenceEntity.setGeoid(geoid);
+                List<VisilabsGeoFenceEntity> geoFences = new ArrayList<>();
 
-                                    geoFences.add(visilabsGeoFenceEntity);
-                                }
-                            }
+                if(response != null && response.size() != 0) {
+                    for (int i = 0; i < response.size(); i++) {
+                        VisilabsGeofenceGetListResponse visilabsGeofenceGetListResponse = response.get(i);
+                        for(int j = 0 ; j < visilabsGeofenceGetListResponse.getGeofences().size() ; j++) {
+                            VisilabsGeoFenceEntity visilabsGeoFenceEntity = new VisilabsGeoFenceEntity();
+                            visilabsGeoFenceEntity.setGuid(visilabsGeofenceGetListResponse.getActId() +
+                                    "_" + j + "_" + visilabsGeofenceGetListResponse.getGeofences().get(j).getId());
+                            visilabsGeoFenceEntity.setLatitude(Double.toString(visilabsGeofenceGetListResponse.
+                                    getGeofences().get(j).getLatitude()));
+                            visilabsGeoFenceEntity.setLongitude(Double.toString(visilabsGeofenceGetListResponse.
+                                    getGeofences().get(j).getLongitude()));
+                            visilabsGeoFenceEntity.setRadius(visilabsGeofenceGetListResponse.
+                                    getGeofences().get(j).getRadius().intValue());
+                            visilabsGeoFenceEntity.setType(visilabsGeofenceGetListResponse.getTrgevt());
+                            visilabsGeoFenceEntity.setDurationInSeconds(visilabsGeofenceGetListResponse.getDistance());
+                            visilabsGeoFenceEntity.setGeoid(visilabsGeofenceGetListResponse.getGeofences().get(j).getId());
+
+                            geoFences.add(visilabsGeoFenceEntity);
                         }
-                        setupGeofencesCallback(geoFences);
                     }
-
-                } catch (Exception ex) {
-                    Log.e("VL", ex.toString());
+                    setupGeofencesCallback(geoFences);
                 }
             }
 
             @Override
-            public void fail(VisilabsResponse response) {
-                try {
-                    JSONArray array = response.getArray();
-                } catch (Exception ex) {
-                    Log.e("VL", ex.toString());
-                }
+            public void fail(Throwable t, String url) {
+                Log.e(TAG, "Fail Request : " + url);
+                Log.e(TAG, "Fail Request Message : " + t.getMessage());
             }
         };
         try {
-            if (Looper.myLooper() == null)
-                Looper.prepare();
-            Handler mainHandler = new Handler(Looper.getMainLooper());
-            Runnable myRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        request.executeAsync(callback);
-                    } catch (Exception e) {
-                        Log.e("VL", e.toString());
-                    }
-                }
-            };
-            mainHandler.post(myRunnable);
-            if (Looper.myLooper() == null)
-                Looper.loop();
-
-
-        } catch (Exception ex) {
-            VisilabsLog.e(TAG, ex.getMessage(), ex);
+            request.executeAsync(callback);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 
     private void setupGeofencesCallback(List<VisilabsGeoFenceEntity> geoFences) {

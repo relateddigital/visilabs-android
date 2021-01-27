@@ -1,14 +1,13 @@
 package com.visilabs.inApp;
 
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
-
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.api.SApiClient;
 import com.visilabs.api.VisilabsApiMethods;
 import com.visilabs.api.VisilabsFavsRequestCallback;
+import com.visilabs.api.VisilabsGeofenceGetListCallback;
 import com.visilabs.api.VisilabsInAppMessageCallback;
 import com.visilabs.api.VisilabsMailSubsFormRequestCallback;
 import com.visilabs.api.VisilabsRemote;
@@ -17,16 +16,13 @@ import com.visilabs.favs.FavsResponse;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
 import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
-import com.visilabs.story.model.storylookingbanners.VisilabsStoryLookingBannerResponse;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import cz.msebera.android.httpclient.Header;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -137,7 +133,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
                 }
                 if(!rawJsonResponse.equals("")) {
                     Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
-                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, new JSONArray(rawJsonResponse), null, null);
+                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, new JSONArray(rawJsonResponse), null, null, null);
                     pCallback.success(visilabsResponse);
                 } else {
                     Log.e(LOG_TAG, "Failed to get the json response");
@@ -147,7 +143,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e(LOG_TAG, "Fail Request " + t.getMessage());
-                VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(""), null, null, null);
+                VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(""), null, null, null, null);
                 pCallback.fail(visilabsResponse);
             }
         });
@@ -176,7 +172,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
                 }
                 if(!rawJsonResponse.equals("")) {
                     Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
-                    VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(rawJsonResponse), null, null, null);
+                    VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(rawJsonResponse), null, null, null, null);
                     pCallback.success(visilabsResponse);
                 } else {
                     Log.e(LOG_TAG, "Failed to get the json response");
@@ -186,7 +182,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e(LOG_TAG, "Fail Request " + t.getMessage());
-                VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(""), null, null, null);
+                VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(""), null, null, null, null);
                 pCallback.fail(visilabsResponse);
             }
         });
@@ -217,6 +213,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
                 pCallback.fail(t, call.request().url().toString());
             }
         });
+    }
+
+    @Override
+    public void executeAsync(VisilabsGeofenceGetListCallback pCallback) {
+
     }
 
     @Override
@@ -269,186 +270,6 @@ public class VisilabsActionRequest extends VisilabsRemote {
                 pCallback.fail(t, call.request().url().toString());
             }
         });
-    }
-
-    public String getURL() {
-        String url = Visilabs.getActionURL();
-        Uri.Builder uriBuilder = Uri.parse(url).buildUpon();
-        if(url != null && url.length() > 0){
-
-            if(Visilabs.CallAPI().getOrganizationID() != null && !Visilabs.CallAPI().getOrganizationID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
-            }
-            if(Visilabs.CallAPI().getSiteID() != null && !Visilabs.CallAPI().getSiteID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.SITEID_KEY, Visilabs.CallAPI().getSiteID());
-            }
-
-            if(Visilabs.CallAPI().getCookieID() != null && !Visilabs.CallAPI().getCookieID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
-            }
-            if(Visilabs.CallAPI().getExVisitorID() != null && !Visilabs.CallAPI().getExVisitorID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
-            }
-
-            if(Visilabs.CallAPI().getSysTokenID() != null && !Visilabs.CallAPI().getSysTokenID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
-            }
-            if(Visilabs.CallAPI().getSysAppID() != null && !Visilabs.CallAPI().getSysAppID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
-            }
-
-            if(mApiVer != null && !mApiVer.equals("")){
-                uriBuilder.appendQueryParameter("OM.apiver", mApiVer);
-            }else{
-                uriBuilder.appendQueryParameter("OM.apiver", "Android");
-            }
-
-            if(mPageName != null && !mPageName.equals("")){
-                uriBuilder.appendQueryParameter("OM.uri", mPageName);
-            }else{
-                uriBuilder.appendQueryParameter("OM.uri", "");
-            }
-
-            if(mVisitorData != null && !mVisitorData.equals("")){
-                uriBuilder.appendQueryParameter("OM.viscap", mVisitorData);
-            }
-
-            if(mVisitData != null && !mVisitData.equals("")){
-                uriBuilder.appendQueryParameter("OM.vcap", mVisitData);
-            }
-        }
-
-        HashMap<String, String> parameters = PersistentTargetManager.with(mContext).getParameters();
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            if(!StringUtils.isNullOrWhiteSpace(entry.getKey()) && !StringUtils.isNullOrWhiteSpace(entry.getValue())){
-                uriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
-            }
-
-            if(mProperties != null){
-                mProperties.remove(entry.getKey());
-            }
-
-        }
-
-        if(mProperties != null){
-            for (Map.Entry<String, String> entry : mProperties.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                if(key.equals(VisilabsConstant.COOKIEID_KEY) || key.equals("OM.siteID")
-                        || key.equals("OM.oid") || key.equals("OM.apiver")
-                        || key.equals("OM.uri") || key.equals(VisilabsConstant.EXVISITORID_KEY)
-                        || key.equals(VisilabsConstant.APPID_KEY) || key.equals(VisilabsConstant.TOKENID_KEY)){
-                    continue;
-                }
-
-                if(value != null && value.length() > 0){
-                    uriBuilder.appendQueryParameter(key, value);
-                }
-
-            }
-        }
-
-        String finalURI = uriBuilder.build().toString();
-
-        if(VisilabsConstant.DEBUG){
-            Log.v(LOG_TAG, finalURI);
-        }
-
-        return finalURI;
-    }
-
-
-    public String getActionUrl() {
-        String url = "https://s.visilabs.net/mobile?";
-        Uri.Builder uriBuilder = Uri.parse(url).buildUpon();
-        if(url != null && url.length() > 0){
-
-            if(Visilabs.CallAPI().getOrganizationID() != null && !Visilabs.CallAPI().getOrganizationID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
-            }
-            if(Visilabs.CallAPI().getSiteID() != null && !Visilabs.CallAPI().getSiteID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.SITEID_KEY, Visilabs.CallAPI().getSiteID());
-            }
-
-            if(Visilabs.CallAPI().getCookieID() != null && !Visilabs.CallAPI().getCookieID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
-            }
-            if(Visilabs.CallAPI().getExVisitorID() != null && !Visilabs.CallAPI().getExVisitorID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
-            }
-
-            if(Visilabs.CallAPI().getSysTokenID() != null && !Visilabs.CallAPI().getSysTokenID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
-            }
-            if(Visilabs.CallAPI().getSysAppID() != null && !Visilabs.CallAPI().getSysAppID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
-            }
-
-            if(mApiVer != null && !mApiVer.equals("")){
-                uriBuilder.appendQueryParameter("OM.apiver", mApiVer);
-            }else{
-                uriBuilder.appendQueryParameter("OM.apiver", "Android");
-            }
-
-            if(mPageName != null && !mPageName.equals("")){
-                uriBuilder.appendQueryParameter("OM.uri", mPageName);
-            }else{
-                uriBuilder.appendQueryParameter("OM.uri", "");
-            }
-
-            if(mVisitorData != null && !mVisitorData.equals("")){
-                uriBuilder.appendQueryParameter("OM.viscap", mVisitorData);
-            }
-
-            if(mVisitData != null && !mVisitData.equals("")){
-                uriBuilder.appendQueryParameter("OM.vcap", mVisitData);
-            }
-
-            if( mActionId!= null && !mActionId.equals("")){
-                uriBuilder.appendQueryParameter("action_id", mActionId);
-            }
-
-            if(mActionType != null && !mActionType.equals("")){
-                uriBuilder.appendQueryParameter("action_type", mActionType);
-            }
-        }
-
-        HashMap<String, String> parameters = PersistentTargetManager.with(mContext).getParameters();
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            if(!StringUtils.isNullOrWhiteSpace(entry.getKey()) && !StringUtils.isNullOrWhiteSpace(entry.getValue())){
-                uriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
-            }
-
-            if(mProperties != null){
-                mProperties.remove(entry.getKey());
-            }
-
-        }
-
-        if(mProperties != null){
-            for (Map.Entry<String, String> entry : mProperties.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                if(key.equals(VisilabsConstant.COOKIEID_KEY) || key.equals("OM.siteID") || key.equals("OM.oid") || key.equals("OM.apiver")
-                        || key.equals("OM.uri") || key.equals(VisilabsConstant.EXVISITORID_KEY)
-                        || key.equals(VisilabsConstant.APPID_KEY) || key.equals(VisilabsConstant.TOKENID_KEY)){
-                    continue;
-                }
-
-                if(value != null && value.length() > 0){
-                    uriBuilder.appendQueryParameter(key, value);
-                }
-
-            }
-        }
-
-        String finalURI = uriBuilder.build().toString();
-
-        if(VisilabsConstant.DEBUG){
-            Log.v(LOG_TAG, finalURI);
-        }
-
-        return finalURI;
     }
 
     protected Header[] buildHeaders(Header[] pHeaders) throws Exception {

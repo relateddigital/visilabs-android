@@ -1,6 +1,7 @@
 package com.visilabs.api;
 
 import com.visilabs.favs.FavsResponse;
+import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
 import com.visilabs.story.model.storylookingbanners.VisilabsStoryLookingBannerResponse;
@@ -72,4 +73,24 @@ public interface VisilabsApiMethods {
     );
 
     //////////////////////////////////////////////////////
+
+    @GET("json")
+    Call<ResponseBody> getGeneralTargetRequestJsonResponse(
+            @HeaderMap Map<String, String> headers,
+            @QueryMap Map<String, String> queryParameters
+    );
+
+    //////////////////////////////////////////////////////
+
+    @GET("geojson")
+    Call<ResponseBody> getGeneralGeofenceRequestJsonResponse(
+            @HeaderMap Map<String, String> headers,
+            @QueryMap Map<String, String> queryParameters
+    );
+
+    @GET("geojson")
+    Call<List<VisilabsGeofenceGetListResponse>> getGeofenceListRequestResponse(
+            @HeaderMap Map<String, String> headers,
+            @QueryMap Map<String, String> queryParameters
+    );
 }

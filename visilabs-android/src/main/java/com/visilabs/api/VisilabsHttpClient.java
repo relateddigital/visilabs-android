@@ -59,7 +59,7 @@ public class VisilabsHttpClient {
                         new FHJsonHttpResponseHandler(pCallback));
             }
         } else {
-            VisilabsResponse res = new VisilabsResponse(null, null, new Exception("offline"), "offline");
+            VisilabsResponse res = new VisilabsResponse(null, null, null, new Exception("offline"), "offline");
             pCallback.fail(res);
         }
     }
@@ -93,7 +93,7 @@ public class VisilabsHttpClient {
                         new FHJsonHttpResponseHandler(pCallback));
             }
         } else {
-            VisilabsResponse res = new VisilabsResponse(null, null, new Exception("offline"), "offline");
+            VisilabsResponse res = new VisilabsResponse(null, null, null, new Exception("offline"), "offline");
             pCallback.fail(res);
         }
     }
@@ -134,7 +134,7 @@ public class VisilabsHttpClient {
                         new FHJsonHttpResponseHandler(pCallback));
             }
         } else {
-            VisilabsResponse res = new VisilabsResponse(null, null, new Exception("offline"), "offline");
+            VisilabsResponse res = new VisilabsResponse(null, null, null, new Exception("offline"), "offline");
             pCallback.fail(res);
         }
     }
@@ -168,7 +168,7 @@ public class VisilabsHttpClient {
                         new FHJsonHttpResponseHandler(pCallback));
             }
         } else {
-            VisilabsResponse res = new VisilabsResponse(null, null, new Exception("offline"), "offline");
+            VisilabsResponse res = new VisilabsResponse(null, null, null, new Exception("offline"), "offline");
             pCallback.fail(res);
         }
     }
@@ -198,7 +198,7 @@ public class VisilabsHttpClient {
         public void onSuccess(int pStatusCode, Header[] pHeaders, org.json.JSONObject pRes) {
             VisilabsLog.v(LOG_TAG, "Got response : " + pRes.toString());
             if (mCallback != null) {
-                VisilabsResponse fhres = new VisilabsResponse(new JSONObject(pRes.toString()), null, null, null);
+                VisilabsResponse fhres = new VisilabsResponse(new JSONObject(pRes.toString()), null, null, null, null);
                 mCallback.success(fhres);
             }
         }
@@ -207,7 +207,7 @@ public class VisilabsHttpClient {
         public void onSuccess(int pStatusCode, Header[] pHeaders, org.json.JSONArray pRes) {
             VisilabsLog.v(LOG_TAG, "Got response : " + pRes.toString());
             if (mCallback != null) {
-                VisilabsResponse fhres = new VisilabsResponse(null, new JSONArray(pRes.toString()), null, null);
+                VisilabsResponse fhres = new VisilabsResponse(null, new JSONArray(pRes.toString()), null, null, null);
                 mCallback.success(fhres);
             }
         }
@@ -216,7 +216,7 @@ public class VisilabsHttpClient {
         public void onFailure(int pStatusCode, Header[] pHeaders, String pContent, Throwable pError) {
             VisilabsLog.e(LOG_TAG, pError.getMessage(), pError);
             if (mCallback != null) {
-                VisilabsResponse fhres = new VisilabsResponse(null, null, pError, pContent);
+                VisilabsResponse fhres = new VisilabsResponse(null, null, null, pError, pContent);
                 mCallback.fail(fhres);
             }
         }
@@ -233,6 +233,7 @@ public class VisilabsHttpClient {
                 VisilabsResponse fhres = new VisilabsResponse(
                         new JSONObject(errorResponse),
                         null,
+                        null,
                         pError,
                         errorResponse);
                 mCallback.fail(fhres);
@@ -246,6 +247,7 @@ public class VisilabsHttpClient {
                 VisilabsResponse fhres = new VisilabsResponse(
                         null,
                         new JSONArray(pErrorResponse.toString()),
+                        null,
                         pError,
                         pErrorResponse.toString());
                 mCallback.fail(fhres);
