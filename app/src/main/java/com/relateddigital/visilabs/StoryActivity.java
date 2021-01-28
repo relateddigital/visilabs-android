@@ -2,7 +2,9 @@ package com.relateddigital.visilabs;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -10,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.relateddigital.visilabs.databinding.ActivityStoryDemoBinding;
 import com.visilabs.story.model.StoryItemClickListener;
+import com.visilabs.util.PersistentTargetManager;
 
 public class StoryActivity extends AppCompatActivity {
 
@@ -34,9 +37,32 @@ public class StoryActivity extends AppCompatActivity {
         binding.btnShowStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboard(StoryActivity.this);
+                binding.etStoryId.clearFocus();
                 showStory();
             }
         });
+
+        binding.btnClearStoryCache.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideKeyboard(StoryActivity.this);
+                binding.etStoryId.clearFocus();
+                clearStoryCache();
+            }
+        });
+
+        binding.sw.setOnTouchListener(new View.OnTouchListener()
+        {
+            @Override
+            public boolean onTouch(View v, MotionEvent event)
+            {
+                hideKeyboard(StoryActivity.this);
+                binding.etStoryId.clearFocus();
+                return false;
+            }
+        });
+
     }
 
     private void showStory() {
@@ -46,6 +72,19 @@ public class StoryActivity extends AppCompatActivity {
         } else {
             binding.vrvStory.setStoryActionId(getApplicationContext(), storyId, storyItemClickListener);
         }
+    }
+
+    private void clearStoryCache() {
+        PersistentTargetManager.with(getApplicationContext()).clearStoryCache();
+    }
+
+    private static void hideKeyboard(AppCompatActivity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE);
+        View view = activity.getCurrentFocus();
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 }

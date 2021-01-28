@@ -490,6 +490,8 @@ public class Visilabs {
         }
         try {
             VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm");
+            visilabsActionRequest.setPageName(pageName);
+            visilabsActionRequest.setProperties(properties);
             visilabsActionRequest.executeAsyncAction(getVisilabsMailSubscriptionFormCallback(parent));
         } catch (Exception e) {
             e.printStackTrace();

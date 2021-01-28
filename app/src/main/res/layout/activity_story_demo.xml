@@ -2,6 +2,10 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sw"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorLight">
@@ -29,6 +33,7 @@
                 android:layout_height="fill_parent"
                 android:layout_margin="2.0dp"
                 android:layout_weight="1.0"
+                android:textSize="12sp"
                 android:autofillHints="@string/story_id_optional"
                 android:hint="@string/story_id_optional"
                 android:inputType="number"
@@ -44,6 +49,16 @@
                 android:layout_weight="1.0"
                 android:background="@color/colorButton"
                 android:text="@string/show_story"
+                android:textColor="@color/colorLight" />
+
+            <Button
+                android:id="@+id/btn_clear_story_cache"
+                android:layout_width="0.0dip"
+                android:layout_height="fill_parent"
+                android:layout_margin="2.0dp"
+                android:layout_weight="1.0"
+                android:background="@color/colorButton"
+                android:text="@string/clear_story_cache"
                 android:textColor="@color/colorLight" />
 
         </LinearLayout>

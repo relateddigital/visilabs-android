@@ -1,9 +1,12 @@
 package com.visilabs.util;
 
 import android.content.Context;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -105,14 +108,32 @@ public class PersistentTargetManager {
         VisilabsLog.i(LOG_TAG, "Parameters cleared.");
     }
 
-    public synchronized void saveShownStory(String actId, String title) {
-
+    public synchronized void saveShownStory(final String actId, final String title) {
+        Map<String, List<String>> shownStories = getShownStories();
+        if(!shownStories.containsKey(actId)) {
+            shownStories.put(actId, new ArrayList<String>());
+        }
+        if(!shownStories.get(actId).contains(title)){
+            shownStories.get(actId).add(title);
+        }
+        Prefs.saveToPrefs(mContext, VisilabsConstant.SHOWN_STORIES_PREF,  VisilabsConstant.SHOWN_STORIES_PREF_KEY, new GsonBuilder().create().toJson(shownStories));
     }
 
-    public synchronized void getShownStories() {
-        Type paramsType = new TypeToken<Map<String, String>>() {}.getType();
-
+    public synchronized Map<String, List<String>> getShownStories() {
+        Map<String, List<String>> shownStories = new HashMap<String, List<String>>();
+        String shownStoriesJson = Prefs.getFromPrefs(mContext, VisilabsConstant.SHOWN_STORIES_PREF,  VisilabsConstant.SHOWN_STORIES_PREF_KEY, "");
+        if (!shownStoriesJson.isEmpty()) {
+            Gson gson = new Gson();
+            Type shownStoriesType = new TypeToken<Map<String, List<String>>>() {}.getType();
+            shownStories = gson.fromJson(shownStoriesJson, shownStoriesType);
+        }
+        return shownStories;
     }
+
+    public synchronized void clearStoryCache() {
+        Prefs.removeFromPrefs(mContext, VisilabsConstant.SHOWN_STORIES_PREF,  VisilabsConstant.SHOWN_STORIES_PREF_KEY);
+    }
+
 
     private static class Builder {
         private final Context context;

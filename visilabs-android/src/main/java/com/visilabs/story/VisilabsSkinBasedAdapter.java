@@ -16,15 +16,22 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.android.R;
 import com.visilabs.story.model.StoryItemClickListener;
+import com.visilabs.story.model.skinbased.Stories;
 import com.visilabs.story.model.skinbased.VisilabsSkinBasedResponse;
 import com.visilabs.story.model.skinbased.ExtendedProps;
+import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.VisilabsConstant;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinBasedAdapter.StoryHolder> {
 
     Context mContext;
+    RecyclerView mRecyclerView;
     VisilabsSkinBasedResponse mVisilabsSkinBasedResponse;
     String mExtendsProps;
 
@@ -41,10 +48,18 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
     }
 
     @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+    }
+
+    @Override
     public void onBindViewHolder(StoryHolder storyHolder, final int position) {
-        String storyName = mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getTitle();
-        String storyImage = mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getThumbnail();
-        storyHolder.tvStoryName.setText(storyName);
+        final Stories story = mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position);
+        final String storyTitle = story.getTitle();
+        final String storyImage = story.getThumbnail();
+        final boolean shown = story.getShown();
+        storyHolder.tvStoryName.setText(storyTitle);
 
         Picasso.get().load(storyImage).fit().into(storyHolder.ivStory);
         Picasso.get().load(storyImage).fit().into(storyHolder.civStory);
@@ -80,21 +95,21 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         if (borderRadius != null) {
             switch (borderRadius) {
                 case VisilabsConstant.STORY_CIRCLE:
-                    storyHolder.setCircleViewProperties();
+                    storyHolder.setCircleViewProperties(shown);
                     break;
 
                 case VisilabsConstant.STORY_ROUNDED_RECTANGLE:
                     float[] roundedRectangleBorderRadius = new float[]{15, 15, 15, 15, 15, 15, 15, 15};
-                    storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius);
+                    storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, shown);
                     break;
 
                 case VisilabsConstant.STORY_RECTANGLE:
                     float[] rectangleBorderRadius = new float[]{0, 0, 0, 0, 0, 0, 0, 0};
-                    storyHolder.setRectangleViewProperties(rectangleBorderRadius);
+                    storyHolder.setRectangleViewProperties(rectangleBorderRadius, shown);
                     break;
 
                 default:
-                    storyHolder.setCircleViewProperties();
+                    storyHolder.setCircleViewProperties(shown);
                     break;
             }
         }
@@ -105,6 +120,8 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         if (mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getItems().size() != 0) {
 
             StoryActivity story = new StoryActivity();
+            StoryActivity.setRecyclerView(mRecyclerView);
+            StoryActivity.setVisilabsSkinBasedAdapter(this);
             Intent intent = new Intent(mContext, story.getClass());
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
@@ -122,6 +139,28 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
     }
 
     public void setStoryList(VisilabsSkinBasedResponse visilabsSkinBasedResponse, String extendsProps) {
+
+        Map<String, List<String>> shownStoriesMap = PersistentTargetManager.with(mContext).getShownStories();
+
+        if (shownStoriesMap.containsKey(visilabsSkinBasedResponse.getStory().get(0).getActid())){
+            List<String> shownTitles = shownStoriesMap.get(visilabsSkinBasedResponse.getStory().get(0).getActid());
+            List<Stories> notShownStories = new ArrayList<>();
+            List<Stories> shownStories = new ArrayList<>();
+
+            if(shownTitles != null && !shownTitles.isEmpty()){
+                for(Stories s : visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories()) {
+                    if(shownTitles.contains(s.getTitle())) {
+                        s.setShown(true);
+                        shownStories.add(s);
+                    } else {
+                        notShownStories.add(s);
+                    }
+                }
+                notShownStories.addAll(shownStories);
+                visilabsSkinBasedResponse.getStory().get(0).getActiondata().setStories(notShownStories);
+            }
+        }
+
         mExtendsProps = extendsProps;
         mVisilabsSkinBasedResponse = visilabsSkinBasedResponse;
     }
@@ -158,29 +197,31 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
             }
         }
 
-        private void setRectangleViewProperties(float[] borderRadius) {
+        private void setRectangleViewProperties(float[] borderRadius, boolean shown) {
             ivStory.setVisibility(View.VISIBLE);
 
-            String borderColor = extendedProps.getStoryz_img_borderColor();
-            if (borderColor.equals("")){
-                borderColor = "#161616";
+            String borderColorString = extendedProps.getStoryz_img_borderColor();
+            if (borderColorString.equals("")){
+                borderColorString = "#161616";
             }
+            int borderColor = shown ? Color.rgb(127, 127, 127) : Color.parseColor(borderColorString);
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setCornerRadii(borderRadius);
-            shape.setStroke(3, Color.parseColor(borderColor));
+            shape.setStroke(3, borderColor);
             ivStory.setBackground(shape);
         }
 
-        private void setCircleViewProperties() {
+        private void setCircleViewProperties(boolean shown) {
             civStory.setVisibility(View.VISIBLE);
 
-            String borderColor = extendedProps.getStoryz_img_borderColor();
-            if (borderColor.equals("")){
-                borderColor = "#161616";
+            String borderColorString = extendedProps.getStoryz_img_borderColor();
+            if (borderColorString.equals("")){
+                borderColorString = "#161616";
             }
 
-            civStory.setBorderColor(Color.parseColor(borderColor));
+            int borderColor = shown ? Color.rgb(127, 127, 127) : Color.parseColor(borderColorString);
+            civStory.setBorderColor(borderColor);
             civStory.setBorderWidth(3);
         }
     }

@@ -69,6 +69,33 @@
                     android:paddingTop="5dp"
                     android:paddingRight="10dp"
                     android:paddingBottom="5dp" />
+
+                <LinearLayout
+                    android:id="@+id/ll_coupon_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_coupon_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="5dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="5dp"
+                        android:drawableRight="@drawable/content_copy_24"
+                        android:drawableEnd="@drawable/content_copy_24"
+                        android:text="@string/coupon_code" />
+
+                </LinearLayout>
+
+
+
             </LinearLayout>
 
             <com.visilabs.view.SmileRating
@@ -97,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:padding="5dp"
-                android:text="OK"
+                android:text="@string/OK"
                 android:textAllCaps="false" />
         </LinearLayout>
 

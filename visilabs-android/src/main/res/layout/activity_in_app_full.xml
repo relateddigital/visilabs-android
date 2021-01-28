@@ -62,7 +62,7 @@
             android:gravity="center_horizontal"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:text="Tıtle"
+            android:text="@string/title"
             android:textColor="#ffffff"
             android:textSize="25sp"
             android:textStyle="bold" />
@@ -78,6 +78,31 @@
             android:text="@string/com_visilabs_android_done"
             android:textColor="#a9b5c5"
             android:textSize="20sp" />
+
+        <LinearLayout
+            android:id="@+id/ll_coupon_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_coupon_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:drawableRight="@drawable/content_copy_24"
+                android:drawableEnd="@drawable/content_copy_24"
+                android:text="@string/coupon_code" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/btn_in_app"
