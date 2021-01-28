@@ -216,18 +216,18 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setPromotionCode() {
-        if(!StringUtils.isNullOrWhiteSpace(mInAppMessage.getPromotionCode())
-                && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getPromoCodeBackgroundColor())
-                && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getPromoCodeTextColor())){
+        if(!StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromotionCode())
+                && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromoCodeBackgroundColor())
+                && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromoCodeTextColor())){
             binding.llCouponContainer.setVisibility(View.VISIBLE);
-            binding.llCouponContainer.setBackgroundColor(Color.parseColor(mInAppMessage.getPromoCodeBackgroundColor()));
-            binding.tvCouponCode.setText(mInAppMessage.getPromotionCode());
-            binding.tvCouponCode.setTextColor(Color.parseColor(mInAppMessage.getPromoCodeTextColor()));
+            binding.llCouponContainer.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getPromoCodeBackgroundColor()));
+            binding.tvCouponCode.setText(mInAppMessage.getActionData().getPromotionCode());
+            binding.tvCouponCode.setTextColor(Color.parseColor(mInAppMessage.getActionData().getPromoCodeTextColor()));
             binding.llCouponContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), mInAppMessage.getPromotionCode());
+                    ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), mInAppMessage.getActionData().getPromotionCode());
                     clipboard.setPrimaryClip(clip);
                     Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
                 }
