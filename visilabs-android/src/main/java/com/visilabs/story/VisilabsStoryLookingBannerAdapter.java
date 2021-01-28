@@ -76,11 +76,14 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         storyHolder.llStoryContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String storyLink = mStoryLookingBanner.getStory().get(0).getActiondata().getStories().get(position).getLink();
+                Visilabs.CallAPI().trackStoryClick(mStoryLookingBanner.getStory().get(0).getActiondata().getReport().getClick());
+
                 Log.i("StoryActivityShows ", actionid + " : " + storyTitle);
                 PersistentTargetManager.with(mContext).saveShownStory(actionid, storyTitle);
                 setStoryList(mStoryLookingBanner, mExtendsProps);
                 mRecyclerView.getAdapter().notifyDataSetChanged();
-                Visilabs.CallAPI().trackStoryClick(actionid);
+              
                 if (mStoryItemClickListener != null) {
                     mStoryItemClickListener.storyItemClicked(storyLink);
                 }

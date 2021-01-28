@@ -1,57 +1,58 @@
 package com.visilabs.mailSub;
 
-import com.visilabs.story.model.storylookingbanners.Story;
+import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
 public class VisilabsMailSubscriptionFormResponse implements Serializable {
-    private String capping;
+    @SerializedName("FavoriteAttributeAction")
+    private List<Object> mFavoriteAttributeAction = null;
+    @SerializedName("MailSubscriptionForm")
+    private List<Object> mMailSubscriptionForm = null;
+    @SerializedName("Story")
+    private List<Object> mStory = null;
+    @SerializedName("VERSION")
+    private Integer mVersion;
+    @SerializedName("capping")
+    private String mCapping;
 
-    private int VERSION;
+    public List<Object> getFavoriteAttributeAction() {
+        return mFavoriteAttributeAction;
+    }
 
-    private List<String> FavoriteAttributeAction;
+    public void setFavoriteAttributeAction(List<Object> favoriteAttributeAction) {
+        mFavoriteAttributeAction = favoriteAttributeAction;
+    }
 
-    private List<Story> Story;
+    public List<Object> getMailSubscriptionForm() {
+        return mMailSubscriptionForm;
+    }
 
-    private List<MailSubscriptionForm> MailSubscriptionForm;
+    public void setMailSubscriptionForm(List<Object> mailSubscriptionForm) {
+        mMailSubscriptionForm = mailSubscriptionForm;
+    }
 
-    public void setCapping(String capping) {
-        this.capping = capping;
+    public List<Object> getStory() {
+        return mStory;
+    }
+
+    public void setStory(List<Object> story) {
+        mStory = story;
+    }
+
+    public Integer getVersion() {
+        return mVersion;
+    }
+
+    public void setVersion(Integer version) {
+        mVersion = version;
     }
 
     public String getCapping() {
-        return this.capping;
+        return mCapping;
     }
 
-    public void setVERSION(int VERSION) {
-        this.VERSION = VERSION;
-    }
-
-    public int getVERSION() {
-        return this.VERSION;
-    }
-
-    public void setFavoriteAttributeAction(List<String> FavoriteAttributeAction) {
-        this.FavoriteAttributeAction = FavoriteAttributeAction;
-    }
-
-    public List<String> getFavoriteAttributeAction() {
-        return this.FavoriteAttributeAction;
-    }
-
-    public void setStory(List<Story> Story) {
-        this.Story = Story;
-    }
-
-    public List<Story> getStory() {
-        return this.Story;
-    }
-
-    public void setMailSubscriptionForm(List<MailSubscriptionForm> MailSubscriptionForm) {
-        this.MailSubscriptionForm = MailSubscriptionForm;
-    }
-
-    public List<MailSubscriptionForm> getMailSubscriptionForm() {
-        return this.MailSubscriptionForm;
+    public void setCapping(String capping) {
+        mCapping = capping;
     }
 }

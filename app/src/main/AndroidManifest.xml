@@ -21,11 +21,11 @@
         <meta-data android:name="AppAlias" android:value="visilabs-android-test" />
         <meta-data android:name="VisilabsOrganizationID" android:value="676D325830564761676D453D" />
         <meta-data android:name="VisilabsSiteID" android:value="356467332F6533766975593D" />
-        <meta-data android:name="VisilabsSegmentURL" android:value="http://lgr.visilabs.net" />
+        <meta-data android:name="VisilabsSegmentURL" android:value="https://lgr.visilabs.net" />
         <meta-data android:name="VisilabsDataSource" android:value="visistore" />
-        <meta-data android:name="VisilabsRealTimeURL" android:value="http://rt.visilabs.net" />
+        <meta-data android:name="VisilabsRealTimeURL" android:value="https://rt.visilabs.net" />
         <meta-data android:name="VisilabsChannel" android:value="Android" />
-        <meta-data android:name="VisilabsGeofenceURL" android:value="http://s.visilabs.net/geojson" />
+        <meta-data android:name="VisilabsGeofenceURL" android:value="https://s.visilabs.net/geojson" />
         <meta-data android:name="VisilabsGeofenceEnabled" android:value="true" />
 
         <!-- Parameters below are optional -->
@@ -33,8 +33,8 @@
         <meta-data android:name="VisilabsRequestTimeoutInSeconds" android:value="30" />
         <meta-data android:name="VisilabsRESTURL" android:value="VisilabsRESTURL" />
         <meta-data android:name="VisilabsEncryptedDataSource" android:value="VisilabsEncryptedDataSource" />
-        <meta-data android:name="VisilabsTargetURL" android:value="http://s.visilabs.net/json" />
-        <meta-data android:name="VisilabsActionURL" android:value="http://s.visilabs.net/actjson" />
+        <meta-data android:name="VisilabsTargetURL" android:value="https://s.visilabs.net/json" />
+        <meta-data android:name="VisilabsActionURL" android:value="https://s.visilabs.net/actjson" />
 
 
         <activity android:name=".MainActivity">

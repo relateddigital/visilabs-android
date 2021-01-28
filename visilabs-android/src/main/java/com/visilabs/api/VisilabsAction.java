@@ -22,9 +22,51 @@ public interface VisilabsAction {
 
     void executeAsync() throws Exception;
 
+    /**
+     * Use this function when you want to get raw JSON response
+     *
+     * @param pCallback the callback function
+     * @throws Exception
+     */
     void executeAsync(VisilabsCallback pCallback) throws Exception;
 
+    /**
+     * Use this function when you want to get InApp-type response
+     *
+     * @param pCallback the callback function
+     * @throws Exception
+     */
+    void executeAsync(VisilabsInAppMessageCallback pCallback);
+
+    /**
+     * Use this function when you want to get GeofenceList-type response
+     *
+     * @param pCallback the callback function
+     * @throws Exception
+     */
+    void executeAsync(VisilabsGeofenceGetListCallback pCallback);
+
+    /**
+     * Use this function when you want to get raw JSON response for the action
+     *
+     * @param pCallback the callback function
+     * @throws Exception
+     */
     void executeAsyncAction(VisilabsCallback pCallback) throws Exception;
 
-    void execute(VisilabsCallback pCallback) throws Exception;
+    /**
+     * Use this function when you want to get MailSubsForm-type response
+     *
+     * @param pCallback the callback function
+     * @throws Exception
+     */
+    void executeAsyncAction(VisilabsMailSubsFormRequestCallback pCallback);
+
+    /**
+     * Use this function when you want to get Favourites-type response
+     *
+     * @param pCallback the callback function
+     * @throws Exception
+     */
+    void executeAsyncAction(VisilabsFavsRequestCallback pCallback);
 }

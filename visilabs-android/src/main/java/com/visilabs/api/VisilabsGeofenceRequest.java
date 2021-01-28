@@ -1,44 +1,37 @@
 package com.visilabs.api;
 
 import android.content.Context;
-import android.net.Uri;
+import android.util.Log;
 
 import com.visilabs.Visilabs;
+import com.visilabs.VisilabsResponse;
+import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
+import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
-import com.visilabs.util.VisilabsEncoder;
-import com.visilabs.util.VisilabsLog;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import cz.msebera.android.httpclient.Header;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class VisilabsGeofenceRequest extends VisilabsRemote {
-
-    public enum Methods {
-        GET, POST, PUT, DELETE;
-
-        public static Methods parse(String pMethod) throws Exception {
-            try {
-                return Methods.valueOf(pMethod.toUpperCase());
-            } catch (Exception e) {
-                throw new Exception("Unsupported HTTP method: " + pMethod);
-            }
-        }
-    }
 
     protected static final String LOG_TAG = "VisilabsGeofenceRequest";
 
     private String mAction;
     private String mActionID;
     private String mPath = "";
-    private Methods mMethod = Methods.GET;
-    private Header[] mHeaders = null;
+    private HashMap<String, String> mHeaders = new HashMap<>();
     private JSONObject mArgs = new JSONObject();
     private int mTimeOutInSeconds;
     private String mApiVer = "Android";
@@ -46,20 +39,24 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     private double mLongitude;
     private String mGeofenceID = "";
 
+    private VisilabsApiMethods mVisilabsSApiInterface;
+
     public VisilabsGeofenceRequest(Context context) {
         super(context);
+        mVisilabsSApiInterface = SApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds())
+                .create(VisilabsApiMethods.class);
     }
 
     public void setPath(String pPath) {
         mPath = pPath;
     }
 
-    public void setMethod(Methods pMethod) {
-        mMethod = pMethod;
-    }
-
-    public void setHeaders(Header[] pHeaders) {
-        mHeaders = pHeaders;
+    public void setHeaders(HashMap<String, String> pHeaders) {
+        if(pHeaders != null && pHeaders.size() > 0) {
+            for (int i = 0; i < pHeaders.size(); i++) {
+                mHeaders.put((String) pHeaders.keySet().toArray()[i], pHeaders.get(pHeaders.keySet().toArray()[i]));
+            }
+        }
     }
 
     public void setRequestArgs(JSONObject pArgs) {
@@ -104,124 +101,169 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     }
 
     @Override
-    public void executeAsync(VisilabsCallback pCallback) throws Exception {
-        try {
-            String url = getURL();
-            VisilabsLog.v(LOG_TAG, "Geofence Request: " + url);
-            switch (mMethod) {
-                case GET:
-                    VisilabsHttpClient.get(url, buildHeaders(mHeaders), mArgs, pCallback, false, mTimeOutInSeconds);
-                    break;
-                case PUT:
-                    VisilabsHttpClient.put(url, buildHeaders(mHeaders), mArgs, pCallback, false, mTimeOutInSeconds);
-                    break;
-                case POST:
-                    VisilabsHttpClient.post(url, buildHeaders(mHeaders), mArgs, pCallback, false, mTimeOutInSeconds);
-                    break;
-                case DELETE:
-                    VisilabsHttpClient.delete(url, buildHeaders(mHeaders), mArgs, pCallback, false, mTimeOutInSeconds);
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception e) {
-            VisilabsLog.e(LOG_TAG, e.getMessage(), e);
-            throw e;
-        }
+    public void executeAsync() throws Exception {
+
     }
 
     @Override
-    public void execute(VisilabsCallback pCallback) throws Exception {
-        try {
-            switch (mMethod) {
-                case GET:
-                    VisilabsHttpClient.get(getURL(), buildHeaders(mHeaders), mArgs, pCallback, true, mTimeOutInSeconds);
-                    break;
-                case PUT:
-                    VisilabsHttpClient.put(getURL(), buildHeaders(mHeaders), mArgs, pCallback, true, mTimeOutInSeconds);
-                    break;
-                case POST:
-                    VisilabsHttpClient.post(getURL(), buildHeaders(mHeaders), mArgs, pCallback, true, mTimeOutInSeconds);
-                    break;
-                case DELETE:
-                    VisilabsHttpClient.delete(getURL(), buildHeaders(mHeaders), mArgs, pCallback, true, mTimeOutInSeconds);
-                    break;
+    public void executeAsync(final VisilabsCallback pCallback) throws Exception {
+        HashMap<String, String> headers = new HashMap<>();
+        HashMap<String, String> queryParameters = new HashMap<>();
+
+        //Put headers
+        fillHeaderMap(headers);
+
+        //Put query parameters
+        fillQueryMap(queryParameters);
+
+        Call<ResponseBody> call = mVisilabsSApiInterface.getGeneralGeofenceRequestJsonResponse(headers, queryParameters);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String rawJsonResponse = "";
+                try {
+                    rawJsonResponse = response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(!rawJsonResponse.equals("")) {
+                    Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
+                    VisilabsResponse visilabsResponse;
+                    if(rawJsonResponse.equals("ok")){
+                        visilabsResponse = new VisilabsResponse(null, null, rawJsonResponse, null, null);
+                    } else {
+                        visilabsResponse = new VisilabsResponse(null, new JSONArray(rawJsonResponse), null, null, null);
+                    }
+                    pCallback.success(visilabsResponse);
+                } else {
+                    Log.e(LOG_TAG, "Failed to get the json response");
+                }
             }
-        } catch (Exception e) {
-            VisilabsLog.e(LOG_TAG, e.getMessage(), e);
-            throw e;
-        }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e(LOG_TAG, "Fail Request " + t.getMessage());
+                VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(""), null, null, null, null);
+                pCallback.fail(visilabsResponse);
+            }
+        });
     }
 
-    public String getURL() {
-        String url = Visilabs.CallAPI().getGeofenceURL();
-        Uri.Builder uriBuilder = Uri.parse(url).buildUpon();
-        if(url != null && url.length() > 0){
+    @Override
+    public void executeAsync(final VisilabsGeofenceGetListCallback pCallback) {
+        HashMap<String, String> headers = new HashMap<>();
+        HashMap<String, String> queryParameters = new HashMap<>();
 
-            if(Visilabs.CallAPI().getOrganizationID() != null && !Visilabs.CallAPI().getOrganizationID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
-            }
-            if(Visilabs.CallAPI().getSiteID() != null && !Visilabs.CallAPI().getSiteID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.SITEID_KEY, Visilabs.CallAPI().getSiteID());
-            }
+        //Put headers
+        fillHeaderMap(headers);
 
-            if(Visilabs.CallAPI().getCookieID() != null && !Visilabs.CallAPI().getCookieID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
-            }
-            if(Visilabs.CallAPI().getExVisitorID() != null && !Visilabs.CallAPI().getExVisitorID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
-            }
+        //Put query parameters
+        fillQueryMap(queryParameters);
 
-            if(Visilabs.CallAPI().getSysTokenID() != null && !Visilabs.CallAPI().getSysTokenID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
-            }
-            if(Visilabs.CallAPI().getSysAppID() != null && !Visilabs.CallAPI().getSysAppID().equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
+        Call<List<VisilabsGeofenceGetListResponse>> call = mVisilabsSApiInterface.getGeofenceListRequestResponse(headers, queryParameters);
+        call.enqueue(new Callback<List<VisilabsGeofenceGetListResponse>>() {
+            @Override
+            public void onResponse(Call<List<VisilabsGeofenceGetListResponse>> call, Response<List<VisilabsGeofenceGetListResponse>> response) {
+                List<VisilabsGeofenceGetListResponse> visilabsGeofenceGetListResponse = response.body();
+                pCallback.success(visilabsGeofenceGetListResponse, response.raw().request().url().toString());
             }
 
-            if(mActionID != null && !mActionID.equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.ACT_ID_KEY, VisilabsEncoder.encode(mActionID));
+            @Override
+            public void onFailure(Call<List<VisilabsGeofenceGetListResponse>> call, Throwable t) {
+                pCallback.fail(t, call.request().url().toString());
             }
-            if(mAction != null && !mAction.equals("")){
-                uriBuilder.appendQueryParameter(VisilabsConstant.ACT_KEY, VisilabsEncoder.encode(mAction));
+        });
+    }
+
+    @Override
+    public void executeAsyncAction(VisilabsCallback pCallback) throws Exception {
+
+    }
+
+    @Override
+    public void executeAsync(VisilabsInAppMessageCallback pCallback) {
+
+    }
+
+    @Override
+    public void executeAsyncAction(VisilabsMailSubsFormRequestCallback pCallback){
+
+    }
+
+    @Override
+    public void executeAsyncAction(VisilabsFavsRequestCallback pCallback) {
+
+    }
+
+    private void fillHeaderMap(HashMap<String, String> headerMap){
+        if(mHeaders != null && mHeaders.size() > 0){
+            for (int i = 0 ; i < mHeaders.size() ; i++){
+                headerMap.put((String)mHeaders.keySet().toArray()[i], mHeaders.get(mHeaders.keySet().toArray()[i]));
             }
+        }
 
-            DecimalFormat df = new DecimalFormat("0.0000000000000");
+        headerMap.put("User-Agent", Visilabs.getUserAgent());
+    }
 
-            if(mLatitude > 0){
-                String latitudeString = df.format(mLatitude);
-                uriBuilder.appendQueryParameter(VisilabsConstant.LATITUDE_KEY, VisilabsEncoder.encode(latitudeString));
-            }
+    private void fillQueryMap(HashMap<String, String> queryMap){
+        if(Visilabs.CallAPI().getOrganizationID() != null && !Visilabs.CallAPI().getOrganizationID().equals("")){
+            queryMap.put(VisilabsConstant.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
+        }
 
-            if(mLongitude > 0){
-                String longitudeString = df.format(mLongitude);
-                uriBuilder.appendQueryParameter(VisilabsConstant.LONGITUDE_KEY, VisilabsEncoder.encode(longitudeString));
-            }
+        if(Visilabs.CallAPI().getSiteID() != null && !Visilabs.CallAPI().getSiteID().equals("")){
+            queryMap.put(VisilabsConstant.SITEID_KEY, Visilabs.CallAPI().getSiteID());
+        }
 
-            if(!StringUtils.isNullOrWhiteSpace(mGeofenceID)){
-                uriBuilder.appendQueryParameter(VisilabsConstant.GEO_ID_KEY, VisilabsEncoder.encode(mGeofenceID));
-            }
+        if(Visilabs.CallAPI().getCookieID() != null && !Visilabs.CallAPI().getCookieID().equals("")){
+            queryMap.put(VisilabsConstant.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
+        }
 
+        if(Visilabs.CallAPI().getExVisitorID() != null && !Visilabs.CallAPI().getExVisitorID().equals("")){
+            queryMap.put(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
+        }
 
-            if(mApiVer != null && !mApiVer.equals("")){
-                uriBuilder.appendQueryParameter("OM.apiver", mApiVer);
-            }else{
-                uriBuilder.appendQueryParameter("OM.apiver", "Android");
-            }
+        if(Visilabs.CallAPI().getSysTokenID() != null && !Visilabs.CallAPI().getSysTokenID().equals("")){
+            queryMap.put(VisilabsConstant.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
+        }
 
+        if(Visilabs.CallAPI().getSysAppID() != null && !Visilabs.CallAPI().getSysAppID().equals("")){
+            queryMap.put(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
+        }
+
+        if(mActionID != null && !mActionID.equals("")){
+            queryMap.put(VisilabsConstant.ACT_ID_KEY, mActionID);
+        }
+        if(mAction != null && !mAction.equals("")){
+            queryMap.put(VisilabsConstant.ACT_KEY, mAction);
+        }
+
+        DecimalFormat df = new DecimalFormat("0.0000000000000");
+
+        if(mLatitude > 0){
+            String latitudeString = df.format(mLatitude);
+            queryMap.put(VisilabsConstant.LATITUDE_KEY, latitudeString);
+        }
+
+        if(mLongitude > 0){
+            String longitudeString = df.format(mLongitude);
+            queryMap.put(VisilabsConstant.LONGITUDE_KEY, longitudeString);
+        }
+
+        if(!StringUtils.isNullOrWhiteSpace(mGeofenceID)){
+            queryMap.put(VisilabsConstant.GEO_ID_KEY, mGeofenceID);
+        }
+
+        if(mApiVer != null && !mApiVer.equals("")){
+            queryMap.put(VisilabsConstant.APIVER_KEY, mApiVer);
+        }else{
+            queryMap.put(VisilabsConstant.APIVER_KEY, "Android");
         }
 
         HashMap<String, String> parameters = PersistentTargetManager.with(mContext).getParameters();
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             if(!StringUtils.isNullOrWhiteSpace(entry.getKey()) && !StringUtils.isNullOrWhiteSpace(entry.getValue())){
-                uriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
+                queryMap.put(entry.getKey(), entry.getValue());
             }
         }
-
-        return uriBuilder.build().toString();
-    }
-
-    protected Header[] buildHeaders(Header[] pHeaders) throws Exception {
-        return  null;
     }
 }

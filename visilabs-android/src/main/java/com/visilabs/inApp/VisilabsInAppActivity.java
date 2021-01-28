@@ -74,13 +74,13 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
     private void setInAppData() {
 
 
-        binding.tvInAppTitle.setText(mInApp.getTitle().replace("\\n","\n"));
-        binding.tvInAppSubtitle.setText(mInApp.getBody().replace("\\n","\n"));
+        binding.tvInAppTitle.setText(mInApp.getActionData().getMsgTitle().replace("\\n","\n"));
+        binding.tvInAppSubtitle.setText(mInApp.getActionData().getMsgBody().replace("\\n","\n"));
 
-        if (mInApp.getButtonText() != null && mInApp.getButtonText().length() > 0) {
-            binding.btnInApp.setText(mInApp.getButtonText());
+        if (mInApp.getActionData().getBtnText() != null && mInApp.getActionData().getBtnText().length() > 0) {
+            binding.btnInApp.setText(mInApp.getActionData().getBtnText());
         }
-        Picasso.get().load(mInApp.getImageUrl()).into(binding.fivInAppImage);
+        Picasso.get().load(mInApp.getActionData().getImg()).into(binding.fivInAppImage);
     }
 
     private void setPromotionCode() {
@@ -112,11 +112,11 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
             @Override
             public void onClick(View v) {
 
-                if (mInApp.getButtonURL() != null && mInApp.getButtonURL().length() > 0) {
+                if (mInApp.getActionData().getAndroidLnk() != null && mInApp.getActionData().getAndroidLnk().length() > 0) {
 
                     try {
                         Visilabs.CallAPI().trackInAppMessageClick(mInApp, null);
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInApp.getButtonURL()));
+                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInApp.getActionData().getAndroidLnk()));
                         VisilabsInAppActivity.this.startActivity(viewIntent);
 
                     } catch (final ActivityNotFoundException e) {

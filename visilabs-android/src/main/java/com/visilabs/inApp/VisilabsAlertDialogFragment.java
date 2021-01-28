@@ -32,12 +32,12 @@ public class VisilabsAlertDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         final InAppMessage inAppMessage = mInAppNotificationState.getInAppMessage();
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mParent, R.style.AlertDialogStyle);
-        alertDialogBuilder.setTitle(inAppMessage.getTitle().replace("\\n","\n"))
-                .setMessage(inAppMessage.getBody().replace("\\n","\n"))
+        alertDialogBuilder.setTitle(inAppMessage.getActionData().getMsgTitle().replace("\\n","\n"))
+                .setMessage(inAppMessage.getActionData().getMsgBody().replace("\\n","\n"))
                 .setCancelable(false)
-                .setPositiveButton(inAppMessage.getButtonText(), new DialogInterface.OnClickListener() {
+                .setPositiveButton(inAppMessage.getActionData().getBtnText(), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        final String uriString = inAppMessage.getButtonURL();
+                        final String uriString = inAppMessage.getActionData().getAndroidLnk();
                         Uri uri = null;
                         if (uriString != null && uriString.length() > 0) {
                             try {
@@ -55,7 +55,7 @@ public class VisilabsAlertDialogFragment extends DialogFragment {
                         dismiss();
                     }
                 })
-                .setNegativeButton(inAppMessage.getCloseButtonText(), new DialogInterface.OnClickListener() {
+                .setNegativeButton(inAppMessage.getActionData().getCloseButtonText(), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
                         dismiss();

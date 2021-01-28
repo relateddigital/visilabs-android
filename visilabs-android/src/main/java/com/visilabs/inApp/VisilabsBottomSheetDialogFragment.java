@@ -1,6 +1,5 @@
 package com.visilabs.inApp;
 
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -46,10 +45,10 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
             return view;
         }
         InAppMessage inApp = mInAppNotificationState.getInAppMessage();
-        binding.tvTitle.setText(inApp.getTitle().replace("\\n","\n"));
-        binding.tvBody.setText(inApp.getBody().replace("\\n","\n"));
-        binding.tvButton.setText(inApp.getButtonText().toUpperCase());
-        binding.tvClose.setText(inApp.getCloseButtonText().toUpperCase());
+        binding.tvTitle.setText(inApp.getActionData().getMsgTitle().replace("\\n","\n"));
+        binding.tvBody.setText(inApp.getActionData().getMsgBody().replace("\\n","\n"));
+        binding.tvButton.setText(inApp.getActionData().getBtnText().toUpperCase());
+        binding.tvClose.setText(inApp.getActionData().getCloseButtonText().toUpperCase());
         setListeners();
         return view;
     }
@@ -99,7 +98,7 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
             @Override
             public void onClick(View v) {
                 final InAppMessage inAppMessage = mInAppNotificationState.getInAppMessage();
-                final String uriString = inAppMessage.getButtonURL();
+                final String uriString = inAppMessage.getActionData().getAndroidLnk();
                 Uri uri = null;
                 if (uriString != null && uriString.length() > 0) {
                     try {

@@ -81,11 +81,11 @@ public class InAppMessageManager {
                         showDebugMessage("DisplayState is locked, will not show notifications");
                         willShowInApp = false;
                     }
-                    if (inAppMessage.getType() == null) {
+                    if (inAppMessage.getActionData().getMsgType() == null) {
                         showDebugMessage("No in app available, will not show.");
                         willShowInApp = false;
                     }
-                    if (inAppMessage.getType() == InAppActionType.FULL &&
+                    if (inAppMessage.getActionData().getMsgType() == InAppActionType.FULL &&
                             !VisilabsConstant.checkNotificationActivityAvailable(parent.getApplicationContext())) {
                         showDebugMessage("Application is not configured to show full screen in app, none will be shown.");
                         willShowInApp = false;
@@ -104,7 +104,7 @@ public class InAppMessageManager {
                     int stateId;
                     VisilabsUpdateDisplayState visilabsUpdateDisplayState;
 
-                    switch (inAppMessage.getType()) {
+                    switch (inAppMessage.getActionData().getMsgType()) {
 
 
                         case UNKNOWN:
@@ -167,7 +167,7 @@ public class InAppMessageManager {
                             if (visilabsUpdateDisplayState == null) {
                                 showDebugMessage("Notification's display proposal was already consumed, no notification will be shown.");
                             } else {
-                                if(inAppMessage.getAlertType() != null && inAppMessage.getAlertType().equals("actionSheet")) {
+                                if(inAppMessage.getActionData().getAlertType() != null && inAppMessage.getActionData().getAlertType().equals("actionSheet")) {
                                     openInAppActionSheet(stateId, parent, visilabsUpdateDisplayState);
                                 } else {
                                     openInAppAlert(stateId, parent, visilabsUpdateDisplayState);
@@ -182,7 +182,7 @@ public class InAppMessageManager {
                             break;
 
                         default:
-                            Log.e(LOG_TAG, "Unrecognized notification type " + inAppMessage.getType() + " can't be shown");
+                            Log.e(LOG_TAG, "Unrecognized notification type " + inAppMessage.getActionData().getMsgType() + " can't be shown");
                     }
 
                 } catch (Exception ex) {

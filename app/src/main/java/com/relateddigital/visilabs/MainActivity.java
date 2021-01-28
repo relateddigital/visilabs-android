@@ -9,12 +9,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.gson.Gson;
 import com.relateddigital.visilabs.databinding.ActivityMainBinding;
 import com.visilabs.Visilabs;
-import com.visilabs.VisilabsResponse;
-import com.visilabs.api.VisilabsCallback;
 
+import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.util.VisilabsConstant;
@@ -22,6 +20,8 @@ import com.visilabs.util.VisilabsConstant;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String LOG_TAG = "MainActivity";
 
     private ActivityMainBinding binding;
 
@@ -186,33 +186,26 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+  
     private void sendInAppRequest(String type) {
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.inapptype", type);
         Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
     }
 
-    public VisilabsCallback getVisilabsCallback() {
+    public VisilabsFavsRequestCallback getVisilabsCallback() {
 
-        return new VisilabsCallback() {
+        return new VisilabsFavsRequestCallback() {
             @Override
-            public void success(VisilabsResponse response) {
-                try {
-
-                    FavsResponse favsResponse = new Gson().fromJson(response.getRawResponse(), FavsResponse.class);
-
-                    //String favBrands = favsResponse.getFavoriteAttributeAction()[0].getActiondata().getFavorites().getBrand()[0];
-                    //Log.i("Favs 1.Brand", favBrands);
-
-                } catch (Exception ex) {
-                    Log.e("Error", ex.getMessage(), ex);
-                }
+            public void success(FavsResponse message, String url) {
+                Log.i(LOG_TAG, "Success Request : " + url);
+                //Do your work here by using message
             }
 
             @Override
-            public void fail(VisilabsResponse response) {
-                Log.d("Error", response.getRawResponse());
+            public void fail(Throwable t, String url) {
+                Log.e(LOG_TAG, "Fail Request : " + url);
+                Log.e(LOG_TAG, "Fail Request Message : " + t.getMessage());
             }
         };
     }
