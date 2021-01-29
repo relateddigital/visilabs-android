@@ -1,43 +1,45 @@
 package com.visilabs.favs;
 
 import com.google.gson.annotations.SerializedName;
+import com.visilabs.mailSub.MailSubscriptionForm;
+import com.visilabs.story.model.storylookingbanners.Story;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class FavsResponse {
     @SerializedName("FavoriteAttributeAction")
-    private List<Object> mFavoriteAttributeAction = null;
+    private List<FavoriteAttributeAction> mFavoriteAttributeAction = null;
     @SerializedName("MailSubscriptionForm")
-    private List<Object> mMailSubscriptionForm = null;
+    private List<MailSubscriptionForm> mMailSubscriptionForm = null;
     @SerializedName("Story")
-    private List<Object> mStory = null;
+    private List<Story> mStory = null;
     @SerializedName("VERSION")
     private Integer mVersion;
     @SerializedName("capping")
     private String mCapping;
 
-    public List<Object> getFavoriteAttributeAction() {
+    public List<FavoriteAttributeAction> getFavoriteAttributeAction() {
         return mFavoriteAttributeAction;
     }
 
-    public void setFavoriteAttributeAction(List<Object> favoriteAttributeAction) {
+    public void setFavoriteAttributeAction(List<FavoriteAttributeAction> favoriteAttributeAction) {
         mFavoriteAttributeAction = favoriteAttributeAction;
     }
 
-    public List<Object> getMailSubscriptionForm() {
+    public List<MailSubscriptionForm> getMailSubscriptionForm() {
         return mMailSubscriptionForm;
     }
 
-    public void setMailSubscriptionForm(List<Object> mailSubscriptionForm) {
+    public void setMailSubscriptionForm(List<MailSubscriptionForm> mailSubscriptionForm) {
         mMailSubscriptionForm = mailSubscriptionForm;
     }
 
-    public List<Object> getStory() {
+    public List<Story> getStory() {
         return mStory;
     }
 
-    public void setStory(List<Object> story) {
+    public void setStory(List<Story> story) {
         mStory = story;
     }
 
@@ -55,14 +57,5 @@ public class FavsResponse {
 
     public void setCapping(String capping) {
         mCapping = capping;
-    }
-
-    @Override
-    public String toString() {
-        FavoriteAttributeAction[] favoriteAttributeAction = new FavoriteAttributeAction[0];
-        for (int i = 0; i < mFavoriteAttributeAction.size(); i++){
-            favoriteAttributeAction[i] = (FavoriteAttributeAction) mFavoriteAttributeAction.get(i);
-        }
-        return "FavsResponse [FavoriteAttributeAction = " + Arrays.toString(favoriteAttributeAction) + ", VERSION = " + mVersion + ", capping = " + mCapping + "]";
     }
 }

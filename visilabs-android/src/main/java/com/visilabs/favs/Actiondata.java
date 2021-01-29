@@ -1,9 +1,10 @@
 package com.visilabs.favs;
 
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class Actiondata
+public class Actiondata implements Serializable
 {
     private Favorites favorites;
 

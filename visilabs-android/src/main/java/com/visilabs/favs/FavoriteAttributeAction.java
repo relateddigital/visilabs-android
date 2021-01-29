@@ -1,7 +1,9 @@
 package com.visilabs.favs;
 
 
-public class FavoriteAttributeAction {
+import java.io.Serializable;
+
+public class FavoriteAttributeAction implements Serializable {
     private String actiontype;
 
     private String actid;

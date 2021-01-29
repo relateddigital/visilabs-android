@@ -193,13 +193,27 @@ public class MainActivity extends AppCompatActivity {
         Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
     }
 
-    public VisilabsFavsRequestCallback getVisilabsCallback() {
+    private VisilabsFavsRequestCallback getVisilabsCallback() {
 
         return new VisilabsFavsRequestCallback() {
             @Override
             public void success(FavsResponse message, String url) {
                 Log.i(LOG_TAG, "Success Request : " + url);
-                //Do your work here by using message
+                //Do your work here by using message, e.g.
+
+                /*
+                List<FavoriteAttributeAction> favsActions = message.getFavoriteAttributeAction();
+                for (int i = 0; i < favsActions.size() ; i++) {
+                    String actionType = favsActions.get(i).getActiontype();
+                    Log.i(LOG_TAG, "action type " + i+1 + " : " + actionType);
+                    Actiondata  actionData = favsActions.get(i).getActiondata();
+                    for (int j = 0; j < favsActions.size() ; j++) {
+                        String[] attributes = actionData.getAttributes();
+                        Favorites favorites = actionData.getFavorites();
+                        //goes on...
+                    }
+                }
+                */
             }
 
             @Override
