@@ -360,16 +360,22 @@ public class Visilabs {
         }
 
         if(inAppMessage.getActionData().getQs()!=null && !inAppMessage.getActionData().getQs().equals("")) {
-            String[] tempQueryString = inAppMessage.getActionData().getQs().split("=", 2);
-            if(tempQueryString.length == 2) {
-                queryMap.put(tempQueryString[0], tempQueryString[1]);
+            String[] tempMultiQuery = inAppMessage.getActionData().getQs().split("&");
+            for (String s : tempMultiQuery) {
+                String[] tempQueryString = s.split("=", 2);
+                if (tempQueryString.length == 2) {
+                    queryMap.put(tempQueryString[0], tempQueryString[1]);
+                }
             }
         }
 
         if(rating != null && !rating.equals("")) {
-            String[] tempQueryString = rating.split("=", 2);
-            if(tempQueryString.length == 2) {
-                queryMap.put(tempQueryString[0], tempQueryString[1]);
+            String[] tempMultiQuery = rating.split("&");
+            for (String s : tempMultiQuery) {
+                String[] tempQueryString = s.split("=", 2);
+                if(tempQueryString.length == 2) {
+                    queryMap.put(tempQueryString[0], tempQueryString[1]);
+                }
             }
         }
 
@@ -411,9 +417,14 @@ public class Visilabs {
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, mExVisitorID);
         }
 
-        String[] tempQueryString = report.split("=", 2);
-        if(tempQueryString.length == 2) {
-            queryMap.put(tempQueryString[0], tempQueryString[1]);
+        if(report != null && !report.equals("")) {
+            String[] tempMultiQuery = report.split("&");
+            for (String s : tempMultiQuery) {
+                String[] tempQueryString = s.split("=", 2);
+                if(tempQueryString.length == 2) {
+                    queryMap.put(tempQueryString[0], tempQueryString[1]);
+                }
+            }
         }
 
         queryMap.put("client", "logger");
@@ -456,9 +467,14 @@ public class Visilabs {
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, mExVisitorID);
         }
 
-        String[] tempQueryString = report.split("=", 2);
-        if(tempQueryString.length == 2) {
-            queryMap.put(tempQueryString[0], tempQueryString[1]);
+        if(report != null && !report.equals("")) {
+            String[] tempMultiQuery = report.split("&");
+            for (String s : tempMultiQuery) {
+                String[] tempQueryString = s.split("=", 2);
+                if(tempQueryString.length == 2) {
+                    queryMap.put(tempQueryString[0], tempQueryString[1]);
+                }
+            }
         }
 
         queryMap.put("client", "logger");
@@ -541,9 +557,14 @@ public class Visilabs {
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, mExVisitorID);
         }
 
-        String[] tempQueryString = report.getClick().split("=", 2);
-        if(tempQueryString.length == 2) {
-            queryMap.put(tempQueryString[0], tempQueryString[1]);
+        if(report.getClick() != null && !report.getClick().equals("")) {
+            String[] tempMultiQuery = report.getClick().split("&");
+            for (String s : tempMultiQuery) {
+                String[] tempQueryString = s.split("=", 2);
+                if(tempQueryString.length == 2) {
+                    queryMap.put(tempQueryString[0], tempQueryString[1]);
+                }
+            }
         }
 
         queryMap.put("client", "logger");
