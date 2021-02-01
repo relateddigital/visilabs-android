@@ -13,6 +13,13 @@
         android:contentDescription="@null"
         android:scaleType="centerCrop" />
 
+    <VideoView
+        android:id="@+id/video_story_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null" />
+
     <LinearLayout
         android:id="@+id/ll"
         android:layout_width="match_parent"

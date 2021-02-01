@@ -4,6 +4,7 @@ package com.visilabs.story;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +16,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.VideoView;
+
 import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
@@ -30,6 +33,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
 
     private StoriesProgressView mStoriesProgressView;
     private ImageView mIvStory;
+    private VideoView mVideoView;
     int mStoryItemPosition;
     long mPressTime = 0L;
     long mLimit = 500L;
@@ -46,6 +50,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     static StoryItemClickListener mStoryItemClickListener;
     static RecyclerView mRecyclerView;
     static VisilabsSkinBasedAdapter mVisilabsSkinBasedAdapter;
+    private int mVideoLastPosition;
 
     public static void setStoryItemClickListener(StoryItemClickListener storyItemClickListener) {
         mStoryItemClickListener = storyItemClickListener;
@@ -88,12 +93,22 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
 
                         mPressTime = System.currentTimeMillis();
                         mStoriesProgressView.pause();
+                        if(mVideoView.getVisibility() == View.VISIBLE) {
+                            mVideoLastPosition = mVideoView.getCurrentPosition();
+                            if (mVideoView.isPlaying()) {
+                                mVideoView.pause();
+                            }
+                        }
 
                         return false;
 
                     case MotionEvent.ACTION_UP:
                         long now = System.currentTimeMillis();
                         mStoriesProgressView.resume();
+                        if(mVideoView.getVisibility() == View.VISIBLE) {
+                            mVideoView.seekTo(mVideoLastPosition);
+                            mVideoView.start();
+                        }
 
                         return mLimit < now - mPressTime;
                 }
@@ -105,6 +120,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     private void setInitialView() {
 
         mIvStory = findViewById(R.id.iv_story);
+        mVideoView = findViewById(R.id.video_story_view);
         mIvCover = findViewById(R.id.civ_cover);
         mTvCover = findViewById(R.id.tv_cover);
         mIvClose = findViewById(R.id.ivClose);
@@ -227,8 +243,23 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
 
     private void setStoryItem(final Items item) {
 
-        if (!item.getFileSrc().equals("")) {
-            Picasso.get().load(item.getFileSrc()).into(mIvStory);
+        mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()
+                .get(mStoryItemPosition).getDisplayTime()) * 1000);
+
+        if(item.getFileType().equals(VisilabsConstant.STORY_PHOTO_KEY)){
+            mVideoView.setVisibility(View.INVISIBLE);
+            mIvStory.setVisibility(View.VISIBLE);
+            if (!item.getFileSrc().equals("")) {
+                Picasso.get().load(item.getFileSrc()).into(mIvStory);
+            }
+        } else if(item.getFileType().equals(VisilabsConstant.STORY_VIDEO_KEY)) {
+            mVideoView.setVisibility(View.VISIBLE);
+            mIvStory.setVisibility(View.INVISIBLE);
+            if (!item.getFileSrc().equals("")) {
+                mVideoView.setVideoURI(Uri.parse(item.getFileSrc()));
+            }
+            mVideoView.requestFocus();
+            mVideoView.start();
         }
 
         if (!item.getButtonText().equals("")) {

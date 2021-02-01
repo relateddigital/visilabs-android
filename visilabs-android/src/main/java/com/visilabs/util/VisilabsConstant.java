@@ -155,6 +155,9 @@ public class VisilabsConstant {
 
     public static final String SUBSJSON_ENDPOINT = "https://s.visilabs.net/subsjson";
 
+    public static final String STORY_PHOTO_KEY = "photo";
+    public static final String STORY_VIDEO_KEY = "video";
+
     public static boolean checkNotificationActivityAvailable(Context context) {
         if (Build.VERSION.SDK_INT < UI_FEATURES_MIN_API) {
             return false;
