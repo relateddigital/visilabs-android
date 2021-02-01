@@ -385,8 +385,10 @@ public class Visilabs {
             addQueryParametersToQueue(queryMap);
             if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 HashMap<String, String> queryMapRealTime = new HashMap<>();
-                for(int i=0; i<queryMap.size()-1; i++){
-                    queryMapRealTime.put((String)queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                for(int i=0; i<queryMap.size(); i++){
+                    if(!((String) queryMap.keySet().toArray()[i]).equals("client")) {
+                        queryMapRealTime.put((String) queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                    }
                 }
                 queryMapRealTime.put("client", "realTime");
                 addQueryParametersToQueue(queryMapRealTime);
@@ -433,8 +435,10 @@ public class Visilabs {
             addQueryParametersToQueue(queryMap);
             if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 HashMap<String, String> queryMapRealTime = new HashMap<>();
-                for(int i=0; i<queryMap.size()-1; i++){
-                    queryMapRealTime.put((String)queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                for(int i=0; i<queryMap.size(); i++){
+                    if(!((String) queryMap.keySet().toArray()[i]).equals("client")) {
+                        queryMapRealTime.put((String) queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                    }
                 }
                 queryMapRealTime.put("client", "realTime");
                 addQueryParametersToQueue(queryMapRealTime);
@@ -483,8 +487,10 @@ public class Visilabs {
             addQueryParametersToQueue(queryMap);
             if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 HashMap<String, String> queryMapRealTime = new HashMap<>();
-                for(int i=0; i<queryMap.size()-1; i++){
-                    queryMapRealTime.put((String)queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                for(int i=0; i<queryMap.size(); i++){
+                    if(!((String) queryMap.keySet().toArray()[i]).equals("client")) {
+                        queryMapRealTime.put((String) queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                    }
                 }
                 queryMapRealTime.put("client", "realTime");
                 addQueryParametersToQueue(queryMapRealTime);
@@ -573,8 +579,10 @@ public class Visilabs {
             addQueryParametersToQueue(queryMap);
             if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 HashMap<String, String> queryMapRealTime = new HashMap<>();
-                for(int i=0; i<queryMap.size()-1; i++){
-                    queryMapRealTime.put((String)queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                for(int i=0; i<queryMap.size(); i++){
+                    if(!((String) queryMap.keySet().toArray()[i]).equals("client")) {
+                        queryMapRealTime.put((String) queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                    }
                 }
                 queryMapRealTime.put("client", "realTime");
                 addQueryParametersToQueue(queryMapRealTime);
@@ -867,8 +875,10 @@ public class Visilabs {
             addQueryParametersToQueue(queryMap);
             if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 HashMap<String, String> queryMapRealTime = new HashMap<>();
-                for(int i=0; i<queryMap.size()-1; i++){
-                    queryMapRealTime.put((String)queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                for(int i=0; i<queryMap.size(); i++){
+                    if(!((String) queryMap.keySet().toArray()[i]).equals("client")) {
+                        queryMapRealTime.put((String) queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                    }
                 }
                 queryMapRealTime.put("client", "realTime");
                 addQueryParametersToQueue(queryMapRealTime);
@@ -928,8 +938,10 @@ public class Visilabs {
             addQueryParametersToQueue(queryMap);
             if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 HashMap<String, String> queryMapRealTime = new HashMap<>();
-                for(int i=0; i<queryMap.size()-1; i++){
-                    queryMapRealTime.put((String)queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                for(int i=0; i<queryMap.size(); i++){
+                    if(!((String) queryMap.keySet().toArray()[i]).equals("client")) {
+                        queryMapRealTime.put((String) queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                    }
                 }
                 queryMapRealTime.put("client", "realTime");
                 addQueryParametersToQueue(queryMapRealTime);
@@ -1035,8 +1047,10 @@ public class Visilabs {
             addQueryParametersToQueue(queryMap);
             if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 HashMap<String, String> queryMapRealTime = new HashMap<>();
-                for(int i=0; i<queryMap.size()-1; i++){
-                    queryMapRealTime.put((String)queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                for(int i=0; i<queryMap.size(); i++){
+                    if(!((String) queryMap.keySet().toArray()[i]).equals("client")) {
+                        queryMapRealTime.put((String) queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                    }
                 }
                 queryMapRealTime.put("client", "realTime");
                 addQueryParametersToQueue(queryMapRealTime);
@@ -1149,8 +1163,10 @@ public class Visilabs {
             addQueryParametersToQueue(queryMap);
             if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
                 HashMap<String, String> queryMapRealTime = new HashMap<>();
-                for(int i=0; i<queryMap.size()-1; i++){
-                    queryMapRealTime.put((String)queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                for(int i=0; i<queryMap.size(); i++){
+                    if(!((String) queryMap.keySet().toArray()[i]).equals("client")) {
+                        queryMapRealTime.put((String) queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                    }
                 }
                 queryMapRealTime.put("client", "realTime");
                 addQueryParametersToQueue(queryMapRealTime);
