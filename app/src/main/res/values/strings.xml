@@ -7,25 +7,26 @@
 
     <string name="visilabs_logo">Visilabs Logo</string>
     <string name="welcome_to_visilabs_demo">Welcome to Visilabs Demo</string>
-    <string name="go_to_login_page">Go To Login Page</string>
-    <string name="go_to_inapp_page">Go To InApp Page</string>
-    <string name="go_to_story_page">Go To Story Page</string>
+    <string name="go_to_login_page">GO TO LOGIN PAGE</string>
+    <string name="go_to_inapp_page">GO TO IN-APP PAGE</string>
+    <string name="go_to_story_page">GO TO STORY PAGE</string>
 
-    <string name="custom_event_1">Custom Event 1</string>
-    <string name="custom_event_2">Custom Event 2</string>
-    <string name="custom_event_3">Custom Event 3</string>
+    <string name="custom_event_1">CUSTOM EVENT 1</string>
+    <string name="custom_event_2">CUSTOM EVENT 2</string>
+    <string name="custom_event_3">CUSTOM EVENT 3</string>
 
-    <string name="mini">Mini</string>
-    <string name="full">Full</string>
-    <string name="full_image">Full Image</string>
-    <string name="image_button">Image Button</string>
-    <string name="image_text_button">Image Text Button</string>
-    <string name="smile_rating">Smile Rating</string>
-    <string name="nps_with_numbers">NPS With Numbers</string>
+    <string name="mini">MINI</string>
+    <string name="full">FULL</string>
+    <string name="full_image">FULL IMAGE</string>
+    <string name="image_button">IMAGE BUTTON</string>
+    <string name="image_text_button">IMAGE TEXT BUTTON</string>
+    <string name="smile_rating">SMILE RATING</string>
+    <string name="nps_with_numbers">NPS WITH NUMBERS</string>
     <string name="nps">NPS</string>
-    <string name="alert_native">Alert Native</string>
-    <string name="alert_actionsheet">Alert Action Sheet</string>
-    <string name="mail_subscription_form">Mail Subscription Form</string>
+    <string name="alert_native">ALERT NATIVE</string>
+    <string name="alert_actionsheet">ALERT ACTION SHEET</string>
+    <string name="mail_subscription_form">MAIL SUBSCRIPTION FORM</string>
+    <string name="scratch_to_win">SCRATCH TO WIN</string>
 
     <string name="alert">Alert</string>
     <string name="story_id_optional">Story ID (optional)</string>
