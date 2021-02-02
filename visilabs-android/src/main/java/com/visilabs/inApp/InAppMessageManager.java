@@ -140,6 +140,8 @@ public class InAppMessageManager {
 
                         case IMAGE_TEXT_BUTTON:
 
+                        case NPS_WITH_NUMBERS:
+
 
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
@@ -174,10 +176,6 @@ public class InAppMessageManager {
                                 }
                             }
 
-
-                            break;
-
-                        case NPS_WITH_NUMBERS:
 
                             break;
 

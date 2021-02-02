@@ -163,6 +163,16 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 showSmileRating();
 
                 break;
+
+            case NPS_WITH_NUMBERS:
+
+                binding.smileRating.setVisibility(View.GONE);
+                setBody();
+                setTitle();
+                setButton();
+                showNpsWithNumbers();
+                break;
+
         }
     }
 
@@ -273,6 +283,13 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     void showSmileRating() {
         binding.smileRating.setVisibility(View.VISIBLE);
     }
+
+    void showNpsWithNumbers() {
+
+    }
+
+
+
 
     private int getCloseIcon() {
 
