@@ -118,6 +118,15 @@
                 android:stepSize="0.5"
                 android:visibility="gone" />
 
+            <com.visilabs.view.NpsWithNumbersView
+                android:id="@+id/npsWithNumbersView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:visibility="gone" />
+
             <Button
                 android:id="@+id/btn_template"
                 android:layout_width="match_parent"

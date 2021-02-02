@@ -90,7 +90,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void setTemplate() {
 
-        //llOverlay.setBackgroundColor(Color.parseColor(inAppMessage.getBackground()));
+        binding.llBack.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
         binding.ibClose.setBackgroundResource(getCloseIcon());
 
         switch (mInAppMessage.getActionData().getMsgType()) {
@@ -171,6 +171,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 setTitle();
                 setButton();
                 showNpsWithNumbers();
+
                 break;
 
         }
@@ -254,6 +255,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
             case NPS:
                 return "OM.s_point=" + binding.ratingBar.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId();
+
+            case NPS_WITH_NUMBERS:
+                return "OM.s_point=" + binding.npsWithNumbersView.getSelectedRate() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId();
         }
 
         return "";
@@ -285,7 +289,13 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     void showNpsWithNumbers() {
+        binding.npsWithNumbersView.setVisibility(View.VISIBLE);
+        int[] colors = new int[mInAppMessage.getActionData().getNumberColors().length];
 
+        for(int i = 0; i < mInAppMessage.getActionData().getNumberColors().length; i ++) {
+            colors[i] = Color.parseColor(mInAppMessage.getActionData().getNumberColors()[i]);
+        }
+        binding.npsWithNumbersView.setColors(colors);
     }
 
 

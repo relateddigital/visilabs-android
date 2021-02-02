@@ -47,17 +47,19 @@ public class ActionData implements Parcelable {
     @SerializedName("msg_type")
     private String mMsgType;
     @SerializedName("promocode_background_color")
-    private String mPromoCodeBackgroundColor;
+    private final String mPromoCodeBackgroundColor;
     @SerializedName("promocode_text_color")
-    private String mPromoCodeTextColor;
+    private final String mPromoCodeTextColor;
     @SerializedName("promotion_code")
-    private String mPromotionCode;
+    private final String mPromotionCode;
+    @SerializedName("number_colors")
+    private String[] mNumberColors;
     @SerializedName("qs")
-    private String mQs;
+    private final String mQs;
     @SerializedName("visit_data")
-    private String mVisitData;
+    private final String mVisitData;
     @SerializedName("visitor_data")
-    private String mVisitorData;
+    private final String mVisitorData;
 
     protected ActionData(Parcel in) {
         mAlertType = in.readString();
@@ -82,6 +84,7 @@ public class ActionData implements Parcelable {
         mPromoCodeBackgroundColor = in.readString();
         mPromoCodeTextColor = in.readString();
         mPromotionCode = in.readString();
+        in.readStringArray(mNumberColors);
         mQs = in.readString();
         mVisitData = in.readString();
         mVisitorData = in.readString();
@@ -128,6 +131,7 @@ public class ActionData implements Parcelable {
         dest.writeString(mPromoCodeBackgroundColor);
         dest.writeString(mPromoCodeTextColor);
         dest.writeString(mPromotionCode);
+        dest.writeStringArray(mNumberColors);
         dest.writeString(mQs);
         dest.writeString(mVisitData);
         dest.writeString(mVisitorData);
@@ -324,6 +328,9 @@ public class ActionData implements Parcelable {
         if (InAppActionType.ALERT.toString().equals(mMsgType.toLowerCase())) {
             return InAppActionType.ALERT;
         }
+        if (InAppActionType.NPS_WITH_NUMBERS.toString().equals(mMsgType.toLowerCase())) {
+            return InAppActionType.NPS_WITH_NUMBERS;
+        }
         return InAppActionType.UNKNOWN;
     }
 
@@ -335,47 +342,27 @@ public class ActionData implements Parcelable {
         return mPromoCodeBackgroundColor;
     }
 
-    public void setPromoCodeBackgroundColor(String promoCodeBackgroundColor) {
-        mPromoCodeBackgroundColor = promoCodeBackgroundColor;
-    }
-
     public String getPromoCodeTextColor() {
         return mPromoCodeTextColor;
-    }
-
-    public void setPromoCodeTextColor(String promoCodeTextColor) {
-        mPromoCodeTextColor = promoCodeTextColor;
     }
 
     public String getPromotionCode() {
         return mPromotionCode;
     }
 
-    public void setPromotionCode(String promotionCode) {
-        mPromotionCode = promotionCode;
+    public String[] getNumberColors() {
+        return mNumberColors;
     }
 
     public String getQs() {
         return mQs;
     }
 
-    public void setQs(String qs) {
-        mQs = qs;
-    }
-
     public String getVisitData() {
         return mVisitData;
     }
 
-    public void setVisitData(String visitData) {
-        mVisitData = visitData;
-    }
-
     public String getVisitorData() {
         return mVisitorData;
-    }
-
-    public void setVisitorData(String visitorData) {
-        mVisitorData = visitorData;
     }
 }
