@@ -231,7 +231,7 @@
                 android:layout_width="0.0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1.0"
-                android:text="@string/mail_subscription_form" />
+                android:text="@string/scratch_to_win" />
 
         </LinearLayout>
 
