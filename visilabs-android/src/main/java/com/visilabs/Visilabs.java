@@ -1067,8 +1067,9 @@ public class Visilabs {
         }
         if (properties == null) {
             properties = new HashMap<>();
-            properties.put(VisilabsConstant.URI_KEY, pageName);
         }
+
+        properties.put(VisilabsConstant.URI_KEY, pageName);
         sendEvent(properties);
     }
 
