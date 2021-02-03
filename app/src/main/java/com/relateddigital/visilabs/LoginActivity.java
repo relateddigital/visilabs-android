@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                                 String token = task.getResult();
                                 HashMap<String, String> parameters = new HashMap<>();
-                                parameters.put("OM.exVisitorID", "ogun.ozturk@euromsg.com");
+                                parameters.put("OM.exVisitorID", "test9876@euromsg.com");
                                 parameters.put("OM.sys.TokenID", token);
                                 parameters.put("OM.sys.AppID", "visilabs-android-test");
                                 Visilabs.CallAPI().customEvent("Login", parameters, LoginActivity.this);
