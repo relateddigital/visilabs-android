@@ -127,14 +127,18 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
                     e.printStackTrace();
                 }
                 if(!rawJsonResponse.equals("")) {
-                    Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
-                    VisilabsResponse visilabsResponse;
-                    if(rawJsonResponse.equals("ok")){
-                        visilabsResponse = new VisilabsResponse(null, null, rawJsonResponse, null, null);
-                    } else {
-                        visilabsResponse = new VisilabsResponse(null, new JSONArray(rawJsonResponse), null, null, null);
+                    try {
+                        Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
+                        VisilabsResponse visilabsResponse;
+                        if (rawJsonResponse.equals("ok") || rawJsonResponse.equals("\"ok\"")) {
+                            visilabsResponse = new VisilabsResponse(null, null, rawJsonResponse, null, null);
+                        } else {
+                            visilabsResponse = new VisilabsResponse(null, new JSONArray(rawJsonResponse), null, null, null);
+                        }
+                        pCallback.success(visilabsResponse);
+                    }catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    pCallback.success(visilabsResponse);
                 } else {
                     Log.e(LOG_TAG, "Failed to get the json response");
                 }

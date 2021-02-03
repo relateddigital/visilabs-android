@@ -76,7 +76,7 @@ public class GeofenceTransitionsReceiver extends BroadcastReceiver {
             VisilabsCallback callback = new VisilabsCallback() {
                 @Override
                 public void success(VisilabsResponse response) {
-                    if(response.getRawResponse().equals("ok")){
+                    if(response.getRawResponse().equals("ok") || response.getRawResponse().equals("\"ok\"")){
                         Log.i(TAG, "Successful Request : Sent the info of Geofence trigger");
                     } else {
                         Log.e(TAG, "Fail Request : Could not send the info of Geofence trigger");
