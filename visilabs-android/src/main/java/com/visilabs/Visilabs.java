@@ -150,6 +150,8 @@ public class Visilabs {
             setCookieID(null);
         }
 
+        mCookie = new Cookie();
+
         mSendQueue = new ArrayList<>();
 
         if (!mIsCreated) {
