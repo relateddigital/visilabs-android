@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.visilabs.scratchToWin.ContainerScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scratch_to_win_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="com.visilabs.scratchToWin.ScratchToWinActivity">
@@ -11,53 +12,61 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <FrameLayout
+        <ImageButton
+            android:id="@+id/close_button"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="top|right"
+            android:layout_margin="5dp"
+            android:textColor="#fff" />
+
+        <ImageView
+            android:id="@+id/main_image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <ImageView
-                android:id="@+id/main_image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:adjustViewBounds="true" />
-
-            <ImageButton
-                android:id="@+id/close_button"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_gravity="top|right"
-                android:layout_margin="5dp"
-                android:textColor="#fff" />
-
-        </FrameLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:adjustViewBounds="true" />
 
         <TextView
             android:id="@+id/title_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
             android:ellipsize="end"
             android:gravity="center"
-            android:textColor="#000"
+            android:textColor="#000000"
             android:textSize="15sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/body_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="15sp" />
+
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/promotion_code_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:layout_marginEnd="60dp"
                 android:layout_marginStart="60dp"
-                android:padding="8dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="60dp"
+                android:layout_marginBottom="20dp"
                 android:ellipsize="end"
                 android:gravity="center"
+                android:padding="8dp"
                 android:textColor="#000"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -66,21 +75,110 @@
                 android:id="@+id/view_to_be_scratched"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginStart="60dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
                 android:layout_marginEnd="60dp"
-                android:layout_marginStart="60dp" />
-
-            <ImageView
-                android:id="@+id/copyToClipboard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_gravity="end | center"
-                android:background="@drawable/content_copy_24"
-                android:layout_marginRight="16dp" />
+                android:layout_marginBottom="20dp" />
 
         </FrameLayout>
 
+        <EditText
+            android:id="@+id/emailEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/rectangle_box"
+            android:inputType="textEmailAddress"
+            android:paddingLeft="10dp"
+            android:paddingTop="8dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/invalid_email_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="20dp"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/mail_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp">
+
+            <CheckBox
+                android:id="@+id/email_permit_checkbox"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp" />
+
+            <TextView
+                android:id="@+id/email_permit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/email_permit_checkbox"
+                android:layout_toRightOf="@+id/email_permit_checkbox"
+                android:gravity="center_vertical"
+                android:minHeight="25dp" />
+
+            <CheckBox
+                android:id="@+id/consent_checkbox"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_below="@+id/email_permit_checkbox"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp" />
+
+            <TextView
+                android:id="@+id/consent_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/email_permit_checkbox"
+                android:layout_toEndOf="@+id/consent_checkbox"
+                android:layout_toRightOf="@+id/consent_checkbox"
+                android:gravity="center_vertical"
+                android:minHeight="25dp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/result_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="20dp"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/save_mail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/copy_to_clipboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:padding="8dp" />
+
     </LinearLayout>
-</ScrollView>
+</com.visilabs.scratchToWin.ContainerScrollView>
