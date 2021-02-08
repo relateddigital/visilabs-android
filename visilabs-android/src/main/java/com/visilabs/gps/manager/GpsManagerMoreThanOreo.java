@@ -109,7 +109,7 @@ public class GpsManagerMoreThanOreo {
                         setLastKnownLocation(location);
                     } else {
                         LocationRequest locationRequest = LocationRequest.create();
-                        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACYZ);
+                        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
                         locationRequest.setInterval(10000);
                         mFusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.getMainLooper());
                     }
