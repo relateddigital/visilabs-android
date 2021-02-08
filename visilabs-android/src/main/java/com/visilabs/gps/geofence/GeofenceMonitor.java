@@ -87,6 +87,7 @@ public class GeofenceMonitor extends VisilabsIntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         connectGoogleApi();
+        setMediumPowerGPS();
         return START_STICKY;
     }
 
@@ -181,13 +182,13 @@ public class GeofenceMonitor extends VisilabsIntentService {
                 final PendingIntent geoFenceIntent = GeoFencesUtils.getTransitionPendingIntent(mContext);
 
                 mGeofencingClient.addGeofences(getAddGeofencingRequest(geofences), geoFenceIntent)
-                        .addOnSuccessListener((Activity) mContext, new OnSuccessListener<Void>() {
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d("Registering geofence : ", "Successful");
                             }
                         })
-                        .addOnFailureListener((Activity) mContext, new OnFailureListener() {
+                        .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.e("Registering geofence : ", "Failed -> " + e.getMessage());

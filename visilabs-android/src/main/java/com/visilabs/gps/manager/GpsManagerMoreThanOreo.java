@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,9 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,6 +56,7 @@ public class GpsManagerMoreThanOreo {
     private GeofencingClient mGeofencingClient;
     private FusedLocationProviderClient mFusedLocationClient;
     private PendingIntent mGeofencePendingIntent;
+    private LocationCallback mLocationCallback;
 
     public GpsManagerMoreThanOreo(Context context) {
         Injector.INSTANCE.initGpsManager(this);
@@ -72,6 +77,19 @@ public class GpsManagerMoreThanOreo {
     private void initGpsService() {
         mGeofencingClient = LocationServices.getGeofencingClient(mApplication);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mApplication);
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+                        setLastKnownLocation(location);
+                    }
+                }
+            }
+        };
     }
 
     @SuppressLint("MissingPermission")
@@ -89,6 +107,11 @@ public class GpsManagerMoreThanOreo {
                 public void onSuccess(Location location) {
                     if (location != null) {
                         setLastKnownLocation(location);
+                    } else {
+                        LocationRequest locationRequest = LocationRequest.create();
+                        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACYZ);
+                        locationRequest.setInterval(10000);
+                        mFusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.getMainLooper());
                     }
                 }
             });
@@ -112,6 +135,8 @@ public class GpsManagerMoreThanOreo {
     }
 
     public void setLastKnownLocation(Location location) {
+
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
 
         Calendar fifteenMinutesBefore = Calendar.getInstance(); // current date/time
         fifteenMinutesBefore.add(Calendar.MINUTE, -15);
