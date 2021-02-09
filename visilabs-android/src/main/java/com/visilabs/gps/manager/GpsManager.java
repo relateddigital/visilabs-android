@@ -1,19 +1,37 @@
 package com.visilabs.gps.manager;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.visilabs.Injector;
 import com.visilabs.api.VisilabsGeofenceGetListCallback;
 import com.visilabs.api.VisilabsGeofenceRequest;
-import com.visilabs.Injector;
 import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
-import com.visilabs.gps.geofence.GeofenceMonitor;
-import com.visilabs.gps.geofence.GeofenceMonitorConnection;
-import com.visilabs.gps.listener.IVisilabsGeofenceListener;
+import com.visilabs.gps.geofence.GeofenceBroadcastReceiver;
+import com.visilabs.gps.geofence.VisilabsAlarm;
 import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
 import com.visilabs.gps.util.GeoFencesUtils;
+import com.visilabs.util.VisilabsLog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,21 +41,22 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GpsManager {
-    private final String TAG = "Visilabs GpsManager";
+
+    private final String TAG = "Visilabs GpsManager2";
     public final List<VisilabsGeoFenceEntity> mActiveGeoFenceEntityList = new ArrayList<>();
     private final List<VisilabsGeoFenceEntity> mAllGeoFenceEntityList = new ArrayList<>();
     private final List<VisilabsGeoFenceEntity> mToAddGeoFenceEntityList = new ArrayList<>();
     private final List<VisilabsGeoFenceEntity> mToRemoveGeoFenceEntityList = new ArrayList<>();
     private final Context mApplication;
-    private final boolean mIsManagerActive = false;
-    private boolean mIsManagerStarting = false;
+    public boolean mIsManagerActive = false;
+    public boolean mIsManagerStarting = false;
     private Location mLastKnownLocation = null;
-    private final IVisilabsGeofenceListener mGeofenceListener = null;
-    private Intent mGpsServiceIntent;
-    private GeofenceMonitor mVisilabsGpsService;
-    private GeofenceMonitorConnection mVisilabsGpsServiceConnection;
     private boolean mFirstServerCheck = false;
     private Calendar mLastServerCheck = Calendar.getInstance();
+    private GeofencingClient mGeofencingClient;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private PendingIntent mGeofencePendingIntent;
+    private LocationCallback mLocationCallback;
 
     public GpsManager(Context context) {
         Injector.INSTANCE.initGpsManager(this);
@@ -51,24 +70,52 @@ public class GpsManager {
         mIsManagerStarting = true;
         initGpsService();
         startGpsService();
-        bindGpsService();
+        VisilabsAlarm.getSingleton().setAlarmCheckIn(mApplication);
+
     }
 
     private void initGpsService() {
-        mGpsServiceIntent = new Intent(mApplication, GeofenceMonitor.class);
+        mGeofencingClient = LocationServices.getGeofencingClient(mApplication);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mApplication);
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+                        setLastKnownLocation(location);
+                    }
+                }
+            }
+        };
     }
 
-    private void startGpsService() {
-        mApplication.startService(mGpsServiceIntent);
-    }
+    @SuppressLint("MissingPermission")
+    public void startGpsService() {
 
-    private void bindGpsService() {
-        mVisilabsGpsServiceConnection = new GeofenceMonitorConnection();
-        mApplication.bindService(mGpsServiceIntent, mVisilabsGpsServiceConnection, Context.BIND_AUTO_CREATE);
-    }
+        boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(mApplication,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean accessCoarseLocationPermission = ContextCompat.checkSelfPermission(mApplication,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-    public void setGeoMonitorReference(GeofenceMonitor geoMonitor) {
-        mVisilabsGpsService = geoMonitor;
+        if (accessFineLocationPermission || accessCoarseLocationPermission) {
+
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        setLastKnownLocation(location);
+                    } else {
+                        LocationRequest locationRequest = LocationRequest.create();
+                        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+                        locationRequest.setInterval(10000);
+                        mFusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.getMainLooper());
+                    }
+                }
+            });
+        }
     }
 
     private boolean GeoFenceEntitiesAreTheSame(VisilabsGeoFenceEntity geoFenceEntity1, VisilabsGeoFenceEntity geoFenceEntity2) {
@@ -89,6 +136,8 @@ public class GpsManager {
 
     public void setLastKnownLocation(Location location) {
 
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+
         Calendar fifteenMinutesBefore = Calendar.getInstance(); // current date/time
         fifteenMinutesBefore.add(Calendar.MINUTE, -15);
 
@@ -99,21 +148,8 @@ public class GpsManager {
             mLastKnownLocation = location;
 
 
-            if(!mFirstServerCheck || mLastServerCheck.before(fifteenMinutesBefore)){
-                setupGeofences();
-                mLastServerCheck = Calendar.getInstance();
-                mFirstServerCheck = true;
-            }
-
-
         } else {
-            if (location == null) {
-                if(!mFirstServerCheck || mLastServerCheck.before(fifteenMinutesBefore)){
-                    setupGeofences();
-                    mLastServerCheck = Calendar.getInstance();
-                    mFirstServerCheck = true;
-                }
-            } else {
+            if (location != null) {
                 double lat1 = mLastKnownLocation.getLatitude();
                 double long1 = mLastKnownLocation.getLongitude();
                 double lat2 = location.getLatitude();
@@ -121,12 +157,12 @@ public class GpsManager {
                 if (GeoFencesUtils.haversine(lat1, long1, lat2, long2) > 1) {
                     mLastKnownLocation = location;
                 }
-                if(!mFirstServerCheck || mLastServerCheck.before(fifteenMinutesBefore)){
-                    setupGeofences();
-                    mLastServerCheck = Calendar.getInstance();
-                    mFirstServerCheck = true;
-                }
             }
+        }
+        if (!mFirstServerCheck || mLastServerCheck.before(fifteenMinutesBefore)) {
+            setupGeofences();
+            mLastServerCheck = Calendar.getInstance();
+            mFirstServerCheck = true;
         }
     }
 
@@ -184,8 +220,8 @@ public class GpsManager {
         }
     }
 
-    private void setupGeofencesCallback(List<VisilabsGeoFenceEntity> geoFences){
-        if(geoFences == null){
+    private void setupGeofencesCallback(List<VisilabsGeoFenceEntity> geoFences) {
+        if (geoFences == null) {
             return;
         }
 
@@ -196,7 +232,7 @@ public class GpsManager {
         double long1 = mLastKnownLocation.getLongitude();
         for (VisilabsGeoFenceEntity entity : mAllGeoFenceEntityList) {
             entity.setDistance(GeoFencesUtils.haversine(lat1, long1, Double.parseDouble(entity.getLatitude()),
-                    Double.parseDouble(entity.getLongitude())));
+                    Double.parseDouble(entity.getLongitude()))); //difference btw two points
         }
         Collections.sort(mAllGeoFenceEntityList, new DistanceComparator());
         mToAddGeoFenceEntityList.clear();
@@ -204,25 +240,24 @@ public class GpsManager {
 
 
         if (!mActiveGeoFenceEntityList.isEmpty()) {
-            if (mVisilabsGpsService != null)
-                mVisilabsGpsService.removeGeofences(mActiveGeoFenceEntityList);
+            if (mGeofencingClient != null)
+                removeGeofences(mActiveGeoFenceEntityList);
             mActiveGeoFenceEntityList.clear();
         }
 
-
         if (mActiveGeoFenceEntityList.isEmpty()) {
-            if (mAllGeoFenceEntityList.size() > 20) {
-                mToAddGeoFenceEntityList.addAll(mAllGeoFenceEntityList.subList(0, 20));
+            if (mAllGeoFenceEntityList.size() > 100) {
+                mToAddGeoFenceEntityList.addAll(mAllGeoFenceEntityList.subList(0, 100));
             } else {
                 mToAddGeoFenceEntityList.addAll(mAllGeoFenceEntityList);
             }
         }
 
-        if (mVisilabsGpsService == null)
+        if (mGeofencingClient == null)
             return;
 
         if (!mToRemoveGeoFenceEntityList.isEmpty()) {
-            mVisilabsGpsService.removeGeofences(mToRemoveGeoFenceEntityList);
+            removeGeofences(mToRemoveGeoFenceEntityList);
             Iterator<VisilabsGeoFenceEntity> it = mActiveGeoFenceEntityList.iterator();
             while (it.hasNext()) {
                 VisilabsGeoFenceEntity geofence = it.next();
@@ -235,16 +270,76 @@ public class GpsManager {
         }
 
         if (!mToAddGeoFenceEntityList.isEmpty()) {
-            mVisilabsGpsService.addGeofences(mToAddGeoFenceEntityList);
+            addGeofences(mToAddGeoFenceEntityList);
             mActiveGeoFenceEntityList.addAll(mToAddGeoFenceEntityList);
         }
+    }
+
+    private void removeGeofences(final List<VisilabsGeoFenceEntity> geoFencesToRemove) {
+        final List<String> IdsToRemove = new ArrayList<>();
+        for (VisilabsGeoFenceEntity geofenceEntity : geoFencesToRemove) {
+            IdsToRemove.add(geofenceEntity.getGuid());
+        }
+
+        if (IdsToRemove.isEmpty())
+            return;
+
+        mGeofencingClient.removeGeofences(IdsToRemove).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                VisilabsLog.v(TAG, "Removing geofences success ");
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        VisilabsLog.e(TAG, "Removing geofence failed: " + e.getMessage(), e);
+                    }
+                });
 
     }
 
-    public IVisilabsGeofenceListener getListener() {
-        return mGeofenceListener;
+    private GeofencingRequest getAddGeofencingRequest(List<Geofence> geofences) {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.addGeofences(geofences);
+        return builder.build();
     }
 
+    @SuppressLint("MissingPermission")
+    private void addGeofences(final List<VisilabsGeoFenceEntity> geoFencesToAdd) {
+        List<Geofence> geofences = new ArrayList<>();
+        for (VisilabsGeoFenceEntity geoFenceEntity : geoFencesToAdd) {
+            Geofence newGf = geoFenceEntity.toGeofence();
+            geofences.add(newGf);
+        }
+
+        boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(mApplication, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+        if (accessFineLocationPermission) {
+            mGeofencingClient.addGeofences(getAddGeofencingRequest(geofences), getGeofencePendingIntent())
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            VisilabsLog.v(TAG, "Registering geofence success ");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            VisilabsLog.e(TAG, "Registering geofence failed: " + e.getMessage(), e);
+                        }
+                    });
+        }
+    }
+
+    private PendingIntent getGeofencePendingIntent() {
+        if (mGeofencePendingIntent != null) {
+            return mGeofencePendingIntent;
+        }
+        Intent intent = new Intent(mApplication, GeofenceBroadcastReceiver.class);
+        mGeofencePendingIntent = PendingIntent.getBroadcast(mApplication, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return mGeofencePendingIntent;
+    }
 
     private static class DistanceComparator implements Comparator<VisilabsGeoFenceEntity> {
         @Override
@@ -260,4 +355,3 @@ public class GpsManager {
         return mLastKnownLocation;
     }
 }
-

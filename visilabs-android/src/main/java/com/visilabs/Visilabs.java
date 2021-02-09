@@ -20,9 +20,7 @@ import com.visilabs.api.VisilabsTargetFilter;
 import com.visilabs.api.VisilabsTargetRequest;
 import com.visilabs.exceptions.VisilabsNotReadyException;
 import com.visilabs.gps.factory.GpsFactory;
-import com.visilabs.gps.factory.GpsFactory2;
 import com.visilabs.gps.manager.GpsManager;
-import com.visilabs.gps.manager.GpsManagerMoreThanOreo;
 import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.VisilabsActionRequest;
@@ -90,7 +88,6 @@ public class Visilabs {
     private String mSysTokenID;
 
     private GpsManager gpsManager = null;
-    private GpsManagerMoreThanOreo gpsManagerMoreThanOreo = null;
 
     private VisilabsApiMethods mVisilabsLoggerApiInterface;
     private VisilabsApiMethods mVisilabsRealTimeApiInterface;
@@ -1527,36 +1524,19 @@ public class Visilabs {
 
     public void startGpsManager() {
         int per = ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (per != PackageManager.PERMISSION_GRANTED) {
-                Timer timer = new Timer("startGpsManager", false);
-                TimerTask task = new TimerTask() {
-                    @Override
-                    public void run() {
-                        startGpsManager();
-                    }
-                };
-                timer.schedule(task, 5000);
-                return;
-            }
-            gpsManagerMoreThanOreo = GpsFactory2.createManager(mContext);
-            gpsManagerMoreThanOreo.start();
-        } else {
-            if (per != PackageManager.PERMISSION_GRANTED) {
-                Timer timer = new Timer("startGpsManager", false);
-                TimerTask task = new TimerTask() {
-                    @Override
-                    public void run() {
-                        startGpsManager();
-                    }
-                };
-                timer.schedule(task, 5000);
-                return;
-            }
-            gpsManager = GpsFactory.createManager(mContext);
-            gpsManager.start();
+        if (per != PackageManager.PERMISSION_GRANTED) {
+            Timer timer = new Timer("startGpsManager", false);
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    startGpsManager();
+                }
+            };
+            timer.schedule(task, 5000);
+            return;
         }
-
+        gpsManager = GpsFactory.createManager(mContext);
+        gpsManager.start();
     }
 
     public Context getContext() {

@@ -4,6 +4,9 @@ import android.content.Context;
 
 import com.visilabs.gps.manager.GpsManager;
 
+/**
+ * Created by visilabs on 13.07.2016.
+ */
 public class GpsFactory {
     private static GpsManager mGpsManager = null;
 
