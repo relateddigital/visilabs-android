@@ -1,7 +1,6 @@
 package com.relateddigital.visilabs;
 
 import android.Manifest;
-import android.app.Application;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -10,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.multidex.MultiDexApplication;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,7 +23,7 @@ import com.visilabs.util.VisilabsConstant;
 import java.util.HashMap;
 import euromsg.com.euromobileandroid.EuroMobileManager;
 
-public class MainApplication extends Application {
+public class MainApplication extends MultiDexApplication {
 
     private String appAlias;
     private EuroMobileManager euroMobileManager;
