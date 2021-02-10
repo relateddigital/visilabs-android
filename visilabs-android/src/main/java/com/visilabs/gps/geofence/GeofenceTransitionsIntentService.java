@@ -16,7 +16,7 @@ import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsGeofenceRequest;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.gps.entities.VisilabsGeoFenceEntity;
-import com.visilabs.gps.manager.GpsManagerMoreThanOreo;
+import com.visilabs.gps.manager.GpsManager;
 import com.visilabs.gps.util.GeoFencesUtils;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
 
     private static final String TAG = "GeofenceTIService";
 
-    GpsManagerMoreThanOreo mGpsManager;
+    GpsManager mGpsManager;
     List<Geofence> mTriggerList;
     GeofencingEvent mGeoFenceEvent;
 
@@ -61,7 +61,7 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
             int errorCode = mGeoFenceEvent.getErrorCode();
             Log.e(TAG, "Location Services error: " + errorCode);
         } else {
-            mGpsManager = Injector.INSTANCE.getGpsManagerMoreThanOreo();
+            mGpsManager = Injector.INSTANCE.getGpsManager();
             if (mGpsManager == null)
                 return;
 
@@ -127,7 +127,7 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
         }
     }
 
-    private Geofence getClosestTriggeredGoefence(GpsManagerMoreThanOreo gpsManager, List<Geofence> triggerList) {
+    private Geofence getClosestTriggeredGoefence(GpsManager gpsManager, List<Geofence> triggerList) {
         if (triggerList.size() == 0) {
             return null;
         } else if (triggerList.size() == 1) {

@@ -12,7 +12,7 @@ import android.os.PowerManager;
 
 import com.visilabs.Injector;
 import com.visilabs.Visilabs;
-import com.visilabs.gps.manager.GpsManagerMoreThanOreo;
+import com.visilabs.gps.manager.GpsManager;
 
 
 public class VisilabsAlarm extends BroadcastReceiver {
@@ -28,14 +28,14 @@ public class VisilabsAlarm extends BroadcastReceiver {
         @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
         wl.acquire(10000);
 
-        GpsManagerMoreThanOreo gpsManagerMoreThanOreo = Injector.INSTANCE.getGpsManagerMoreThanOreo();
-        if(gpsManagerMoreThanOreo == null){
+        GpsManager gpsManager = Injector.INSTANCE.getGpsManager();
+        if(gpsManager == null){
             if(Visilabs.CallAPI() == null){
                 Visilabs.CreateAPI(context.getApplicationContext());
             }
             Visilabs.CallAPI().startGpsManager();
         }else{
-            gpsManagerMoreThanOreo.startGpsService();
+            gpsManager.startGpsService();
         }
         wl.release();
 
@@ -46,9 +46,7 @@ public class VisilabsAlarm extends BroadcastReceiver {
         Intent i = new Intent(context, VisilabsAlarm.class);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int fifteenMinutes = 15 * 60 * 1000;
-            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0,fifteenMinutes, pi);
-            }
+        int fifteenMinutes = 15 * 60 * 1000;
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0,fifteenMinutes, pi);
     }
 }

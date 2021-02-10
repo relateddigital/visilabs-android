@@ -6,14 +6,6 @@ import android.content.Intent;
 
 
 public class GeoFencesUtils {
-    public static PendingIntent getTransitionPendingIntent(Context context) {
-        Intent intent = new Intent("com.visilabs.gps.geofence.ACTION_RECEIVE_GEOFENCE");
-        return PendingIntent.getBroadcast(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
 
     private static final double R = 6372.8; // In kilometers
 
