@@ -4,6 +4,7 @@ package com.visilabs.story;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +30,9 @@ import com.visilabs.story.model.skinbased.Stories;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.VisilabsConstant;
 
+import java.util.HashMap;
+import java.util.List;
+
 public class StoryActivity extends Activity implements StoriesProgressView.StoriesListener {
 
     private StoriesProgressView mStoriesProgressView;
@@ -51,6 +55,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     static RecyclerView mRecyclerView;
     static VisilabsSkinBasedAdapter mVisilabsSkinBasedAdapter;
     private int mVideoLastPosition;
+    private MediaMetadataRetriever mRetriever;
 
     public static void setStoryItemClickListener(StoryItemClickListener storyItemClickListener) {
         mStoryItemClickListener = storyItemClickListener;
@@ -75,6 +80,9 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         mStoryPosition = getIntent().getExtras().getInt(VisilabsConstant.STORY_POSITION);
         mStoryItemPosition = getIntent().getExtras().getInt(VisilabsConstant.STORY_ITEM_POSITION);
         mStories = mActionData.getStories().get(mStoryPosition);
+
+        mRetriever = new MediaMetadataRetriever();
+        calculateDisplayTimeVideo();
 
         setTouchEvents();
 
@@ -137,9 +145,14 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         mRecyclerView.getAdapter().notifyDataSetChanged();
 
         mStoriesProgressView.setStoriesCount(mStories.getItems().size());
-        mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()
-                .get(mStoryItemPosition).getDisplayTime()) * 1000);
         mStoriesProgressView.setStoriesListener(this);
+        if(mStories.getItems().get(0).getFileType().equals(VisilabsConstant.STORY_PHOTO_KEY)){
+            mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()
+                    .get(mStoryItemPosition).getDisplayTime()) * 1000);
+        } else {
+            mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()
+                    .get(mStoryItemPosition).getDisplayTime()));
+        }
         mStoriesProgressView.startStories(mStoryItemPosition);
 
         String impressionReport = mActionData.getReport().getImpression();
@@ -238,13 +251,19 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     @Override
     protected void onDestroy() {
         mStoriesProgressView.destroy();
+        mRetriever.release();
         super.onDestroy();
     }
 
     private void setStoryItem(final Items item) {
 
-        mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()
-                .get(mStoryItemPosition).getDisplayTime()) * 1000);
+        if(item.getFileType().equals(VisilabsConstant.STORY_PHOTO_KEY)){
+            mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()
+                    .get(mStoryItemPosition).getDisplayTime()) * 1000);
+        } else {
+            mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()
+                    .get(mStoryItemPosition).getDisplayTime()));
+        }
 
         if(item.getFileType().equals(VisilabsConstant.STORY_PHOTO_KEY)){
             mVideoView.setVisibility(View.INVISIBLE);
@@ -281,5 +300,17 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 }
             }
         });
+    }
+
+    private void calculateDisplayTimeVideo() {
+        List<Items> items = mStories.getItems();
+        for (int i = 0; i < items.size(); i++) {
+            if(items.get(i).getFileType().equals(VisilabsConstant.STORY_VIDEO_KEY)){
+                mRetriever.setDataSource(items.get(i).getFileSrc(), new HashMap<String, String>());
+                String time = mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                long timeInMilliSec = Long.parseLong(time);
+                mStories.getItems().get(i).setDisplayTime(String.valueOf(timeInMilliSec));
+            }
+        }
     }
 }
