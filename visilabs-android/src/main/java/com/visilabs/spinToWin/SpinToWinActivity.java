@@ -10,6 +10,7 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
         super.onCreate(savedInstanceState);
         WebViewDialogFragment webViewDialogFragment = new WebViewDialogFragment("spintowin.html");
         webViewDialogFragment.display(getSupportFragmentManager());
+        webViewDialogFragment.setSpinToWinCompleteListener(this);
         webViewDialogFragment.getJavaScriptInterface().setSpinToWinCompleteListener(this);
     }
 

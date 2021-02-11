@@ -22,6 +22,7 @@ public class WebViewDialogFragment extends DialogFragment {
     public static final String TAG = "WebViewDialogFragment";
     WebView webView;
     private final WebViewJavaScriptInterface mJavaScriptInterface;
+    private SpinToWinCompleteInterface mListener;
 
     private String fileName = "";
 
@@ -50,6 +51,12 @@ public class WebViewDialogFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_FullScreenDialog);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mListener.onCompleted();
     }
 
     @Override
@@ -82,6 +89,10 @@ public class WebViewDialogFragment extends DialogFragment {
 
     public WebViewJavaScriptInterface getJavaScriptInterface(){
         return mJavaScriptInterface;
+    }
+
+    public void setSpinToWinCompleteListener(SpinToWinCompleteInterface listener){
+        mListener = listener;
     }
 
 }
