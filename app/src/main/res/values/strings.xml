@@ -27,6 +27,7 @@
     <string name="alert_actionsheet">ALERT ACTION SHEET</string>
     <string name="mail_subscription_form">MAIL SUBSCRIPTION FORM</string>
     <string name="scratch_to_win">SCRATCH TO WIN</string>
+    <string name="spin_to_win">SPIN TO WIN</string>
 
     <string name="alert">Alert</string>
     <string name="story_id_optional">Story ID (optional)</string>

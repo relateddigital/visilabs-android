@@ -16,6 +16,7 @@ import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.scratchToWin.ScratchToWinActivity;
+import com.visilabs.spinToWin.SpinToWinActivity;
 import com.visilabs.util.VisilabsConstant;
 
 import java.util.HashMap;
@@ -41,14 +42,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        binding.btnGoToInapp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, InAppActivity.class);
                 startActivity(intent);
             }
         });
@@ -176,6 +169,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ScratchToWinActivity.class);
+                startActivity(intent);
+                //TODO when backend side gets ready, use below
+                //sendInAppRequest("mailsubsform");
+            }
+        });
+
+        binding.inApp13.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SpinToWinActivity.class);
                 startActivity(intent);
                 //TODO when backend side gets ready, use below
                 //sendInAppRequest("mailsubsform");
