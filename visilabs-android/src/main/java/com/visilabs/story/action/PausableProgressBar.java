@@ -32,6 +32,8 @@ final class PausableProgressBar extends FrameLayout {
 
     public PausableProgressBar(Context context) {
         this(context, null);
+        mAnimation = new PausableScaleAnimation(0, 1, 1, 1,
+                Animation.ABSOLUTE, 0, Animation.RELATIVE_TO_SELF, 0);
     }
 
     public PausableProgressBar(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -95,9 +97,6 @@ final class PausableProgressBar extends FrameLayout {
 
     public void startProgress() {
         mMaxProgressView.setVisibility(GONE);
-
-        mAnimation = new PausableScaleAnimation(0, 1, 1, 1,
-                Animation.ABSOLUTE, 0, Animation.RELATIVE_TO_SELF, 0);
         mAnimation.setDuration(mDuration);
         mAnimation.setInterpolator(new LinearInterpolator());
         mAnimation.setAnimationListener(new Animation.AnimationListener() {

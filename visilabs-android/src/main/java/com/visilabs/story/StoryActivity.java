@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.recyclerview.widget.RecyclerView;
@@ -153,7 +154,6 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
             mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()
                     .get(mStoryItemPosition).getDisplayTime()));
         }
-        mStoriesProgressView.startStories(mStoryItemPosition);
 
         String impressionReport = mActionData.getReport().getImpression();
         Visilabs.CallAPI().impressionStory(impressionReport);
@@ -228,7 +228,6 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
 
     @Override
     public void onComplete() {
-
         mStoryPosition++;
 
         if (mStoryPosition < mActionData.getStories().size()) {
@@ -273,12 +272,19 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
             if (!item.getFileSrc().equals("")) {
                 Picasso.get().load(item.getFileSrc()).into(mIvStory);
             }
+            mStoriesProgressView.startStories(mStoryItemPosition);
         } else if(item.getFileType().equals(VisilabsConstant.STORY_VIDEO_KEY)) {
             mVideoView.setVisibility(View.VISIBLE);
             mIvStory.setVisibility(View.INVISIBLE);
             if (!item.getFileSrc().equals("")) {
                 mVideoView.setVideoURI(Uri.parse(item.getFileSrc()));
             }
+            mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mStoriesProgressView.startStories(mStoryItemPosition);
+                }
+            });
             mVideoView.requestFocus();
             mVideoView.start();
         }

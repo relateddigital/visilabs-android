@@ -151,7 +151,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e(LOG_TAG, "Fail Request " + t.getMessage());
-                VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(""), null, null, null, null);
+                VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), null, null);
                 pCallback.fail(visilabsResponse);
             }
         });
@@ -190,7 +190,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e(LOG_TAG, "Fail Request " + t.getMessage());
-                VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(""), null, null, null, null);
+                VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), null, null);
                 pCallback.fail(visilabsResponse);
             }
         });
