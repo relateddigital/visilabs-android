@@ -174,20 +174,12 @@ public class StoriesProgressView extends LinearLayout {
             public void onFinishProgress() {
                 if (mIsReverseStart) {
                     if (mStoriesListener != null) mStoriesListener.onPrev();
-                    if (0 <= (mCurrent - 1)) {
-                        PausableProgressBar p = mProgressBars.get(mCurrent - 1);
-                        p.setMinWithoutCallback();
-                        mProgressBars.get(--mCurrent).startProgress();
-                    } else {
-                        mProgressBars.get(mCurrent).startProgress();
-                    }
                     mIsReverseStart = false;
                     return;
                 }
                 int next = mCurrent + 1;
                 if (next <= (mProgressBars.size() - 1)) {
                     if (mStoriesListener != null) mStoriesListener.onNext();
-                    mProgressBars.get(next).startProgress();
                 } else {
                     mIsComplete = true;
                     if (mStoriesListener != null) mStoriesListener.onComplete();

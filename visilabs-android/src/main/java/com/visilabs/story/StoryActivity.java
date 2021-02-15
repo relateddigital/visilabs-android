@@ -36,6 +36,7 @@ import java.util.List;
 
 public class StoryActivity extends Activity implements StoriesProgressView.StoriesListener {
 
+    private static int VIDEO_DURATION_OFFSET = 1000;
     private StoriesProgressView mStoriesProgressView;
     private ImageView mIvStory;
     private VideoView mVideoView;
@@ -202,7 +203,9 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     public void onNext() {
         Visilabs.CallAPI().impressionStory(mActionData.getReport().getImpression());
 
-        setStoryItem(mStories.getItems().get(++mStoryItemPosition));
+        if(mStories.getItems().size() > mStoryItemPosition + 1) {
+            setStoryItem(mStories.getItems().get(++mStoryItemPosition));
+        }
     }
 
     @Override
@@ -317,7 +320,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 mRetriever.setDataSource(items.get(i).getFileSrc(), new HashMap<String, String>());
                 String time = mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
                 long timeInMilliSec = Long.parseLong(time);
-                mStories.getItems().get(i).setDisplayTime(String.valueOf(timeInMilliSec));
+                mStories.getItems().get(i).setDisplayTime(String.valueOf(timeInMilliSec + VIDEO_DURATION_OFFSET));
             }
         }
     }
