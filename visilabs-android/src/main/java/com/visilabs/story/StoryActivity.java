@@ -158,7 +158,9 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         String impressionReport = mActionData.getReport().getImpression();
         Visilabs.CallAPI().impressionStory(impressionReport);
 
-        Picasso.get().load(mStories.getThumbnail()).into(mIvCover);
+        if(!mStories.getThumbnail().equals("")) {
+            Picasso.get().load(mStories.getThumbnail()).into(mIvCover);
+        }
         mTvCover.setText(mStories.getTitle());
 
         setStoryItem(mStories.getItems().get(mStoryItemPosition));

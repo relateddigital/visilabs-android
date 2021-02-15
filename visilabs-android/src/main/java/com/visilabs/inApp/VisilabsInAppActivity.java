@@ -80,7 +80,12 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
         if (mInApp.getActionData().getBtnText() != null && mInApp.getActionData().getBtnText().length() > 0) {
             binding.btnInApp.setText(mInApp.getActionData().getBtnText());
         }
-        Picasso.get().load(mInApp.getActionData().getImg()).into(binding.fivInAppImage);
+        if(!mInApp.getActionData().getImg().equals("")) {
+            binding.fivInAppImage.setVisibility(View.VISIBLE);
+            Picasso.get().load(mInApp.getActionData().getImg()).into(binding.fivInAppImage);
+        } else {
+            binding.fivInAppImage.setVisibility(View.GONE);
+        }
     }
 
     private void setPromotionCode() {

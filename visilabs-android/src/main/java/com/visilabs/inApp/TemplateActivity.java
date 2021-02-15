@@ -78,7 +78,12 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setUpView() {
-        Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivTemplate);
+        if(!mInAppMessage.getActionData().getImg().equals("")) {
+            binding.ivTemplate.setVisibility(View.VISIBLE);
+            Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivTemplate);
+        } else {
+            binding.ivTemplate.setVisibility(View.GONE);
+        }
 
         binding.smileRating.setOnSmileySelectionListener(this);
         binding.smileRating.setOnRatingSelectedListener(this);

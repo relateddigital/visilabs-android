@@ -56,7 +56,12 @@ public class VisilabsInAppFragment extends Fragment {
 
             binding.tvInAppTitleMini.setText(inApp.getActionData().getMsgTitle().replace("\\n","\n"));
 
-            Picasso.get().load(inApp.getActionData().getImg()).into(binding.ivInAppImageMini);
+            if(!inApp.getActionData().getImg().equals("")) {
+                binding.ivInAppImageMini.setVisibility(View.VISIBLE);
+                Picasso.get().load(inApp.getActionData().getImg()).into(binding.ivInAppImageMini);
+            } else {
+                binding.ivInAppImageMini.setVisibility(View.GONE);
+            }
 
             mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
 

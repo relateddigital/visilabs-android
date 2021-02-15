@@ -62,6 +62,11 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         //TODO When real data comes, change the code below
         //TODO if img = "", dont use Picasso -> crash
         binding.scratchToWinContainer.setBackgroundColor(getResources().getColor(R.color.yellow));
+        /*
+        if(!imgUrl.equals("")) {
+            Picasso.get().load(imgUrl).into(binding.mainImage);
+        }
+        */
         Picasso.get().load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_153_20210201150721831.jpg").into(binding.mainImage);
         binding.titleText.setText("scratch-to-win title here");
         binding.bodyText.setText("scratch-to-win body text here");
