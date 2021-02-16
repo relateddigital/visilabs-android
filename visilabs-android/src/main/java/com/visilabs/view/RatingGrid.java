@@ -41,7 +41,7 @@ public class RatingGrid extends GridView {
         mCells = ColorUtils.calculateGradientColors(mRateCount, mColors);
         setNumColumns(mCells.size());
         setStretchMode(STRETCH_COLUMN_WIDTH);
-        setHorizontalSpacing(15);
+        setHorizontalSpacing(8);
         validateAndUpdate();
     }
 
