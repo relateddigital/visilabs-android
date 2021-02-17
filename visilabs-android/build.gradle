@@ -12,7 +12,7 @@ ext {
     siteUrl = 'http://visilabs.com/'
     gitUrl = 'http://visilabs.com/'
 
-    libraryVersion = '5.4.2'
+    libraryVersion = '5.4.3'
 
     developerId = 'visilabs'
     developerName = 'Visilabs'
@@ -31,7 +31,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 4
-        versionName "5.4.2"
+        versionName "5.4.3"
     }
     buildTypes {
         release {
