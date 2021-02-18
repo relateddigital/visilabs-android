@@ -15,6 +15,9 @@
             android:name="com.visilabs.scratchToWin.ScratchToWinActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
+            android:name="com.visilabs.spinToWin.SpinToWinActivity"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
+        <activity
             android:name="com.visilabs.inApp.VisilabsInAppActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity

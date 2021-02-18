@@ -1,4 +1,4 @@
-package com.relateddigital.visilabs;
+package com.visilabs.spinToWin;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -7,6 +7,7 @@ import android.webkit.JavascriptInterface;
 
 public class WebViewJavaScriptInterface {
     WebViewDialogFragment mWebViewDialogFragment;
+    private SpinToWinCompleteInterface mListener;
 
     WebViewJavaScriptInterface(WebViewDialogFragment webViewDialogFragment) {
         this.mWebViewDialogFragment = webViewDialogFragment;
@@ -15,6 +16,7 @@ public class WebViewJavaScriptInterface {
     @JavascriptInterface
     public void closeButtonClicked() {
         this.mWebViewDialogFragment.dismiss();
+        mListener.onCompleted();
     }
 
     @JavascriptInterface
@@ -25,5 +27,10 @@ public class WebViewJavaScriptInterface {
         clipboard.setPrimaryClip(clip);
 
         this.mWebViewDialogFragment.dismiss();
+        mListener.onCompleted();
+    }
+
+    public void setSpinToWinCompleteListener(SpinToWinCompleteInterface listener){
+        mListener = listener;
     }
 }

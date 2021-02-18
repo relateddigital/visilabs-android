@@ -49,16 +49,6 @@
                 android:textColor="@color/colorLight" />
 
             <Button
-                android:id="@+id/btn_go_to_inapp"
-                android:layout_width="0.0dip"
-                android:layout_height="fill_parent"
-                android:layout_margin="2.0dp"
-                android:layout_weight="1.0"
-                android:background="@color/colorButton"
-                android:text="@string/go_to_inapp_page"
-                android:textColor="@color/colorLight" />
-
-            <Button
                 android:id="@+id/btn_go_to_story"
                 android:layout_width="0.0dip"
                 android:layout_height="fill_parent"
@@ -232,6 +222,25 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1.0"
                 android:text="@string/scratch_to_win" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/bottom_bar"
+            android:orientation="horizontal"
+            android:paddingLeft="4.0dip"
+            android:paddingTop="5.0dip"
+            android:paddingRight="4.0dip"
+            android:paddingBottom="1.0dip">
+
+            <Button
+                android:id="@+id/inApp13"
+                android:layout_width="0.0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:text="@string/spin_to_win" />
 
         </LinearLayout>
 

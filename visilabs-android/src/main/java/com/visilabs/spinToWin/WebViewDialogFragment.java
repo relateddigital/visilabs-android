@@ -1,4 +1,4 @@
-package com.relateddigital.visilabs;
+package com.visilabs.spinToWin;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -12,6 +12,8 @@ import android.webkit.WebView;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.visilabs.android.R;
+
 //https://android--code.blogspot.com/2015/05/android-webview-local-html-javascript.html
 //https://medium.com/alexander-schaefer/implementing-the-new-material-design-full-screen-dialog-for-android-e9dcc712cb38
 //TODO: animasyon gerekiyorsa ekle
@@ -19,18 +21,19 @@ public class WebViewDialogFragment extends DialogFragment {
 
     public static final String TAG = "WebViewDialogFragment";
     WebView webView;
+    private final WebViewJavaScriptInterface mJavaScriptInterface;
+    private SpinToWinCompleteInterface mListener;
 
     private String fileName = "";
 
     WebViewDialogFragment(String fileName){
         this.fileName = fileName;
-
+        mJavaScriptInterface = new WebViewJavaScriptInterface(this);
     }
 
-    public static WebViewDialogFragment display(FragmentManager fragmentManager, String fileName) {
-        WebViewDialogFragment dialog = new WebViewDialogFragment(fileName);
-        dialog.show(fragmentManager, TAG);
-        return dialog;
+    public WebViewDialogFragment display(FragmentManager fragmentManager) {
+        this.show(fragmentManager, TAG);
+        return this;
     }
 
     @Override
@@ -51,13 +54,19 @@ public class WebViewDialogFragment extends DialogFragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mListener.onCompleted();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.layout_web_view, container, false);
         webView = view.findViewById(R.id.webview);
         webView.setWebChromeClient(getWebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new WebViewJavaScriptInterface(this), "Android");
+        webView.addJavascriptInterface(mJavaScriptInterface, "Android");
         String folderPath = "file:android_asset/";
         String fileName = this.fileName;
         String file = folderPath + fileName;
@@ -76,6 +85,14 @@ public class WebViewDialogFragment extends DialogFragment {
             }
         };
         return client;
+    }
+
+    public WebViewJavaScriptInterface getJavaScriptInterface(){
+        return mJavaScriptInterface;
+    }
+
+    public void setSpinToWinCompleteListener(SpinToWinCompleteInterface listener){
+        mListener = listener;
     }
 
 }
