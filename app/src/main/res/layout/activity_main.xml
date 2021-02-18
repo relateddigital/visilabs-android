@@ -242,6 +242,13 @@
                 android:layout_weight="1.0"
                 android:text="@string/spin_to_win" />
 
+            <Button
+                android:id="@+id/inApp14"
+                android:layout_width="0.0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:text="@string/social_proof" />
+
         </LinearLayout>
 
     </LinearLayout>
