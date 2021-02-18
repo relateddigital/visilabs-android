@@ -147,7 +147,7 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e(LOG_TAG, "Fail Request " + t.getMessage());
-                VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), null, null);
+                VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), t, t.getMessage());
                 pCallback.fail(visilabsResponse);
             }
         });
