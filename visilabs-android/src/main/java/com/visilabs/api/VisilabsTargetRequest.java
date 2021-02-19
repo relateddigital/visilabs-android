@@ -5,6 +5,7 @@ import android.util.Log;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.json.JSONArray;
+import com.visilabs.json.JSONException;
 import com.visilabs.json.JSONObject;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
@@ -114,32 +115,41 @@ public class VisilabsTargetRequest extends VisilabsRemote {
         //Put query parameters
         fillTargetQueryMap(queryParameters);
 
-        Call<ResponseBody> call = mVisilabsSApiInterface.getGeneralTargetRequestJsonResponse(headers, queryParameters);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String rawJsonResponse = "";
-                try {
-                    rawJsonResponse = response.body().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        try {
+            Call<ResponseBody> call = mVisilabsSApiInterface.getGeneralTargetRequestJsonResponse(headers, queryParameters);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    String rawJsonResponse = "";
+                    try {
+                        rawJsonResponse = response.body().string();
+                        if (!rawJsonResponse.equals("")) {
+                            Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
+                            VisilabsResponse visilabsResponse = new VisilabsResponse(null, new JSONArray(rawJsonResponse), null, null, null);
+                            pCallback.success(visilabsResponse);
+                        } else {
+                            Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                    }
                 }
-                if(!rawJsonResponse.equals("")) {
-                    Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
-                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, new JSONArray(rawJsonResponse), null, null, null);
-                    pCallback.success(visilabsResponse);
-                } else {
-                    Log.e(LOG_TAG, "Failed to get the json response");
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(LOG_TAG, "Fail Request " + t.getMessage());
-                VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), t, t.getMessage());
-                pCallback.fail(visilabsResponse);
-            }
-        });
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e(LOG_TAG, "Fail Request " + t.getMessage());
+                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), t, t.getMessage());
+                    pCallback.fail(visilabsResponse);
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Could not parse the response!");
+        }
     }
 
     @Override

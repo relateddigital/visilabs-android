@@ -14,6 +14,7 @@ import com.visilabs.api.VisilabsRemote;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.json.JSONArray;
+import com.visilabs.json.JSONException;
 import com.visilabs.json.JSONObject;
 import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
 import com.visilabs.util.PersistentTargetManager;
@@ -129,32 +130,42 @@ public class VisilabsActionRequest extends VisilabsRemote {
         //Put query parameters
         fillQueryMap(queryParameters);
 
-        Call<ResponseBody> call = mVisilabsSApiInterface.getGeneralRequestJsonResponse(headers, queryParameters);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String rawJsonResponse = "";
-                try {
-                    rawJsonResponse = response.body().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if(!rawJsonResponse.equals("")) {
-                    Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
-                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, new JSONArray(rawJsonResponse), null, null, null);
-                    pCallback.success(visilabsResponse);
-                } else {
-                    Log.e(LOG_TAG, "Failed to get the json response");
-                }
-            }
+        try {
+            Call<ResponseBody> call = mVisilabsSApiInterface.getGeneralRequestJsonResponse(headers, queryParameters);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    String rawJsonResponse = "";
+                    try {
+                        rawJsonResponse = response.body().string();
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(LOG_TAG, "Fail Request " + t.getMessage());
-                VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), t, t.getMessage());
-                pCallback.fail(visilabsResponse);
-            }
-        });
+                        if (!rawJsonResponse.equals("")) {
+                            Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
+                            VisilabsResponse visilabsResponse = new VisilabsResponse(null, new JSONArray(rawJsonResponse), null, null, null);
+                            pCallback.success(visilabsResponse);
+                        } else {
+                            Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e(LOG_TAG, "Fail Request " + t.getMessage());
+                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), t, t.getMessage());
+                    pCallback.fail(visilabsResponse);
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Could not parse the response!");
+        }
     }
 
     @Override
@@ -168,32 +179,42 @@ public class VisilabsActionRequest extends VisilabsRemote {
         //Put query parameters
         fillActionQueryMap(queryParameters);
 
-        Call<ResponseBody> call = mVisilabsSApiInterface.getGeneralActionRequestJsonResponse(headers, queryParameters);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String rawJsonResponse = "";
-                try {
-                    rawJsonResponse = response.body().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if(!rawJsonResponse.equals("")) {
-                    Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
-                    VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(rawJsonResponse), null, null, null, null);
-                    pCallback.success(visilabsResponse);
-                } else {
-                    Log.e(LOG_TAG, "Failed to get the json response");
-                }
-            }
+        try {
+            Call<ResponseBody> call = mVisilabsSApiInterface.getGeneralActionRequestJsonResponse(headers, queryParameters);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    String rawJsonResponse = "";
+                    try {
+                        rawJsonResponse = response.body().string();
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(LOG_TAG, "Fail Request " + t.getMessage());
-                VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), t, t.getMessage());
-                pCallback.fail(visilabsResponse);
-            }
-        });
+                        if (!rawJsonResponse.equals("")) {
+                            Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
+                            VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(rawJsonResponse), null, null, null, null);
+                            pCallback.success(visilabsResponse);
+                        } else {
+                            Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e(LOG_TAG, "Fail Request " + t.getMessage());
+                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), t, t.getMessage());
+                    pCallback.fail(visilabsResponse);
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Could not parse the response!");
+        }
     }
 
     @Override
@@ -208,19 +229,29 @@ public class VisilabsActionRequest extends VisilabsRemote {
         //Put query parameters
         fillQueryMap(queryParameters);
 
-        Call<List<InAppMessage>> call = mVisilabsSApiInterface.getInAppRequestResponse(headers, queryParameters);
-        call.enqueue(new Callback<List<InAppMessage>>() {
-            @Override
-            public void onResponse(Call<List<InAppMessage>> call, Response<List<InAppMessage>> response) {
-                List<InAppMessage> inAppMessages = response.body();
-                pCallback.success(inAppMessages, response.raw().request().url().toString());
-            }
+        try {
+            Call<List<InAppMessage>> call = mVisilabsSApiInterface.getInAppRequestResponse(headers, queryParameters);
+            call.enqueue(new Callback<List<InAppMessage>>() {
+                @Override
+                public void onResponse(Call<List<InAppMessage>> call, Response<List<InAppMessage>> response) {
+                    try {
+                        List<InAppMessage> inAppMessages = response.body();
+                        pCallback.success(inAppMessages, response.raw().request().url().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                    }
+                }
 
-            @Override
-            public void onFailure(Call<List<InAppMessage>> call, Throwable t) {
-                pCallback.fail(t, call.request().url().toString());
-            }
-        });
+                @Override
+                public void onFailure(Call<List<InAppMessage>> call, Throwable t) {
+                    pCallback.fail(t, call.request().url().toString());
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Could not parse the response!");
+        }
     }
 
     @Override
@@ -239,19 +270,29 @@ public class VisilabsActionRequest extends VisilabsRemote {
         //Put query parameters
         fillActionQueryMap(queryParameters);
 
-        Call<VisilabsMailSubscriptionFormResponse> call = mVisilabsSApiInterface.getMailSubsRequestResponse(headers, queryParameters);
-        call.enqueue(new Callback<VisilabsMailSubscriptionFormResponse>() {
-            @Override
-            public void onResponse(Call<VisilabsMailSubscriptionFormResponse> call, Response<VisilabsMailSubscriptionFormResponse> response) {
-                VisilabsMailSubscriptionFormResponse visilabsMailSubscriptionFormResponse = response.body();
-                pCallback.success(visilabsMailSubscriptionFormResponse, response.raw().request().url().toString());
-            }
+        try {
+            Call<VisilabsMailSubscriptionFormResponse> call = mVisilabsSApiInterface.getMailSubsRequestResponse(headers, queryParameters);
+            call.enqueue(new Callback<VisilabsMailSubscriptionFormResponse>() {
+                @Override
+                public void onResponse(Call<VisilabsMailSubscriptionFormResponse> call, Response<VisilabsMailSubscriptionFormResponse> response) {
+                    try {
+                        VisilabsMailSubscriptionFormResponse visilabsMailSubscriptionFormResponse = response.body();
+                        pCallback.success(visilabsMailSubscriptionFormResponse, response.raw().request().url().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                    }
+                }
 
-            @Override
-            public void onFailure(Call<VisilabsMailSubscriptionFormResponse> call, Throwable t) {
-                pCallback.fail(t, call.request().url().toString());
-            }
-        });
+                @Override
+                public void onFailure(Call<VisilabsMailSubscriptionFormResponse> call, Throwable t) {
+                    pCallback.fail(t, call.request().url().toString());
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Could not parse the response!");
+        }
     }
 
     @Override
@@ -265,19 +306,29 @@ public class VisilabsActionRequest extends VisilabsRemote {
         //Put query parameters
         fillActionQueryMap(queryParameters);
 
-        Call<FavsResponse> call = mVisilabsSApiInterface.getFavsRequestResponse(headers, queryParameters);
-        call.enqueue(new Callback<FavsResponse>() {
-            @Override
-            public void onResponse(Call<FavsResponse> call, Response<FavsResponse> response) {
-                FavsResponse favsResponse = response.body();
-                pCallback.success(favsResponse, response.raw().request().url().toString());
-            }
+        try {
+            Call<FavsResponse> call = mVisilabsSApiInterface.getFavsRequestResponse(headers, queryParameters);
+            call.enqueue(new Callback<FavsResponse>() {
+                @Override
+                public void onResponse(Call<FavsResponse> call, Response<FavsResponse> response) {
+                    try {
+                        FavsResponse favsResponse = response.body();
+                        pCallback.success(favsResponse, response.raw().request().url().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                    }
+                }
 
-            @Override
-            public void onFailure(Call<FavsResponse> call, Throwable t) {
-                pCallback.fail(t, call.request().url().toString());
-            }
-        });
+                @Override
+                public void onFailure(Call<FavsResponse> call, Throwable t) {
+                    pCallback.fail(t, call.request().url().toString());
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Could not parse the response!");
+        }
     }
 
     private void fillHeaderMap(HashMap<String, String> headerMap){

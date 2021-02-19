@@ -7,6 +7,7 @@ import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
 import com.visilabs.json.JSONArray;
+import com.visilabs.json.JSONException;
 import com.visilabs.json.JSONObject;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
@@ -116,41 +117,46 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
         //Put query parameters
         fillQueryMap(queryParameters);
 
-        Call<ResponseBody> call = mVisilabsSApiInterface.getGeneralGeofenceRequestJsonResponse(headers, queryParameters);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String rawJsonResponse = "";
-                try {
-                    rawJsonResponse = response.body().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if(!rawJsonResponse.equals("")) {
+        try {
+            Call<ResponseBody> call = mVisilabsSApiInterface.getGeneralGeofenceRequestJsonResponse(headers, queryParameters);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    String rawJsonResponse = "";
                     try {
-                        Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
-                        VisilabsResponse visilabsResponse;
-                        if (rawJsonResponse.equals("ok") || rawJsonResponse.equals("\"ok\"")) {
-                            visilabsResponse = new VisilabsResponse(null, null, rawJsonResponse, null, null);
+                        rawJsonResponse = response.body().string();
+                        if (!rawJsonResponse.equals("")) {
+                            Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
+                            VisilabsResponse visilabsResponse;
+                            if (rawJsonResponse.equals("ok") || rawJsonResponse.equals("\"ok\"")) {
+                                visilabsResponse = new VisilabsResponse(null, null, rawJsonResponse, null, null);
+                            } else {
+                                visilabsResponse = new VisilabsResponse(null, new JSONArray(rawJsonResponse), null, null, null);
+                            }
+                            pCallback.success(visilabsResponse);
                         } else {
-                            visilabsResponse = new VisilabsResponse(null, new JSONArray(rawJsonResponse), null, null, null);
+                            Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
                         }
-                        pCallback.success(visilabsResponse);
-                    }catch (Exception e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
                     }
-                } else {
-                    Log.e(LOG_TAG, "Failed to get the json response");
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(LOG_TAG, "Fail Request " + t.getMessage());
-                VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), t, t.getMessage());
-                pCallback.fail(visilabsResponse);
-            }
-        });
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e(LOG_TAG, "Fail Request " + t.getMessage());
+                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), t, t.getMessage());
+                    pCallback.fail(visilabsResponse);
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Could not parse the response!");
+        }
     }
 
     @Override
@@ -164,19 +170,29 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
         //Put query parameters
         fillQueryMap(queryParameters);
 
-        Call<List<VisilabsGeofenceGetListResponse>> call = mVisilabsSApiInterface.getGeofenceListRequestResponse(headers, queryParameters);
-        call.enqueue(new Callback<List<VisilabsGeofenceGetListResponse>>() {
-            @Override
-            public void onResponse(Call<List<VisilabsGeofenceGetListResponse>> call, Response<List<VisilabsGeofenceGetListResponse>> response) {
-                List<VisilabsGeofenceGetListResponse> visilabsGeofenceGetListResponse = response.body();
-                pCallback.success(visilabsGeofenceGetListResponse, response.raw().request().url().toString());
-            }
+        try {
+            Call<List<VisilabsGeofenceGetListResponse>> call = mVisilabsSApiInterface.getGeofenceListRequestResponse(headers, queryParameters);
+            call.enqueue(new Callback<List<VisilabsGeofenceGetListResponse>>() {
+                @Override
+                public void onResponse(Call<List<VisilabsGeofenceGetListResponse>> call, Response<List<VisilabsGeofenceGetListResponse>> response) {
+                    try {
+                        List<VisilabsGeofenceGetListResponse> visilabsGeofenceGetListResponse = response.body();
+                        pCallback.success(visilabsGeofenceGetListResponse, response.raw().request().url().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                    }
+                }
 
-            @Override
-            public void onFailure(Call<List<VisilabsGeofenceGetListResponse>> call, Throwable t) {
-                pCallback.fail(t, call.request().url().toString());
-            }
-        });
+                @Override
+                public void onFailure(Call<List<VisilabsGeofenceGetListResponse>> call, Throwable t) {
+                    pCallback.fail(t, call.request().url().toString());
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Could not parse the response!");
+        }
     }
 
     @Override
