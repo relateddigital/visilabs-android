@@ -529,8 +529,8 @@ label:not(.variant__button-label), .label {
 
 </div>
 <script type="text/javascript">
-         var config = {};
-         config.actid = "1";
+         var config = JSON.parse(Android.getResponse());
+         var spinToWin = new SpinToWin(config);
 
          /*
          İhtiyacımız olmayan field'ler
@@ -554,128 +554,13 @@ label:not(.variant__button-label), .label {
          sendemail bizim kullanmamız gereken bir parametre mi?
          esp_cmpid bizim kullanmamız gereken bir parametre mi?
          courseofaction bizim kullanmamız gereken bir parametre mi?
-
          javascript sdk'sında aşağıdaki gibi bir kullanımı var
-
          visilabs_object.AddParameter("promoAuth", promoAuth);
          visilabs_object.AddParameter("promotionId", firstResult.code);
          visilabs_object.AddParameter("actionid", actid);
-
          sendemail bizi ilgilendimiyor sanırım. javascript sdk'sında bir kullanımını görmedim.
-
-
          */
          // http://s.visilabs.net/act.js?OM.cookieID=YVUNDRCCUYMDXBPB20210104142937&OM.oid=676D325830564761676D453D&OM.siteID=356467332F6533766975593D&OM.obj=_VTObjs%5B%22_VisilabsTarget_2%22%5D&dat=Wed,%2006%20Jan%202021%2009:47:01%20GMT&OM.pushnotifystatus=denied&OM.pushchannel=webpush&OM.pvt=2021-01-05%2022%3A27%3A46&OM.pviv=1&OM.tvc=4&OM.th=5&OM.lvt=2021-01-06%2012%3A47%3A01&OM.tvd=1089&OM.resol=3840x2160&OM.jv=No&OM.nrv=0&OM.domain=one2onestore.com&OM.uri=%2F&OM.title=visistore&test=Kitchenette&OM.viscap=%7B%22data%22%3A%7B%7D%7D
-         config.actiondata = {
-
-
-              /*Eklenecek field'ler*/  
-              "background_color" : "#eeefff",
-              "close_button_color" : "#000000",
-
-              "msg_title_color" : "#6200ee",
-              "msg_title_font_family" : "Monospace",
-              "msg_title_textsize" : 10,
-
-              "msg_body_color" : "#0000ff",
-              "msg_body_font_family" : "sansserif",
-              "msg_body_textsize" : 5,
-
-
-              "button_color" : "#ff79ff",
-              "button_text_color" : "#ffffff",
-              "button_font_family" : "sansserif",
-              "button_textsize" : 0,
-
-              "consent_text_textsize" : 5,
-
-
-
-              "promotion_code_color" : "#ff79ff",
-              "promotion_code_text_color" : "#ffffff",
-              "promotion_code_font_family" : "sansserif",
-              "promotion_code_textsize" : 0,
-
-
-              "copy_button_text" : "Panoya Kopyala",
-              "copy_button_color" : "#00bcd4",
-              "copy_button_text_color" : "#ffffff",
-              "copy_button_font_family" : "sansserif",
-              "copy_button_textsize" : 0,
-
-
-
-
-
-              /*Eklenecek field'ler*/  
-
-
-               "slices": [
-                 {
-                   "displayName": "Promotion 1",
-                   "color": "#00bcd4",
-                   "code": "null",
-                   "type": "promotion"
-                 },
-                 {
-                   "displayName": "Promotion 2",
-                   "color": "#ff79ff",
-                   "code": "null",
-                   "type": "promotion"
-                 },
-                 {
-                   "displayName": "Static Code 1",
-                   "color": "#e4e65e",
-                   "code": "CF,CE,CD,CC,CB,CA",
-                   "type": "staticcode"
-                 },
-                 {
-                   "displayName": "Static Code 2",
-                   "color": "#6200ee",
-                   "code": "CF,CE,CD,CC,CB,CC",
-                   "type": "staticcode"
-                 },
-                 {
-                   "displayName": "Pass",
-                   "color": "#f50000",
-                   "code": "",
-                   "type": "pass"
-                 }
-               ],
-               "view_type": "Lightbox",
-               "mail_subscription": true,
-               "spin_to_win_content": {
-                 "title": "çArKıFeLeK",
-                 "message": "Tarık Tarcan, Mehmet Ali Erbil, Dobrovski, Parmaktan Sonra",
-                 "placeholder": "E-mail gir",
-                 "button_label": "Start",
-                 "title_style": "",
-                 "message_style": "",
-                 "button_style": "",
-                 "consent_text": "Kullanım koşullarını okudum. Tekrar tekrar okudum",
-                 "container_style": "", // "background-color:#e6e6e6",
-                 "invalid_email_message": "E-Mail Adresini düzgün gir.",
-                 "input_style": "",
-                 "validation_message_style": "",
-                 "consent_text_container_style": "",
-                 "success_message": "Tebrikle başarı mesajı.",
-                 "success_message_style": "",
-                 "emailpermit_text": "E-Posta Göndermeye İzin Ver"
-               },
-               "font_size": 20,
-               "circle_R": window.innerWidth / 2,
-               "auth": "3D8C108037744386D0C4BD317DE6C31E64F6BFF705349726E56B0687032C8ADA",
-               "type": "spin_to_win_email",
-               "waiting_time": 0,
-               "promoAuth": "51B3A13FE2948E3A19BC606617539A2476ADE08B493EE11F270626DD94E480A5",
-               "slice_count": "5",
-               "sendemail": false,
-               "esp_cmpid": "",
-               "courseofaction": "GetExistingPromoCode",
-               "Javascript": ""
-             };
-         
-         var spinToWin = new SpinToWin(config);
       </script>
 </body>
 </html>

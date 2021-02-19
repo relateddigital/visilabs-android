@@ -8,9 +8,11 @@ import android.webkit.JavascriptInterface;
 public class WebViewJavaScriptInterface {
     WebViewDialogFragment mWebViewDialogFragment;
     private SpinToWinCompleteInterface mListener;
+    private String mResponse;
 
-    WebViewJavaScriptInterface(WebViewDialogFragment webViewDialogFragment) {
+    WebViewJavaScriptInterface(WebViewDialogFragment webViewDialogFragment, String response) {
         this.mWebViewDialogFragment = webViewDialogFragment;
+        mResponse = response;
     }
 
     @JavascriptInterface
@@ -28,6 +30,11 @@ public class WebViewJavaScriptInterface {
 
         this.mWebViewDialogFragment.dismiss();
         mListener.onCompleted();
+    }
+
+    @JavascriptInterface
+    public String getResponse() {
+        return mResponse;
     }
 
     public void setSpinToWinCompleteListener(SpinToWinCompleteInterface listener){

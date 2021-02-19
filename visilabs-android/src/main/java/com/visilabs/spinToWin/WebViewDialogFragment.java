@@ -23,12 +23,14 @@ public class WebViewDialogFragment extends DialogFragment {
     WebView webView;
     private final WebViewJavaScriptInterface mJavaScriptInterface;
     private SpinToWinCompleteInterface mListener;
+    private String mResponse;
 
     private String fileName = "";
 
-    WebViewDialogFragment(String fileName){
+    WebViewDialogFragment(String fileName, String response){
         this.fileName = fileName;
-        mJavaScriptInterface = new WebViewJavaScriptInterface(this);
+        mResponse = response;
+        mJavaScriptInterface = new WebViewJavaScriptInterface(this, response);
     }
 
     public WebViewDialogFragment display(FragmentManager fragmentManager) {
