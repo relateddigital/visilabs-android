@@ -14,13 +14,11 @@ import com.visilabs.api.VisilabsRemote;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.json.JSONArray;
-import com.visilabs.json.JSONException;
 import com.visilabs.json.JSONObject;
 import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,13 +143,14 @@ public class VisilabsActionRequest extends VisilabsRemote {
                             pCallback.success(visilabsResponse);
                         } else {
                             Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
+                            VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "empty string", null, "empty string");
+                            pCallback.fail(visilabsResponse);
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                        VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, rawJsonResponse, null, rawJsonResponse);
+                        pCallback.fail(visilabsResponse);
                     }
                 }
 
@@ -162,7 +161,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
                     pCallback.fail(visilabsResponse);
                 }
             });
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(LOG_TAG, "Could not parse the response!");
         }
@@ -194,13 +193,14 @@ public class VisilabsActionRequest extends VisilabsRemote {
                             pCallback.success(visilabsResponse);
                         } else {
                             Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
+                            VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "empty string", null, "empty string");
+                            pCallback.fail(visilabsResponse);
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                        VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, rawJsonResponse, null, rawJsonResponse);
+                        pCallback.fail(visilabsResponse);
                     }
                 }
 
@@ -211,7 +211,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
                     pCallback.fail(visilabsResponse);
                 }
             });
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(LOG_TAG, "Could not parse the response!");
         }
@@ -237,9 +237,15 @@ public class VisilabsActionRequest extends VisilabsRemote {
                     try {
                         List<InAppMessage> inAppMessages = response.body();
                         pCallback.success(inAppMessages, response.raw().request().url().toString());
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                        try {
+                            pCallback.fail(new Throwable(response.body().toString()), call.request().url().toString());
+                        } catch (Exception c){
+                            c.printStackTrace();
+                            pCallback.fail(new Throwable("The response is not in the correct format"), call.request().url().toString());
+                        }
                     }
                 }
 
@@ -248,7 +254,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
                     pCallback.fail(t, call.request().url().toString());
                 }
             });
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(LOG_TAG, "Could not parse the response!");
         }
@@ -278,9 +284,15 @@ public class VisilabsActionRequest extends VisilabsRemote {
                     try {
                         VisilabsMailSubscriptionFormResponse visilabsMailSubscriptionFormResponse = response.body();
                         pCallback.success(visilabsMailSubscriptionFormResponse, response.raw().request().url().toString());
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                        try {
+                            pCallback.fail(new Throwable(response.body().toString()), call.request().url().toString());
+                        } catch (Exception c){
+                            c.printStackTrace();
+                            pCallback.fail(new Throwable("The response is not in the correct format"), call.request().url().toString());
+                        }
                     }
                 }
 
@@ -289,7 +301,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
                     pCallback.fail(t, call.request().url().toString());
                 }
             });
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(LOG_TAG, "Could not parse the response!");
         }
@@ -314,9 +326,15 @@ public class VisilabsActionRequest extends VisilabsRemote {
                     try {
                         FavsResponse favsResponse = response.body();
                         pCallback.success(favsResponse, response.raw().request().url().toString());
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                        try {
+                            pCallback.fail(new Throwable(response.body().toString()), call.request().url().toString());
+                        } catch (Exception c){
+                            c.printStackTrace();
+                            pCallback.fail(new Throwable("The response is not in the correct format"), call.request().url().toString());
+                        }
                     }
                 }
 
@@ -325,7 +343,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
                     pCallback.fail(t, call.request().url().toString());
                 }
             });
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(LOG_TAG, "Could not parse the response!");
         }

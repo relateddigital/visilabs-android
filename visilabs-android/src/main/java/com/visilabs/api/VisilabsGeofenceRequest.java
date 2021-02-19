@@ -7,13 +7,11 @@ import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
 import com.visilabs.json.JSONArray;
-import com.visilabs.json.JSONException;
 import com.visilabs.json.JSONObject;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -136,13 +134,14 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
                             pCallback.success(visilabsResponse);
                         } else {
                             Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
+                            VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "empty string", null, "empty string");
+                            pCallback.fail(visilabsResponse);
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                        VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, rawJsonResponse, null, rawJsonResponse);
+                        pCallback.fail(visilabsResponse);
                     }
                 }
 
@@ -153,7 +152,7 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
                     pCallback.fail(visilabsResponse);
                 }
             });
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(LOG_TAG, "Could not parse the response!");
         }
@@ -178,9 +177,15 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
                     try {
                         List<VisilabsGeofenceGetListResponse> visilabsGeofenceGetListResponse = response.body();
                         pCallback.success(visilabsGeofenceGetListResponse, response.raw().request().url().toString());
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                        try {
+                            pCallback.fail(new Throwable(response.body().toString()), call.request().url().toString());
+                        } catch (Exception c){
+                            c.printStackTrace();
+                            pCallback.fail(new Throwable("The response is not in the correct format"), call.request().url().toString());
+                        }
                     }
                 }
 
@@ -189,7 +194,7 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
                     pCallback.fail(t, call.request().url().toString());
                 }
             });
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(LOG_TAG, "Could not parse the response!");
         }

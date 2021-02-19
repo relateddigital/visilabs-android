@@ -5,13 +5,11 @@ import android.util.Log;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.json.JSONArray;
-import com.visilabs.json.JSONException;
 import com.visilabs.json.JSONObject;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
 import com.visilabs.util.VisilabsLog;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -129,13 +127,15 @@ public class VisilabsTargetRequest extends VisilabsRemote {
                             pCallback.success(visilabsResponse);
                         } else {
                             Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
+                            VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "empty string", null, "empty string");
+                            pCallback.fail(visilabsResponse);
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                        VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, rawJsonResponse, null, rawJsonResponse);
+                        pCallback.fail(visilabsResponse);
+
                     }
                 }
 
@@ -146,7 +146,7 @@ public class VisilabsTargetRequest extends VisilabsRemote {
                     pCallback.fail(visilabsResponse);
                 }
             });
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(LOG_TAG, "Could not parse the response!");
         }
