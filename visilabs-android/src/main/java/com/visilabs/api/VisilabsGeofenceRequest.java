@@ -206,6 +206,11 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     }
 
     @Override
+    public void executeSyncAction(VisilabsCallback pCallback) throws Exception {
+
+    }
+
+    @Override
     public void executeAsync(VisilabsInAppMessageCallback pCallback) {
 
     }

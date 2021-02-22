@@ -1,5 +1,6 @@
 package com.visilabs.story;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -47,12 +48,36 @@ public class VisilabsRecyclerView extends RecyclerView {
         }
     }
 
+    public void setStoryActionSync(Context context, Activity activity, StoryItemClickListener storyItemClickListener) {
+        mStoryItemClickListener = storyItemClickListener;
+        VisilabsActionRequest visilabsActionRequest;
+        try {
+            visilabsActionRequest = Visilabs.CallAPI().requestAction("Story");
+            visilabsActionRequest.executeSyncAction(getVisilabsStoryCallbackSync(context, activity));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setStoryActionId(Context context, String actionId, StoryItemClickListener storyItemClickListener) {
         mStoryItemClickListener = storyItemClickListener;
         VisilabsActionRequest visilabsActionRequest;
         try {
             visilabsActionRequest = Visilabs.CallAPI().requestActionId(actionId);
             visilabsActionRequest.executeAsyncAction(getVisilabsStoryCallback(context));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setStoryActionIdSync(Context context, Activity activity, String actionId, StoryItemClickListener storyItemClickListener) {
+        mStoryItemClickListener = storyItemClickListener;
+        VisilabsActionRequest visilabsActionRequest;
+        try {
+            visilabsActionRequest = Visilabs.CallAPI().requestActionId(actionId);
+            visilabsActionRequest.executeSyncAction(getVisilabsStoryCallbackSync(context, activity));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,6 +131,68 @@ public class VisilabsRecyclerView extends RecyclerView {
                             setAdapter(visilabsSkinBasedAdapter);
                         }
                     }
+
+                } catch (Exception ex) {
+                    Log.e(TAG, ex.getMessage(), ex);
+                }
+            }
+
+            @Override
+            public void fail(VisilabsResponse response) {
+                Log.e(TAG, response.getRawResponse());
+            }
+        };
+    }
+
+    public VisilabsCallback getVisilabsStoryCallbackSync(final Context context, final Activity activity) {
+        return new VisilabsCallback() {
+            @Override
+            public void success(final VisilabsResponse response) {
+                try {
+                    final VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse =
+                            new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
+
+                    if(visilabsStoryLookingBannerResponse.getStory().isEmpty()){
+                        Log.i(TAG, "There is no story to show.");
+                        return;
+                    }
+
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata()
+                                    .getTaTemplate().equals(VisilabsConstant.STORY_LOOKING_BANNERS)) {
+
+                                VisilabsStoryLookingBannerAdapter visilabsStoryLookingBannerAdapter =
+                                        new VisilabsStoryLookingBannerAdapter(context, mStoryItemClickListener);
+
+                                visilabsStoryLookingBannerAdapter.setStoryList(visilabsStoryLookingBannerResponse,
+                                        visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata().getExtendedProps());
+
+                                setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                                setHasFixedSize(true);
+
+                                setAdapter(visilabsStoryLookingBannerAdapter);
+
+                            } else if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata()
+                                    .getTaTemplate().equals(VisilabsConstant.STORY_SKIN_BASED)) {
+                                VisilabsSkinBasedResponse skinBased = new Gson().fromJson(response
+                                        .getRawResponse(), VisilabsSkinBasedResponse.class);
+
+                                VisilabsSkinBasedAdapter visilabsSkinBasedAdapter = new VisilabsSkinBasedAdapter(context);
+
+                                visilabsSkinBasedAdapter.setStoryListener(mStoryItemClickListener);
+
+                                visilabsSkinBasedAdapter.setStoryList(skinBased, skinBased.getStory()
+                                        .get(0).getActiondata().getExtendedProps());
+
+                                setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                                setHasFixedSize(true);
+
+                                setAdapter(visilabsSkinBasedAdapter);
+                            }
+                        }
+                    });
 
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getMessage(), ex);

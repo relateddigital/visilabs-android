@@ -55,6 +55,14 @@ public interface VisilabsAction {
     void executeAsyncAction(VisilabsCallback pCallback) throws Exception;
 
     /**
+     * Use this function when you want to get raw JSON response synchronously for the action
+     *
+     * @param pCallback the callback function
+     * @throws Exception
+     */
+    void executeSyncAction(final VisilabsCallback pCallback) throws Exception;
+
+    /**
      * Use this function when you want to get MailSubsForm-type response
      *
      * @param pCallback the callback function

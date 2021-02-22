@@ -168,6 +168,11 @@ public class VisilabsTargetRequest extends VisilabsRemote {
     }
 
     @Override
+    public void executeSyncAction(VisilabsCallback pCallback) throws Exception {
+
+    }
+
+    @Override
     public void executeAsyncAction(VisilabsMailSubsFormRequestCallback pCallback) {
 
     }
