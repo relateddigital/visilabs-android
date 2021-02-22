@@ -1,6 +1,7 @@
 package com.relateddigital.visilabs;
 
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,8 @@ import com.visilabs.Visilabs;
 
 import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.favs.FavsResponse;
+import com.visilabs.inApp.InAppMessage;
+import com.visilabs.inApp.SocialProofFragment;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.scratchToWin.ScratchToWinActivity;
 import com.visilabs.spinToWin.SpinToWinActivity;
@@ -182,6 +185,21 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 //TODO when backend side gets ready, use below
                 //sendInAppRequest("mailsubsform");
+            }
+        });
+
+        binding.inApp14.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SocialProofFragment socialProofFragment = SocialProofFragment.newInstance(0,null);
+
+                socialProofFragment.setRetainInstance(true);
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.add(android.R.id.content, socialProofFragment);
+                transaction.commit();
+                //TODO when backend side gets ready, check below
+                //sendInAppRequest("socialproof");
             }
         });
 

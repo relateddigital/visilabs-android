@@ -1,0 +1,95 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.visilabs.inApp.SocialProofFragment">
+
+    <RelativeLayout
+        android:id="@+id/social_proof_container_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/number_text_view_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="32sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="125" />
+
+        <TextView
+            android:id="@+id/explanation_text_view_top"
+            android:layout_toRightOf="@+id/number_text_view_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="40dp"
+            android:text="kişi bu ürünü satın aldı."
+            android:layout_marginEnd="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_toEndOf="@+id/number_text_view_top"
+            android:layout_alignParentEnd="true" />
+
+        <ImageButton
+            android:id="@+id/close_button_top"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="5dp"
+            android:textColor="#fff"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/social_proof_container_bot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/number_text_view_bot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="32sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="125" />
+
+        <TextView
+            android:id="@+id/explanation_text_view_bot"
+            android:layout_toRightOf="@+id/number_text_view_bot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="40dp"
+            android:text="kişi bu ürünü satın aldı."
+            android:layout_marginEnd="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_toEndOf="@+id/number_text_view_bot"
+            android:layout_alignParentEnd="true" />
+
+        <ImageButton
+            android:id="@+id/close_button_bot"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="5dp"
+            android:textColor="#fff"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+</RelativeLayout>
