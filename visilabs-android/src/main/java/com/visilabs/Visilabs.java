@@ -2,6 +2,7 @@
 package com.visilabs;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -24,6 +25,8 @@ import com.visilabs.gps.manager.GpsManager;
 import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.VisilabsActionRequest;
+import com.visilabs.json.JSONArray;
+import com.visilabs.json.JSONObject;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.Report;
 import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
@@ -325,6 +328,33 @@ public class Visilabs {
 
     public void setCheckForNotificationsOnLoggerRequest(Boolean checkForNotificationsOnLoggerRequest) {
         mCheckForNotificationsOnLoggerRequest = checkForNotificationsOnLoggerRequest;
+    }
+
+    /**
+     * This method sends the list of
+     * names and package names of the applications
+     * installed via a store like Play Store or
+     * Huawei App Gallery in the device.
+     */
+    public void sendTheListOfAppsInstalled(){
+        PackageManager packageManager = mContext.getPackageManager();
+        @SuppressLint("QueryPermissionsNeeded") // TODO duruma göre kaldırılacak
+        List<ApplicationInfo> appsInstalled = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
+        JSONArray appsArray = new JSONArray();
+        for(int i = 0 ; i < appsInstalled.size() ; i++) {
+            ApplicationInfo currentAppInfo = appsInstalled.get(i);
+            if(isSystemApp(currentAppInfo)){
+                continue;
+            }
+            if(!isFromStore(packageManager, currentAppInfo)){
+                continue;
+            }
+            JSONObject currentApp = new JSONObject();
+            currentApp.put("app_name", currentAppInfo.loadLabel(packageManager));
+            currentApp.put("package_name", currentAppInfo.packageName);
+            appsArray.put(currentApp);
+        }
+        String result = appsArray.toString();
     }
 
 
@@ -1602,5 +1632,35 @@ public class Visilabs {
                 }
             }
         }
+    }
+
+    /**
+     * This method checks if the application
+     * is a system application
+     * @param applicationInfo : ApplicationInfo
+     * @return true if it is a system app
+     *         false if it is not a system app
+     */
+    private boolean isSystemApp(ApplicationInfo applicationInfo){
+        return (applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
+    }
+
+    /**
+     * This method checks if the application
+     * is installed from a store like Play Store or Huawei App Gallery
+     * @param packageManager : PackageManager
+     * @param applicationInfo : ApplicationInfo
+     * @return true if it is installed from a store
+     *         false if is is not installed from a store
+     */
+    private boolean isFromStore(PackageManager packageManager, ApplicationInfo applicationInfo){
+        ArrayList<String> validInstallers = new ArrayList<>();
+        validInstallers.add("com.android.vending"); // Play Store
+        validInstallers.add("com.huawei.appmarket"); // Huawei App Gallery
+        validInstallers.add("com.amazon.venezia"); // Amazon App Store
+
+        final String installerName = packageManager.getInstallerPackageName(applicationInfo.packageName);
+
+        return installerName != null && validInstallers.contains(installerName);
     }
 }

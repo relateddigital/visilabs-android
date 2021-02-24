@@ -203,12 +203,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-      try {
+        try {
             VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
             visilabsActionRequest.executeAsyncAction(getVisilabsCallback());
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // Optional
+        // To send the list of the applications installed from a store in the device
+        // Visilabs.CallAPI().sendTheListOfAppsInstalled();
     }
   
     private void sendInAppRequest(String type) {
