@@ -331,14 +331,33 @@ public class Visilabs {
     }
 
     /**
-     * This method sends the list of
-     * names and package names of the applications
-     * installed via a store like Play Store or
-     * Huawei App Gallery in the device.
+     * This method is used to send the list of the
+     * applications installed from a store in the device to the server.
+     * With Android 11, to get the list of the apps installed
+     * in the device, you have 2 options:
+     * 1-) You can add the package names of the applications
+     * that you are interested in into the AndroidManifest.xml file
+     * like below:
+     * <manifest package="com.example.myApp">
+     *     <queries>
+     *         <package android:name="com.example.app1" />
+     *         <package android:name="com.example.app2" />
+     *     </queries>
+     *     ...
+     * </manifest>
+     * 2-) You can add the permission below to the
+     * AndroidManifest.xml files like below:
+     * <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+     *     tools:ignore="QueryAllPackagesPermission" />
+     *
+     * For the 2nd method: Google might expect you to
+     * explain why you need this permission when you upload
+     * the app to Play Store.
+     * https://developer.android.com/training/basics/intents/package-visibility
      */
     public void sendTheListOfAppsInstalled(){
         PackageManager packageManager = mContext.getPackageManager();
-        @SuppressLint("QueryPermissionsNeeded") // TODO duruma göre kaldırılacak
+        @SuppressLint("QueryPermissionsNeeded")
         List<ApplicationInfo> appsInstalled = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
         JSONArray appsArray = new JSONArray();
         for(int i = 0 ; i < appsInstalled.size() ; i++) {

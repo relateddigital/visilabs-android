@@ -210,8 +210,11 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // Optional
-        // To send the list of the applications installed from a store in the device
+        /**
+         * Optional
+         * The method below is used to send the list of the
+         * applications installed from a store in the device to the server.
+         */
         // Visilabs.CallAPI().sendTheListOfAppsInstalled();
     }
   
