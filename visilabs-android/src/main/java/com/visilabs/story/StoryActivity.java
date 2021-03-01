@@ -58,6 +58,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     static VisilabsSkinBasedAdapter mVisilabsSkinBasedAdapter;
     private int mVideoLastPosition;
     private MediaMetadataRetriever mRetriever;
+    private Activity mActivity;
 
     public static void setStoryItemClickListener(StoryItemClickListener storyItemClickListener) {
         mStoryItemClickListener = storyItemClickListener;
@@ -76,6 +77,8 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         overridePendingTransition(R.anim.anim_fade_in, R.anim.anim_fade_out);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_story);
+
+        mActivity = this;
 
         mActionData = (Actiondata) getIntent().getSerializableExtra(VisilabsConstant.ACTION_DATA);
         mActionId = (String) getIntent().getSerializableExtra(VisilabsConstant.ACTION_ID);
@@ -306,6 +309,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
             @Override
             public void onClick(View v) {
                 Visilabs.CallAPI().trackStoryClick(mActionData.getReport().getClick());
+                mActivity.finish();
                 if (mStoryItemClickListener != null) {
                     mStoryItemClickListener.storyItemClicked(item.getTargetUrl());
                 }
