@@ -218,6 +218,45 @@ public class VisilabsActionRequest extends VisilabsRemote {
     }
 
     @Override
+    public void executeSyncAction(final VisilabsCallback pCallback) throws Exception {
+        HashMap<String, String> headers = new HashMap<>();
+        HashMap<String, String> queryParameters = new HashMap<>();
+
+        //Put headers
+        fillHeaderMap(headers);
+
+        //Put query parameters
+        fillActionQueryMap(queryParameters);
+
+        try {
+            Call<ResponseBody> call = mVisilabsSApiInterface.getGeneralActionRequestJsonResponse(headers, queryParameters);
+            Response<ResponseBody> response = call.execute();
+            String rawJsonResponse = "";
+            try {
+                rawJsonResponse = response.body().string();
+
+                if (!rawJsonResponse.equals("")) {
+                    Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
+                    VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(rawJsonResponse), null, null, null, null);
+                    pCallback.success(visilabsResponse);
+                } else {
+                    Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
+                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "empty string", null, "empty string");
+                    pCallback.fail(visilabsResponse);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, rawJsonResponse, null, rawJsonResponse);
+                pCallback.fail(visilabsResponse);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Could not parse the response!");
+        }
+    }
+
+    @Override
     public void executeAsync(final VisilabsInAppMessageCallback pCallback) {
 
         HashMap<String, String> headers = new HashMap<>();
