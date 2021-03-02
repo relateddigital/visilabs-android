@@ -1,6 +1,5 @@
 package com.relateddigital.visilabs;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -19,7 +18,6 @@ public class StoryActivity extends AppCompatActivity {
 
     private ActivityStoryDemoBinding binding;
     private StoryItemClickListener storyItemClickListener;
-    private Activity mActivity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,8 +25,6 @@ public class StoryActivity extends AppCompatActivity {
         binding = ActivityStoryDemoBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-
-        mActivity = this;
 
         storyItemClickListener = new StoryItemClickListener() {
             @Override
@@ -71,20 +67,10 @@ public class StoryActivity extends AppCompatActivity {
 
     private void showStory() {
         String storyId = binding.etStoryId.getText().toString().trim();
-        if (storyId.isEmpty()) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    binding.vrvStory.setStoryActionSync(getApplicationContext(), mActivity, storyItemClickListener);
-                }
-            }).start();
+        if(storyId.isEmpty()) {
+            binding.vrvStory.setStoryAction(getApplicationContext(), storyItemClickListener);
         } else {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    binding.vrvStory.setStoryActionIdSync(getApplicationContext(), mActivity, storyId, storyItemClickListener);
-                }
-            }).start();
+            binding.vrvStory.setStoryActionId(getApplicationContext(), storyId, storyItemClickListener);
         }
     }
 

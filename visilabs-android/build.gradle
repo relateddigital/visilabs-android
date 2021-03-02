@@ -1,18 +1,18 @@
 apply plugin: 'com.android.library'
 ext {
     bintrayRepo = 'maven'
-    bintrayName = 'visilabs-android-beta'
+    bintrayName = 'visilabs-android'
 
     publishedGroupId = 'com.visilabs.android'
     libraryName = 'Visilabs Android'
-    artifact = 'visilabs-android-beta'
+    artifact = 'visilabs-android'
 
     libraryDescription = 'SDK for Visilabs\' analytics and target modules.'
 
     siteUrl = 'http://visilabs.com/'
     gitUrl = 'http://visilabs.com/'
 
-    libraryVersion = '5.4.7-beta'
+    libraryVersion = '5.4.7'
 
     developerId = 'visilabs'
     developerName = 'Visilabs'
@@ -31,7 +31,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 4
-        versionName "5.4.7-beta"
+        versionName "5.4.7"
     }
     buildTypes {
         release {
