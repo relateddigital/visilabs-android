@@ -203,12 +203,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-      try {
+        try {
             VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
             visilabsActionRequest.executeAsyncAction(getVisilabsCallback());
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        /**
+         * Optional
+         * The method below is used to send the list of the
+         * applications installed from a store in the device to the server.
+         */
+        // Visilabs.CallAPI().sendTheListOfAppsInstalled();
     }
   
     private void sendInAppRequest(String type) {
