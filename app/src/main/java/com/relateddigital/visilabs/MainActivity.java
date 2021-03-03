@@ -15,6 +15,7 @@ import com.visilabs.Visilabs;
 
 import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.favs.FavsResponse;
+import com.visilabs.inApp.CountdownTimerFragment;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.SocialProofFragment;
 import com.visilabs.inApp.VisilabsActionRequest;
@@ -60,12 +61,12 @@ public class MainActivity extends AppCompatActivity {
         binding.customEvent1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, String> parameters= new HashMap<String, String>();
-                parameters.put("OM.pv","Product Code");
-                parameters.put("OM.pn","Product Name");
-                parameters.put("OM.ppr","10.0");
-                parameters.put("OM.pv.1","Brand");
-                parameters.put("OM.inv","3");
+                HashMap<String, String> parameters = new HashMap<String, String>();
+                parameters.put("OM.pv", "Product Code");
+                parameters.put("OM.pn", "Product Name");
+                parameters.put("OM.ppr", "10.0");
+                parameters.put("OM.pv.1", "Brand");
+                parameters.put("OM.inv", "3");
                 Visilabs.CallAPI().customEvent("Product View", parameters);
             }
         });
@@ -83,9 +84,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 HashMap<String, String> properties = new HashMap<>();
-                properties.put("utm_campaign","android-test-campaign");
-                properties.put("utm_source","euromsg");
-                properties.put("utm_medium","push");
+                properties.put("utm_campaign", "android-test-campaign");
+                properties.put("utm_source", "euromsg");
+                properties.put("utm_medium", "push");
                 Visilabs.CallAPI().sendCampaignParameters(properties);
                 Toast.makeText(getApplicationContext(), "The campaign parameters are sent.", Toast.LENGTH_LONG).show();
             }
@@ -191,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp14.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SocialProofFragment socialProofFragment = SocialProofFragment.newInstance(0,null);
+                SocialProofFragment socialProofFragment = SocialProofFragment.newInstance(0, null);
 
                 socialProofFragment.setRetainInstance(true);
 
@@ -200,6 +201,21 @@ public class MainActivity extends AppCompatActivity {
                 transaction.commit();
                 //TODO when backend side gets ready, check below
                 //sendInAppRequest("socialproof");
+            }
+        });
+
+        binding.inApp15.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CountdownTimerFragment countdownTimerFragment = CountdownTimerFragment.newInstance(0, null);
+
+                countdownTimerFragment.setRetainInstance(true);
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.add(android.R.id.content, countdownTimerFragment);
+                transaction.commit();
+                //TODO when backend side gets ready, check below
+                //sendInAppRequest("countdowntimer");
             }
         });
 
@@ -217,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
          */
         // Visilabs.CallAPI().sendTheListOfAppsInstalled();
     }
-  
+
     private void sendInAppRequest(String type) {
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.inapptype", type);

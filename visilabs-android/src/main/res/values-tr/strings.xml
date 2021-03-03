@@ -24,4 +24,11 @@
     </string-array>
 
     <string name="missing_subs_email">Lütfen, önce email adresini girin</string>
+
+    <!-- Countdown Timer strings -->
+    <string name="week_name" >Hafta</string>
+    <string name="day_name" >Gün</string>
+    <string name="hour_name" >Saat</string>
+    <string name="minute_name" >Dakika</string>
+    <string name="second_name" >Saniye</string>
 </resources>
