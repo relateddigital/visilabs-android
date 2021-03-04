@@ -31,4 +31,5 @@
     <string name="hour_name" >Saat</string>
     <string name="minute_name" >Dakika</string>
     <string name="second_name" >Saniye</string>
+    <string name="time_is_over" >Süre doldu!</string>
 </resources>

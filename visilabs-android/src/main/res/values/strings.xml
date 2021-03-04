@@ -32,4 +32,5 @@
     <string name="hour_name" >Hour</string>
     <string name="minute_name" >Minute</string>
     <string name="second_name" >Second</string>
+    <string name="time_is_over" >Time has expired!</string>
 </resources>
