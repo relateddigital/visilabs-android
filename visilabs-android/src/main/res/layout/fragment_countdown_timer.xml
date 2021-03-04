@@ -7,17 +7,19 @@
     <RelativeLayout
         android:id="@+id/countdown_timer_container_top"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/ct_main_container_bottom_padding" >
 
         <TextView
             android:id="@+id/title_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/close_button_top"
+            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:paddingLeft="@dimen/ct_left_right_padding"
-            android:paddingRight="@dimen/ct_left_right_padding"
+            android:layout_marginTop="@dimen/ct_title_top_margin"
+            android:layout_marginLeft="@dimen/ct_title_left_right_margin"
+            android:layout_marginRight="@dimen/ct_title_left_right_margin"
             android:textSize="@dimen/ct_title_text_size" />
 
         <TextView
@@ -213,58 +215,72 @@
             android:layout_marginRight="@dimen/ct_close_button_margin" />
 
         <LinearLayout
-            android:id="@+id/coupon_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/inner_timer_container_top"
             android:layout_marginTop="@dimen/ct_timer_button_margin"
+            android:paddingRight="@dimen/ct_left_right_padding"
+            android:paddingLeft="@dimen/ct_left_right_padding"
             android:gravity="center"
             android:orientation="horizontal">
 
+            <FrameLayout
+                android:id="@+id/coupon_top"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:id="@+id/coupon_text_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/ct_coupon_code_margin_right"
+                    android:layout_marginEnd="@dimen/ct_coupon_code_margin_right"
+                    android:padding="@dimen/ct_button_padding"
+                    android:textSize="@dimen/ct_coupon_code_text_size" />
+
+                <ImageView
+                    android:id="@+id/coupon_button_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|end"
+                    android:layout_marginRight="@dimen/ct_coupon_copy_margin_right"
+                    android:layout_marginEnd="@dimen/ct_coupon_copy_margin_right"
+                    android:background="@drawable/content_copy_24" />
+            </FrameLayout>
+
             <TextView
-                android:id="@+id/coupon_text_top"
-                android:layout_width="wrap_content"
+                android:id="@+id/button_top"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_coupon_copy_to_button_margin"
+                android:layout_marginLeft="@dimen/ct_coupon_copy_to_button_margin"
+                android:gravity="center"
                 android:padding="@dimen/ct_button_padding"
-                android:textSize="@dimen/ct_button_text_size" />
-
-            <ImageView
-                android:id="@+id/coupon_button_top"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ct_coupon_copy_margin"
-                android:layout_marginLeft="@dimen/ct_coupon_copy_margin"
-                android:background="@drawable/content_copy_24" />
+                android:textSize="@dimen/ct_button_text_size"
+                android:textStyle="bold" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/button_top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/coupon_top"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/ct_timer_button_margin"
-            android:gravity="center"
-            android:padding="@dimen/ct_button_padding"
-            android:textSize="@dimen/ct_button_text_size"
-            android:textStyle="bold" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/countdown_timer_container_bot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/ct_main_container_bottom_padding"
         android:layout_alignParentBottom="true">
 
         <TextView
             android:id="@+id/title_bot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/close_button_bot"
+            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:paddingLeft="@dimen/ct_left_right_padding"
-            android:paddingRight="@dimen/ct_left_right_padding"
+            android:layout_marginTop="@dimen/ct_title_top_margin"
+            android:layout_marginLeft="@dimen/ct_title_left_right_margin"
+            android:layout_marginRight="@dimen/ct_title_left_right_margin"
             android:textSize="@dimen/ct_title_text_size" />
 
         <TextView
@@ -449,41 +465,53 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:id="@+id/coupon_bot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/inner_timer_container_bot"
             android:layout_marginTop="@dimen/ct_timer_button_margin"
             android:gravity="center"
+            android:paddingRight="@dimen/ct_left_right_padding"
+            android:paddingLeft="@dimen/ct_left_right_padding"
             android:orientation="horizontal">
 
+            <FrameLayout
+                android:id="@+id/coupon_bot"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:id="@+id/coupon_text_bot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/ct_button_padding"
+                    android:layout_marginRight="@dimen/ct_coupon_code_margin_right"
+                    android:layout_marginEnd="@dimen/ct_coupon_code_margin_right"
+                    android:textSize="@dimen/ct_coupon_code_text_size" />
+
+                <ImageView
+                    android:id="@+id/coupon_button_bot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|end"
+                    android:layout_marginRight="@dimen/ct_coupon_copy_margin_right"
+                    android:layout_marginEnd="@dimen/ct_coupon_copy_margin_right"
+                    android:background="@drawable/content_copy_24" />
+            </FrameLayout>
+
             <TextView
-                android:id="@+id/coupon_text_bot"
-                android:layout_width="wrap_content"
+                android:id="@+id/button_bot"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_coupon_copy_to_button_margin"
+                android:layout_marginLeft="@dimen/ct_coupon_copy_to_button_margin"
+                android:gravity="center"
                 android:padding="@dimen/ct_button_padding"
-                android:textSize="@dimen/ct_button_text_size" />
-
-            <ImageView
-                android:id="@+id/coupon_button_bot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ct_coupon_copy_margin"
-                android:layout_marginLeft="@dimen/ct_coupon_copy_margin"
-                android:background="@drawable/content_copy_24" />
+                android:textSize="@dimen/ct_button_text_size"
+                android:textStyle="bold" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/button_bot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/coupon_bot"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/ct_timer_button_margin"
-            android:gravity="center"
-            android:padding="@dimen/ct_button_padding"
-            android:textSize="@dimen/ct_button_text_size"
-            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/close_button_bot"

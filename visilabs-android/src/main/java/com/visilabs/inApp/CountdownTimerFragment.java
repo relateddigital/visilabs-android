@@ -74,7 +74,7 @@ public class CountdownTimerFragment extends Fragment {
     }
 
     private void setupInitialView() {
-        //Check the position and assign it to mIsTop
+        //TODO: Check the position and assign it to mIsTop
         mIsTop = true;
         if (mIsTop) {
             adjustTop();
@@ -199,7 +199,7 @@ public class CountdownTimerFragment extends Fragment {
 
     private int getCloseIcon() {
 
-        return R.drawable.ic_close_black_24dp;
+        return R.drawable.ic_close_white_24dp;
         //TODO when real data comes:
        /* switch (mInAppMessage.getActionData().getCloseButtonColor()) {
 
