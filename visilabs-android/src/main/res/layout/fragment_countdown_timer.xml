@@ -1,0 +1,527 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.visilabs.inApp.CountdownTimerFragment">
+
+    <RelativeLayout
+        android:id="@+id/countdown_timer_container_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/ct_main_container_bottom_padding" >
+
+        <TextView
+            android:id="@+id/title_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/ct_title_top_margin"
+            android:layout_marginLeft="@dimen/ct_title_left_right_margin"
+            android:layout_marginRight="@dimen/ct_title_left_right_margin"
+            android:textSize="@dimen/ct_title_text_size" />
+
+        <TextView
+            android:id="@+id/body_text_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_top"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/ct_title_body_margin"
+            android:gravity="center"
+            android:paddingLeft="@dimen/ct_left_right_padding"
+            android:paddingRight="@dimen/ct_left_right_padding"
+            android:textSize="@dimen/ct_body_text_size" />
+
+        <RelativeLayout
+            android:id="@+id/inner_timer_container_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/body_text_top"
+            android:layout_marginTop="@dimen/ct_timer_body_text_timer_margin"
+            android:gravity="center"
+            android:paddingLeft="@dimen/ct_left_right_padding"
+            android:paddingRight="@dimen/ct_left_right_padding">
+
+            <TextView
+                android:id="@+id/week_num_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/divider1_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@id/week_num_top"
+                android:layout_toRightOf="@id/week_num_top"
+                android:text="@string/colon"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/day_num_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@+id/divider1_top"
+                android:layout_toRightOf="@+id/divider1_top"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/divider2_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@id/day_num_top"
+                android:layout_toRightOf="@id/day_num_top"
+                android:text="@string/colon"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/hour_num_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@+id/divider2_top"
+                android:layout_toRightOf="@+id/divider2_top"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/divider3_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@id/hour_num_top"
+                android:layout_toRightOf="@id/hour_num_top"
+                android:text="@string/colon"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/minute_num_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@+id/divider3_top"
+                android:layout_toRightOf="@+id/divider3_top"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/divider4_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@id/minute_num_top"
+                android:layout_toRightOf="@id/minute_num_top"
+                android:text="@string/colon"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/sec_num_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@+id/divider4_top"
+                android:layout_toRightOf="@+id/divider4_top"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/week_str_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num_top"
+                android:layout_alignStart="@+id/week_num_top"
+                android:layout_alignLeft="@+id/week_num_top"
+                android:text="@string/week_name"
+                android:textSize="@dimen/ct_timer_name_size" />
+
+            <TextView
+                android:id="@+id/day_str_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num_top"
+                android:layout_alignStart="@+id/day_num_top"
+                android:layout_alignLeft="@+id/day_num_top"
+                android:layout_toEndOf="@+id/week_str_top"
+                android:layout_toRightOf="@+id/week_str_top"
+                android:text="@string/day_name"
+                android:textSize="@dimen/ct_timer_name_size" />
+
+            <TextView
+                android:id="@+id/hour_str_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num_top"
+                android:layout_alignStart="@+id/hour_num_top"
+                android:layout_alignLeft="@+id/hour_num_top"
+                android:layout_toEndOf="@+id/day_str_top"
+                android:layout_toRightOf="@+id/day_str_top"
+                android:text="@string/hour_name"
+                android:textSize="@dimen/ct_timer_name_size" />
+
+            <TextView
+                android:id="@+id/minute_str_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num_top"
+                android:layout_alignStart="@+id/minute_num_top"
+                android:layout_alignLeft="@+id/minute_num_top"
+                android:layout_toEndOf="@+id/hour_str_top"
+                android:layout_toRightOf="@+id/hour_str_top"
+                android:text="@string/minute_name"
+                android:textSize="@dimen/ct_timer_name_size" />
+
+            <TextView
+                android:id="@+id/sec_str_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num_top"
+                android:layout_alignStart="@+id/sec_num_top"
+                android:layout_alignLeft="@+id/sec_num_top"
+                android:layout_toEndOf="@+id/minute_str_top"
+                android:layout_toRightOf="@+id/minute_str_top"
+                android:text="@string/second_name"
+                android:textSize="@dimen/ct_timer_name_size" />
+
+        </RelativeLayout>
+
+        <ImageButton
+            android:id="@+id/close_button_top"
+            android:layout_width="@dimen/ct_close_button_width"
+            android:layout_height="@dimen/ct_close_button_height"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/ct_close_button_margin"
+            android:layout_marginTop="@dimen/ct_close_button_margin"
+            android:layout_marginRight="@dimen/ct_close_button_margin" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/inner_timer_container_top"
+            android:layout_marginTop="@dimen/ct_timer_button_margin"
+            android:paddingRight="@dimen/ct_left_right_padding"
+            android:paddingLeft="@dimen/ct_left_right_padding"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/coupon_top"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:id="@+id/coupon_text_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/ct_coupon_code_margin_right"
+                    android:layout_marginEnd="@dimen/ct_coupon_code_margin_right"
+                    android:padding="@dimen/ct_button_padding"
+                    android:textSize="@dimen/ct_coupon_code_text_size" />
+
+                <ImageView
+                    android:id="@+id/coupon_button_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|end"
+                    android:layout_marginRight="@dimen/ct_coupon_copy_margin_right"
+                    android:layout_marginEnd="@dimen/ct_coupon_copy_margin_right"
+                    android:background="@drawable/content_copy_24" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/button_top"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_coupon_copy_to_button_margin"
+                android:layout_marginLeft="@dimen/ct_coupon_copy_to_button_margin"
+                android:gravity="center"
+                android:padding="@dimen/ct_button_padding"
+                android:textSize="@dimen/ct_button_text_size"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/countdown_timer_container_bot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/ct_main_container_bottom_padding"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:id="@+id/title_bot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/ct_title_top_margin"
+            android:layout_marginLeft="@dimen/ct_title_left_right_margin"
+            android:layout_marginRight="@dimen/ct_title_left_right_margin"
+            android:textSize="@dimen/ct_title_text_size" />
+
+        <TextView
+            android:id="@+id/body_text_bot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_bot"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/ct_title_body_margin"
+            android:gravity="center"
+            android:paddingLeft="@dimen/ct_left_right_padding"
+            android:paddingRight="@dimen/ct_left_right_padding"
+            android:textSize="@dimen/ct_body_text_size" />
+
+        <RelativeLayout
+            android:id="@+id/inner_timer_container_bot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/body_text_bot"
+            android:layout_marginTop="@dimen/ct_timer_body_text_timer_margin"
+            android:gravity="center"
+            android:paddingLeft="@dimen/ct_left_right_padding"
+            android:paddingRight="@dimen/ct_left_right_padding">
+
+            <TextView
+                android:id="@+id/week_num_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/divider1_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@id/week_num_bot"
+                android:layout_toRightOf="@id/week_num_bot"
+                android:text="@string/colon"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/day_num_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@+id/divider1_bot"
+                android:layout_toRightOf="@+id/divider1_bot"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/divider2_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@id/day_num_bot"
+                android:layout_toRightOf="@id/day_num_bot"
+                android:text="@string/colon"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/hour_num_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@+id/divider2_bot"
+                android:layout_toRightOf="@+id/divider2_bot"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/divider3_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@id/hour_num_bot"
+                android:layout_toRightOf="@id/hour_num_bot"
+                android:text="@string/colon"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/minute_num_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@+id/divider3_bot"
+                android:layout_toRightOf="@+id/divider3_bot"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/divider4_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@id/minute_num_bot"
+                android:layout_toRightOf="@id/minute_num_bot"
+                android:text="@string/colon"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/sec_num_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@+id/divider4_bot"
+                android:layout_toRightOf="@+id/divider4_bot"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/week_str_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num_bot"
+                android:layout_alignStart="@+id/week_num_bot"
+                android:layout_alignLeft="@+id/week_num_bot"
+                android:text="@string/week_name"
+                android:textSize="@dimen/ct_timer_name_size" />
+
+            <TextView
+                android:id="@+id/day_str_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num_bot"
+                android:layout_alignStart="@+id/day_num_bot"
+                android:layout_alignLeft="@+id/day_num_bot"
+                android:layout_toEndOf="@+id/week_str_bot"
+                android:layout_toRightOf="@+id/week_str_bot"
+                android:text="@string/day_name"
+                android:textSize="@dimen/ct_timer_name_size" />
+
+            <TextView
+                android:id="@+id/hour_str_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num_bot"
+                android:layout_alignStart="@+id/hour_num_bot"
+                android:layout_alignLeft="@+id/hour_num_bot"
+                android:layout_toEndOf="@+id/day_str_bot"
+                android:layout_toRightOf="@+id/day_str_bot"
+                android:text="@string/hour_name"
+                android:textSize="@dimen/ct_timer_name_size" />
+
+            <TextView
+                android:id="@+id/minute_str_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num_bot"
+                android:layout_alignStart="@+id/minute_num_bot"
+                android:layout_alignLeft="@+id/minute_num_bot"
+                android:layout_toEndOf="@+id/hour_str_bot"
+                android:layout_toRightOf="@+id/hour_str_bot"
+                android:text="@string/minute_name"
+                android:textSize="@dimen/ct_timer_name_size" />
+
+            <TextView
+                android:id="@+id/sec_str_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num_bot"
+                android:layout_alignStart="@+id/sec_num_bot"
+                android:layout_alignLeft="@+id/sec_num_bot"
+                android:layout_toEndOf="@+id/minute_str_bot"
+                android:layout_toRightOf="@+id/minute_str_bot"
+                android:text="@string/second_name"
+                android:textSize="@dimen/ct_timer_name_size" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/inner_timer_container_bot"
+            android:layout_marginTop="@dimen/ct_timer_button_margin"
+            android:gravity="center"
+            android:paddingRight="@dimen/ct_left_right_padding"
+            android:paddingLeft="@dimen/ct_left_right_padding"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/coupon_bot"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:id="@+id/coupon_text_bot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/ct_button_padding"
+                    android:layout_marginRight="@dimen/ct_coupon_code_margin_right"
+                    android:layout_marginEnd="@dimen/ct_coupon_code_margin_right"
+                    android:textSize="@dimen/ct_coupon_code_text_size" />
+
+                <ImageView
+                    android:id="@+id/coupon_button_bot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|end"
+                    android:layout_marginRight="@dimen/ct_coupon_copy_margin_right"
+                    android:layout_marginEnd="@dimen/ct_coupon_copy_margin_right"
+                    android:background="@drawable/content_copy_24" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/button_bot"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_coupon_copy_to_button_margin"
+                android:layout_marginLeft="@dimen/ct_coupon_copy_to_button_margin"
+                android:gravity="center"
+                android:padding="@dimen/ct_button_padding"
+                android:textSize="@dimen/ct_button_text_size"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/close_button_bot"
+            android:layout_width="@dimen/ct_close_button_width"
+            android:layout_height="@dimen/ct_close_button_height"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/ct_close_button_margin"
+            android:layout_marginTop="@dimen/ct_close_button_margin"
+            android:layout_marginRight="@dimen/ct_close_button_margin" />
+    </RelativeLayout>
+</RelativeLayout>

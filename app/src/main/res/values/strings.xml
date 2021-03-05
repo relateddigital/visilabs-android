@@ -29,6 +29,7 @@
     <string name="scratch_to_win">SCRATCH TO WIN</string>
     <string name="spin_to_win">SPIN TO WIN</string>
     <string name="social_proof">SOCIAL PROOF</string>
+    <string name="countdown_timer">COUNTDOWN TIMER</string>
 
     <string name="alert">Alert</string>
     <string name="story_id_optional">Story ID (optional)</string>
