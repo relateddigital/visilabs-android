@@ -86,7 +86,13 @@ public class CountdownTimerFragment extends Fragment {
     }
 
     private void setupInitialView() {
+        //TODO: Check the type of campaign e.g. end date or time
+        //TODO: If only end date is sent, calculate the time between the date now and end date.
         //TODO: Check the position and assign it to mIsTop
+
+        //Calculate the time remained to the end day
+        //calculateTimeToEndDate();
+
         mIsTop = true;
         if (mIsTop) {
             adjustTop();
@@ -175,7 +181,9 @@ public class CountdownTimerFragment extends Fragment {
         binding.buttonTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: Remove Toast
                 Toast.makeText(getActivity(), "Go to the Link", Toast.LENGTH_LONG).show();
+                endFragment();
             }
         });
     }
@@ -185,7 +193,9 @@ public class CountdownTimerFragment extends Fragment {
         binding.buttonBot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: Remove Toast
                 Toast.makeText(getActivity(), "Go to the Link", Toast.LENGTH_LONG).show();
+                endFragment();
             }
         });
     }
