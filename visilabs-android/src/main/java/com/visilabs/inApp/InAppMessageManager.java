@@ -6,7 +6,9 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
-import androidx.appcompat.app.AppCompatActivity;
+
+import androidx.fragment.app.FragmentActivity;
+
 import com.visilabs.InAppNotificationState;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.mailSub.MailSubscriptionForm;
@@ -45,12 +47,11 @@ public class InAppMessageManager {
                     if (VisilabsUpdateDisplayState.hasCurrentProposal()) {
                         showDebugMessage("DisplayState is locked, will not show notifications");
                     } else {
-                        AppCompatActivity context = (AppCompatActivity) parent;
-                        Intent intent = new Intent(context, MailSubscriptionFormActivity.class);
+                        Intent intent = new Intent(parent, MailSubscriptionFormActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, mailSubscriptionForm));
-                        context.startActivity(intent);
+                        parent.startActivity(intent);
                     }
                 } catch (Exception ex) {
                     Log.e(LOG_TAG, ex.getMessage(), ex);
@@ -95,9 +96,7 @@ public class InAppMessageManager {
                         return;
                     }
 
-                    AppCompatActivity context = (AppCompatActivity) parent;
-
-                    Intent intent = new Intent(context, TemplateActivity.class);
+                    Intent intent = new Intent(parent, TemplateActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
@@ -145,7 +144,7 @@ public class InAppMessageManager {
 
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
-                            context.startActivity(intent);
+                            parent.startActivity(intent);
 
                             break;
 
@@ -156,7 +155,7 @@ public class InAppMessageManager {
                             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
-                            context.startActivity(intent);
+                            parent.startActivity(intent);
 
                             break;
 
@@ -249,13 +248,13 @@ public class InAppMessageManager {
             VisilabsUpdateDisplayState.releaseDisplayState(stateID);
             return;
         }
-        if(parent instanceof AppCompatActivity) {
+        if(parent instanceof FragmentActivity) {
             InAppNotificationState state = (InAppNotificationState) visilabsUpdateDisplayState.getDisplayState();
-            AppCompatActivity appCompatActivity = (AppCompatActivity)parent;
+            FragmentActivity fragmentActivity = (FragmentActivity)parent;
             VisilabsAlertDialogFragment visilabsAlertDialogFragment = VisilabsAlertDialogFragment.newInstance();
             visilabsAlertDialogFragment.setCancelable(false);
             visilabsAlertDialogFragment.setInAppState(stateID, state, parent);
-            visilabsAlertDialogFragment.show(appCompatActivity.getSupportFragmentManager(), "visilabs_alert_dialog_fragment");
+            visilabsAlertDialogFragment.show(fragmentActivity.getSupportFragmentManager(), "visilabs_alert_dialog_fragment");
         }
     }
 
@@ -264,13 +263,13 @@ public class InAppMessageManager {
             VisilabsUpdateDisplayState.releaseDisplayState(stateID);
             return;
         }
-        if(parent instanceof AppCompatActivity) {
+        if(parent instanceof FragmentActivity) {
             InAppNotificationState state = (InAppNotificationState) visilabsUpdateDisplayState.getDisplayState();
-            AppCompatActivity appCompatActivity = (AppCompatActivity)parent;
+            FragmentActivity fragmentActivity = (FragmentActivity)parent;
             VisilabsBottomSheetDialogFragment visilabsBottomSheetDialogFragment = VisilabsBottomSheetDialogFragment.newInstance();
             visilabsBottomSheetDialogFragment.setCancelable(false);
             visilabsBottomSheetDialogFragment.setInAppState(stateID, state);
-            visilabsBottomSheetDialogFragment.show(appCompatActivity.getSupportFragmentManager(), "visilabs_bottom_sheet_dialog_fragment");
+            visilabsBottomSheetDialogFragment.show(fragmentActivity.getSupportFragmentManager(), "visilabs_bottom_sheet_dialog_fragment");
         }
     }
 
