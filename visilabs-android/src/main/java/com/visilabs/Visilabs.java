@@ -5,6 +5,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -14,9 +15,9 @@ import com.visilabs.api.LoggerApiClient;
 import com.visilabs.api.RealTimeApiClient;
 import com.visilabs.api.SApiClient;
 import com.visilabs.api.VisilabsAction;
+import com.visilabs.api.VisilabsActionsCallback;
 import com.visilabs.api.VisilabsApiMethods;
 import com.visilabs.api.VisilabsInAppMessageCallback;
-import com.visilabs.api.VisilabsMailSubsFormRequestCallback;
 import com.visilabs.api.VisilabsTargetFilter;
 import com.visilabs.api.VisilabsTargetRequest;
 import com.visilabs.exceptions.VisilabsNotReadyException;
@@ -29,7 +30,9 @@ import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.Report;
-import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
+import com.visilabs.model.VisilabsActionsResponse;
+import com.visilabs.spinToWin.SpinToWinActivity;
+import com.visilabs.spinToWin.model.SpinToWinModel;
 import com.visilabs.util.NetworkManager;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.Prefs;
@@ -38,6 +41,7 @@ import com.visilabs.util.VisilabsConstant;
 import com.visilabs.util.VisilabsEncoder;
 import com.visilabs.util.VisilabsLog;
 import com.visilabs.util.VisilabsParameter;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -370,7 +374,6 @@ public class Visilabs {
             }
             JSONObject currentApp = new JSONObject();
             currentApp.put("app_name", currentAppInfo.loadLabel(packageManager));
-            currentApp.put("package_name", currentAppInfo.packageName);
             appsArray.put(currentApp);
         }
         String result = appsArray.toString();
@@ -554,31 +557,42 @@ public class Visilabs {
     }
 
 
-    private void showMailSubscriptionForm(String pageName, Activity parent, HashMap<String, String> properties) {
+    private void showActions(String pageName, Activity parent, HashMap<String, String> properties) {
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
             return;
         }
         try {
-            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm");
+            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin");
             visilabsActionRequest.setPageName(pageName);
             visilabsActionRequest.setProperties(properties);
-            visilabsActionRequest.executeAsyncAction(getVisilabsMailSubscriptionFormCallback(parent));
+            visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback(parent));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public VisilabsMailSubsFormRequestCallback getVisilabsMailSubscriptionFormCallback(final Activity parent) {
+    private VisilabsActionsCallback getVisilabsActionsCallback(final Activity parent) {
 
-        return new VisilabsMailSubsFormRequestCallback() {
+        return new VisilabsActionsCallback() {
             @Override
-            public void success(VisilabsMailSubscriptionFormResponse response, String url) {
+            public void success(VisilabsActionsResponse response, String url) {
                 Log.i(LOG_TAG, "Success Request : " + url);
 
-                if(response != null && !response.getMailSubscriptionForm().isEmpty()) {
-                    MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm)response.getMailSubscriptionForm().get(0);
-                    new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
+                if(response != null) {
+
+                    if (!response.getSpinToWinList().isEmpty()) {
+                        Intent intent = new Intent(parent, SpinToWinActivity.class);
+                        SpinToWinModel spinToWinModel = (SpinToWinModel) response.getSpinToWinList().get(0);
+                        intent.putExtra("spin-to-win-data", spinToWinModel);
+                        parent.startActivity(intent);
+                    } else if (!response.getMailSubscriptionForm().isEmpty()) {
+                        MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm) response.getMailSubscriptionForm().get(0);
+                        new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
+                    }
+                } else {
+                    Log.e(LOG_TAG, "Response is null : " + url);
                 }
+
             }
 
             @Override
@@ -1224,7 +1238,7 @@ public class Visilabs {
 
         if (mCheckForNotificationsOnLoggerRequest && mActionURL != null) {
             showNotification(pageName, parent, properties);
-            showMailSubscriptionForm(pageName, parent, properties);
+            showActions(pageName, parent, properties);
         }
 
         send();

@@ -216,7 +216,7 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     }
 
     @Override
-    public void executeAsyncAction(VisilabsMailSubsFormRequestCallback pCallback){
+    public void executeAsyncAction(VisilabsActionsCallback pCallback){
 
     }
 

@@ -68,7 +68,7 @@ public interface VisilabsAction {
      * @param pCallback the callback function
      * @throws Exception
      */
-    void executeAsyncAction(VisilabsMailSubsFormRequestCallback pCallback);
+    void executeAsyncAction(VisilabsActionsCallback pCallback);
 
     /**
      * Use this function when you want to get Favourites-type response

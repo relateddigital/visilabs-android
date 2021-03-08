@@ -173,7 +173,7 @@ public class VisilabsTargetRequest extends VisilabsRemote {
     }
 
     @Override
-    public void executeAsyncAction(VisilabsMailSubsFormRequestCallback pCallback) {
+    public void executeAsyncAction(VisilabsActionsCallback pCallback) {
 
     }
 

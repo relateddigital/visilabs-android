@@ -5,17 +5,17 @@ import android.util.Log;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.api.SApiClient;
+import com.visilabs.api.VisilabsActionsCallback;
 import com.visilabs.api.VisilabsApiMethods;
 import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.api.VisilabsGeofenceGetListCallback;
 import com.visilabs.api.VisilabsInAppMessageCallback;
-import com.visilabs.api.VisilabsMailSubsFormRequestCallback;
 import com.visilabs.api.VisilabsRemote;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
-import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
+import com.visilabs.model.VisilabsActionsResponse;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
@@ -305,7 +305,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
     }
 
     @Override
-    public void executeAsyncAction(final VisilabsMailSubsFormRequestCallback pCallback) {
+    public void executeAsyncAction(final VisilabsActionsCallback pCallback) {
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
@@ -316,12 +316,12 @@ public class VisilabsActionRequest extends VisilabsRemote {
         fillActionQueryMap(queryParameters);
 
         try {
-            Call<VisilabsMailSubscriptionFormResponse> call = mVisilabsSApiInterface.getMailSubsRequestResponse(headers, queryParameters);
-            call.enqueue(new Callback<VisilabsMailSubscriptionFormResponse>() {
+            Call<VisilabsActionsResponse> call = mVisilabsSApiInterface.getActionRequestResponse(headers, queryParameters);
+            call.enqueue(new Callback<VisilabsActionsResponse>() {
                 @Override
-                public void onResponse(Call<VisilabsMailSubscriptionFormResponse> call, Response<VisilabsMailSubscriptionFormResponse> response) {
+                public void onResponse(Call<VisilabsActionsResponse> call, Response<VisilabsActionsResponse> response) {
                     try {
-                        VisilabsMailSubscriptionFormResponse visilabsMailSubscriptionFormResponse = response.body();
+                        VisilabsActionsResponse visilabsMailSubscriptionFormResponse = response.body();
                         pCallback.success(visilabsMailSubscriptionFormResponse, response.raw().request().url().toString());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -336,7 +336,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
                 }
 
                 @Override
-                public void onFailure(Call<VisilabsMailSubscriptionFormResponse> call, Throwable t) {
+                public void onFailure(Call<VisilabsActionsResponse> call, Throwable t) {
                     pCallback.fail(t, call.request().url().toString());
                 }
             });
