@@ -659,7 +659,7 @@ public class Visilabs {
         send();
     }
 
-    public void createSubsJsonRequest(String actId, String auth, String email) {
+    public void createSubsJsonRequest(String type, String actId, String auth, String email) {
         long timeOfEvent = System.currentTimeMillis() / 1000;
 
         HashMap<String, String> queryMap = new HashMap<>();
@@ -667,7 +667,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.SITEID_KEY, mSiteID);
         queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
-        queryMap.put(VisilabsConstant.TYPE_KEY, "subscription_email");
+        queryMap.put(VisilabsConstant.TYPE_KEY, type);
         queryMap.put(VisilabsConstant.ACTION_ID_KEY, actId);
         queryMap.put(VisilabsConstant.AUTH_KEY, auth);
         queryMap.put(VisilabsConstant.SUBS_EMAIL_KEY, email);
@@ -1530,6 +1530,10 @@ public class Visilabs {
 
     public String getSysAppID() {
         return mSysAppID;
+    }
+
+    public String getChannelName() {
+        return mChannel;
     }
 
 

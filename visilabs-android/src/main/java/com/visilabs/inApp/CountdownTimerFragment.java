@@ -76,10 +76,28 @@ public class CountdownTimerFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(mTimer!=null){
+            mTimer.cancel();
+        }
+        //TODO: save the remaining time according to the format here
+        //TODO: save the json string here
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentCountdownTimerBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+
+        if(savedInstanceState != null) {
+            //TODO: get the remaining time here
+            //TODO: get the json string here
+            //TODO: set the remaining time to json string here
+        } else {
+            //TODO: get the json string here
+        }
 
         setupInitialView();
         return view;
@@ -400,6 +418,8 @@ public class CountdownTimerFragment extends Fragment {
         if(mTimer!=null){
             mTimer.cancel();
         }
-        getActivity().getFragmentManager().beginTransaction().remove(CountdownTimerFragment.this).commit();
+        if(getActivity() != null) {
+            getActivity().getFragmentManager().beginTransaction().remove(CountdownTimerFragment.this).commit();
+        }
     }
 }

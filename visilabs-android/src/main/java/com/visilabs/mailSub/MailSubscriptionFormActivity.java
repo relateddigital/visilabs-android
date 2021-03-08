@@ -177,7 +177,7 @@ public class MailSubscriptionFormActivity extends Activity {
 
                 Visilabs.CallAPI().trackMailSubscriptionFormClick(mMailSubscriptionForm.getActiondata().getReport());
 
-                Visilabs.CallAPI().createSubsJsonRequest(mMailSubscriptionForm.getActid(),
+                Visilabs.CallAPI().createSubsJsonRequest("subscription_email", mMailSubscriptionForm.getActid(),
                         mMailSubscriptionForm.getActiondata().getAuth(), email);
 
                 binding.tvCheckConsentMessage.setVisibility(View.VISIBLE);

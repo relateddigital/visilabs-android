@@ -321,8 +321,8 @@ public class VisilabsActionRequest extends VisilabsRemote {
                 @Override
                 public void onResponse(Call<VisilabsActionsResponse> call, Response<VisilabsActionsResponse> response) {
                     try {
-                        VisilabsActionsResponse visilabsMailSubscriptionFormResponse = response.body();
-                        pCallback.success(visilabsMailSubscriptionFormResponse, response.raw().request().url().toString());
+                        VisilabsActionsResponse visilabsActionsResponse = response.body();
+                        pCallback.success(visilabsActionsResponse, response.raw().request().url().toString());
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
@@ -511,6 +511,19 @@ public class VisilabsActionRequest extends VisilabsRemote {
             queryMap.put(VisilabsConstant.URI_KEY, mPageName);
         }else{
             queryMap.put(VisilabsConstant.URI_KEY, "");
+        }
+
+        long timeOfEvent = System.currentTimeMillis() / 1000;
+        queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
+
+        if(Visilabs.CallAPI().getChannelName() != null && !Visilabs.CallAPI().getChannelName().equals("")){
+            queryMap.put(VisilabsConstant.CHANNEL_KEY, Visilabs.CallAPI().getChannelName());
+        }
+
+        queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
+
+        if (Visilabs.CallAPI().getIdentifierForAdvertising() != null) {
+            queryMap.put(VisilabsConstant.ADVERTISER_ID_KEY, Visilabs.CallAPI().getIdentifierForAdvertising());
         }
 
         if(mVisitorData != null && !mVisitorData.equals("")){
