@@ -388,6 +388,64 @@ public class VisilabsActionRequest extends VisilabsRemote {
         }
     }
 
+    @Override
+    public void executeAsyncPromotionCode(final VisilabsCallback pCallback, HashMap<String, String> extraQueryParameters) {
+        HashMap<String, String> headers = new HashMap<>();
+        HashMap<String, String> queryParameters = new HashMap<>();
+
+        //Put headers
+        fillHeaderMap(headers);
+
+        //Put query parameters
+        fillPromotionCodeQueryMap(queryParameters);
+        queryParameters.putAll(extraQueryParameters);
+
+        try {
+            Call<ResponseBody> call = mVisilabsSApiInterface.getPromotionCodeRequestJsonResponse(headers, queryParameters);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    String rawJsonResponse = "";
+                    try {
+                        rawJsonResponse = response.body().string();
+
+                        if (!rawJsonResponse.equals("")) {
+                            JSONObject jsonResponse = new JSONObject(rawJsonResponse);
+                            if(jsonResponse.getBoolean("success") && !jsonResponse.getString("promocode").equals("")) {
+                                Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
+                                VisilabsResponse visilabsResponse = new VisilabsResponse(jsonResponse, null, null, null, null);
+                                pCallback.success(visilabsResponse);
+                            } else {
+                                Log.e(LOG_TAG, "Empty promotion code - auth issue" + response.raw().request().url().toString());
+                                VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "Empty promotion code - auth issue", null, "Empty promotion code - auth issue");
+                                pCallback.fail(visilabsResponse);
+                            }
+                        } else {
+                            Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
+                            VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "empty string", null, "empty string");
+                            pCallback.fail(visilabsResponse);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                        VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, rawJsonResponse, null, rawJsonResponse);
+                        pCallback.fail(visilabsResponse);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e(LOG_TAG, "Fail Request " + t.getMessage());
+                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), t, t.getMessage());
+                    pCallback.fail(visilabsResponse);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Could not parse the response!");
+        }
+    }
+
     private void fillHeaderMap(HashMap<String, String> headerMap){
         if(mHeaders != null && mHeaders.size() > 0){
             for (int i = 0 ; i < mHeaders.size() ; i++){
@@ -572,6 +630,24 @@ public class VisilabsActionRequest extends VisilabsRemote {
                     queryMap.put(key, value);
                 }
             }
+        }
+    }
+
+    private void fillPromotionCodeQueryMap(HashMap<String, String> queryMap){
+        if(Visilabs.CallAPI().getOrganizationID() != null && !Visilabs.CallAPI().getOrganizationID().equals("")){
+            queryMap.put(VisilabsConstant.ORGANIZATIONID_KEY, Visilabs.CallAPI().getOrganizationID());
+        }
+
+        if(Visilabs.CallAPI().getSiteID() != null && !Visilabs.CallAPI().getSiteID().equals("")){
+            queryMap.put(VisilabsConstant.SITEID_KEY, Visilabs.CallAPI().getSiteID());
+        }
+
+        if(Visilabs.CallAPI().getCookieID() != null && !Visilabs.CallAPI().getCookieID().equals("")){
+            queryMap.put(VisilabsConstant.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
+        }
+
+        if(Visilabs.CallAPI().getExVisitorID() != null && !Visilabs.CallAPI().getExVisitorID().equals("")){
+            queryMap.put(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
         }
     }
 }

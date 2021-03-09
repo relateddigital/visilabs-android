@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import com.google.gson.Gson;
+import com.visilabs.android.R;
 import com.visilabs.spinToWin.model.SpinToWinModel;
 
 public class SpinToWinActivity extends FragmentActivity implements SpinToWinCompleteInterface, SpinToWinCopyToClipboardInterface {
@@ -63,6 +65,7 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Coupon Code", couponCode);
         clipboard.setPrimaryClip(clip);
+        Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
         finish();
     }
 }

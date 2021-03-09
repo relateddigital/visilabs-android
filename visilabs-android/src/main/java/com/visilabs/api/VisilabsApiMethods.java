@@ -81,6 +81,14 @@ public interface VisilabsApiMethods {
             @QueryMap Map<String, String> queryParameters
     );
 
+    //Method to get promotion code
+
+    @GET("promotion")
+    Call<ResponseBody> getPromotionCodeRequestJsonResponse(
+            @HeaderMap Map<String, String> headers,
+            @QueryMap Map<String, String> queryParameters
+    );
+
     //Methods to get Geofence List and to send info of a geofence trigger
 
     @GET("geojson")

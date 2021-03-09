@@ -182,6 +182,11 @@ public class VisilabsTargetRequest extends VisilabsRemote {
 
     }
 
+    @Override
+    public void executeAsyncPromotionCode(VisilabsCallback pCallback, HashMap<String, String> extraQueryParameters) {
+
+    }
+
     private void cleanParameters(){
         if(this.mProperties != null && this.mProperties.size() > 0){
             for (String key : this.mProperties.keySet()) {

@@ -225,6 +225,11 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
 
     }
 
+    @Override
+    public void executeAsyncPromotionCode(VisilabsCallback pCallback, HashMap<String, String> extraQueryParameters) {
+
+    }
+
     private void fillHeaderMap(HashMap<String, String> headerMap){
         if(mHeaders != null && mHeaders.size() > 0){
             for (int i = 0 ; i < mHeaders.size() ; i++){
