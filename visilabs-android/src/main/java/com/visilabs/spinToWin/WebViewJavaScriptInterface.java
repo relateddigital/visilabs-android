@@ -84,7 +84,7 @@ public class WebViewJavaScriptInterface {
         promoAuth = spinToWinModel.getActiondata().getPromoAuth();
         actId = spinToWinModel.getActid();
 
-        for(int i = 0 ; i < spinToWinModel.getActiondata().getSliceCount().length() ; i++) {
+        for(int i = 0 ; i < spinToWinModel.getActiondata().getSlices().size() ; i++) {
             Slice slice = spinToWinModel.getActiondata().getSlices().get(i);
             if(slice.getType().equals("promotion")) {
                 promotionCodes.add(slice.getCode());
