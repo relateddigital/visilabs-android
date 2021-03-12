@@ -1,5 +1,8 @@
 package com.visilabs.spinToWin;
+import android.os.Build;
 import android.webkit.JavascriptInterface;
+
+import androidx.annotation.RequiresApi;
 
 import com.google.gson.Gson;
 import com.visilabs.Visilabs;
@@ -11,7 +14,10 @@ import com.visilabs.mailSub.Report;
 import com.visilabs.spinToWin.model.Slice;
 import com.visilabs.spinToWin.model.SpinToWinModel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 public class WebViewJavaScriptInterface {
     WebViewDialogFragment mWebViewDialogFragment;
@@ -28,7 +34,7 @@ public class WebViewJavaScriptInterface {
      * This method closes SpinToWinActivity
      */
     @JavascriptInterface
-    public void closeButtonClicked() {
+    public void close() {
         this.mWebViewDialogFragment.dismiss();
         mListener.onCompleted();
     }
@@ -49,7 +55,7 @@ public class WebViewJavaScriptInterface {
      * @param email : String - the value entered for email
      */
     @JavascriptInterface
-    public void subsEmail(String email) {
+    public void subscribeEmail(String email) {
         SpinToWinModel spinToWinModel = new Gson().fromJson(mResponse, SpinToWinModel.class);
         Report report = new Report();
         report.setImpression(spinToWinModel.getActiondata().getReport().getImpression());
@@ -64,11 +70,13 @@ public class WebViewJavaScriptInterface {
     /**
      * This method makes a request to the ad server to get the coupon code
      */
-    @JavascriptInterface
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void getPromotionCode() {
         String promotionId = "";
         String promoAuth;
         int actId;
+        List<String> promotionCodes = new ArrayList<String>();
+        int selectedIndex = -1;
 
         SpinToWinModel spinToWinModel = new Gson().fromJson(mResponse, SpinToWinModel.class);
 
@@ -78,26 +86,55 @@ public class WebViewJavaScriptInterface {
         for(int i = 0 ; i < spinToWinModel.getActiondata().getSliceCount().length() ; i++) {
             Slice slice = spinToWinModel.getActiondata().getSlices().get(i);
             if(slice.getType().equals("promotion")) {
+                promotionCodes.add(slice.getCode());
                 promotionId = slice.getCode();
             }
         }
 
-        if(!promotionId.equals("")) {
+        if(promotionCodes.size() > 0) {
+            try {
+                Random random = new Random();
+                selectedIndex = random.nextInt(promotionCodes.size());
+                promotionId = promotionCodes.get(selectedIndex);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(selectedIndex != -1) {
             try {
                 HashMap<String, String> queryParameters = new HashMap<>();
                 queryParameters.put("promotionid", promotionId);
                 queryParameters.put("promoauth", promoAuth);
                 queryParameters.put("actionid", String.valueOf(actId));
                 VisilabsActionRequest visilabsActionRequest = new VisilabsActionRequest(mWebViewDialogFragment.getContext());
-                visilabsActionRequest.executeAsyncPromotionCode(getVisilabsCallback(), queryParameters);
+                visilabsActionRequest.executeAsyncPromotionCode(getVisilabsCallback(selectedIndex), queryParameters);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            //TODO: there is no type promotion in the slices.
-            //TODO: inform the js side that this method should not have been called.
-            //TODO: maybe string "invalid"
+            mWebViewDialogFragment.getWebView().evaluateJavascript("window.chooseSlice(-1, undefined);", null);
         }
+    }
+
+    private VisilabsCallback getVisilabsCallback (int idx) {
+        return new VisilabsCallback() {
+
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void success(VisilabsResponse response) {
+                String rawResponse = response.getRawResponse();
+                JSONObject jsonResponse = new JSONObject(rawResponse);
+                String promotionCode = jsonResponse.getString("promocode");
+                mWebViewDialogFragment.getWebView().evaluateJavascript("window.chooseSlice('idx, promotionCode');", null);
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void fail(VisilabsResponse response) {
+                mWebViewDialogFragment.getWebView().evaluateJavascript("window.chooseSlice(-1, undefined);", null);
+            }
+        };
     }
 
     /**
@@ -112,25 +149,5 @@ public class WebViewJavaScriptInterface {
     public void setSpinToWinListeners(SpinToWinCompleteInterface listener, SpinToWinCopyToClipboardInterface copyToClipboardInterface){
         mListener = listener;
         mCopyToClipboardInterface = copyToClipboardInterface;
-    }
-
-    private VisilabsCallback getVisilabsCallback () {
-        return new VisilabsCallback() {
-
-            @Override
-            public void success(VisilabsResponse response) {
-                String rawResponse = response.getRawResponse();
-                JSONObject jsonResponse = new JSONObject(rawResponse);
-                String promotionCode = jsonResponse.getString("promocode");
-                promotionCode = promotionCode + promotionCode;
-                //TODO: pass the promotion code to js side here
-            }
-
-            @Override
-            public void fail(VisilabsResponse response) {
-                //TODO: inform the js side here that the request failed
-                //TODO: maybe string "fail"
-            }
-        };
     }
 }

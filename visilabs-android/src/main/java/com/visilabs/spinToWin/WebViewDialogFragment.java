@@ -9,11 +9,9 @@ import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
-
 import com.visilabs.android.R;
 
 public class WebViewDialogFragment extends DialogFragment {
@@ -114,5 +112,9 @@ public class WebViewDialogFragment extends DialogFragment {
 
     public WebViewJavaScriptInterface getJavaScriptInterface(){
         return mJavaScriptInterface;
+    }
+
+    public WebView getWebView() {
+        return webView;
     }
 }

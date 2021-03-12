@@ -581,10 +581,15 @@ public class Visilabs {
                 if(response != null) {
 
                     if (!response.getSpinToWinList().isEmpty()) {
-                        Intent intent = new Intent(parent, SpinToWinActivity.class);
-                        SpinToWinModel spinToWinModel = (SpinToWinModel) response.getSpinToWinList().get(0);
-                        intent.putExtra("spin-to-win-data", spinToWinModel);
-                        parent.startActivity(intent);
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                           Log.e(LOG_TAG, "SpinToWin feature is not supported for API levels smaller than 19!"
+                           + " Currently, " + Build.VERSION.SDK_INT + ".");
+                        } else {
+                            Intent intent = new Intent(parent, SpinToWinActivity.class);
+                            SpinToWinModel spinToWinModel = (SpinToWinModel) response.getSpinToWinList().get(0);
+                            intent.putExtra("spin-to-win-data", spinToWinModel);
+                            parent.startActivity(intent);
+                        }
                     } else if (!response.getMailSubscriptionForm().isEmpty()) {
                         MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm) response.getMailSubscriptionForm().get(0);
                         new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
