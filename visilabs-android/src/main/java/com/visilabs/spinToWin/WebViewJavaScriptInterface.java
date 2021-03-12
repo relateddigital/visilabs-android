@@ -71,6 +71,7 @@ public class WebViewJavaScriptInterface {
      * This method makes a request to the ad server to get the coupon code
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @JavascriptInterface
     public void getPromotionCode() {
         String promotionId = "";
         String promoAuth;
@@ -117,7 +118,7 @@ public class WebViewJavaScriptInterface {
         }
     }
 
-    private VisilabsCallback getVisilabsCallback (int idx) {
+    private VisilabsCallback getVisilabsCallback (final int idx) {
         return new VisilabsCallback() {
 
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -126,7 +127,7 @@ public class WebViewJavaScriptInterface {
                 String rawResponse = response.getRawResponse();
                 JSONObject jsonResponse = new JSONObject(rawResponse);
                 String promotionCode = jsonResponse.getString("promocode");
-                mWebViewDialogFragment.getWebView().evaluateJavascript("window.chooseSlice('idx, promotionCode');", null);
+                mWebViewDialogFragment.getWebView().evaluateJavascript("window.chooseSlice("+idx+",'"+promotionCode+"');", null);
             }
 
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
