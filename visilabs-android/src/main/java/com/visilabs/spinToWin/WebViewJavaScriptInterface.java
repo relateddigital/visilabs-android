@@ -65,7 +65,7 @@ public class WebViewJavaScriptInterface {
             report.setImpression(spinToWinModel.getActiondata().getReport().getImpression());
             report.setClick(spinToWinModel.getActiondata().getReport().getClick());
         } catch (Exception e) {
-            Log.e("Spin to Win : ", "There is no report to send");
+            Log.w("Spin to Win : ", "There is no report to send");
             e.printStackTrace();
             report = null;
         }
