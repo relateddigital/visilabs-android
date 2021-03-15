@@ -175,7 +175,7 @@ public class MailSubscriptionFormActivity extends Activity {
                     return;
                 }
 
-                Visilabs.CallAPI().trackMailSubscriptionFormClick(mMailSubscriptionForm.getActiondata().getReport());
+                Visilabs.CallAPI().trackActionClick(mMailSubscriptionForm.getActiondata().getReport());
 
                 Visilabs.CallAPI().createSubsJsonRequest("subscription_email", mMailSubscriptionForm.getActid(),
                         mMailSubscriptionForm.getActiondata().getAuth(), email);

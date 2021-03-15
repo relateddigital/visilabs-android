@@ -1,5 +1,6 @@
 package com.visilabs.spinToWin;
 import android.os.Build;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 
 import androidx.annotation.RequiresApi;
@@ -56,15 +57,27 @@ public class WebViewJavaScriptInterface {
      */
     @JavascriptInterface
     public void subscribeEmail(String email) {
+        Report report = null;
+
         SpinToWinModel spinToWinModel = new Gson().fromJson(mResponse, SpinToWinModel.class);
-        Report report = new Report();
-        report.setImpression(spinToWinModel.getActiondata().getReport().getImpression());
-        report.setClick(spinToWinModel.getActiondata().getReport().getClick());
+        try {
+            report = new Report();
+            report.setImpression(spinToWinModel.getActiondata().getReport().getImpression());
+            report.setClick(spinToWinModel.getActiondata().getReport().getClick());
+        } catch (Exception e) {
+            Log.e("Spin to Win : ", "There is no report to send");
+            e.printStackTrace();
+            report = null;
+        }
 
-        Visilabs.CallAPI().trackMailSubscriptionFormClick(report);
+        if(!email.equals("")) {
+            Visilabs.CallAPI().createSubsJsonRequest(spinToWinModel.getActiondata().getType(),
+                    spinToWinModel.getActid().toString(), spinToWinModel.getActiondata().getAuth(), email);
+        }
 
-        Visilabs.CallAPI().createSubsJsonRequest(spinToWinModel.getActiondata().getType(),
-                spinToWinModel.getActid().toString(), spinToWinModel.getActiondata().getAuth(), email);
+        if(report != null) {
+            Visilabs.CallAPI().trackActionClick(report);
+        }
     }
 
     /**

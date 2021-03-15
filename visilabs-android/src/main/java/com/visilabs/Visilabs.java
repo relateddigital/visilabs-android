@@ -608,10 +608,10 @@ public class Visilabs {
         };
     }
 
-    public void trackMailSubscriptionFormClick(Report report) {
+    public void trackActionClick(Report report) {
 
         if (report == null || report.getClick() == null || report.getClick().equals("")) {
-            Log.w(LOG_TAG, "Mail subs form report click is null or empty.");
+            Log.w(LOG_TAG, "report click is null or empty.");
             return;
         }
 
