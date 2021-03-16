@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.android.R;
 import com.visilabs.story.model.StoryItemClickListener;
+import com.visilabs.story.model.skinbased.Actiondata;
 import com.visilabs.story.model.skinbased.Stories;
 import com.visilabs.story.model.skinbased.VisilabsSkinBasedResponse;
 import com.visilabs.story.model.skinbased.ExtendedProps;
@@ -34,6 +36,7 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
     RecyclerView mRecyclerView;
     VisilabsSkinBasedResponse mVisilabsSkinBasedResponse;
     String mExtendsProps;
+    private boolean isFirstRun = true;
 
     public VisilabsSkinBasedAdapter(Context context) {
         mContext = context;
@@ -41,6 +44,9 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
     @Override
     public StoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if(isFirstRun) {
+            cacheImagesBeforeDisplaying();
+        }
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.visilabs_story_item, parent, false);
@@ -225,6 +231,24 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
             int borderColor = shown ? Color.rgb(127, 127, 127) : Color.parseColor(borderColorString);
             civStory.setBorderColor(borderColor);
             civStory.setBorderWidth(3);
+        }
+    }
+
+    private void cacheImagesBeforeDisplaying() {
+        isFirstRun = false;
+        Actiondata actiondata = mVisilabsSkinBasedResponse.getStory().get(0).getActiondata();
+        for (int i = 0; i < actiondata.getStories().size(); i++) {
+            for (int j = 0; j < actiondata.getStories().get(i).getItems().size(); j++) {
+                if (actiondata.getStories().get(i).getItems().get(j).getFileType().equals(VisilabsConstant.STORY_PHOTO_KEY)) {
+                    if (!actiondata.getStories().get(i).getItems().get(j).getFileSrc().equals("")) {
+                        try {
+                            Picasso.get().load(actiondata.getStories().get(i).getItems().get(j).getFileSrc()).fetch();
+                        } catch (Exception e) {
+                            Log.w("Story Activity", "URL for the image is empty!");
+                        }
+                    }
+                }
+            }
         }
     }
 }
