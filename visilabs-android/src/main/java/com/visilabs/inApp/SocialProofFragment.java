@@ -67,6 +67,8 @@ public class SocialProofFragment extends Fragment {
         binding = FragmentSocialProofBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
+        //TODO: send impression report here
+
         if(isUnderThreshold()){
             endFragment();
         }
