@@ -79,6 +79,7 @@
                     android:id="@+id/ll_email_permit"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <CheckBox
@@ -105,6 +106,7 @@
                     android:id="@+id/ll_consent"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <CheckBox

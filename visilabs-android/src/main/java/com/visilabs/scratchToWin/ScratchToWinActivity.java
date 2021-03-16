@@ -99,6 +99,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         binding.invalidEmailMessage.setText("Invalid email");
         binding.resultText.setText("Check the boxes");
         binding.emailEdit.setHint("Please, enter your email");
+        //TODO: When the real data comes, add links to email texts to send browser.
         binding.emailPermitText.setText("I've read and accept Terms of Use");
         binding.consentText.setText("To read terms and conditions click here");
         binding.saveMail.setText("Save & Scratch");
