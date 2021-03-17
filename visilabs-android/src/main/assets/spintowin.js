@@ -1,8 +1,31 @@
+var PIXEL_RATIO = (function () {
+  var ctx = document.createElement("canvas").getContext("2d"),
+      dpr = window.devicePixelRatio || 1,
+      bsr = ctx.webkitBackingStorePixelRatio ||
+            ctx.mozBackingStorePixelRatio ||
+            ctx.msBackingStorePixelRatio ||
+            ctx.oBackingStorePixelRatio ||
+            ctx.backingStorePixelRatio || 1;
+
+  return dpr / bsr;
+})();
+
+var setHiDPICanvas = function(canvas, w, h, ratio) {
+  if (!ratio) { ratio = PIXEL_RATIO; }
+  var can = canvas;
+  can.width = w * ratio;
+  can.height = h * ratio;
+  can.style.width = w + "px";
+  can.style.height = h + "px";
+  can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
+};
+
 function SpinToWin(config) {
   this.config = config;
   if (window.Android) {
-      this.convertConfigJson();
-  } 
+    this.convertConfigJson();
+  }
+
   this.container = document.getElementById("container");
   this.canvasContainer = document.getElementById("canvas-container");
   this.wheelCanvas = document.getElementById("wheel-canvas");
@@ -25,10 +48,10 @@ function SpinToWin(config) {
   this.warning = document.getElementById("vl-warning");
   this.invalidEmailMessageLi = document.getElementById("invalid-email-message");
   this.checkConsentMessageLi = document.getElementById("check-consent-message");
-    
+
   this.successMessageElement = document.getElementById("success-message");
   this.promocodeTitleElement = document.getElementById("promocode-title");
-    
+
   this.formValidation = {
     email: true,
     consent: true
@@ -54,7 +77,6 @@ function SpinToWin(config) {
   this.config.middleCircleR = this.config.r / 10;
   this.config.middleCircleColor = "#000";
   this.config.fontFamily = "sans-serif"; // TODO: default gelirse ne yapılacak?
-  this.config.font_size = config.textSize + 10;
   this.config.isMobile = true;
   this.config.textDirection = "horizontal";
   this.config.angle = 2 * Math.PI / config.sliceCount;
@@ -85,29 +107,31 @@ function SpinToWin(config) {
   this.textsHandler();
   this.styleHandler();
   //TODO: buna gerek olmayabilir, webview'de resize ihtimali var mı? kalmasında da zarar yok.
-  window.onresize = function() {
+  window.onresize = function () {
     window.spinToWin.styleHandler();
   }
 
   this.drawArrow();
 
 
+  this.midCircleDrawer(this.config.middleCircleColor, this.config.middleCircleR);
+
   for (var i = 0; i < config.sliceCount; i++) {
     this.sliceDrawer(i, config.colors[i]);
     this.mobileTextTyper(i, config.slices[i].displayName, config.colors[i]);
   }
-  this.midCircleDrawer(config.middleCircleColor, config.middleCircleR);
+
   this.handleVisibility();
 
   window.spinToWin = this;
 }
 
-SpinToWin.prototype.convertConfigJson = function() {
+SpinToWin.prototype.convertConfigJson = function () {
   //actiondata
   this.config.mailSubscription = this.config.actiondata.mail_subscription;
   this.config.sliceCount = this.config.actiondata.slice_count;
   this.config.slices = this.config.actiondata.slices;
-  
+
   //spin_to_win_content
   this.config.title = this.config.actiondata.spin_to_win_content.title;
   this.config.message = this.config.actiondata.spin_to_win_content.message;
@@ -152,7 +176,7 @@ SpinToWin.prototype.convertConfigJson = function() {
   this.config.backgroundColor = extendedProps.background_color;
 }
 
-SpinToWin.prototype.getPromotionCode = function() {
+SpinToWin.prototype.getPromotionCode = function () {
   if (window.Android) {
     Android.getPromotionCode();
   } else if (window.webkit.messageHandlers.eventHandler) {
@@ -162,7 +186,7 @@ SpinToWin.prototype.getPromotionCode = function() {
   }
 };
 
-SpinToWin.prototype.subscribeEmail = function() {
+SpinToWin.prototype.subscribeEmail = function () {
   if (window.Android) {
     Android.subscribeEmail(this.emailInput.value.trim());
   } else if (window.webkit.messageHandlers.eventHandler) {
@@ -173,7 +197,7 @@ SpinToWin.prototype.subscribeEmail = function() {
   }
 };
 
-SpinToWin.prototype.close = function() {
+SpinToWin.prototype.close = function () {
   if (window.Android) {
     Android.close();
   } else if (window.webkit.messageHandlers.eventHandler) {
@@ -183,7 +207,7 @@ SpinToWin.prototype.close = function() {
   }
 };
 
-SpinToWin.prototype.copyToClipboard = function() {
+SpinToWin.prototype.copyToClipboard = function () {
   if (window.Android) {
     Android.copyToClipboard(this.couponCode.innerText);
   } else if (window.webkit.messageHandlers.eventHandler) {
@@ -194,7 +218,8 @@ SpinToWin.prototype.copyToClipboard = function() {
   }
 };
 
-SpinToWin.prototype.convertStringsToNumber = function() {
+SpinToWin.prototype.convertStringsToNumber = function () {
+  this.config.displaynameTextSize = isNaN(parseInt(this.config.displaynameTextSize)) ? 10 : parseInt(this.config.displaynameTextSize);
   this.config.titleTextSize = isNaN(parseInt(this.config.titleTextSize)) ? 10 : parseInt(this.config.titleTextSize);
   this.config.textSize = isNaN(parseInt(this.config.textSize)) ? 5 : parseInt(this.config.textSize);
   this.config.buttonTextSize = isNaN(parseInt(this.config.buttonTextSize)) ? 20 : parseInt(this.config.buttonTextSize);
@@ -203,7 +228,7 @@ SpinToWin.prototype.convertStringsToNumber = function() {
   this.config.promocodeTitleTextSize = isNaN(parseInt(this.config.promocodeTitleTextSize)) ? 20 : parseInt(this.config.promocodeTitleTextSize);
 };
 
-SpinToWin.prototype.setContent = function() {
+SpinToWin.prototype.setContent = function () {
   this.container.style.backgroundColor = this.config.backgroundColor;
   this.titleElement.innerHTML = this.config.title.replace(/\\n/g, '<br/>');
   this.titleElement.style.color = this.config.titleTextColor;
@@ -236,26 +261,26 @@ SpinToWin.prototype.setContent = function() {
   this.checkConsentMessageLi.innerHTML = this.config.checkConsentMessage;
   this.checkConsentMessageLi.style.fontSize = (this.config.consentTextSize + 10) + "px";
   this.checkConsentMessageLi.style.fontFamily = this.config.textFontFamily;
-  
+
   this.couponCode.style.color = this.config.promocodeTextColor;
   this.couponCode.style.backgroundColor = this.config.promocodeBackgroundColor;
   this.couponCode.style.fontFamily = this.config.copybuttonFontFamily;
   this.couponCode.style.fontSize = (this.config.copybuttonTextSize + 20) + "px";
-    
+
   this.successMessageElement.innerHTML = this.config.successMessage;
   this.successMessageElement.style.color = "green";
-    
+
   this.promocodeTitleElement.innerHTML = this.config.promocodeTitle;
   this.promocodeTitleElement.style.color = this.config.promocodeTitleTextColor;
   this.promocodeTitleElement.style.fontFamily = this.config.promocodeTitleFontFamily;
   this.promocodeTitleElement.style.fontSize = (this.config.promocodeTitleTextSize + 20) + "px";
-    
+
   this.submitButton.addEventListener("click", this.submit);
   this.closeButton.addEventListener("click", evt => this.close());
   this.copyButton.addEventListener("click", evt => this.copyToClipboard());
 };
 
-SpinToWin.prototype.validateForm = function() {
+SpinToWin.prototype.validateForm = function () {
   var result = {
     email: true,
     consent: true
@@ -276,7 +301,7 @@ SpinToWin.prototype.validateForm = function() {
 };
 
 
-SpinToWin.prototype.handleVisibility = function() {
+SpinToWin.prototype.handleVisibility = function () {
 
   if (this.spinCompleted) {
     this.couponCode.style.display = "";
@@ -322,7 +347,7 @@ SpinToWin.prototype.handleVisibility = function() {
 };
 
 //TODO: randomNumber çalışıyor mu bak?
-SpinToWin.prototype.colorsHandler = function() {
+SpinToWin.prototype.colorsHandler = function () {
   if (this.config.pickedColors.length == 0) {
     for (var i = 0; i < this.config.sliceCount; i++) {
       this.config.colors.push("rgb(" + randomInt(0, 256) + "," + randomInt(0, 256) + "," + randomInt(0, 256) + ")");
@@ -338,7 +363,7 @@ SpinToWin.prototype.colorsHandler = function() {
   }
 };
 
-SpinToWin.prototype.textsHandler = function() {
+SpinToWin.prototype.textsHandler = function () {
   if (this.config.campaigns.length <= this.config.sliceCount) {
     for (var i = 0; i < this.config.sliceCount; i++) {
       if (i >= this.config.campaigns.length) {
@@ -350,13 +375,17 @@ SpinToWin.prototype.textsHandler = function() {
   }
 };
 
-SpinToWin.prototype.styleHandler = function() {
+SpinToWin.prototype.styleHandler = function () {
 
   var wheelCanvasWidth = (config.r * 2),
     wheelCanvasHeight = (config.r * 2);
   this.wheelCanvas.width = wheelCanvasWidth;
   this.wheelCanvas.height = wheelCanvasHeight;
   var wheelCanvasStyle = {};
+
+  setHiDPICanvas(this.wheelCanvas, wheelCanvasWidth, wheelCanvasHeight, PIXEL_RATIO);
+
+
   wheelCanvasStyle.transform = "translateX(0px) rotate(" + this.randomInt(0, 360) + "deg)";
   wheelCanvasStyle.transitionProperty = "transform";
   wheelCanvasStyle.transitionDuration = "0s";
@@ -373,45 +402,45 @@ SpinToWin.prototype.styleHandler = function() {
   var arrowContainerTop = (config.r - (config.r / 5.2)) + "px"; // R: 250 top: 205, R: 200 top: 162, R: 150 top: 121
   var styleEl = document.createElement("style"),
     styleString = "#lightbox-outer{}" +
-    "#canvas-container{float:left;width:" + config.r + "px;height:" + (2 * config.r) + "px}" +
-    "#wheel-container{float:left;height:" + (2 * config.r) + "px;width:" + config.r + "px;margin:20px 0;overflow:hidden}" +
-    "#arrow-container{width:20px;height:30px;display:inline-block;position:absolute;box-sizing:border-box;top:calc(50% - 14px);left:" + (config.r - 10) + "px;z-index:1;transform:rotate(90deg)}" +
-    "#form-container{width:300px;box-sizing:border-box;float:right}" +
-    "#form-container>div{position:absolute;top:50%;transform:translateY(-50%);margin:0 30px;width: 240px;}" +
-    "#form-title, #form-message, #success-message, #promocode-title{text-align:center;}" +
-    "#warning{display:none; position: absolute; z-index: 3; background: #fcf6c1; font-size: 12px; border: 1px solid #ccc; top: 105%;width: 100%; box-sizing: border-box;}" +
-    "#warning>ul{margin: 2px;padding-inline-start: 20px;}" +
-    "#form-consent{font-size:12px;color:#555;width:100%;padding:5px 0;position:relative;}" +
-    "#form-aggreement-link{color:#555;opacity:.75;text-decoration:none}" +
-    "#form-consent input[type='checkbox']{opacity:0;position:absolute}" +
-    "#form-consent label{position:relative;display:inline-block;padding-left:18px}" +
-    "#form-consent label::before," +
-    "#form-consent label::after{position:absolute;content:'';display:inline-block;cursor:pointer}" +
-    "#form-consent label::before{height:12px;width:12px;border:1px solid;left:0;top:0}" +
-    "#form-consent label::after{height:4px;width:8.5px;border-left:2px solid;border-bottom:2px solid;transform:rotate(-45deg);left:2px;top:2px}" +
-    "#form-consent input[type='checkbox']+label::after{content:none}" +
-    "#form-consent input[type='checkbox']:checked+label::after{content:''}" +
-    "#form-consent input[type='checkbox']:focus+label::before{outline:#3b99fc auto 5px}" +
-    "#form-emailpermit{font-size:12px;color:#555;width:100%;padding:5px 0;position:relative;}" +
-    "#form-emailpermit input[type='checkbox']{opacity:0;position:absolute}" +
-    "#form-emailpermit label{position:relative;display:inline-block;padding-left:18px}" +
-    "#form-emailpermit label::before," +
-    "#form-emailpermit label::after{position:absolute;content:'';display:inline-block;cursor:pointer}" +
-    "#form-emailpermit label::before{height:12px;width:12px;border:1px solid;left:0;top:0}" +
-    "#form-emailpermit label::after{height:4px;width:8.5px;border-left:2px solid;border-bottom:2px solid;transform:rotate(-45deg);left:2px;top:2px}" +
-    "#form-emailpermit input[type='checkbox']+label::after{content:none}" +
-    "#form-emailpermit input[type='checkbox']:checked+label::after{content:''}" +
-    "#form-emailpermit input[type='checkbox']:focus+label::before{outline:#3b99fc auto 5px}" +
-    ".form-submit-btn{transition:.2s filter ease-in-out;}" +
-    ".form-submit-btn:hover{filter: brightness(110%);transition:.2s filter ease-in-out;}" +
-    ".form-submit-btn.disabled{filter: grayscale(100%);transition:.2s filter ease-in-out;}" +
-    "@media only screen and (max-width:2500px){" +
-    "#canvas-container{float:unset;width:100%;text-align:center;position:relative}" +
-    "#wheel-container{width:" + (config.r * 2) + "px;margin:0 auto;float:unset;transform:rotate(-90deg)}" +
-    "#arrow-container{top:" + arrowContainerTop + ";transform:rotate(45deg);left:calc(50% - 10px)}" +
-    "#form-container{float:unset;width:100%;}" +
-    "#form-container>div{transform:unset;top:unset;margin:20px;width:calc(100% - 40px)}" +
-    "}";
+      "#canvas-container{float:left;width:" + config.r + "px;height:" + (2 * config.r) + "px}" +
+      "#wheel-container{float:left;height:" + (2 * config.r) + "px;width:" + config.r + "px;margin:20px 0;overflow:hidden}" +
+      "#arrow-container{width:20px;height:30px;display:inline-block;position:absolute;box-sizing:border-box;top:calc(50% - 14px);left:" + (config.r - 10) + "px;z-index:1;transform:rotate(90deg)}" +
+      "#form-container{width:300px;box-sizing:border-box;float:right}" +
+      "#form-container>div{position:absolute;top:50%;transform:translateY(-50%);margin:0 30px;width: 240px;}" +
+      "#form-title, #form-message, #success-message, #promocode-title{text-align:center;}" +
+      "#warning{display:none; position: absolute; z-index: 3; background: #fcf6c1; font-size: 12px; border: 1px solid #ccc; top: 105%;width: 100%; box-sizing: border-box;}" +
+      "#warning>ul{margin: 2px;padding-inline-start: 20px;}" +
+      "#form-consent{font-size:12px;color:#555;width:100%;padding:5px 0;position:relative;}" +
+      "#form-aggreement-link{color:#555;opacity:.75;text-decoration:none}" +
+      "#form-consent input[type='checkbox']{opacity:0;position:absolute}" +
+      "#form-consent label{position:relative;display:inline-block;padding-left:18px}" +
+      "#form-consent label::before," +
+      "#form-consent label::after{position:absolute;content:'';display:inline-block;cursor:pointer}" +
+      "#form-consent label::before{height:12px;width:12px;border:1px solid;left:0;top:0}" +
+      "#form-consent label::after{height:4px;width:8.5px;border-left:2px solid;border-bottom:2px solid;transform:rotate(-45deg);left:2px;top:2px}" +
+      "#form-consent input[type='checkbox']+label::after{content:none}" +
+      "#form-consent input[type='checkbox']:checked+label::after{content:''}" +
+      "#form-consent input[type='checkbox']:focus+label::before{outline:#3b99fc auto 5px}" +
+      "#form-emailpermit{font-size:12px;color:#555;width:100%;padding:5px 0;position:relative;}" +
+      "#form-emailpermit input[type='checkbox']{opacity:0;position:absolute}" +
+      "#form-emailpermit label{position:relative;display:inline-block;padding-left:18px}" +
+      "#form-emailpermit label::before," +
+      "#form-emailpermit label::after{position:absolute;content:'';display:inline-block;cursor:pointer}" +
+      "#form-emailpermit label::before{height:12px;width:12px;border:1px solid;left:0;top:0}" +
+      "#form-emailpermit label::after{height:4px;width:8.5px;border-left:2px solid;border-bottom:2px solid;transform:rotate(-45deg);left:2px;top:2px}" +
+      "#form-emailpermit input[type='checkbox']+label::after{content:none}" +
+      "#form-emailpermit input[type='checkbox']:checked+label::after{content:''}" +
+      "#form-emailpermit input[type='checkbox']:focus+label::before{outline:#3b99fc auto 5px}" +
+      ".form-submit-btn{transition:.2s filter ease-in-out;}" +
+      ".form-submit-btn:hover{filter: brightness(110%);transition:.2s filter ease-in-out;}" +
+      ".form-submit-btn.disabled{filter: grayscale(100%);transition:.2s filter ease-in-out;}" +
+      "@media only screen and (max-width:2500px){" +
+      "#canvas-container{float:unset;width:100%;text-align:center;position:relative}" +
+      "#wheel-container{width:" + (config.r * 2) + "px;margin:0 auto;float:unset;transform:rotate(-90deg)}" +
+      "#arrow-container{top:" + arrowContainerTop + ";transform:rotate(45deg);left:calc(50% - 10px)}" +
+      "#form-container{float:unset;width:100%;}" +
+      "#form-container>div{transform:unset;top:unset;margin:20px;width:calc(100% - 40px)}" +
+      "}";
 
   styleEl.id = "vl-styles";
   if (!document.getElementById("vl-styles")) {
@@ -423,7 +452,7 @@ SpinToWin.prototype.styleHandler = function() {
 };
 
 //TODO: bunu css'e ekle
-SpinToWin.prototype.getWheelCanvasStyle = function() {
+SpinToWin.prototype.getWheelCanvasStyle = function () {
   var wheelCanvasStyle = {};
   wheelCanvasStyle.transform = "translateX(0px) rotate(" + this.randomInt(0, 360) + "deg)";
   wheelCanvasStyle.transitionProperty = "transform";
@@ -435,7 +464,7 @@ SpinToWin.prototype.getWheelCanvasStyle = function() {
 };
 
 
-SpinToWin.prototype.drawArrow = function() {
+SpinToWin.prototype.drawArrow = function () {
   this.arrowCanvasContext.beginPath();
   this.arrowCanvasContext.moveTo(0, 0);
   this.arrowCanvasContext.lineTo(config.centerX + 100, config.centerY);
@@ -448,7 +477,7 @@ SpinToWin.prototype.drawArrow = function() {
   this.arrowCanvasContext.fill();
 };
 
-SpinToWin.prototype.sliceDrawer = function(sliceNumber, sliceColor) {
+SpinToWin.prototype.sliceDrawer = function (sliceNumber, sliceColor) {
   this.wheelCanvasContext.beginPath();
   this.wheelCanvasContext.fillStyle = sliceColor;
   this.wheelCanvasContext.moveTo(config.centerX, config.centerY);
@@ -459,14 +488,18 @@ SpinToWin.prototype.sliceDrawer = function(sliceNumber, sliceColor) {
 };
 
 
-SpinToWin.prototype.mobileTextTyper = function(sliceNumber, sliceText, sliceColor) {
-  var fontSize = config.font_size;
+SpinToWin.prototype.mobileTextTyper = function (sliceNumber, sliceText, sliceColor) {
+  var fontSize = this.config.displaynameTextSize + 10;
+  var fontColor = this.config.displaynameTextColor;
+  var fontFamily = this.config.displaynameFontFamily;
+
   this.wheelCanvasContext.save();
+
   this.wheelCanvasContext.translate(config.centerX + (Math.cos(sliceNumber * config.angle) * config.r), config.centerY + (Math.sin(sliceNumber * config.angle) * config.r));
   this.wheelCanvasContext.moveTo(config.centerX, config.centerY);
   this.wheelCanvasContext.rotate((config.angle * sliceNumber + config.angle / 2) + (Math.PI / 2));
-  this.wheelCanvasContext.fillStyle = this.lightOrDark(sliceColor) == "light" ? "#000" : "#fff";
-  this.wheelCanvasContext.font = 'bolder ' + fontSize + 'px ' + config.fontFamily;
+  this.wheelCanvasContext.fillStyle = fontColor;
+  this.wheelCanvasContext.font = 'bolder ' + fontSize + 'px ' + fontFamily;
   var textWidth = this.wheelCanvasContext.measureText(sliceText).width + 10;
   var arcValue = Math.PI * 2 * (config.r - fontSize) / config.sliceCount;
   if (textWidth < arcValue) {
@@ -483,7 +516,7 @@ SpinToWin.prototype.mobileTextTyper = function(sliceNumber, sliceText, sliceColo
   this.wheelCanvasContext.restore();
 };
 
-SpinToWin.prototype.midCircleDrawer = function(circleColor, circleRadius) {
+SpinToWin.prototype.midCircleDrawer = function (circleColor, circleRadius) {
   this.wheelCanvasContext.beginPath();
   this.wheelCanvasContext.fillStyle = circleColor;
   this.wheelCanvasContext.moveTo(config.centerX, config.centerY);
@@ -492,7 +525,7 @@ SpinToWin.prototype.midCircleDrawer = function(circleColor, circleRadius) {
   this.wheelCanvasContext.closePath();
 };
 
-SpinToWin.prototype.submit = function() {
+SpinToWin.prototype.submit = function () {
   if (config.mailFormEnabled) {
     this.formValidation = window.spinToWin.validateForm();
     if (!window.spinToWin.formValidation.email || !window.spinToWin.formValidation.consent) {
@@ -506,7 +539,7 @@ SpinToWin.prototype.submit = function() {
   window.spinToWin.getPromotionCode();
 };
 
-SpinToWin.prototype.spin = function(sliceIndex, promotionCode) {
+SpinToWin.prototype.spin = function (sliceIndex, promotionCode) {
   if (sliceIndex > -1) {
     window.spinToWin.config.selectedSlice = window.spinToWin.config.slices[sliceIndex];
     window.spinToWin.config.selectedSlice.code = promotionCode;
@@ -519,7 +552,7 @@ SpinToWin.prototype.spin = function(sliceIndex, promotionCode) {
 
 
 
-SpinToWin.prototype.spinHandler = function(result) {
+SpinToWin.prototype.spinHandler = function (result) {
 
   var spinHandler_R = window.spinToWin.r;
   var spinHandler_isMobile = true; //window.visilabs_spin_to_win.isMobile;
@@ -544,7 +577,7 @@ SpinToWin.prototype.spinHandler = function(result) {
   spinDuration = spinDuration > 7.5 ? 7.5 : spinDuration;
   this.wheelCanvas.style.transform = "translateX(" + (spinHandler_isMobile ? 0 : -spinHandler_R) + "px) rotate(" + (spinDeg + currentAngle) + "deg)";
   this.wheelCanvas.style.transitionDuration = spinDuration + "s";
-  setTimeout(function() {
+  setTimeout(function () {
     window.spinToWin.wheelCanvas.style.transform = "translateX(" + (spinHandler_isMobile ? 0 : -spinHandler_R) + "px) rotate(" + (spinDeg + currentAngle) % 360 + "deg)";
     window.spinToWin.wheelCanvas.style.transitionDuration = "0s";
     window.spinToWin.resultHandler(window.spinToWin.config.slices[result]);
@@ -552,7 +585,7 @@ SpinToWin.prototype.spinHandler = function(result) {
 
 };
 
-SpinToWin.prototype.resultHandler = function(res) {
+SpinToWin.prototype.resultHandler = function (res) {
   this.spinCompleted = true;
   this.couponCode.innerText = res.code;
   this.couponCode.value = res.code;
@@ -561,60 +594,31 @@ SpinToWin.prototype.resultHandler = function(res) {
 
 
 //Helper functions
-                      
-//TODO: burada href olmamalı. ios ya da android'deki native tarayıca yönlendirme yapılmalı
-SpinToWin.prototype.prepareCheckboxHtmls = function(text, url) {
-      if(this.isNullOrWhitespace(url)) {
-          return text;
-      } else if(!text.includes("<LINK>")) {
-          return '<a href="' + url + '">'  + text + '</a>';
-      }
-};
-                                 
 
-SpinToWin.prototype.randomInt = function(min, max) {
+//TODO: burada href olmamalı. ios ya da android'deki native tarayıca yönlendirme yapılmalı
+SpinToWin.prototype.prepareCheckboxHtmls = function (text, url) {
+  if (this.isNullOrWhitespace(url)) {
+    return text;
+  } else if (!text.includes("<LINK>")) {
+    return '<a href="' + url + '">' + text + '</a>';
+  }
+};
+
+SpinToWin.prototype.randomInt = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
-SpinToWin.prototype.lightOrDark = function(color) {
-  var r, g, b, hsp;
-  if (color.indexOf("rgb") != -1) {
-    color = color.replace("rgb(" || "rgba(", "");
-    color = color.replace(")", "");
-    var colorArr = color.split(",");
-    r = parseFloat(colorArr[0]);
-    g = parseFloat(colorArr[1]);
-    b = parseFloat(colorArr[2]);
-  } else {
-    color = +("0x" + color.slice(1).replace(
-      color.length < 5 && /./g, '$&$&'));
-    r = color >> 16;
-    g = color >> 8 & 255;
-    b = color & 255;
-  }
-  hsp = Math.sqrt(
-    0.299 * (r * r) +
-    0.587 * (g * g) +
-    0.114 * (b * b)
-  );
-  if (hsp > 127.5) {
-    return 'light';
-  } else {
-    return 'dark';
-  }
-};
-
-SpinToWin.prototype.isNullOrWhitespace = function(input) {
+SpinToWin.prototype.isNullOrWhitespace = function (input) {
   if (typeof input === 'undefined' || input == null) return true;
   return input.replace(/\s/g, '').length < 1;
 };
 
-SpinToWin.prototype.validateEmail = function(email) {
+SpinToWin.prototype.validateEmail = function (email) {
   var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email);
 };
 
-SpinToWin.prototype.setCloseButton = function() {
+SpinToWin.prototype.setCloseButton = function () {
 
   if (this.config.closeButtonColor == "black") {
 

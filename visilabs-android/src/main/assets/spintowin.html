@@ -489,6 +489,10 @@
             float: unset;
             transform: rotate(-90deg);
         }
+
+        .wlo_gdpr_text p {
+            margin-left: 10px;
+        }
     </style>
 </head>
 
@@ -499,7 +503,7 @@
     <div class="wlo_form wlo_gpuac wlo_font_color">
       <div class="wlo_enter_email wlo_gpuac">
 
-        <img id="spin-to-win-box-close"/>
+        <img id="spin-to-win-box-close" />
 
         <div class="wlo_title wlo_main_title">
           <p id="form-title">Title</p>
@@ -509,8 +513,8 @@
         </div>
 
         <div id="wl_custom_fields_holder" class="wlo_invert_input">
-          <input class="wlo_email_input wlo_input" id="vl-form-input" name="vl-form-input" type="email"
-                 placeholder="Email" data-field-name="email" maxlength="99">
+          <input class="wlo_email_input wlo_input" id="vl-form-input" name="vl-form-input"
+                 type="email" placeholder="Email" data-field-name="email" maxlength="99">
 
           <div id="vl-form-consent" class="wlo_invert_input">
             <input class="wlo_checkbox" type="checkbox" id="vl-form-checkbox"
@@ -553,7 +557,8 @@
 
         <div id="vl-warning" class="vl-validationMessage" style="display: block; color:red;">
           <ul style="padding-inline-start: 0px; list-style-type: none;">
-            <li id="invalid-email-message" style="display: block;">Please enter a valid E-Mail Address.</li>
+            <li id="invalid-email-message" style="display: block;">Please enter a valid E-Mail
+              Address.</li>
             <li id="check-consent-message" style="display: block;">Please check consent.</li>
           </ul>
         </div>
@@ -566,7 +571,7 @@
 
   <div id="canvas-container">
     <div id="arrow-container"><canvas id="arrow-canvas"></canvas></div>
-    <div id="wheel-container"><canvas id="wheel-canvas" width="375" height="375"
+    <div id="wheel-container"><canvas id="wheel-canvas"
                                       style="transform: translateX(0px) rotate(42deg); transition: transform 0s ease-out 0s; border-radius: 50%;"></canvas>
     </div>
   </div>
@@ -586,7 +591,7 @@
             spinToWin = new SpinToWin(config);
         };
 
-        window.chooseSlice = function(sliceIndex, promotionCode) {
+        window.chooseSlice = function (sliceIndex, promotionCode) {
             console.log("selectSlice");
             console.log(sliceIndex + " : " + promotionCode);
             window.spinToWin.spin(sliceIndex, promotionCode);
@@ -596,10 +601,10 @@
             config = JSON.parse(Android.getResponse());
             initSpinToWin(config);
         } else if (window.webkit && window.webkit.messageHandlers.eventHandler) {
-            window.webkit.messageHandlers.eventHandler.postMessage({ method : "initSpinToWin" });
-            window.console.log = function(message) {
+            window.webkit.messageHandlers.eventHandler.postMessage({ method: "initSpinToWin" });
+            window.console.log = function (message) {
                 var stringMessage = message;
-                if(typeof message !== "string") {
+                if (typeof message !== "string") {
                     stringMessage = JSON.stringify(message);
                 }
                 window.webkit.messageHandlers.eventHandler.postMessage({ method: "console.log", message: stringMessage });
