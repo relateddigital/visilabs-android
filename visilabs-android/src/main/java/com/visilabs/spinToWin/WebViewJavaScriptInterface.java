@@ -57,6 +57,20 @@ public class WebViewJavaScriptInterface {
      */
     @JavascriptInterface
     public void subscribeEmail(String email) {
+        if(!email.equals("") && email != null) {
+            SpinToWinModel spinToWinModel = new Gson().fromJson(mResponse, SpinToWinModel.class);
+            Visilabs.CallAPI().createSubsJsonRequest(spinToWinModel.getActiondata().getType(),
+                    spinToWinModel.getActid().toString(), spinToWinModel.getActiondata().getAuth(), email);
+        } else {
+            Log.w("Spin to Win : ", "Email entered is not valid!");
+        }
+    }
+
+    /**
+     * This method sends the report to the server
+     */
+    @JavascriptInterface
+    public void sendReport() {
         Report report = null;
 
         SpinToWinModel spinToWinModel = new Gson().fromJson(mResponse, SpinToWinModel.class);
@@ -65,14 +79,9 @@ public class WebViewJavaScriptInterface {
             report.setImpression(spinToWinModel.getActiondata().getReport().getImpression());
             report.setClick(spinToWinModel.getActiondata().getReport().getClick());
         } catch (Exception e) {
-            Log.w("Spin to Win : ", "There is no report to send");
+            Log.w("Spin to Win : ", "There is no report to send!");
             e.printStackTrace();
             report = null;
-        }
-
-        if(!email.equals("")) {
-            Visilabs.CallAPI().createSubsJsonRequest(spinToWinModel.getActiondata().getType(),
-                    spinToWinModel.getActid().toString(), spinToWinModel.getActiondata().getAuth(), email);
         }
 
         if(report != null) {
@@ -86,10 +95,11 @@ public class WebViewJavaScriptInterface {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @JavascriptInterface
     public void getPromotionCode() {
-        String promotionId = "";
+        String selectedCode = "";
         String promoAuth;
         int actId;
         List<String> promotionCodes = new ArrayList<String>();
+        List<Integer> promotionIndexes = new ArrayList<Integer>();
         int selectedIndex = -1;
 
         SpinToWinModel spinToWinModel = new Gson().fromJson(mResponse, SpinToWinModel.class);
@@ -101,15 +111,16 @@ public class WebViewJavaScriptInterface {
             Slice slice = spinToWinModel.getActiondata().getSlices().get(i);
             if(slice.getType().equals("promotion")) {
                 promotionCodes.add(slice.getCode());
-                promotionId = slice.getCode();
+                promotionIndexes.add(i);
             }
         }
 
         if(promotionCodes.size() > 0) {
             try {
                 Random random = new Random();
-                selectedIndex = random.nextInt(promotionCodes.size());
-                promotionId = promotionCodes.get(selectedIndex);
+                int randomIndex = random.nextInt(promotionCodes.size());
+                selectedCode = promotionCodes.get(randomIndex);
+                selectedIndex = promotionIndexes.get(randomIndex);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -118,7 +129,7 @@ public class WebViewJavaScriptInterface {
         if(selectedIndex != -1) {
             try {
                 HashMap<String, String> queryParameters = new HashMap<>();
-                queryParameters.put("promotionid", promotionId);
+                queryParameters.put("promotionid", selectedCode);
                 queryParameters.put("promoauth", promoAuth);
                 queryParameters.put("actionid", String.valueOf(actId));
                 VisilabsActionRequest visilabsActionRequest = new VisilabsActionRequest(mWebViewDialogFragment.getContext());
