@@ -62,7 +62,7 @@ public class WebViewJavaScriptInterface {
             Visilabs.CallAPI().createSubsJsonRequest(spinToWinModel.getActiondata().getType(),
                     spinToWinModel.getActid().toString(), spinToWinModel.getActiondata().getAuth(), email);
         } else {
-            Log.w("Spin to Win : ", "Email entered is not valid!");
+            Log.e("Spin to Win : ", "Email entered is not valid!");
         }
     }
 
@@ -79,7 +79,7 @@ public class WebViewJavaScriptInterface {
             report.setImpression(spinToWinModel.getActiondata().getReport().getImpression());
             report.setClick(spinToWinModel.getActiondata().getReport().getClick());
         } catch (Exception e) {
-            Log.w("Spin to Win : ", "There is no report to send!");
+            Log.e("Spin to Win : ", "There is no report to send!");
             e.printStackTrace();
             report = null;
         }
