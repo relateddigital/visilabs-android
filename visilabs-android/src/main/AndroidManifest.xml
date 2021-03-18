@@ -14,9 +14,7 @@
         <activity
             android:name="com.visilabs.scratchToWin.ScratchToWinActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
-        <activity
-            android:name="com.visilabs.spinToWin.SpinToWinActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
+        <activity android:name="com.visilabs.spinToWin.SpinToWinActivity"/>
         <activity
             android:name="com.visilabs.inApp.VisilabsInAppActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
@@ -27,13 +25,7 @@
             android:name="com.visilabs.mailSub.MailSubscriptionFormActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name="com.visilabs.story.StoryActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+        <activity android:name="com.visilabs.story.StoryActivity"/>
     </application>
 
 </manifest>
