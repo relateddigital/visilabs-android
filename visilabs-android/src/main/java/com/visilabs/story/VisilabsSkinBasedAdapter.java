@@ -37,6 +37,7 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
     VisilabsSkinBasedResponse mVisilabsSkinBasedResponse;
     String mExtendsProps;
     private boolean isFirstRun = true;
+    private boolean moveShownToEnd = false;
 
     public VisilabsSkinBasedAdapter(Context context) {
         mContext = context;
@@ -103,17 +104,29 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         if (borderRadius != null) {
             switch (borderRadius) {
                 case VisilabsConstant.STORY_CIRCLE:
-                    storyHolder.setCircleViewProperties(shown);
+                    if(moveShownToEnd) {
+                        storyHolder.setCircleViewProperties(shown);
+                    } else {
+                        storyHolder.setCircleViewProperties(isItShown(position));
+                    }
                     break;
 
                 case VisilabsConstant.STORY_ROUNDED_RECTANGLE:
                     float[] roundedRectangleBorderRadius = new float[]{15, 15, 15, 15, 15, 15, 15, 15};
-                    storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, shown);
+                    if(moveShownToEnd) {
+                        storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, shown);
+                    } else {
+                        storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, isItShown(position));
+                    }
                     break;
 
                 case VisilabsConstant.STORY_RECTANGLE:
                     float[] rectangleBorderRadius = new float[]{0, 0, 0, 0, 0, 0, 0, 0};
-                    storyHolder.setRectangleViewProperties(rectangleBorderRadius, shown);
+                    if(moveShownToEnd) {
+                        storyHolder.setRectangleViewProperties(rectangleBorderRadius, shown);
+                    } else {
+                        storyHolder.setRectangleViewProperties(rectangleBorderRadius, isItShown(position));
+                    }
                     break;
 
                 default:
@@ -147,25 +160,27 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
     }
 
     public void setStoryList(VisilabsSkinBasedResponse visilabsSkinBasedResponse, String extendsProps) {
+        //TODO: check the value of moveShownToEnd parameter here in the real data and assign it to moveShownToEnd
+        if (moveShownToEnd) {
+            Map<String, List<String>> shownStoriesMap = PersistentTargetManager.with(mContext).getShownStories();
 
-        Map<String, List<String>> shownStoriesMap = PersistentTargetManager.with(mContext).getShownStories();
+            if (shownStoriesMap.containsKey(visilabsSkinBasedResponse.getStory().get(0).getActid())){
+                List<String> shownTitles = shownStoriesMap.get(visilabsSkinBasedResponse.getStory().get(0).getActid());
+                List<Stories> notShownStories = new ArrayList<>();
+                List<Stories> shownStories = new ArrayList<>();
 
-        if (shownStoriesMap.containsKey(visilabsSkinBasedResponse.getStory().get(0).getActid())){
-            List<String> shownTitles = shownStoriesMap.get(visilabsSkinBasedResponse.getStory().get(0).getActid());
-            List<Stories> notShownStories = new ArrayList<>();
-            List<Stories> shownStories = new ArrayList<>();
-
-            if(shownTitles != null && !shownTitles.isEmpty()){
-                for(Stories s : visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories()) {
-                    if(shownTitles.contains(s.getTitle())) {
-                        s.setShown(true);
-                        shownStories.add(s);
-                    } else {
-                        notShownStories.add(s);
+                if(shownTitles != null && !shownTitles.isEmpty()){
+                    for(Stories s : visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories()) {
+                        if(shownTitles.contains(s.getTitle())) {
+                            s.setShown(true);
+                            shownStories.add(s);
+                        } else {
+                            notShownStories.add(s);
+                        }
                     }
+                    notShownStories.addAll(shownStories);
+                    visilabsSkinBasedResponse.getStory().get(0).getActiondata().setStories(notShownStories);
                 }
-                notShownStories.addAll(shownStories);
-                visilabsSkinBasedResponse.getStory().get(0).getActiondata().setStories(notShownStories);
             }
         }
 
@@ -250,5 +265,19 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
                 }
             }
         }
+    }
+
+    private boolean isItShown(int position) {
+        boolean result = false;
+        Map<String, List<String>> shownStoriesMap = PersistentTargetManager.with(mContext).getShownStories();
+
+        if (shownStoriesMap.containsKey(mVisilabsSkinBasedResponse.getStory().get(0).getActid())){
+            List<String> shownTitles = shownStoriesMap.get(mVisilabsSkinBasedResponse.getStory().get(0).getActid());
+
+            if(shownTitles != null && !shownTitles.isEmpty()){
+                result = shownTitles.contains(mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getTitle());
+            }
+        }
+        return result;
     }
 }

@@ -1,5 +1,7 @@
 package com.relateddigital.visilabs;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -15,6 +17,7 @@ import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.util.PersistentTargetManager;
 
 public class StoryActivity extends AppCompatActivity {
+    private static final String LOG_TAG = "StoryActivity";
 
     private ActivityStoryDemoBinding binding;
     private StoryItemClickListener storyItemClickListener;
@@ -31,6 +34,12 @@ public class StoryActivity extends AppCompatActivity {
             public void storyItemClicked(String storyLink) {
                 Toast.makeText(getApplicationContext(), storyLink, Toast.LENGTH_SHORT).show();
                 Log.i("link story", storyLink);
+                try {
+                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(storyLink));
+                    startActivity(viewIntent);
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "The link is not formatted properly!");
+                }
             }
         };
 
