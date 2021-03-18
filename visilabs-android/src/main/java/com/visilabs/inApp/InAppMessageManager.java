@@ -141,18 +141,8 @@ public class InAppMessageManager {
 
                         case NPS_WITH_NUMBERS:
 
-
-                            intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
-
-                            parent.startActivity(intent);
-
-                            break;
-
-
                         case IMAGE_BUTTON:
 
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
                             parent.startActivity(intent);
