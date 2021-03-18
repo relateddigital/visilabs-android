@@ -219,6 +219,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        binding.inApp16.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: change this to "carousel" when BE gets ready
+                sendInAppRequest("image_text_button");
+            }
+        });
+
         try {
             VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
             visilabsActionRequest.executeAsyncAction(getVisilabsCallback());

@@ -143,6 +143,8 @@ public class InAppMessageManager {
 
                         case IMAGE_BUTTON:
 
+                        case CAROUSEL:
+
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
                             parent.startActivity(intent);

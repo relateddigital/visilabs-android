@@ -301,37 +301,34 @@ public class ActionData implements Parcelable {
     }
 
     public InAppActionType getMsgType() {
+        InAppActionType result;
+
         if (mMsgType == null) {
-            return InAppActionType.UNKNOWN;
+            result = InAppActionType.UNKNOWN;
+        } else if (InAppActionType.MINI.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.MINI;
+        } else if (InAppActionType.FULL.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.FULL;
+        } else if (InAppActionType.IMAGE_TEXT_BUTTON.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.IMAGE_TEXT_BUTTON;
+        } else if (InAppActionType.FULL_IMAGE.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.FULL_IMAGE;
+        } else if (InAppActionType.NPS.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.NPS;
+        } else if (InAppActionType.IMAGE_BUTTON.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.IMAGE_BUTTON;
+        } else if (InAppActionType.SMILE_RATING.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.SMILE_RATING;
+        } else if (InAppActionType.ALERT.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.ALERT;
+        } else if (InAppActionType.NPS_WITH_NUMBERS.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.NPS_WITH_NUMBERS;
+        } else if(InAppActionType.CAROUSEL.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.CAROUSEL;
+        } else {
+            result = InAppActionType.UNKNOWN;
         }
-        if (InAppActionType.MINI.toString().equals(mMsgType.toLowerCase())) {
-            return InAppActionType.MINI;
-        }
-        if (InAppActionType.FULL.toString().equals(mMsgType.toLowerCase())) {
-            return InAppActionType.FULL;
-        }
-        if (InAppActionType.IMAGE_TEXT_BUTTON.toString().equals(mMsgType.toLowerCase())) {
-            return InAppActionType.IMAGE_TEXT_BUTTON;
-        }
-        if (InAppActionType.FULL_IMAGE.toString().equals(mMsgType.toLowerCase())) {
-            return InAppActionType.FULL_IMAGE;
-        }
-        if (InAppActionType.NPS.toString().equals(mMsgType.toLowerCase())) {
-            return InAppActionType.NPS;
-        }
-        if (InAppActionType.IMAGE_BUTTON.toString().equals(mMsgType.toLowerCase())) {
-            return InAppActionType.IMAGE_BUTTON;
-        }
-        if (InAppActionType.SMILE_RATING.toString().equals(mMsgType.toLowerCase())) {
-            return InAppActionType.SMILE_RATING;
-        }
-        if (InAppActionType.ALERT.toString().equals(mMsgType.toLowerCase())) {
-            return InAppActionType.ALERT;
-        }
-        if (InAppActionType.NPS_WITH_NUMBERS.toString().equals(mMsgType.toLowerCase())) {
-            return InAppActionType.NPS_WITH_NUMBERS;
-        }
-        return InAppActionType.UNKNOWN;
+        return result;
     }
 
     public void setMsgType(String msgType) {

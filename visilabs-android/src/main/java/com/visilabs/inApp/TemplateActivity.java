@@ -22,6 +22,7 @@ import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.ActivityTemplateBinding;
+import com.visilabs.android.databinding.ActivityTemplateCarouselBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.StringUtils;
 import com.visilabs.view.BaseRating;
@@ -35,22 +36,40 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private VisilabsUpdateDisplayState mUpdateDisplayState;
     private int mIntentId = -1;
     private ActivityTemplateBinding binding;
+    private ActivityTemplateCarouselBinding bindingCarousel;
+    private boolean mIsCarousel = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityTemplateBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        //supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
 
+        mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
         mInAppMessage = getInAppMessage();
+
+        View view;
+
+        //TODO: Remove this line after testing
+        mInAppMessage.getActionData().setMsgType(InAppActionType.CAROUSEL.toString());
+
+        if(mInAppMessage.getActionData().getMsgType() == InAppActionType.CAROUSEL) {
+            mIsCarousel = true;
+            bindingCarousel = ActivityTemplateCarouselBinding.inflate(getLayoutInflater());
+            view = bindingCarousel.getRoot();
+        } else {
+            mIsCarousel = false;
+            binding = ActivityTemplateBinding.inflate(getLayoutInflater());
+            view = binding.getRoot();
+        }
 
         setContentView(view);
         this.setFinishOnTouchOutside(false);
 
         if (isShowingInApp() && mInAppMessage != null) {
-            setUpView();
+            if(mIsCarousel) {
+                setupViewCarousel();
+            } else {
+                setUpView();
+            }
         } else {
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             finish();
@@ -303,9 +322,6 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.npsWithNumbersView.setColors(colors);
     }
 
-
-
-
     private int getCloseIcon() {
 
         switch (mInAppMessage.getActionData().getCloseButtonColor()) {
@@ -368,5 +384,10 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     protected void onDestroy() {
         super.onDestroy();
         VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+    }
+
+    private void setupViewCarousel() {
+        bindingCarousel.textDeneme.setText("CAROUSEL");
+        bindingCarousel.textDeneme.setTextColor(getResources().getColor(R.color.blue));
     }
 }
