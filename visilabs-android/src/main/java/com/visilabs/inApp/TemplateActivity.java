@@ -16,6 +16,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
@@ -38,6 +42,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private ActivityTemplateBinding binding;
     private ActivityTemplateCarouselBinding bindingCarousel;
     private boolean mIsCarousel = false;
+    private CarouselFinishInterface carouselFinishInterface;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +56,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         //TODO: Remove this line after testing
         mInAppMessage.getActionData().setMsgType(InAppActionType.CAROUSEL.toString());
 
-        if(mInAppMessage.getActionData().getMsgType() == InAppActionType.CAROUSEL) {
+        if (mInAppMessage.getActionData().getMsgType() == InAppActionType.CAROUSEL) {
             mIsCarousel = true;
             bindingCarousel = ActivityTemplateCarouselBinding.inflate(getLayoutInflater());
             view = bindingCarousel.getRoot();
@@ -65,7 +70,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         this.setFinishOnTouchOutside(false);
 
         if (isShowingInApp() && mInAppMessage != null) {
-            if(mIsCarousel) {
+            if (mIsCarousel) {
                 setupViewCarousel();
             } else {
                 setUpView();
@@ -97,7 +102,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setUpView() {
-        if(!mInAppMessage.getActionData().getImg().equals("")) {
+        if (!mInAppMessage.getActionData().getImg().equals("")) {
             binding.ivTemplate.setVisibility(View.VISIBLE);
             Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivTemplate);
         } else {
@@ -205,13 +210,13 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         binding.tvTitle.setVisibility(View.VISIBLE);
         binding.tvTitle.setTypeface(mInAppMessage.getActionData().getFontFamily(), Typeface.BOLD);
-        binding.tvTitle.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n","\n"));
+        binding.tvTitle.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
         binding.tvTitle.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
         binding.tvTitle.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgBodyTextSize()) + 12);
     }
 
     private void setBody() {
-        binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n","\n"));
+        binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n", "\n"));
         binding.tvBody.setTypeface(mInAppMessage.getActionData().getFontFamily());
         binding.tvBody.setVisibility(View.VISIBLE);
         binding.tvBody.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyColor()));
@@ -251,9 +256,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setPromotionCode() {
-        if(!StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromotionCode())
+        if (!StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromotionCode())
                 && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromoCodeBackgroundColor())
-                && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromoCodeTextColor())){
+                && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromoCodeTextColor())) {
             binding.llCouponContainer.setVisibility(View.VISIBLE);
             binding.llCouponContainer.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getPromoCodeBackgroundColor()));
             binding.tvCouponCode.setText(mInAppMessage.getActionData().getPromotionCode());
@@ -316,7 +321,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.npsWithNumbersView.setVisibility(View.VISIBLE);
         int[] colors = new int[mInAppMessage.getActionData().getNumberColors().length];
 
-        for(int i = 0; i < mInAppMessage.getActionData().getNumberColors().length; i ++) {
+        for (int i = 0; i < mInAppMessage.getActionData().getNumberColors().length; i++) {
             colors[i] = Color.parseColor(mInAppMessage.getActionData().getNumberColors()[i]);
         }
         binding.npsWithNumbersView.setColors(colors);
@@ -387,7 +392,20 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setupViewCarousel() {
-        bindingCarousel.textDeneme.setText("CAROUSEL");
-        bindingCarousel.textDeneme.setTextColor(getResources().getColor(R.color.blue));
+        carouselFinishInterface = new CarouselFinishInterface() {
+            @Override
+            public void onFinish() {
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                finish();
+            }
+        };
+        CarouselAdapter adapter = new CarouselAdapter(getApplicationContext(), mInAppMessage, carouselFinishInterface);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+        bindingCarousel.carouselListView.setLayoutManager(layoutManager);
+        bindingCarousel.carouselListView.setAdapter(adapter);
+        bindingCarousel.carouselListView.setHasFixedSize(true);
+        bindingCarousel.carouselListView.setNestedScrollingEnabled(false);
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(bindingCarousel.carouselListView);
     }
 }
