@@ -593,6 +593,8 @@ public class Visilabs {
                     } else if (!response.getMailSubscriptionForm().isEmpty()) {
                         MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm) response.getMailSubscriptionForm().get(0);
                         new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
+                    } else {
+                        Log.e(LOG_TAG, "Response is null : " + url);
                     }
                 } else {
                     Log.e(LOG_TAG, "Response is null : " + url);
