@@ -1,16 +1,16 @@
 var PIXEL_RATIO = (function () {
   var ctx = document.createElement("canvas").getContext("2d"),
-      dpr = window.devicePixelRatio || 1,
-      bsr = ctx.webkitBackingStorePixelRatio ||
-            ctx.mozBackingStorePixelRatio ||
-            ctx.msBackingStorePixelRatio ||
-            ctx.oBackingStorePixelRatio ||
-            ctx.backingStorePixelRatio || 1;
+    dpr = window.devicePixelRatio || 1,
+    bsr = ctx.webkitBackingStorePixelRatio ||
+      ctx.mozBackingStorePixelRatio ||
+      ctx.msBackingStorePixelRatio ||
+      ctx.oBackingStorePixelRatio ||
+      ctx.backingStorePixelRatio || 1;
 
   return dpr / bsr;
 })();
 
-var setHiDPICanvas = function(canvas, w, h, ratio) {
+var setHiDPICanvas = function (canvas, w, h, ratio) {
   if (!ratio) { ratio = PIXEL_RATIO; }
   var can = canvas;
   can.width = w * ratio;
@@ -22,7 +22,7 @@ var setHiDPICanvas = function(canvas, w, h, ratio) {
 
 function SpinToWin(config) {
   this.config = config;
-  if (window.Android) {
+  if (window.Android || window.BrowserTest) {
     this.convertConfigJson();
   }
 
@@ -30,6 +30,7 @@ function SpinToWin(config) {
   this.canvasContainer = document.getElementById("canvas-container");
   this.wheelCanvas = document.getElementById("wheel-canvas");
   this.arrowCanvas = document.getElementById("arrow-canvas");
+
   this.wheelCanvasContext = this.wheelCanvas.getContext("2d");
   this.arrowCanvasContext = this.arrowCanvas.getContext("2d");
   this.closeButton = document.getElementById("spin-to-win-box-close");
@@ -61,7 +62,6 @@ function SpinToWin(config) {
   var r = parseFloat(config.circle_R);
   this.config.windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
   this.config.r = (r * 2) > this.config.windowWidth ? 150 : r;
-  this.config.language = "En";
   this.config.centerX = this.config.r;
   this.config.centerY = this.config.r;
   this.config.selectedPromotionCode = "";
@@ -74,8 +74,7 @@ function SpinToWin(config) {
   this.config.campaigns = this.config.slices;
   this.config.mailFormEnabled = config.mailSubscription;
   this.config.pickedColors = [];
-  this.config.middleCircleR = this.config.r / 10;
-  this.config.middleCircleColor = "#000";
+  this.config.middleCircleR = this.config.r / 5;
   this.config.fontFamily = "sans-serif"; // TODO: default gelirse ne yapılacak?
   this.config.isMobile = true;
   this.config.textDirection = "horizontal";
@@ -111,15 +110,19 @@ function SpinToWin(config) {
     window.spinToWin.styleHandler();
   }
 
-  this.drawArrow();
 
 
-  this.midCircleDrawer(this.config.middleCircleColor, this.config.middleCircleR);
+
+
 
   for (var i = 0; i < config.sliceCount; i++) {
     this.sliceDrawer(i, config.colors[i]);
-    this.mobileTextTyper(i, config.slices[i].displayName, config.colors[i]);
+    this.mobileTextTyper(i, config.slices[i].displayName);
   }
+
+  this.midCircleDrawer("#000000", this.config.middleCircleR);
+
+  this.drawArrow();
 
   this.handleVisibility();
 
@@ -179,17 +182,19 @@ SpinToWin.prototype.convertConfigJson = function () {
 SpinToWin.prototype.getPromotionCode = function () {
   if (window.Android) {
     Android.getPromotionCode();
-  } else if (window.webkit.messageHandlers.eventHandler) {
+  } else if (window.webkit && window.webkit.messageHandlers) {
     window.webkit.messageHandlers.eventHandler.postMessage({
       method: "getPromotionCode"
     });
+  } else {
+    window.BrowserTest.getPromotionCode();
   }
 };
 
 SpinToWin.prototype.subscribeEmail = function () {
   if (window.Android) {
     Android.subscribeEmail(this.emailInput.value.trim());
-  } else if (window.webkit.messageHandlers.eventHandler) {
+  } else if (window.webkit && window.webkit.messageHandlers) {
     window.webkit.messageHandlers.eventHandler.postMessage({
       method: "subscribeEmail",
       email: this.emailInput.value.trim()
@@ -200,7 +205,7 @@ SpinToWin.prototype.subscribeEmail = function () {
 SpinToWin.prototype.close = function () {
   if (window.Android) {
     Android.close();
-  } else if (window.webkit.messageHandlers.eventHandler) {
+  } else if (window.webkit && window.webkit.messageHandlers) {
     window.webkit.messageHandlers.eventHandler.postMessage({
       method: "close"
     });
@@ -214,6 +219,25 @@ SpinToWin.prototype.copyToClipboard = function () {
     window.webkit.messageHandlers.eventHandler.postMessage({
       method: "copyToClipboard",
       couponCode: this.couponCode.innerText
+    });
+  }
+};
+
+SpinToWin.prototype.sendReport = function () {
+  if (window.Android) {
+    Android.sendReport();
+  } else if (window.webkit && window.webkit.messageHandlers) {
+    window.webkit.messageHandlers.eventHandler.postMessage({
+      method: "sendReport"
+    });
+  }
+};
+
+SpinToWin.prototype.openUrl = function (url) {
+  if (window.webkit && window.webkit.messageHandlers) {
+    window.webkit.messageHandlers.eventHandler.postMessage({
+      method: "openUrl",
+      url : url
     });
   }
 };
@@ -270,10 +294,16 @@ SpinToWin.prototype.setContent = function () {
   this.successMessageElement.innerHTML = this.config.successMessage;
   this.successMessageElement.style.color = "green";
 
-  this.promocodeTitleElement.innerHTML = this.config.promocodeTitle;
+  this.promocodeTitleElement.innerHTML = this.config.promocodeTitle.replace(/\\n/g, '<br/>');
   this.promocodeTitleElement.style.color = this.config.promocodeTitleTextColor;
   this.promocodeTitleElement.style.fontFamily = this.config.promocodeTitleFontFamily;
   this.promocodeTitleElement.style.fontSize = (this.config.promocodeTitleTextSize + 20) + "px";
+
+  this.container.addEventListener("click", function(event) {
+    if(event.target.tagName != "INPUT") {
+      document.activeElement.blur();
+    }
+  } );
 
   this.submitButton.addEventListener("click", this.submit);
   this.closeButton.addEventListener("click", evt => this.close());
@@ -299,7 +329,6 @@ SpinToWin.prototype.validateForm = function () {
   this.formValidation = result;
   return result;
 };
-
 
 SpinToWin.prototype.handleVisibility = function () {
 
@@ -339,6 +368,17 @@ SpinToWin.prototype.handleVisibility = function () {
     } else {
       this.warning.style.display = "none";
     }
+
+    if (this.isNullOrWhitespace(this.consentText.innerHTML)) {
+      this.consentCheckbox.style.display = "none";
+      this.consentContainer.style.display = "none";
+    }
+
+    if (this.isNullOrWhitespace(this.emailPermitText.innerHTML)) {
+      this.emailPermitCheckbox.style.display = "none";
+      this.emailPermitContainer.style.display = "none";
+    }
+
   } else {
     this.emailInput.style.display = "none";
     this.consentContainer.style.display = "none";
@@ -384,6 +424,7 @@ SpinToWin.prototype.styleHandler = function () {
   var wheelCanvasStyle = {};
 
   setHiDPICanvas(this.wheelCanvas, wheelCanvasWidth, wheelCanvasHeight, PIXEL_RATIO);
+  setHiDPICanvas(this.arrowCanvas, wheelCanvasWidth, wheelCanvasHeight, PIXEL_RATIO);
 
 
   wheelCanvasStyle.transform = "translateX(0px) rotate(" + this.randomInt(0, 360) + "deg)";
@@ -398,20 +439,16 @@ SpinToWin.prototype.styleHandler = function () {
   this.canvasContainer.style.position = "absolute";
   this.canvasContainer.style.bottom = (-wheelCanvasHeight / 2) + "px";
 
-
-  var arrowContainerTop = (config.r - (config.r / 5.2)) + "px"; // R: 250 top: 205, R: 200 top: 162, R: 150 top: 121
   var styleEl = document.createElement("style"),
-    styleString = "#lightbox-outer{}" +
-      "#canvas-container{float:left;width:" + config.r + "px;height:" + (2 * config.r) + "px}" +
+    styleString = "#canvas-container{float:left;width:" + config.r + "px;height:" + (2 * config.r) + "px}" +
+      "#arrow-container{float:left;height:" + (2 * config.r) + "px;width:" + config.r + "px;margin:20px 0;overflow:hidden}" +
       "#wheel-container{float:left;height:" + (2 * config.r) + "px;width:" + config.r + "px;margin:20px 0;overflow:hidden}" +
-      "#arrow-container{width:20px;height:30px;display:inline-block;position:absolute;box-sizing:border-box;top:calc(50% - 14px);left:" + (config.r - 10) + "px;z-index:1;transform:rotate(90deg)}" +
       "#form-container{width:300px;box-sizing:border-box;float:right}" +
       "#form-container>div{position:absolute;top:50%;transform:translateY(-50%);margin:0 30px;width: 240px;}" +
       "#form-title, #form-message, #success-message, #promocode-title{text-align:center;}" +
       "#warning{display:none; position: absolute; z-index: 3; background: #fcf6c1; font-size: 12px; border: 1px solid #ccc; top: 105%;width: 100%; box-sizing: border-box;}" +
       "#warning>ul{margin: 2px;padding-inline-start: 20px;}" +
       "#form-consent{font-size:12px;color:#555;width:100%;padding:5px 0;position:relative;}" +
-      "#form-aggreement-link{color:#555;opacity:.75;text-decoration:none}" +
       "#form-consent input[type='checkbox']{opacity:0;position:absolute}" +
       "#form-consent label{position:relative;display:inline-block;padding-left:18px}" +
       "#form-consent label::before," +
@@ -421,23 +458,13 @@ SpinToWin.prototype.styleHandler = function () {
       "#form-consent input[type='checkbox']+label::after{content:none}" +
       "#form-consent input[type='checkbox']:checked+label::after{content:''}" +
       "#form-consent input[type='checkbox']:focus+label::before{outline:#3b99fc auto 5px}" +
-      "#form-emailpermit{font-size:12px;color:#555;width:100%;padding:5px 0;position:relative;}" +
-      "#form-emailpermit input[type='checkbox']{opacity:0;position:absolute}" +
-      "#form-emailpermit label{position:relative;display:inline-block;padding-left:18px}" +
-      "#form-emailpermit label::before," +
-      "#form-emailpermit label::after{position:absolute;content:'';display:inline-block;cursor:pointer}" +
-      "#form-emailpermit label::before{height:12px;width:12px;border:1px solid;left:0;top:0}" +
-      "#form-emailpermit label::after{height:4px;width:8.5px;border-left:2px solid;border-bottom:2px solid;transform:rotate(-45deg);left:2px;top:2px}" +
-      "#form-emailpermit input[type='checkbox']+label::after{content:none}" +
-      "#form-emailpermit input[type='checkbox']:checked+label::after{content:''}" +
-      "#form-emailpermit input[type='checkbox']:focus+label::before{outline:#3b99fc auto 5px}" +
       ".form-submit-btn{transition:.2s filter ease-in-out;}" +
       ".form-submit-btn:hover{filter: brightness(110%);transition:.2s filter ease-in-out;}" +
       ".form-submit-btn.disabled{filter: grayscale(100%);transition:.2s filter ease-in-out;}" +
       "@media only screen and (max-width:2500px){" +
       "#canvas-container{float:unset;width:100%;text-align:center;position:relative}" +
       "#wheel-container{width:" + (config.r * 2) + "px;margin:0 auto;float:unset;transform:rotate(-90deg)}" +
-      "#arrow-container{top:" + arrowContainerTop + ";transform:rotate(45deg);left:calc(50% - 10px)}" +
+      "#arrow-container{width:" + (config.r * 2) + "px;margin:0 auto;float:unset;}" +
       "#form-container{float:unset;width:100%;}" +
       "#form-container>div{transform:unset;top:unset;margin:20px;width:calc(100% - 40px)}" +
       "}";
@@ -451,29 +478,19 @@ SpinToWin.prototype.styleHandler = function () {
   }
 };
 
-//TODO: bunu css'e ekle
-SpinToWin.prototype.getWheelCanvasStyle = function () {
-  var wheelCanvasStyle = {};
-  wheelCanvasStyle.transform = "translateX(0px) rotate(" + this.randomInt(0, 360) + "deg)";
-  wheelCanvasStyle.transitionProperty = "transform";
-  wheelCanvasStyle.transitionDuration = "0s";
-  wheelCanvasStyle.transitionTimingFunction = "ease-out";
-  wheelCanvasStyle.transitionDelay = "0s";
-  wheelCanvasStyle.borderRadius = "50%";
-  return wheelCanvasStyle;
-};
-
-
 SpinToWin.prototype.drawArrow = function () {
+  this.arrowCanvasContext.fillStyle = '#000000';
   this.arrowCanvasContext.beginPath();
-  this.arrowCanvasContext.moveTo(0, 0);
-  this.arrowCanvasContext.lineTo(config.centerX + 100, config.centerY);
-  this.arrowCanvasContext.lineTo(config.centerX, config.centerY + 100);
+  console.log(config.centerX);
+  console.log(config.centerY);
+  var triangleHeight = config.centerY / 3;
+  var triangleHalfBase = config.centerY / 7;
+  this.arrowCanvasContext.moveTo(config.centerX - triangleHalfBase, config.centerY);
+  this.arrowCanvasContext.lineTo(config.centerX, config.centerY - triangleHeight);
+  this.arrowCanvasContext.lineTo(config.centerX + triangleHalfBase, config.centerY);
+  this.arrowCanvasContext.lineTo(config.centerX - triangleHalfBase, config.centerY);
   this.arrowCanvasContext.closePath();
-  this.arrowCanvasContext.lineWidth = 30;
-  this.arrowCanvasContext.strokeStyle = '#000000';
   this.arrowCanvasContext.stroke();
-  this.arrowCanvasContext.fillStyle = "#000000";
   this.arrowCanvasContext.fill();
 };
 
@@ -488,13 +505,11 @@ SpinToWin.prototype.sliceDrawer = function (sliceNumber, sliceColor) {
 };
 
 
-SpinToWin.prototype.mobileTextTyper = function (sliceNumber, sliceText, sliceColor) {
+SpinToWin.prototype.mobileTextTyper = function (sliceNumber, sliceText) {
   var fontSize = this.config.displaynameTextSize + 10;
   var fontColor = this.config.displaynameTextColor;
   var fontFamily = this.config.displaynameFontFamily;
-
   this.wheelCanvasContext.save();
-
   this.wheelCanvasContext.translate(config.centerX + (Math.cos(sliceNumber * config.angle) * config.r), config.centerY + (Math.sin(sliceNumber * config.angle) * config.r));
   this.wheelCanvasContext.moveTo(config.centerX, config.centerY);
   this.wheelCanvasContext.rotate((config.angle * sliceNumber + config.angle / 2) + (Math.PI / 2));
@@ -505,12 +520,12 @@ SpinToWin.prototype.mobileTextTyper = function (sliceNumber, sliceText, sliceCol
   if (textWidth < arcValue) {
     this.wheelCanvasContext.textAlign = "center";
     sliceText = sliceText.split("|").join(" ");
-    this.wheelCanvasContext.fillText(sliceText, Math.PI * (config.r - fontSize) / config.sliceCount, 10)
+    this.wheelCanvasContext.fillText(sliceText, Math.PI * (config.r - fontSize) / config.sliceCount, 20)
   } else {
     this.wheelCanvasContext.textAlign = "center";
     var lines = sliceText.split("|");
     for (var j = 0; j < lines.length; j++) {
-      this.wheelCanvasContext.fillText(lines[j], Math.PI * (config.r) / config.sliceCount, (j * fontSize) + 10);
+      this.wheelCanvasContext.fillText(lines[j], Math.PI * (config.r) / config.sliceCount, (j * fontSize) + 20);
     }
   }
   this.wheelCanvasContext.restore();
@@ -534,6 +549,7 @@ SpinToWin.prototype.submit = function () {
     }
     window.spinToWin.subscribeEmail();
   }
+  window.spinToWin.sendReport();
   window.spinToWin.handleVisibility();
   window.spinToWin.submitButton.removeEventListener("click", window.spinToWin.submit);
   window.spinToWin.getPromotionCode();
@@ -550,12 +566,7 @@ SpinToWin.prototype.spin = function (sliceIndex, promotionCode) {
   window.spinToWin.spinHandler(sliceIndex);
 };
 
-
-
 SpinToWin.prototype.spinHandler = function (result) {
-
-  var spinHandler_R = window.spinToWin.r;
-  var spinHandler_isMobile = true; //window.visilabs_spin_to_win.isMobile;
   var vl_form_input = document.getElementById("vl-form-input");
   if (vl_form_input !== null)
     vl_form_input.setAttribute("disabled", "");
@@ -565,7 +576,7 @@ SpinToWin.prototype.spinHandler = function (result) {
   var vl_form_checkbox_emailpermit = document.getElementById("vl-form-checkbox-emailpermit");
   if (vl_form_checkbox_emailpermit !== null)
     vl_form_checkbox_emailpermit.setAttribute("disabled", "");
-  var vl_form_submit_btn = document.getElementsByClassName("form-submit-btn"); // document.getElementsByClassName("vl-form-submit-btn");
+  var vl_form_submit_btn = document.getElementsByClassName("form-submit-btn");
   if (vl_form_submit_btn !== null)
     vl_form_submit_btn[0].classList.add("disabled");
   var currentAngle = Math.round((parseFloat(this.wheelCanvas.style.transform.split("(")[2]) % 360));
@@ -575,14 +586,13 @@ SpinToWin.prototype.spinHandler = function (result) {
   var spinDeg = (spinCount * 360) + (startSlice - result) * sliceDeg;
   var spinDuration = parseFloat((spinDeg / 360).toFixed(2));
   spinDuration = spinDuration > 7.5 ? 7.5 : spinDuration;
-  this.wheelCanvas.style.transform = "translateX(" + (spinHandler_isMobile ? 0 : -spinHandler_R) + "px) rotate(" + (spinDeg + currentAngle) + "deg)";
+  this.wheelCanvas.style.transform = "translateX(0px) rotate(" + (spinDeg + currentAngle) + "deg)";
   this.wheelCanvas.style.transitionDuration = spinDuration + "s";
   setTimeout(function () {
-    window.spinToWin.wheelCanvas.style.transform = "translateX(" + (spinHandler_isMobile ? 0 : -spinHandler_R) + "px) rotate(" + (spinDeg + currentAngle) % 360 + "deg)";
+    window.spinToWin.wheelCanvas.style.transform = "translateX(0px) rotate(" + (spinDeg + currentAngle) % 360 + "deg)";
     window.spinToWin.wheelCanvas.style.transitionDuration = "0s";
     window.spinToWin.resultHandler(window.spinToWin.config.slices[result]);
   }, spinDuration * 1000);
-
 };
 
 SpinToWin.prototype.resultHandler = function (res) {
@@ -595,12 +605,34 @@ SpinToWin.prototype.resultHandler = function (res) {
 
 //Helper functions
 
-//TODO: burada href olmamalı. ios ya da android'deki native tarayıca yönlendirme yapılmalı
 SpinToWin.prototype.prepareCheckboxHtmls = function (text, url) {
-  if (this.isNullOrWhitespace(url)) {
+  if (this.isNullOrWhitespace(text)) {
+    return "";
+  }
+  else if (this.isNullOrWhitespace(url)) {
+    return text.replaceAll('<LINK>', '').replaceAll('</LINK>', '');
+  }
+  else if (!text.includes("<LINK>")) {
+    if (window.webkit && window.webkit.messageHandlers.eventHandler) {
+      return '<a href="javascript:window.spinToWin.openUrl(\'' + url + '\')">' + text +  '</a>';
+    } else {
+      return '<a href="' + url + '">' + text + '</a>';
+    }
+  } else {
+    var linkRegex = /<LINK>(.*?)<\/LINK>/g;
+    var regexResult;
+    while((regexResult = linkRegex.exec(text)) !== null) {
+      var outerHtml = regexResult[0];
+      var innerHtml = regexResult[1];
+      if (window.webkit && window.webkit.messageHandlers.eventHandler) {
+        var link = '<a href="javascript:window.spinToWin.openUrl(\'' + url + '\')">' + innerHtml +  '</a>';
+        text = text.replace(outerHtml, link);
+      } else {
+        var link = '<a href="' + url + '">' + innerHtml +  '</a>';
+        text = text.replace(outerHtml, link);
+      }
+    }
     return text;
-  } else if (!text.includes("<LINK>")) {
-    return '<a href="' + url + '">' + text + '</a>';
   }
 };
 
@@ -619,12 +651,9 @@ SpinToWin.prototype.validateEmail = function (email) {
 };
 
 SpinToWin.prototype.setCloseButton = function () {
-
   if (this.config.closeButtonColor == "black") {
-
     this.closeButton.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAABvUlEQVRoQ+2Z4U0DMQyFfYsxRIEN2AomQEjMgBisKG0jRac0sf2ec1ZF//Qkkvh9fo4vDZtcP08i8nN7Ll9b85zx8dyIKtp/i+BXEfnsqM0K00JU2S9FbO8PdUA2mLtaZyCZymyU8MteGA64WXO0M1ONVeB04IENQKWtzbRqwuIWpta0Lxn1xAVAJi292jctEARk1nBvE5sXIgK5Yo+6kWtBEMgdc9ZW3Qs7gKBYM5CiBwqgBIJjaECiYWAI6/GDEnDnEG1NrSM1Pi0wu2StIKwyYybkkmQPCApDh0BAvDAhECiIFSYMggGihdG8TrxlDu2RvTBNtkcwEATLEUtr7sHAEGwQT5lRICJALDA0iH+Qwa61bnqaK7SFlGen9Jvd6sQeCE4ovADgBBUGBdE4seQSEAGxQFhemi5NrknKclp61eQB8TjhOZuZtJkGg06EwlhAGE6EwWhBIiCoDUADEglBg5mBrICgwDz8JfZKJygN4GH/0XOkE5AzrSOZIMwNYMnJVHOpBf7q3ApIRifMZaYBmb1rwISrpw8TPgPJAjHdM0Xou4i8dfKSDWIE81HFfonIcwOTFaIH8y0ipz/jH10bOlDCXQAAAABJRU5ErkJggg==";
   } else {
     this.closeButton.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAABwklEQVRoQ+2aa24CMQyE7QuUM7YHK2csF0i1qJF2A0lszxiiVfkDEnnM52fCoiIipZRvEfncPm8vVdX6ecX3UkrZ6bqq6pe2EKvDNBBV7nUD2dMdHLCaZ4ZaR1+uFGZTnbMBK8CYNP4leze83p0zJoh9DlgnvLKKeTQdyqxnYjaQV8tDv/AukAEU0fC08UUWYgFF9+528OiCCBCy5/AogizsBUL3mp6p0A0sQIw9piDZfYYBcW/aFotlwbAgXCBsGCaEG4QFw4YIgaAwGRBhkChMFgQE4oXJhIBBrDCWyojeRs3ldyTGYu3RfBSC4pEqMArDgKCCRMKMBUEH8cAwIf5BeonrzROmVyhVyxNSrRFYMBQQrycyYGAQFKJCoZ6BQCwQVaBnrOUk8ODVyCRrTrRWzoQJeQQRhMwdHnO8HmEIYawBhRZTAHMtV2dnbxzNs14EmXIkA8JzaraU5ilIJgQT5vw/mb7CE228I3ue97ECYhVvT0KuA20BON+jtxU8geTM3SMrQnhL8/AvHKy7Apo7JkPPBlm6KirUMn+qczRgFQhLmG2h9SMiHxn3aIulvWM6hr/VZD/ArOaJSTW7qerlF9bSa7Pl7TDpAAAAAElFTkSuQmCC";
   }
-
 };

@@ -1,5 +1,7 @@
 package com.visilabs.spinToWin;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
@@ -138,7 +140,14 @@ public class WebViewJavaScriptInterface {
                 e.printStackTrace();
             }
         } else {
-            mWebViewDialogFragment.getWebView().evaluateJavascript("window.chooseSlice(-1, undefined);", null);
+            Handler mainHandler = new Handler(Looper.getMainLooper());
+            Runnable myRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    mWebViewDialogFragment.getWebView().evaluateJavascript("window.chooseSlice(-1, undefined);", null);
+                }
+            };
+            mainHandler.post(myRunnable);
         }
     }
 
@@ -150,14 +159,28 @@ public class WebViewJavaScriptInterface {
             public void success(VisilabsResponse response) {
                 String rawResponse = response.getRawResponse();
                 JSONObject jsonResponse = new JSONObject(rawResponse);
-                String promotionCode = jsonResponse.getString("promocode");
-                mWebViewDialogFragment.getWebView().evaluateJavascript("window.chooseSlice("+idx+",'"+promotionCode+"');", null);
+                final String promotionCode = jsonResponse.getString("promocode");
+                Handler mainHandler = new Handler(Looper.getMainLooper());
+                Runnable myRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        mWebViewDialogFragment.getWebView().evaluateJavascript("window.chooseSlice("+idx+",'"+promotionCode+"');", null);
+                    }
+                };
+                mainHandler.post(myRunnable);
             }
 
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void fail(VisilabsResponse response) {
-                mWebViewDialogFragment.getWebView().evaluateJavascript("window.chooseSlice(-1, undefined);", null);
+                Handler mainHandler = new Handler(Looper.getMainLooper());
+                Runnable myRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        mWebViewDialogFragment.getWebView().evaluateJavascript("window.chooseSlice(-1, undefined);", null);
+                    }
+                };
+                mainHandler.post(myRunnable);
             }
         };
     }
