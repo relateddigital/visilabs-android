@@ -9,28 +9,36 @@ import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
-
 import com.visilabs.android.R;
 
-//https://android--code.blogspot.com/2015/05/android-webview-local-html-javascript.html
-//https://medium.com/alexander-schaefer/implementing-the-new-material-design-full-screen-dialog-for-android-e9dcc712cb38
-//TODO: animasyon gerekiyorsa ekle
 public class WebViewDialogFragment extends DialogFragment {
 
     public static final String TAG = "WebViewDialogFragment";
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "filename";
+    private static final String ARG_PARAM2 = "response";
+
     WebView webView;
-    private final WebViewJavaScriptInterface mJavaScriptInterface;
-    private SpinToWinCompleteInterface mListener;
+    private static WebViewJavaScriptInterface mJavaScriptInterface;
     private String mResponse;
-
     private String fileName = "";
+    private boolean mIsRotation = false;
+    private SpinToWinCompleteInterface mListener;
+    private SpinToWinCopyToClipboardInterface mCopyToClipboardInterface;
 
-    WebViewDialogFragment(String fileName, String response){
-        this.fileName = fileName;
-        mResponse = response;
-        mJavaScriptInterface = new WebViewJavaScriptInterface(this, response);
+    public WebViewDialogFragment (){}
+
+    public static WebViewDialogFragment newInstance(String filename, String response) {
+        WebViewDialogFragment fragment = new WebViewDialogFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, filename);
+        args.putString(ARG_PARAM2, response);
+        mJavaScriptInterface = new WebViewJavaScriptInterface(fragment, response);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     public WebViewDialogFragment display(FragmentManager fragmentManager) {
@@ -53,12 +61,28 @@ public class WebViewDialogFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_FullScreenDialog);
+        if(getArguments() != null) {
+            this.fileName = getArguments().getString("filename");
+            mResponse = getArguments().getString("response");
+            mJavaScriptInterface = new WebViewJavaScriptInterface(this, mResponse);
+            mJavaScriptInterface.setSpinToWinListeners(mListener, mCopyToClipboardInterface);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mIsRotation = true;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mListener.onCompleted();
+        if(!mIsRotation) {
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
+        }
     }
 
     @Override
@@ -93,8 +117,12 @@ public class WebViewDialogFragment extends DialogFragment {
         return mJavaScriptInterface;
     }
 
-    public void setSpinToWinCompleteListener(SpinToWinCompleteInterface listener){
-        mListener = listener;
+    public WebView getWebView() {
+        return webView;
     }
 
+    public void setSpinToWinListeners(SpinToWinCompleteInterface listener, SpinToWinCopyToClipboardInterface copyToClipboardInterface){
+        mListener = listener;
+        mCopyToClipboardInterface = copyToClipboardInterface;
+    }
 }

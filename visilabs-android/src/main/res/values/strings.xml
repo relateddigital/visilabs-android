@@ -13,7 +13,7 @@
     <string name="smile_rating_great">Harika</string>
     <string name="OK">OK</string>
     <string name="coupon_code">Coupon Code</string>
-    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="copied_to_clipboard">Copied to Clipboard</string>
 
     <string-array name="names">
         <item>@string/smile_rating_terrible</item>

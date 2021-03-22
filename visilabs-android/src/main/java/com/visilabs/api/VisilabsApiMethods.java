@@ -3,7 +3,7 @@ package com.visilabs.api;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
 import com.visilabs.inApp.InAppMessage;
-import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
+import com.visilabs.model.VisilabsActionsResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -62,7 +62,7 @@ public interface VisilabsApiMethods {
     );
 
     @GET("mobile")
-    Call<VisilabsMailSubscriptionFormResponse> getMailSubsRequestResponse(
+    Call<VisilabsActionsResponse> getActionRequestResponse(
             @HeaderMap Map<String, String> headers,
             @QueryMap Map<String, String> queryParameters
     );
@@ -77,6 +77,14 @@ public interface VisilabsApiMethods {
 
     @GET("json")
     Call<ResponseBody> getGeneralTargetRequestJsonResponse(
+            @HeaderMap Map<String, String> headers,
+            @QueryMap Map<String, String> queryParameters
+    );
+
+    //Method to get promotion code
+
+    @GET("promotion")
+    Call<ResponseBody> getPromotionCodeRequestJsonResponse(
             @HeaderMap Map<String, String> headers,
             @QueryMap Map<String, String> queryParameters
     );

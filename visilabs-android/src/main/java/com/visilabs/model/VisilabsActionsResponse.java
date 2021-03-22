@@ -1,17 +1,21 @@
-package com.visilabs.mailSub;
+package com.visilabs.model;
 
 import com.google.gson.annotations.SerializedName;
 import com.visilabs.favs.FavoriteAttributeAction;
+import com.visilabs.mailSub.MailSubscriptionForm;
+import com.visilabs.spinToWin.model.SpinToWinModel;
 import com.visilabs.story.model.storylookingbanners.Story;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class VisilabsMailSubscriptionFormResponse implements Serializable {
+public class VisilabsActionsResponse implements Serializable {
     @SerializedName("FavoriteAttributeAction")
     private List<FavoriteAttributeAction> mFavoriteAttributeAction = null;
     @SerializedName("MailSubscriptionForm")
     private List<MailSubscriptionForm> mMailSubscriptionForm = null;
+    @SerializedName("SpinToWin")
+    private List<SpinToWinModel> mSpinToWinList = null;
     @SerializedName("Story")
     private List<Story> mStory = null;
     @SerializedName("VERSION")
@@ -33,6 +37,14 @@ public class VisilabsMailSubscriptionFormResponse implements Serializable {
 
     public void setMailSubscriptionForm(List<MailSubscriptionForm> mailSubscriptionForm) {
         mMailSubscriptionForm = mailSubscriptionForm;
+    }
+
+    public List<SpinToWinModel> getSpinToWinList() {
+        return mSpinToWinList;
+    }
+
+    public void setSpinToWinList(List<SpinToWinModel> spinToWinList) {
+        mSpinToWinList = spinToWinList;
     }
 
     public List<Story> getStory() {
