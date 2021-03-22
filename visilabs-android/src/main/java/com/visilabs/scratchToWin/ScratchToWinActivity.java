@@ -36,6 +36,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
     }
 
     private void setupInitialView() {
+        //TODO: send impression report here
         setupCloseButton();
         setupScratchToWin();
         //TODO control if there is email
@@ -82,6 +83,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         binding.copyToClipboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: send click report here
                 String promotionCode = binding.promotionCodeText.getText().toString();
                 ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clipData = ClipData.newPlainText("", promotionCode);
@@ -99,6 +101,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         binding.invalidEmailMessage.setText("Invalid email");
         binding.resultText.setText("Check the boxes");
         binding.emailEdit.setHint("Please, enter your email");
+        //TODO: When the real data comes, add links to email texts to send browser.
         binding.emailPermitText.setText("I've read and accept Terms of Use");
         binding.consentText.setText("To read terms and conditions click here");
         binding.saveMail.setText("Save & Scratch");
@@ -132,6 +135,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
                     binding.emailEdit.setVisibility(View.GONE);
                     binding.saveMail.setVisibility(View.GONE);
                     //TODO update here when real data comes
+                    //TODO: send click report here
                     /*Visilabs.CallAPI().trackMailSubscriptionFormClick(mMailSubscriptionForm.getActiondata().getReport());
                     Visilabs.CallAPI().createSubsJsonRequest(mMailSubscriptionForm.getActid(),
                         mMailSubscriptionForm.getActiondata().getAuth(), email);

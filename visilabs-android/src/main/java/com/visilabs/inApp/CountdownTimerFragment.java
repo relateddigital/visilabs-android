@@ -165,6 +165,7 @@ public class CountdownTimerFragment extends Fragment {
         binding.couponButtonTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: send click report here
                 ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 //TODO: get coupon text from the response instead of view here
                 ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), binding.couponTextTop.getText().toString());
@@ -184,6 +185,7 @@ public class CountdownTimerFragment extends Fragment {
         binding.couponButtonBot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: send click report here
                 ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 //TODO: get coupon text from the response instead of view here
                 ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), binding.couponTextBot.getText().toString());
@@ -199,6 +201,7 @@ public class CountdownTimerFragment extends Fragment {
         binding.buttonTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: send click report here
                 //TODO: Remove Toast
                 Toast.makeText(getActivity(), "Go to the Link", Toast.LENGTH_LONG).show();
                 endFragment();
@@ -211,6 +214,7 @@ public class CountdownTimerFragment extends Fragment {
         binding.buttonBot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: send click report here
                 //TODO: Remove Toast
                 Toast.makeText(getActivity(), "Go to the Link", Toast.LENGTH_LONG).show();
                 endFragment();
