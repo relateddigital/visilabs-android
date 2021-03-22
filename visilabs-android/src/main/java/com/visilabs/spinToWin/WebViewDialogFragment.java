@@ -26,6 +26,8 @@ public class WebViewDialogFragment extends DialogFragment {
     private String mResponse;
     private String fileName = "";
     private boolean mIsRotation = false;
+    private SpinToWinCompleteInterface mListener;
+    private SpinToWinCopyToClipboardInterface mCopyToClipboardInterface;
 
     public WebViewDialogFragment (){}
 
@@ -63,6 +65,7 @@ public class WebViewDialogFragment extends DialogFragment {
             this.fileName = getArguments().getString("filename");
             mResponse = getArguments().getString("response");
             mJavaScriptInterface = new WebViewJavaScriptInterface(this, mResponse);
+            mJavaScriptInterface.setSpinToWinListeners(mListener, mCopyToClipboardInterface);
         }
     }
 
@@ -116,5 +119,10 @@ public class WebViewDialogFragment extends DialogFragment {
 
     public WebView getWebView() {
         return webView;
+    }
+
+    public void setSpinToWinListeners(SpinToWinCompleteInterface listener, SpinToWinCopyToClipboardInterface copyToClipboardInterface){
+        mListener = listener;
+        mCopyToClipboardInterface = copyToClipboardInterface;
     }
 }

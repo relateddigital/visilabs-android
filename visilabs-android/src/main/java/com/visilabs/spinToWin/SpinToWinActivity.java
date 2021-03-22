@@ -41,8 +41,8 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
         }
         if(jsonStr != null && !jsonStr.equals("")){
             WebViewDialogFragment webViewDialogFragment = WebViewDialogFragment.newInstance("spintowin.html", jsonStr);
+            webViewDialogFragment.setSpinToWinListeners(this, this);
             webViewDialogFragment.display(getSupportFragmentManager());
-            webViewDialogFragment.getJavaScriptInterface().setSpinToWinListeners(this, this);
         } else {
             Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");
             finish();
