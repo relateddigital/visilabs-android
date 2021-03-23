@@ -1,5 +1,6 @@
 package com.visilabs.inApp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -9,17 +10,15 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.PagerSnapHelper;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SnapHelper;
 
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
@@ -28,8 +27,7 @@ import com.visilabs.android.R;
 import com.visilabs.android.databinding.ActivityTemplateBinding;
 import com.visilabs.android.databinding.ActivityTemplateCarouselBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
-import com.visilabs.inApp.carousel.CarouselAdapter;
-import com.visilabs.inApp.carousel.CarouselFinishInterface;
+import com.visilabs.inApp.carousel.OnSwipeTouchListener;
 import com.visilabs.util.StringUtils;
 import com.visilabs.view.BaseRating;
 import com.visilabs.view.SmileRating;
@@ -37,6 +35,7 @@ import com.visilabs.view.SmileRating;
 
 public class TemplateActivity extends Activity implements SmileRating.OnSmileySelectionListener, SmileRating.OnRatingSelectedListener {
 
+    private static final String LOG_TAG = "Template Activity";
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
     InAppMessage mInAppMessage;
     private VisilabsUpdateDisplayState mUpdateDisplayState;
@@ -44,7 +43,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private ActivityTemplateBinding binding;
     private ActivityTemplateCarouselBinding bindingCarousel;
     private boolean mIsCarousel = false;
-    private CarouselFinishInterface carouselFinishInterface;
+    private int mCarouselPosition = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +72,23 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         if (isShowingInApp() && mInAppMessage != null) {
             if (mIsCarousel) {
-                setupViewCarousel();
+                mCarouselPosition = 0;
+                bindingCarousel.carouselContainer.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+                    public void onSwipeRight() {
+                        if(!isFirstCarousel()) {
+                            mCarouselPosition--;
+                            setupViewCarousel();
+                        }
+                    }
+
+                    public void onSwipeLeft() {
+                        if(!isLastCarousel()) {
+                            mCarouselPosition++;
+                            setupViewCarousel();
+                        }
+                    }
+                });
+                setupInitialViewCarousel();
             } else {
                 setUpView();
             }
@@ -393,20 +408,146 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
     }
 
-    private void setupViewCarousel() {
-        carouselFinishInterface = new CarouselFinishInterface() {
+    private void setupInitialViewCarousel() {
+        bindingCarousel.carouselCloseButton.setBackgroundResource(getCloseIcon());
+        bindingCarousel.carouselCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFinish() {
-                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+            public void onClick(View v) {
                 finish();
             }
-        };
-        CarouselAdapter adapter = new CarouselAdapter(getApplicationContext(), mInAppMessage, carouselFinishInterface);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-        bindingCarousel.carouselListView.setLayoutManager(layoutManager);
-        bindingCarousel.carouselListView.setAdapter(adapter);
-        bindingCarousel.carouselListView.setHasFixedSize(true);
-        SnapHelper snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(bindingCarousel.carouselListView);
+        });
+        setupViewCarousel();
+    }
+
+    private void setupViewCarousel() {
+        bindingCarousel.carouselImage.setVisibility(View.VISIBLE);
+        bindingCarousel.carouselTitle.setVisibility(View.VISIBLE);
+        bindingCarousel.carouselBodyText.setVisibility(View.VISIBLE);
+        bindingCarousel.carouselButton.setVisibility(View.VISIBLE);
+        //TODO: check mInAppMessage and mCarouselPosition and set visibilities
+        switch (mCarouselPosition) {
+            case 0: {
+                Picasso.get().
+                        load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg")
+                        .into(bindingCarousel.carouselImage);
+
+                bindingCarousel.carouselTitle.setText("Carousel Item1 Title");
+                bindingCarousel.carouselTitle.setTextColor(getResources().getColor(R.color.blue));
+                bindingCarousel.carouselTitle.setTextSize(32);
+                bindingCarousel.carouselBodyText.setText("Carousel Item1 Text");
+                bindingCarousel.carouselBodyText.setTextColor(getResources().getColor(R.color.black));
+                bindingCarousel.carouselBodyText.setTextSize(16);
+                bindingCarousel.carouselButton.setText("Carousel Item1 Button");
+                bindingCarousel.carouselButton.setTextColor(getResources().getColor(R.color.yellow));
+                bindingCarousel.carouselButton.setTextSize(24);
+                bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
+                            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(viewIntent);
+                        } catch (Exception e) {
+                            Log.e(LOG_TAG, "The link is not formatted properly!");
+                        }
+                    }
+                });
+                break;
+            }
+            case 1: {
+                bindingCarousel.carouselImage.setVisibility(View.GONE);
+                bindingCarousel.carouselTitle.setText("Carousel Item2 Title");
+                bindingCarousel.carouselTitle.setTextColor(getResources().getColor(R.color.black));
+                bindingCarousel.carouselTitle.setTextSize(32);
+                bindingCarousel.carouselBodyText.setText("Carousel Item2 Text");
+                bindingCarousel.carouselBodyText.setTextColor(getResources().getColor(R.color.yellow));
+                bindingCarousel.carouselBodyText.setTextSize(16);
+                bindingCarousel.carouselButton.setText("Carousel Item2 Button");
+                bindingCarousel.carouselButton.setTextColor(getResources().getColor(R.color.blue));
+                bindingCarousel.carouselButton.setTextSize(24);
+                bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
+                            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(viewIntent);
+                        } catch (Exception e) {
+                            Log.e(LOG_TAG, "The link is not formatted properly!");
+                        }
+                    }
+                });
+                break;
+            }
+            case 2: {
+                Picasso.get().
+                        load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg")
+                        .into(bindingCarousel.carouselImage);
+                bindingCarousel.carouselTitle.setText("Carousel Item3 Title");
+                bindingCarousel.carouselTitle.setTextColor(getResources().getColor(R.color.blue));
+                bindingCarousel.carouselTitle.setTextSize(32);
+                bindingCarousel.carouselBodyText.setText("Carousel Item3 Text");
+                bindingCarousel.carouselBodyText.setTextColor(getResources().getColor(R.color.yellow));
+                bindingCarousel.carouselBodyText.setTextSize(16);
+                bindingCarousel.carouselButton.setVisibility(View.GONE);
+                break;
+            }
+            case 3: {
+                bindingCarousel.carouselImage.setVisibility(View.GONE);
+                bindingCarousel.carouselTitle.setText("Carousel Item4 Title");
+                bindingCarousel.carouselTitle.setTextColor(getResources().getColor(R.color.black));
+                bindingCarousel.carouselTitle.setTextSize(32);
+                bindingCarousel.carouselBodyText.setVisibility(View.GONE);
+                bindingCarousel.carouselButton.setText("Carousel Item4 Button");
+                bindingCarousel.carouselButton.setTextColor(getResources().getColor(R.color.blue));
+                bindingCarousel.carouselButton.setTextSize(24);
+                bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
+                            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(viewIntent);
+                        } catch (Exception e) {
+                            Log.e(LOG_TAG, "The link is not formatted properly!");
+                        }
+                    }
+                });
+                break;
+            }
+            case 4: {
+                Picasso.get().
+                        load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png")
+                        .into(bindingCarousel.carouselImage);
+                bindingCarousel.carouselTitle.setVisibility(View.GONE);
+                bindingCarousel.carouselBodyText.setText("Carousel Item5 Text");
+                bindingCarousel.carouselBodyText.setTextColor(getResources().getColor(R.color.yellow));
+                bindingCarousel.carouselBodyText.setTextSize(16);
+                bindingCarousel.carouselButton.setVisibility(View.GONE);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    private int getCarouselItemCount() {
+        //TODO: return real carousel item count here
+        return 5;
+    }
+
+    private boolean isLastCarousel() {
+        //TODO: Check if the carousel was the last one
+        return mCarouselPosition == getCarouselItemCount() - 1;
+    }
+
+    private boolean isFirstCarousel() {
+        //TODO: Check if the carousel was the first one
+        return mCarouselPosition == 0;
+    }
+
+    private void cacheImages() {
+        //TODO: you may cache the images first
     }
 }
