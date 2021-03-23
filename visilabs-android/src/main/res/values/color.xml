@@ -5,6 +5,8 @@
     <color name="progress_primary">@color/white</color>
     <color name="progress_secondary">@color/gray_scale</color>
     <color name="progress_max_active">@color/white</color>
+    <color name="dot_indicator_default">#B2B2B2</color>
+    <color name="dot_indicator_selected">#666666</color>
 
     <color name="gray_scale">#8AFFFFFF</color>
     <color name="white">#FFFFFF</color>

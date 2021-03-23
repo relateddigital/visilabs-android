@@ -14,8 +14,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -45,12 +45,15 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private boolean mIsCarousel = false;
     private int mCarouselPosition = -1;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
         mInAppMessage = getInAppMessage();
+
+        cacheImages();
 
         View view;
 
@@ -416,6 +419,15 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 finish();
             }
         });
+        for(int i = 0 ; i < getCarouselItemCount() ; i++) {
+            View view = new View(getApplicationContext());
+            view.setBackgroundResource(R.drawable.dot_indicator_default);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    40, 40);
+            layoutParams.setMargins(10, 0, 10, 0);
+            view.setLayoutParams(layoutParams);
+            bindingCarousel.dotIndicator.addView(view);
+        }
         setupViewCarousel();
     }
 
@@ -424,21 +436,31 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         bindingCarousel.carouselTitle.setVisibility(View.VISIBLE);
         bindingCarousel.carouselBodyText.setVisibility(View.VISIBLE);
         bindingCarousel.carouselButton.setVisibility(View.VISIBLE);
+
+        for(int i = 0 ; i < getCarouselItemCount() ; i++) {
+            if(i == mCarouselPosition) {
+                bindingCarousel.dotIndicator.getChildAt(i).setBackgroundResource(R.drawable.dot_indicator_selected);
+            } else {
+                bindingCarousel.dotIndicator.getChildAt(i).setBackgroundResource(R.drawable.dot_indicator_default);
+            }
+        }
         //TODO: check mInAppMessage and mCarouselPosition and set visibilities
         switch (mCarouselPosition) {
             case 0: {
+                bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#CD2F2F"));
                 Picasso.get().
                         load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg")
                         .into(bindingCarousel.carouselImage);
 
-                bindingCarousel.carouselTitle.setText("Carousel Item1 Title");
-                bindingCarousel.carouselTitle.setTextColor(getResources().getColor(R.color.blue));
+                bindingCarousel.carouselTitle.setText("Title1");
+                bindingCarousel.carouselTitle.setTextColor(Color.parseColor("#E8F279"));
                 bindingCarousel.carouselTitle.setTextSize(32);
-                bindingCarousel.carouselBodyText.setText("Carousel Item1 Text");
-                bindingCarousel.carouselBodyText.setTextColor(getResources().getColor(R.color.black));
-                bindingCarousel.carouselBodyText.setTextSize(16);
-                bindingCarousel.carouselButton.setText("Carousel Item1 Button");
-                bindingCarousel.carouselButton.setTextColor(getResources().getColor(R.color.yellow));
+                bindingCarousel.carouselBodyText.setText("Text1");
+                bindingCarousel.carouselBodyText.setTextColor(Color.parseColor("#E3A9E7"));
+                bindingCarousel.carouselBodyText.setTextSize(24);
+                bindingCarousel.carouselButton.setText("Button1");
+                bindingCarousel.carouselButton.setTextColor(Color.parseColor("#000000"));
+                bindingCarousel.carouselButton.setBackgroundColor(Color.parseColor("#A9E7E4"));
                 bindingCarousel.carouselButton.setTextSize(24);
                 bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -455,15 +477,17 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
             }
             case 1: {
+                bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#77CD2F"));
                 bindingCarousel.carouselImage.setVisibility(View.GONE);
-                bindingCarousel.carouselTitle.setText("Carousel Item2 Title");
-                bindingCarousel.carouselTitle.setTextColor(getResources().getColor(R.color.black));
+                bindingCarousel.carouselTitle.setText("Title2");
+                bindingCarousel.carouselTitle.setTextColor(Color.parseColor("#F5F43E"));
                 bindingCarousel.carouselTitle.setTextSize(32);
-                bindingCarousel.carouselBodyText.setText("Carousel Item2 Text");
-                bindingCarousel.carouselBodyText.setTextColor(getResources().getColor(R.color.yellow));
-                bindingCarousel.carouselBodyText.setTextSize(16);
-                bindingCarousel.carouselButton.setText("Carousel Item2 Button");
-                bindingCarousel.carouselButton.setTextColor(getResources().getColor(R.color.blue));
+                bindingCarousel.carouselBodyText.setText("Text2");
+                bindingCarousel.carouselBodyText.setTextColor(Color.parseColor("#FFFFFF"));
+                bindingCarousel.carouselBodyText.setTextSize(24);
+                bindingCarousel.carouselButton.setText("Button2");
+                bindingCarousel.carouselButton.setBackgroundColor(Color.parseColor("#27FB76"));
+                bindingCarousel.carouselButton.setTextColor(Color.parseColor("#000000"));
                 bindingCarousel.carouselButton.setTextSize(24);
                 bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -480,26 +504,29 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
             }
             case 2: {
+                bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#2FBBCD"));
                 Picasso.get().
                         load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg")
                         .into(bindingCarousel.carouselImage);
-                bindingCarousel.carouselTitle.setText("Carousel Item3 Title");
-                bindingCarousel.carouselTitle.setTextColor(getResources().getColor(R.color.blue));
+                bindingCarousel.carouselTitle.setText("Title3");
+                bindingCarousel.carouselTitle.setTextColor(Color.parseColor("#FFFFFF"));
                 bindingCarousel.carouselTitle.setTextSize(32);
-                bindingCarousel.carouselBodyText.setText("Carousel Item3 Text");
-                bindingCarousel.carouselBodyText.setTextColor(getResources().getColor(R.color.yellow));
-                bindingCarousel.carouselBodyText.setTextSize(16);
+                bindingCarousel.carouselBodyText.setText("Text3");
+                bindingCarousel.carouselBodyText.setTextColor(Color.parseColor("#1D19E0"));
+                bindingCarousel.carouselBodyText.setTextSize(24);
                 bindingCarousel.carouselButton.setVisibility(View.GONE);
                 break;
             }
             case 3: {
+                bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#C9CD2F"));
                 bindingCarousel.carouselImage.setVisibility(View.GONE);
-                bindingCarousel.carouselTitle.setText("Carousel Item4 Title");
-                bindingCarousel.carouselTitle.setTextColor(getResources().getColor(R.color.black));
+                bindingCarousel.carouselTitle.setText("Title4");
+                bindingCarousel.carouselTitle.setTextColor(Color.parseColor("#E019D6"));
                 bindingCarousel.carouselTitle.setTextSize(32);
                 bindingCarousel.carouselBodyText.setVisibility(View.GONE);
-                bindingCarousel.carouselButton.setText("Carousel Item4 Button");
-                bindingCarousel.carouselButton.setTextColor(getResources().getColor(R.color.blue));
+                bindingCarousel.carouselButton.setText("Button4");
+                bindingCarousel.carouselButton.setBackgroundColor(Color.parseColor("#E02B19"));
+                bindingCarousel.carouselButton.setTextColor(Color.parseColor("#080201"));
                 bindingCarousel.carouselButton.setTextSize(24);
                 bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -516,13 +543,14 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
             }
             case 4: {
+                bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#CD2FC5"));
                 Picasso.get().
                         load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png")
                         .into(bindingCarousel.carouselImage);
                 bindingCarousel.carouselTitle.setVisibility(View.GONE);
-                bindingCarousel.carouselBodyText.setText("Carousel Item5 Text");
+                bindingCarousel.carouselBodyText.setText("Text5");
                 bindingCarousel.carouselBodyText.setTextColor(getResources().getColor(R.color.yellow));
-                bindingCarousel.carouselBodyText.setTextSize(16);
+                bindingCarousel.carouselBodyText.setTextSize(24);
                 bindingCarousel.carouselButton.setVisibility(View.GONE);
                 break;
             }
@@ -549,5 +577,14 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void cacheImages() {
         //TODO: you may cache the images first
+        //TODO: Tüm in app tipleri için cache le
+        Picasso.get().load(mInAppMessage.getActionData().getImg()).fetch();
+        Picasso.get().
+                load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg").fetch();
+        Picasso.get().
+                load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg").fetch();
+        Picasso.get().
+                load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png").fetch();
+
     }
 }
