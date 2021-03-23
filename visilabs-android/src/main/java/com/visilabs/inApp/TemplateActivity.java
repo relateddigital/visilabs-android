@@ -30,7 +30,6 @@ import com.visilabs.android.databinding.ActivityTemplateCarouselBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.inApp.carousel.CarouselAdapter;
 import com.visilabs.inApp.carousel.CarouselFinishInterface;
-import com.visilabs.inApp.carousel.CarouselLayoutManager;
 import com.visilabs.util.StringUtils;
 import com.visilabs.view.BaseRating;
 import com.visilabs.view.SmileRating;
@@ -403,11 +402,10 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         };
         CarouselAdapter adapter = new CarouselAdapter(getApplicationContext(), mInAppMessage, carouselFinishInterface);
-        RecyclerView.LayoutManager layoutManager = new CarouselLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
         bindingCarousel.carouselListView.setLayoutManager(layoutManager);
         bindingCarousel.carouselListView.setAdapter(adapter);
         bindingCarousel.carouselListView.setHasFixedSize(true);
-        bindingCarousel.carouselListView.setNestedScrollingEnabled(false);
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(bindingCarousel.carouselListView);
     }
