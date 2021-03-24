@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.squareup.picasso.Picasso;
@@ -37,6 +38,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private static final String LOG_TAG = "Template Activity";
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
+    private static final String CAROUSEL_LAST_INDEX_KEY = "carousel_last_index";
     InAppMessage mInAppMessage;
     private VisilabsUpdateDisplayState mUpdateDisplayState;
     private int mIntentId = -1;
@@ -44,13 +46,19 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private ActivityTemplateCarouselBinding bindingCarousel;
     private boolean mIsCarousel = false;
     private int mCarouselPosition = -1;
+    private boolean mIsRotation = false;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
+        if(savedInstanceState != null) {
+            mIntentId = savedInstanceState.getInt(INTENT_ID_KEY, Integer.MAX_VALUE);
+        } else {
+            mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
+        }
+
         mInAppMessage = getInAppMessage();
 
         cacheImages();
@@ -64,6 +72,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             mIsCarousel = true;
             bindingCarousel = ActivityTemplateCarouselBinding.inflate(getLayoutInflater());
             view = bindingCarousel.getRoot();
+            if(savedInstanceState != null) {
+                mCarouselPosition = savedInstanceState.getInt(CAROUSEL_LAST_INDEX_KEY, -1);
+            }
         } else {
             mIsCarousel = false;
             binding = ActivityTemplateBinding.inflate(getLayoutInflater());
@@ -75,7 +86,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         if (isShowingInApp() && mInAppMessage != null) {
             if (mIsCarousel) {
-                mCarouselPosition = 0;
+                if(mCarouselPosition == -1) {
+                    mCarouselPosition = 0;
+                }
                 bindingCarousel.carouselContainer.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
                     public void onSwipeRight() {
                         if(!isFirstCarousel()) {
@@ -101,6 +114,16 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         }
 
         this.setFinishOnTouchOutside(true);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(INTENT_ID_KEY, mIntentId);
+        if(mIsCarousel) {
+            outState.putInt(CAROUSEL_LAST_INDEX_KEY, mCarouselPosition);
+        }
+        mIsRotation = true;
     }
 
     private InAppMessage getInAppMessage() {
@@ -408,7 +431,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+        if(mIsRotation) {
+            mIsRotation = false;
+        } else {
+            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+        }
     }
 
     private void setupInitialViewCarousel() {
@@ -416,6 +443,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         bindingCarousel.carouselCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                 finish();
             }
         });
