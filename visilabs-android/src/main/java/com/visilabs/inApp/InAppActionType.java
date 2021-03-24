@@ -74,5 +74,13 @@ public enum InAppActionType {
         public String toString() {
             return "nps_with_numbers";
         }
+    },
+
+    CAROUSEL {
+        @NonNull
+        @Override
+        public String toString() {
+            return "carousel"; //TODO: Check this string when the real data comes.
+        }
     }
 }

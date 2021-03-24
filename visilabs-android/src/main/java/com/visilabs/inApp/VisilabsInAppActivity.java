@@ -14,6 +14,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
@@ -31,6 +33,7 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
     private VisilabsUpdateDisplayState mUpdateDisplayState;
     private int mIntentId = -1;
     private ActivityInAppFullBinding binding;
+    private boolean mIsRotation = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +43,12 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
 
         setContentView(view);
 
-        mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
+        if(savedInstanceState != null) {
+            mIntentId = savedInstanceState.getInt(INTENT_ID_KEY, Integer.MAX_VALUE);
+        } else {
+            mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
+        }
+
         mUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(mIntentId);
 
 
@@ -56,6 +64,13 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
         } else {
             finish();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(INTENT_ID_KEY, mIntentId);
+        mIsRotation = true;
     }
 
     @Override
@@ -189,7 +204,11 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+        if(mIsRotation) {
+            mIsRotation = false;
+        } else {
+            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+        }
     }
 
 }

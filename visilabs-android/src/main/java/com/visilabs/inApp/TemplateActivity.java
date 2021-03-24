@@ -1,5 +1,6 @@
 package com.visilabs.inApp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -9,12 +10,15 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.squareup.picasso.Picasso;
@@ -22,7 +26,9 @@ import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.ActivityTemplateBinding;
+import com.visilabs.android.databinding.ActivityTemplateCarouselBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
+import com.visilabs.inApp.carousel.OnSwipeTouchListener;
 import com.visilabs.util.StringUtils;
 import com.visilabs.view.BaseRating;
 import com.visilabs.view.SmileRating;
@@ -32,32 +38,93 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private static final String LOG_TAG = "Template Activity";
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
+    private static final String LOG_TAG = "Template Activity";
+    private static final String CAROUSEL_LAST_INDEX_KEY = "carousel_last_index";
     InAppMessage mInAppMessage;
     private VisilabsUpdateDisplayState mUpdateDisplayState;
     private int mIntentId = -1;
     private ActivityTemplateBinding binding;
+    private ActivityTemplateCarouselBinding bindingCarousel;
+    private boolean mIsCarousel = false;
+    private int mCarouselPosition = -1;
+    private boolean mIsRotation = false;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityTemplateBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        //supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
+
+        if (savedInstanceState != null) {
+            mIntentId = savedInstanceState.getInt(INTENT_ID_KEY, Integer.MAX_VALUE);
+        } else {
+            mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
+        }
 
         mInAppMessage = getInAppMessage();
+
+        cacheImages();
+
+        View view;
+
+        //TODO: Open this line to test carousel.
+        //mInAppMessage.getActionData().setMsgType(InAppActionType.CAROUSEL.toString());
+
+        if (mInAppMessage.getActionData().getMsgType() == InAppActionType.CAROUSEL) {
+            mIsCarousel = true;
+            bindingCarousel = ActivityTemplateCarouselBinding.inflate(getLayoutInflater());
+            view = bindingCarousel.getRoot();
+            if (savedInstanceState != null) {
+                mCarouselPosition = savedInstanceState.getInt(CAROUSEL_LAST_INDEX_KEY, -1);
+            }
+        } else {
+            mIsCarousel = false;
+            binding = ActivityTemplateBinding.inflate(getLayoutInflater());
+            view = binding.getRoot();
+        }
 
         setContentView(view);
         this.setFinishOnTouchOutside(false);
 
         if (isShowingInApp() && mInAppMessage != null) {
-            setUpView();
+            if (mIsCarousel) {
+                if (mCarouselPosition == -1) {
+                    mCarouselPosition = 0;
+                }
+                bindingCarousel.carouselContainer.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+                    public void onSwipeRight() {
+                        if (!isFirstCarousel()) {
+                            mCarouselPosition--;
+                            setupViewCarousel();
+                        }
+                    }
+
+                    public void onSwipeLeft() {
+                        if (!isLastCarousel()) {
+                            mCarouselPosition++;
+                            setupViewCarousel();
+                        }
+                    }
+                });
+                setupInitialViewCarousel();
+            } else {
+                setUpView();
+            }
         } else {
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             finish();
         }
 
         this.setFinishOnTouchOutside(true);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(INTENT_ID_KEY, mIntentId);
+        if (mIsCarousel) {
+            outState.putInt(CAROUSEL_LAST_INDEX_KEY, mCarouselPosition);
+        }
+        mIsRotation = true;
     }
 
     private InAppMessage getInAppMessage() {
@@ -79,7 +146,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setUpView() {
-        if(!mInAppMessage.getActionData().getImg().equals("")) {
+        if (!mInAppMessage.getActionData().getImg().equals("")) {
             binding.ivTemplate.setVisibility(View.VISIBLE);
             Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivTemplate);
         } else {
@@ -216,7 +283,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setBody() {
-        binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n","\n"));
+        binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n", "\n"));
         binding.tvBody.setTypeface(mInAppMessage.getActionData().getFontFamily());
         binding.tvBody.setVisibility(View.VISIBLE);
         if(mInAppMessage.getActionData().getMsgBodyColor() != null && !mInAppMessage.getActionData().getMsgBodyColor().equals("")) {
@@ -286,9 +353,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setPromotionCode() {
-        if(!StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromotionCode())
+        if (!StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromotionCode())
                 && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromoCodeBackgroundColor())
-                && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromoCodeTextColor())){
+                && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromoCodeTextColor())) {
             binding.llCouponContainer.setVisibility(View.VISIBLE);
             binding.llCouponContainer.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getPromoCodeBackgroundColor()));
             binding.tvCouponCode.setText(mInAppMessage.getActionData().getPromotionCode());
@@ -351,14 +418,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.npsWithNumbersView.setVisibility(View.VISIBLE);
         int[] colors = new int[mInAppMessage.getActionData().getNumberColors().length];
 
-        for(int i = 0; i < mInAppMessage.getActionData().getNumberColors().length; i ++) {
+        for (int i = 0; i < mInAppMessage.getActionData().getNumberColors().length; i++) {
             colors[i] = Color.parseColor(mInAppMessage.getActionData().getNumberColors()[i]);
         }
         binding.npsWithNumbersView.setColors(colors);
     }
-
-
-
 
     private int getCloseIcon() {
 
@@ -421,6 +485,187 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+        if (mIsRotation) {
+            mIsRotation = false;
+        } else {
+            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+        }
+    }
+
+    private void setupInitialViewCarousel() {
+        bindingCarousel.carouselCloseButton.setBackgroundResource(getCloseIcon());
+        bindingCarousel.carouselCloseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                finish();
+            }
+        });
+        for (int i = 0; i < getCarouselItemCount(); i++) {
+            View view = new View(getApplicationContext());
+            view.setBackgroundResource(R.drawable.dot_indicator_default);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    40, 40);
+            layoutParams.setMargins(10, 0, 10, 0);
+            view.setLayoutParams(layoutParams);
+            bindingCarousel.dotIndicator.addView(view);
+        }
+        setupViewCarousel();
+    }
+
+    private void setupViewCarousel() {
+        bindingCarousel.carouselImage.setVisibility(View.VISIBLE);
+        bindingCarousel.carouselTitle.setVisibility(View.VISIBLE);
+        bindingCarousel.carouselBodyText.setVisibility(View.VISIBLE);
+        bindingCarousel.carouselButton.setVisibility(View.VISIBLE);
+
+        for (int i = 0; i < getCarouselItemCount(); i++) {
+            if (i == mCarouselPosition) {
+                bindingCarousel.dotIndicator.getChildAt(i).setBackgroundResource(R.drawable.dot_indicator_selected);
+            } else {
+                bindingCarousel.dotIndicator.getChildAt(i).setBackgroundResource(R.drawable.dot_indicator_default);
+            }
+        }
+        //TODO: check mInAppMessage and mCarouselPosition and set visibilities
+        switch (mCarouselPosition) {
+            case 0: {
+                bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#CD2F2F"));
+                Picasso.get().
+                        load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg")
+                        .into(bindingCarousel.carouselImage);
+
+                bindingCarousel.carouselTitle.setText("Title1");
+                bindingCarousel.carouselTitle.setTextColor(Color.parseColor("#E8F279"));
+                bindingCarousel.carouselTitle.setTextSize(32);
+                bindingCarousel.carouselBodyText.setText("Text1");
+                bindingCarousel.carouselBodyText.setTextColor(Color.parseColor("#E3A9E7"));
+                bindingCarousel.carouselBodyText.setTextSize(24);
+                bindingCarousel.carouselButton.setText("Button1");
+                bindingCarousel.carouselButton.setTextColor(Color.parseColor("#000000"));
+                bindingCarousel.carouselButton.setBackgroundColor(Color.parseColor("#A9E7E4"));
+                bindingCarousel.carouselButton.setTextSize(24);
+                bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
+                            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(viewIntent);
+                        } catch (Exception e) {
+                            Log.e(LOG_TAG, "The link is not formatted properly!");
+                        }
+                    }
+                });
+                break;
+            }
+            case 1: {
+                bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#77CD2F"));
+                bindingCarousel.carouselImage.setVisibility(View.GONE);
+                bindingCarousel.carouselTitle.setText("Title2");
+                bindingCarousel.carouselTitle.setTextColor(Color.parseColor("#F5F43E"));
+                bindingCarousel.carouselTitle.setTextSize(32);
+                bindingCarousel.carouselBodyText.setText("Text2");
+                bindingCarousel.carouselBodyText.setTextColor(Color.parseColor("#FFFFFF"));
+                bindingCarousel.carouselBodyText.setTextSize(24);
+                bindingCarousel.carouselButton.setText("Button2");
+                bindingCarousel.carouselButton.setBackgroundColor(Color.parseColor("#27FB76"));
+                bindingCarousel.carouselButton.setTextColor(Color.parseColor("#000000"));
+                bindingCarousel.carouselButton.setTextSize(24);
+                bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
+                            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(viewIntent);
+                        } catch (Exception e) {
+                            Log.e(LOG_TAG, "The link is not formatted properly!");
+                        }
+                    }
+                });
+                break;
+            }
+            case 2: {
+                bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#2FBBCD"));
+                Picasso.get().
+                        load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg")
+                        .into(bindingCarousel.carouselImage);
+                bindingCarousel.carouselTitle.setText("Title3");
+                bindingCarousel.carouselTitle.setTextColor(Color.parseColor("#FFFFFF"));
+                bindingCarousel.carouselTitle.setTextSize(32);
+                bindingCarousel.carouselBodyText.setText("Text3");
+                bindingCarousel.carouselBodyText.setTextColor(Color.parseColor("#1D19E0"));
+                bindingCarousel.carouselBodyText.setTextSize(24);
+                bindingCarousel.carouselButton.setVisibility(View.GONE);
+                break;
+            }
+            case 3: {
+                bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#C9CD2F"));
+                bindingCarousel.carouselImage.setVisibility(View.GONE);
+                bindingCarousel.carouselTitle.setText("Title4");
+                bindingCarousel.carouselTitle.setTextColor(Color.parseColor("#E019D6"));
+                bindingCarousel.carouselTitle.setTextSize(32);
+                bindingCarousel.carouselBodyText.setVisibility(View.GONE);
+                bindingCarousel.carouselButton.setText("Button4");
+                bindingCarousel.carouselButton.setBackgroundColor(Color.parseColor("#E02B19"));
+                bindingCarousel.carouselButton.setTextColor(Color.parseColor("#080201"));
+                bindingCarousel.carouselButton.setTextSize(24);
+                bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
+                            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(viewIntent);
+                        } catch (Exception e) {
+                            Log.e(LOG_TAG, "The link is not formatted properly!");
+                        }
+                    }
+                });
+                break;
+            }
+            case 4: {
+                bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#CD2FC5"));
+                Picasso.get().
+                        load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png")
+                        .into(bindingCarousel.carouselImage);
+                bindingCarousel.carouselTitle.setVisibility(View.GONE);
+                bindingCarousel.carouselBodyText.setText("Text5");
+                bindingCarousel.carouselBodyText.setTextColor(getResources().getColor(R.color.yellow));
+                bindingCarousel.carouselBodyText.setTextSize(24);
+                bindingCarousel.carouselButton.setVisibility(View.GONE);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    private int getCarouselItemCount() {
+        //TODO: return real carousel item count here
+        return 5;
+    }
+
+    private boolean isLastCarousel() {
+        return mCarouselPosition == getCarouselItemCount() - 1;
+    }
+
+    private boolean isFirstCarousel() {
+        return mCarouselPosition == 0;
+    }
+
+    private void cacheImages() {
+        if (mIsCarousel) {
+            //TODO: cache all images for carousel
+            Picasso.get().
+                    load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg").fetch();
+            Picasso.get().
+                    load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg").fetch();
+            Picasso.get().
+                    load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png").fetch();
+        } else {
+            Picasso.get().load(mInAppMessage.getActionData().getImg()).fetch();
+        }
     }
 }
