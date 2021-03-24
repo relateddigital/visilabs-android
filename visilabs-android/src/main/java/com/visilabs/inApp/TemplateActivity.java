@@ -38,7 +38,6 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private static final String LOG_TAG = "Template Activity";
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
-    private static final String LOG_TAG = "Template Activity";
     private static final String CAROUSEL_LAST_INDEX_KEY = "carousel_last_index";
     InAppMessage mInAppMessage;
     private VisilabsUpdateDisplayState mUpdateDisplayState;
@@ -62,8 +61,6 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         mInAppMessage = getInAppMessage();
 
-        cacheImages();
-
         View view;
 
         //TODO: Open this line to test carousel.
@@ -81,6 +78,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             binding = ActivityTemplateBinding.inflate(getLayoutInflater());
             view = binding.getRoot();
         }
+
+        cacheImages();
 
         setContentView(view);
         this.setFinishOnTouchOutside(false);
