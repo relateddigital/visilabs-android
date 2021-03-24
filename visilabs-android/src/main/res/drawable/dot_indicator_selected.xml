@@ -4,5 +4,5 @@
     android:shape="ring"
     android:thickness="6dp"
     android:useLevel="false">
-    <solid android:color="@color/dot_indicator_selected"/>
+    <solid android:color="@color/dot_indicator_selected" />
 </shape>

@@ -36,8 +36,8 @@ import com.visilabs.view.SmileRating;
 
 public class TemplateActivity extends Activity implements SmileRating.OnSmileySelectionListener, SmileRating.OnRatingSelectedListener {
 
-    private static final String LOG_TAG = "Template Activity";
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
+    private static final String LOG_TAG = "Template Activity";
     private static final String CAROUSEL_LAST_INDEX_KEY = "carousel_last_index";
     InAppMessage mInAppMessage;
     private VisilabsUpdateDisplayState mUpdateDisplayState;
@@ -53,7 +53,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             mIntentId = savedInstanceState.getInt(INTENT_ID_KEY, Integer.MAX_VALUE);
         } else {
             mIntentId = getIntent().getIntExtra(INTENT_ID_KEY, Integer.MAX_VALUE);
@@ -65,14 +65,14 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         View view;
 
-        //TODO: Remove this line after testing
-        mInAppMessage.getActionData().setMsgType(InAppActionType.CAROUSEL.toString());
+        //TODO: Open this line to test carousel.
+        //mInAppMessage.getActionData().setMsgType(InAppActionType.CAROUSEL.toString());
 
         if (mInAppMessage.getActionData().getMsgType() == InAppActionType.CAROUSEL) {
             mIsCarousel = true;
             bindingCarousel = ActivityTemplateCarouselBinding.inflate(getLayoutInflater());
             view = bindingCarousel.getRoot();
-            if(savedInstanceState != null) {
+            if (savedInstanceState != null) {
                 mCarouselPosition = savedInstanceState.getInt(CAROUSEL_LAST_INDEX_KEY, -1);
             }
         } else {
@@ -86,19 +86,19 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         if (isShowingInApp() && mInAppMessage != null) {
             if (mIsCarousel) {
-                if(mCarouselPosition == -1) {
+                if (mCarouselPosition == -1) {
                     mCarouselPosition = 0;
                 }
                 bindingCarousel.carouselContainer.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
                     public void onSwipeRight() {
-                        if(!isFirstCarousel()) {
+                        if (!isFirstCarousel()) {
                             mCarouselPosition--;
                             setupViewCarousel();
                         }
                     }
 
                     public void onSwipeLeft() {
-                        if(!isLastCarousel()) {
+                        if (!isLastCarousel()) {
                             mCarouselPosition++;
                             setupViewCarousel();
                         }
@@ -120,7 +120,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(INTENT_ID_KEY, mIntentId);
-        if(mIsCarousel) {
+        if (mIsCarousel) {
             outState.putInt(CAROUSEL_LAST_INDEX_KEY, mCarouselPosition);
         }
         mIsRotation = true;
@@ -431,7 +431,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mIsRotation) {
+        if (mIsRotation) {
             mIsRotation = false;
         } else {
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
@@ -447,7 +447,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 finish();
             }
         });
-        for(int i = 0 ; i < getCarouselItemCount() ; i++) {
+        for (int i = 0; i < getCarouselItemCount(); i++) {
             View view = new View(getApplicationContext());
             view.setBackgroundResource(R.drawable.dot_indicator_default);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -465,8 +465,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         bindingCarousel.carouselBodyText.setVisibility(View.VISIBLE);
         bindingCarousel.carouselButton.setVisibility(View.VISIBLE);
 
-        for(int i = 0 ; i < getCarouselItemCount() ; i++) {
-            if(i == mCarouselPosition) {
+        for (int i = 0; i < getCarouselItemCount(); i++) {
+            if (i == mCarouselPosition) {
                 bindingCarousel.dotIndicator.getChildAt(i).setBackgroundResource(R.drawable.dot_indicator_selected);
             } else {
                 bindingCarousel.dotIndicator.getChildAt(i).setBackgroundResource(R.drawable.dot_indicator_default);
@@ -594,25 +594,24 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private boolean isLastCarousel() {
-        //TODO: Check if the carousel was the last one
         return mCarouselPosition == getCarouselItemCount() - 1;
     }
 
     private boolean isFirstCarousel() {
-        //TODO: Check if the carousel was the first one
         return mCarouselPosition == 0;
     }
 
     private void cacheImages() {
-        //TODO: you may cache the images first
-        //TODO: Tüm in app tipleri için cache le
-        Picasso.get().load(mInAppMessage.getActionData().getImg()).fetch();
-        Picasso.get().
-                load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg").fetch();
-        Picasso.get().
-                load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg").fetch();
-        Picasso.get().
-                load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png").fetch();
-
+        if (mIsCarousel) {
+            //TODO: cache all images for carousel
+            Picasso.get().
+                    load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg").fetch();
+            Picasso.get().
+                    load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg").fetch();
+            Picasso.get().
+                    load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png").fetch();
+        } else {
+            Picasso.get().load(mInAppMessage.getActionData().getImg()).fetch();
+        }
     }
 }
