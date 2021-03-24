@@ -38,6 +38,7 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
     StoryItemClickListener mStoryItemClickListener;
     VisilabsStoryLookingBannerResponse mStoryLookingBanner;
     String mExtendsProps;
+    private boolean moveShownToEnd = false;
 
     public VisilabsStoryLookingBannerAdapter(Context context, StoryItemClickListener storyItemClickListener) {
         mContext = context;
@@ -114,17 +115,29 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         if (borderRadius != null) {
             switch (borderRadius) {
                 case VisilabsConstant.STORY_CIRCLE:
-                    storyHolder.setCircleViewProperties(shown);
+                    if(moveShownToEnd) {
+                        storyHolder.setCircleViewProperties(shown);
+                    } else {
+                        storyHolder.setCircleViewProperties(isItShown(position));
+                    }
                     break;
 
                 case VisilabsConstant.STORY_ROUNDED_RECTANGLE:
                     float[] roundedRectangleBorderRadius = new float[]{15, 15, 15, 15, 15, 15, 15, 15};
-                    storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, shown);
+                    if(moveShownToEnd) {
+                        storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, shown);
+                    } else {
+                        storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, isItShown(position));
+                    }
                     break;
 
                 case VisilabsConstant.STORY_RECTANGLE:
                     float[] rectangleBorderRadius = new float[]{0, 0, 0, 0, 0, 0, 0, 0};
-                    storyHolder.setRectangleViewProperties(rectangleBorderRadius, shown);
+                    if(moveShownToEnd) {
+                        storyHolder.setRectangleViewProperties(rectangleBorderRadius, shown);
+                    } else {
+                        storyHolder.setRectangleViewProperties(rectangleBorderRadius, isItShown(position));
+                    }
                     break;
             }
         }
@@ -136,24 +149,33 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
     }
 
     public void setStoryList(VisilabsStoryLookingBannerResponse storyLookingBanner, String extendsProps) {
-        Map<String, List<String>> shownStoriesMap = PersistentTargetManager.with(mContext).getShownStories();
+        try {
+            ExtendedProps extendedProps = new Gson().fromJson(new java.net.URI(storyLookingBanner.
+                    getStory().get(0).getActiondata().getExtendedProps()).getPath(), ExtendedProps.class);
+            moveShownToEnd = extendedProps.getMoveShownToEnd();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (moveShownToEnd) {
+            Map<String, List<String>> shownStoriesMap = PersistentTargetManager.with(mContext).getShownStories();
 
-        if (shownStoriesMap.containsKey(storyLookingBanner.getStory().get(0).getActid())){
-            List<String> shownTitles = shownStoriesMap.get(storyLookingBanner.getStory().get(0).getActid());
-            List<Stories> notShownStories = new ArrayList<>();
-            List<Stories> shownStories = new ArrayList<>();
+            if (shownStoriesMap.containsKey(storyLookingBanner.getStory().get(0).getActid())){
+                List<String> shownTitles = shownStoriesMap.get(storyLookingBanner.getStory().get(0).getActid());
+                List<Stories> notShownStories = new ArrayList<>();
+                List<Stories> shownStories = new ArrayList<>();
 
-            if(shownTitles != null && !shownTitles.isEmpty()){
-                for(Stories s : storyLookingBanner.getStory().get(0).getActiondata().getStories()) {
-                    if(shownTitles.contains(s.getTitle())) {
-                        s.setShown(true);
-                        shownStories.add(s);
-                    } else {
-                        notShownStories.add(s);
+                if(shownTitles != null && !shownTitles.isEmpty()){
+                    for(Stories s : storyLookingBanner.getStory().get(0).getActiondata().getStories()) {
+                        if(shownTitles.contains(s.getTitle())) {
+                            s.setShown(true);
+                            shownStories.add(s);
+                        } else {
+                            notShownStories.add(s);
+                        }
                     }
+                    notShownStories.addAll(shownStories);
+                    storyLookingBanner.getStory().get(0).getActiondata().setStories(notShownStories);
                 }
-                notShownStories.addAll(shownStories);
-                storyLookingBanner.getStory().get(0).getActiondata().setStories(notShownStories);
             }
         }
 
@@ -215,5 +237,19 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
             civStory.setBorderColor(borderColor);
             civStory.setBorderWidth(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2);
         }
+    }
+
+    private boolean isItShown(int position) {
+        boolean result = false;
+        Map<String, List<String>> shownStoriesMap = PersistentTargetManager.with(mContext).getShownStories();
+
+        if (shownStoriesMap.containsKey(mStoryLookingBanner.getStory().get(0).getActid())){
+            List<String> shownTitles = shownStoriesMap.get(mStoryLookingBanner.getStory().get(0).getActid());
+
+            if(shownTitles != null && !shownTitles.isEmpty()){
+                result = shownTitles.contains(mStoryLookingBanner.getStory().get(0).getActiondata().getStories().get(position).getTitle());
+            }
+        }
+        return result;
     }
 }

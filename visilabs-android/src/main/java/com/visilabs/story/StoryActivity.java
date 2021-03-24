@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class StoryActivity extends Activity implements StoriesProgressView.StoriesListener {
+    private static final String LOG_TAG = "Story Activity";
 
     private static int VIDEO_DURATION_OFFSET = 1000;
     private StoriesProgressView mStoriesProgressView;
@@ -80,11 +81,22 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
 
         mActivity = this;
 
-        mActionData = (Actiondata) getIntent().getSerializableExtra(VisilabsConstant.ACTION_DATA);
-        mActionId = (String) getIntent().getSerializableExtra(VisilabsConstant.ACTION_ID);
-        mStoryPosition = getIntent().getExtras().getInt(VisilabsConstant.STORY_POSITION);
-        mStoryItemPosition = getIntent().getExtras().getInt(VisilabsConstant.STORY_ITEM_POSITION);
-        mStories = mActionData.getStories().get(mStoryPosition);
+        if(getIntent() != null) {
+            try {
+                mActionData = (Actiondata) getIntent().getSerializableExtra(VisilabsConstant.ACTION_DATA);
+                mActionId = (String) getIntent().getSerializableExtra(VisilabsConstant.ACTION_ID);
+                mStoryPosition = getIntent().getExtras().getInt(VisilabsConstant.STORY_POSITION);
+                mStoryItemPosition = getIntent().getExtras().getInt(VisilabsConstant.STORY_ITEM_POSITION);
+                mStories = mActionData.getStories().get(mStoryPosition);
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Could not get the story data properly, finishing...");
+                e.printStackTrace();
+                finish();
+            }
+        } else {
+            Log.e(LOG_TAG, "Could not get the story data properly, finishing...");
+            finish();
+        }
 
         mRetriever = new MediaMetadataRetriever();
         calculateDisplayTimeVideo();

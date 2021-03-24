@@ -1,19 +1,19 @@
 package com.visilabs.api;
 
-import com.visilabs.mailSub.VisilabsMailSubscriptionFormResponse;
+import com.visilabs.model.VisilabsActionsResponse;
 
 /**
  * An VisilabsMailSubsFormRequestCallback will be used to execute code after a Visilabs Action API request finishes running on a background thread.
  *
  * */
-public interface VisilabsMailSubsFormRequestCallback {
+public interface VisilabsActionsCallback {
     /**
      * Will be run if the target call is successful
      *
      * @param message the response data
      * @param url requested url
      */
-    void success(VisilabsMailSubscriptionFormResponse message, String url);
+    void success(VisilabsActionsResponse message, String url);
 
     /**
      * Will be run if the target call is failed

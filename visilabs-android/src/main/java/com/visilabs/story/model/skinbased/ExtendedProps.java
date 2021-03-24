@@ -6,6 +6,8 @@ public class ExtendedProps {
 
     private String storyz_img_borderColor;
 
+    private boolean moveShownToEnd;
+
     public String getStoryz_img_borderRadius() {
         return storyz_img_borderRadius;
     }
@@ -20,5 +22,13 @@ public class ExtendedProps {
 
     public void setStoryz_img_borderColor(String storyz_img_borderColor) {
         this.storyz_img_borderColor = storyz_img_borderColor;
+    }
+
+    public boolean getMoveShownToEnd() {
+        return moveShownToEnd;
+    }
+
+    public void setMoveShownToEnd(boolean moveShownToEnd) {
+        this.moveShownToEnd = moveShownToEnd;
     }
 }

@@ -1,477 +1,503 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
   <script type="text/javascript" src="spintowin.js"></script>
   <style type="text/css">
+        *,
+        input,
+        :before,
+        :after {
+            box-sizing: border-box;
+        }
 
-/*TODO: placeholder ı şeffaflaştır*/
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
 
-*, input, :before, :after {
-    box-sizing: border-box;
-}
+        input,
+        textarea,
+        select {
+            border: 1px solid #000;
+            max-width: 100%;
+            padding: 8px 10px;
+            border-radius: 0;
+        }
 
-label {
-    display: block;
-    margin-bottom: 10px;
-}
+        a,
+        .text-link {
+            color: #000;
+            text-decoration: none;
+            background: transparent;
+        }
 
-input, textarea, select {
-    border: 1px solid #000;
-    max-width: 100%;
-    padding: 8px 10px;
-    border-radius: 0;
-}
+        input,
+        textarea,
+        select {
+            background-color: inherit;
+            color: inherit;
+        }
 
-a, .text-link {
-    color: #000;
-    text-decoration: none;
-    background: transparent;
-}
+        input[type="checkbox"] {
+            -webkit-appearance: checkbox;
+            -moz-appearance: checkbox;
+        }
 
-input, textarea, select {
-    background-color: inherit;
-    color: inherit;
-}
+        input[type="checkbox"],
+        input[type="radio"] {
+            margin: 0 10px 0 0;
+            padding: 0;
+            width: auto;
+        }
 
-input[type="checkbox"] {
-    -webkit-appearance: checkbox;
-    -moz-appearance: checkbox;
-}
+        body,
+        input,
+        textarea,
+        button,
+        select {
+            font-size: 14.45px;
+            font-family: 'Futura', sans-serif;
+            letter-spacing: 0.025em;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -webkit-text-size-adjust: 100%;
+            text-rendering: optimizeSpeed;
+        }
 
-input[type="checkbox"], input[type="radio"] {
-    margin: 0 10px 0 0;
-    padding: 0;
-    width: auto;
-}
-
-body, input, textarea, button, select {
-    font-size: 14.45px;
-    font-family: 'Futura', sans-serif;
-    letter-spacing: 0.025em;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    -webkit-text-size-adjust: 100%;
-    text-rendering: optimizeSpeed;
-}
-
-      p {
-          display: block;
-          margin-block-start: 1em;
-          margin-block-end: 1em;
-          margin-inline-start: 0px;
-          margin-inline-end: 0px;
-          margin: 0 0 15px 0;
-      }
-
-
-
-      .wheelio_holder .wlo_panel {
-          width: 100%;
-      }
-
-      .wheelio_holder {
-    z-index: 2000000000;
-    z-index: 2147483647;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    width: 100vw;
-    height: 100vh;
-    font-family: Roboto,sans-serif;
-    line-height: 1em;
-    text-align: left;
-    top: 0;
-    left: 0;
-    direction: ltr!important;
-    overflow-y: auto;
-}
-
-      .wheelio_holder .wlo_panel {
-    margin: 0;
-    position: fixed; /*position: absolute;*/ /*egemen*/
-    overflow: hidden;
-    z-index: 10;
-    top: 0;
-    left: 0;
-    width: 100%;
-    min-height: 100vh;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    /*background-color: #ffffff;*/
-    -webkit-box-shadow: 5px 2px 60px 0 #000;
-    -moz-box-shadow: 5px 2px 60px 0 #000;
-    box-shadow: 5px 2px 60px 0 #000;
-}
-
-.wheelio_holder .wlo_content {
-    position: relative;
-    z-index: 2;
-    min-height: 100vh;
-    padding-top: 5%;
-    width: 40%;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    /*color: #fff;*/
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    flex-direction: column;
-    display: flex;
-    justify-content: center;
-    margin: unset;
-}
-
-.wheelio_holder .wlo_content {
-    min-height: 0;
-    left: 6%;
-    right: 6%;
-    width: 87%;
-    padding-bottom: 0;
-}
-
-.ed_flex_vert {
-    -webkit-box-orient: vertical;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
-}
-
-.ed_flex {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-}
-
-.wheelio_holder .wlo_content .wlo_form {
-    width: 100%;
-    padding: 20px 0;
-}
-
-.wlo_gpuac {
-    -webkit-transform: translate3d(0,0,0);
-    -webkit-backface-visibility: hidden;
-    -moz-transform: translate3d(0,0,0);
-    -moz-backface-visibility: hidden;
-    -o-transform: translate3d(0,0,0);
-    -o-backface-visibility: hidden;
-    -ms-transform: translate3d(0,0,0);
-    -ms-backface-visibility: hidden;
-    transform: translate3d(0,0,0);
-    backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    perspective: none;
-    -webkit-transform-style: flat;
-    -moz-transform-style: flat;
-    -o-transform-style: flat;
-    -ms-transform-style: flat;
-    will-change: opacity;
-}
-
-/*@media screen and (max-width: 750px)*/
-.wheelio_holder .wlo_content .wlo_title {
-    font-size: 26px;
-}
-
-.wheelio_holder .wlo_content .wlo_title, .wlo_title p {
-    font-size: 30px;
-    line-height: 1.3em;
-    font-weight: 700;
-    color: inherit;
-    margin-bottom: 20px;
-}
+        p {
+            display: block;
+            margin-block-start: 1em;
+            margin-block-end: 1em;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            margin: 0 0 15px 0;
+        }
 
 
-.wlo_enter_email p, .wlo_thank_you, .wlo_thank_you p {
-    line-height: 1.3em!important;
-    margin: 0 0 10px;
-}
 
-/*@media screen and (max-width: 750px)*/
-.wheelio_holder .wlo_content .wlo_close, .wheelio_holder .wlo_content .wlo_small_text, .wheelio_holder .wlo_content .wlo_text {
-    font-size: 14px;
-}
+        .wheelio_holder .wlo_panel {
+            width: 100%;
+        }
 
-.wheelio_holder .wlo_content .wlo_close, .wheelio_holder .wlo_content .wlo_small_text, .wheelio_holder .wlo_content .wlo_subtext, .wheelio_holder .wlo_content .wlo_text {
-    font-size: 14px;
-    color: inherit;
-    text-shadow: none;
-}
+        .wheelio_holder {
+            z-index: 2000000000;
+            z-index: 2147483647;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            width: 100vw;
+            height: 100vh;
+            font-family: Roboto, sans-serif;
+            line-height: 1em;
+            text-align: left;
+            top: 0;
+            left: 0;
+            direction: ltr !important;
+            overflow-y: auto;
+        }
 
-.wheelio_holder .wlo_content .wlo_small_text {
-    -moz-opacity: .6;
-    -khtml-opacity: .6;
-    opacity: .6;
-}
+        .wheelio_holder .wlo_panel {
+            margin: 0;
+            position: fixed;
+            /*position: absolute;*/
+            /*egemen*/
+            overflow: hidden;
+            z-index: 10;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100vh;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            /*background-color: #ffffff;*/
+            -webkit-box-shadow: 5px 2px 60px 0 #000;
+            -moz-box-shadow: 5px 2px 60px 0 #000;
+            box-shadow: 5px 2px 60px 0 #000;
+        }
 
-.wheelio_holder .wlo_toast {
-    pointer-events: none;
-    position: absolute;
-    padding: 0;
-    background-color: #ffa3bf;
-    z-index: 999999;
-    color: #111;
-    font-size: 15px;
-    line-height: 38px;
-    border-radius: 3px;
-    -webkit-box-shadow: 3px 5px 15px 0 rgba(0,0,0,.3);
-    -moz-box-shadow: 3px 5px 15px 0 rgba(0,0,0,.3);
-    box-shadow: 3px 5px 15px 0 rgba(0,0,0,.3);
-}
+        .wheelio_holder .wlo_content {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            padding-top: 5%;
+            width: 40%;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            /*color: #fff;*/
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            flex-direction: column;
+            display: flex;
+            justify-content: center;
+            margin: unset;
+        }
 
-.toast_animate_out {
-    opacity: 0;
-    transition: .3s;
-}
+        .wheelio_holder .wlo_content {
+            min-height: 0;
+            left: 6%;
+            right: 6%;
+            width: 87%;
+            padding-bottom: 0;
+        }
 
-.enter_email_toast {
-    width: 100%;
-    text-align: center;
-}
+        .ed_flex_vert {
+            -webkit-box-orient: vertical;
+            -webkit-flex-direction: column;
+            -ms-flex-direction: column;
+            flex-direction: column;
+        }
 
-#wl_custom_fields_holder {
-    z-index: 1001;
-    position: relative;
-}
+        .ed_flex {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+        }
 
-/*@media screen and (max-width: 470px)*/
-.wheelio_holder .wlo_content .wlo_btn, .wheelio_holder .wlo_content .wlo_email_input {
-    max-width: 360px!important;
-}
+        .wheelio_holder .wlo_content .wlo_form {
+            width: 100%;
+            padding: 20px 0;
+        }
 
-.wheelio_holder .wlo_content input.wlo_input {
-    font-style: normal!important;
-    font-family: Roboto,sans-serif;
-    border-radius: 3px!important;
-    height: 40px!important;
-    line-height: 40px!important;
-    padding: 0!important;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    width: 100%;
-    max-width: 400px;
-    font-size: 16px;
-    text-indent: 10px;
-    color: #333;
-    border: none;
-    background-color: #fff;
-}
+        .wlo_gpuac {
+            -webkit-transform: translate3d(0, 0, 0);
+            -webkit-backface-visibility: hidden;
+            -moz-transform: translate3d(0, 0, 0);
+            -moz-backface-visibility: hidden;
+            -o-transform: translate3d(0, 0, 0);
+            -o-backface-visibility: hidden;
+            -ms-transform: translate3d(0, 0, 0);
+            -ms-backface-visibility: hidden;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            -webkit-perspective: 1000;
+            perspective: none;
+            -webkit-transform-style: flat;
+            -moz-transform-style: flat;
+            -o-transform-style: flat;
+            -ms-transform-style: flat;
+            will-change: opacity;
+        }
 
-/*@media screen and (max-width: 750px)*/
-.wheelio_holder .wlo_content input.wlo_input {
-    line-height: 35px!important;
-    height: 35px!important;
-    font-size: 16px;
-}
+        /*@media screen and (max-width: 750px)*/
+        .wheelio_holder .wlo_content .wlo_title {
+            font-size: 26px;
+        }
 
-#wl_custom_fields_holder .wlo_input {
-    background-color: #0000001c;
-}
-
-#wl_custom_fields_holder.wlo_invert_input .wlo_input {
-    background-color: #fff!important;
-}
-
-.wheelio_holder .wlo_content input[type=checkbox] {
-    height: 0;
-    -webkit-transform: translate(-10000px,0);
-    -moz-transform: translate(-10000px,0);
-    -ms-transform: translate(-10000px,0);
-    transform: translate(-10000px,0);
-}
-
-/*@media screen and (max-width: 750px)*/
-.wheelio_holder .wlo_content input[type=checkbox]+label, .wheelio_holder .wlo_content textarea.wlo_textarea {
-    font-size: 16px;
-}
-
-.wheelio_holder .wlo_content input[type=checkbox]+label {
-    display: block;
-    position: relative;
-    text-align: left;
-    padding-left: 25px;
-    width: 100%;
-}
-
-label:not(.variant__button-label), .label {
-    /*letter-spacing: 0.2em;*/
-    font-size: 0.8em;
-}
-
-.wheelio_holder .wlo_content input[type=checkbox]+label::before {
-    border-color: #0000001c!important;
-    background-color: #5555551c!important;
-}
-
-.wheelio_holder .wlo_content input[type=checkbox]+label:before {
-    content: "";
-    display: block;
-    position: absolute;
-    left: 0;
-    top: 3px;
-    background-color: #fff;
-    border-radius: 2px;
-    border: 2px solid #fff;
-    width: 16px;
-    height: 16px;
-    -ms-transform: rotate(0);
-    -webkit-transform: rotate(0);
-    transform: rotate(0);
-    transition: all .3s;
-    -webkit-transition: all .3s;
-    -moz-transition: all .3s;
-    -o-transition: all .3s;
-    transition-timing-function: ease;
-}
-
-.wheelio_holder .wlo_content .wlo_invert_input input[type=checkbox]+label::before {
-    border-color: #fff!important;
-    background-color: #fff!important;
-}
-
-.wheelio_holder .wlo_content input[type=checkbox]:not(:checked)+label:before {
-    border: 2px solid #fff;
-    border-radius: 2px;
-}
-
-.wheelio_holder .wlo_content input[type=checkbox]+label:after {
-    content: "";
-    position: absolute;
-    width: 5px;
-    height: 10px;
-    left: 3px;
-    top: 12px;
-    border: none;
-    border-top: 3px solid #fff;
-    border-right: 3px solid #fff;
-    -webkit-transform-origin: left top;
-    -moz-transform-origin: left top;
-    -ms-transform-origin: left top;
-    -o-transform-origin: left top;
-    transform-origin: left top;
-    -webkit-transform: scaleX(-1) rotate(135deg);
-    -moz-transform: scaleX(-1) rotate(135deg);
-    -ms-transform: scaleX(-1) rotate(135deg);
-    transform: scaleX(-1) rotate(135deg);
-    -moz-opacity: .3;
-    -khtml-opacity: .3;
-    opacity: .3;
-    transition: all .3s;
-    -webkit-transition: all .3s;
-    -moz-transition: all .3s;
-    -o-transition: all .3s;
-    transition-timing-function: ease;
-}
-
-.wheelio_holder .wlo_content input[type=checkbox]:checked+label:after {
-    -moz-opacity: 1;
-    -khtml-opacity: 1;
-    opacity: 1;
-    border-top: 3px solid #3c3c3c;
-    border-right: 3px solid #3c3c3c;
-}
-
-.wlo_gdpr_text a {
-    text-decoration: underline;
-}
-
-.link-accent-color, .wlo_gdpr_text a {
-    color: unset;
-}
-
-.wlo_btn {
-    background-color: #111;
-    color: inherit;
-    padding: 8px 20px;
-    line-height: 1.5em;
-    max-width: inherit;
-    /*font-size: 16px!important;*/
-    margin-top: 20px;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    border-radius: 3px;
-    text-align: center;
-    cursor: pointer;
-    margin-bottom: 10px;
-    min-height: 40px;
-}
-
-.wheelio_holder .wlo_content .wlo_btn, .wheelio_holder .wlo_content .wlo_email_input {
-    max-width: 360px!important;
-}
+        .wheelio_holder .wlo_content .wlo_title,
+        .wlo_title p {
+            font-size: 30px;
+            line-height: 1.3em;
+            font-weight: 700;
+            color: inherit;
+            margin-bottom: 20px;
+        }
 
 
-#spin-to-win-box-close {
-  position: absolute; top:-10px; right:-10px; cursor: pointer; opacity: 0.7; z-index: 1; width: 30px; height: : 30px; 
-}
+        .wlo_enter_email p,
+        .wlo_thank_you,
+        .wlo_thank_you p {
+            line-height: 1.3em !important;
+            margin: 0 0 10px;
+        }
 
-#canvas-container {
-    float: left;
-    width: 207px;
-    height: 414px;
-}
+        /*@media screen and (max-width: 750px)*/
+        .wheelio_holder .wlo_content .wlo_close,
+        .wheelio_holder .wlo_content .wlo_small_text,
+        .wheelio_holder .wlo_content .wlo_text {
+            font-size: 14px;
+        }
 
-#canvas-container {
-    float: unset;
-    width: 100%;
-    text-align: center;
-    position: relative;
-}
+        .wheelio_holder .wlo_content .wlo_close,
+        .wheelio_holder .wlo_content .wlo_small_text,
+        .wheelio_holder .wlo_content .wlo_subtext,
+        .wheelio_holder .wlo_content .wlo_text {
+            font-size: 14px;
+            color: inherit;
+            text-shadow: none;
+        }
 
-#arrow-container {
-    width: 20px;
-    height: 30px;
-    display: inline-block;
-    position: absolute;
-    box-sizing: border-box;
-    top: calc(50% - 14px);
-    left: 197px;
-    z-index: 1;
-    transform: rotate(90deg);
-}
+        .wheelio_holder .wlo_content .wlo_small_text {
+            -moz-opacity: .6;
+            -khtml-opacity: .6;
+            opacity: .6;
+        }
 
-#arrow-container {
-    top: 167.19230769230768px;
-    transform: rotate(45deg);
-    left: calc(50% - 10px);
-}
+        .wheelio_holder .wlo_toast {
+            pointer-events: none;
+            position: absolute;
+            padding: 0;
+            background-color: #ffa3bf;
+            z-index: 999999;
+            color: #111;
+            font-size: 15px;
+            line-height: 38px;
+            border-radius: 3px;
+            -webkit-box-shadow: 3px 5px 15px 0 rgba(0, 0, 0, .3);
+            -moz-box-shadow: 3px 5px 15px 0 rgba(0, 0, 0, .3);
+            box-shadow: 3px 5px 15px 0 rgba(0, 0, 0, .3);
+        }
 
-#wheel-container {
-    float: left;
-    height: 414px;
-    width: 207px;
-    margin: 20px 0;
-    overflow: hidden;
-}
+        .toast_animate_out {
+            opacity: 0;
+            transition: .3s;
+        }
 
-#wheel-container {
-    width: 414px;
-    margin: 0 auto;
-    float: unset;
-    transform: rotate(-90deg);
-}
+        .enter_email_toast {
+            width: 100%;
+            text-align: center;
+        }
+
+        #wl_custom_fields_holder {
+            z-index: 1001;
+            position: relative;
+        }
+
+        /*@media screen and (max-width: 470px)*/
+        .wheelio_holder .wlo_content .wlo_btn,
+        .wheelio_holder .wlo_content .wlo_email_input {
+            max-width: 360px !important;
+        }
+
+        .wheelio_holder .wlo_content input.wlo_input {
+            font-style: normal !important;
+            font-family: Roboto, sans-serif;
+            border-radius: 3px !important;
+            height: 40px !important;
+            line-height: 40px !important;
+            padding: 0 !important;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            width: 100%;
+            max-width: 400px;
+            font-size: 16px;
+            text-indent: 10px;
+            color: #333;
+            border: none;
+            background-color: #fff;
+        }
+
+        /*@media screen and (max-width: 750px)*/
+        .wheelio_holder .wlo_content input.wlo_input {
+            line-height: 35px !important;
+            height: 35px !important;
+            font-size: 16px;
+        }
+
+        #wl_custom_fields_holder .wlo_input {
+            background-color: #0000001c;
+        }
+
+        #wl_custom_fields_holder.wlo_invert_input .wlo_input {
+            background-color: #fff !important;
+        }
+
+        .wheelio_holder .wlo_content input[type=checkbox] {
+            height: 0;
+            -webkit-transform: translate(-10000px, 0);
+            -moz-transform: translate(-10000px, 0);
+            -ms-transform: translate(-10000px, 0);
+            transform: translate(-10000px, 0);
+        }
+
+        /*@media screen and (max-width: 750px)*/
+        .wheelio_holder .wlo_content input[type=checkbox]+label,
+        .wheelio_holder .wlo_content textarea.wlo_textarea {
+            font-size: 16px;
+        }
+
+        .wheelio_holder .wlo_content input[type=checkbox]+label {
+            display: block;
+            position: relative;
+            text-align: left;
+            padding-left: 25px;
+            width: 100%;
+        }
+
+        label:not(.variant__button-label),
+        .label {
+            /*letter-spacing: 0.2em;*/
+            font-size: 0.8em;
+        }
+
+        .wheelio_holder .wlo_content input[type=checkbox]+label::before {
+            border-color: #0000001c !important;
+            background-color: #5555551c !important;
+        }
+
+        .wheelio_holder .wlo_content input[type=checkbox]+label:before {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 3px;
+            background-color: #fff;
+            border-radius: 2px;
+            border: 2px solid #fff;
+            width: 16px;
+            height: 16px;
+            -ms-transform: rotate(0);
+            -webkit-transform: rotate(0);
+            transform: rotate(0);
+            transition: all .3s;
+            -webkit-transition: all .3s;
+            -moz-transition: all .3s;
+            -o-transition: all .3s;
+            transition-timing-function: ease;
+        }
+
+        .wheelio_holder .wlo_content .wlo_invert_input input[type=checkbox]+label::before {
+            border-color: #fff !important;
+            background-color: #fff !important;
+        }
+
+        .wheelio_holder .wlo_content input[type=checkbox]:not(:checked)+label:before {
+            border: 2px solid #fff;
+            border-radius: 2px;
+        }
+
+        .wheelio_holder .wlo_content input[type=checkbox]+label:after {
+            content: "";
+            position: absolute;
+            width: 5px;
+            height: 10px;
+            left: 3px;
+            top: 12px;
+            border: none;
+            border-top: 3px solid #fff;
+            border-right: 3px solid #fff;
+            -webkit-transform-origin: left top;
+            -moz-transform-origin: left top;
+            -ms-transform-origin: left top;
+            -o-transform-origin: left top;
+            transform-origin: left top;
+            -webkit-transform: scaleX(-1) rotate(135deg);
+            -moz-transform: scaleX(-1) rotate(135deg);
+            -ms-transform: scaleX(-1) rotate(135deg);
+            transform: scaleX(-1) rotate(135deg);
+            -moz-opacity: .3;
+            -khtml-opacity: .3;
+            opacity: .3;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+            -moz-transition: all .3s;
+            -o-transition: all .3s;
+            transition-timing-function: ease;
+        }
+
+        .wheelio_holder .wlo_content input[type=checkbox]:checked+label:after {
+            -moz-opacity: 1;
+            -khtml-opacity: 1;
+            opacity: 1;
+            border-top: 3px solid #3c3c3c;
+            border-right: 3px solid #3c3c3c;
+        }
+
+        .wlo_gdpr_text a {
+            text-decoration: underline;
+        }
+
+        .link-accent-color,
+        .wlo_gdpr_text a {
+            color: unset;
+        }
+
+        .wlo_btn {
+            background-color: #111;
+            color: inherit;
+            padding: 8px 20px;
+            line-height: 1.5em;
+            max-width: inherit;
+            /*font-size: 16px!important;*/
+            margin-top: 20px;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            border-radius: 3px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 10px;
+            min-height: 40px;
+        }
+
+        .wheelio_holder .wlo_content .wlo_btn,
+        .wheelio_holder .wlo_content .wlo_email_input {
+            max-width: 360px !important;
+        }
 
 
-      </style>
+        #spin-to-win-box-close {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            cursor: pointer;
+            opacity: 0.7;
+            z-index: 1;
+            width: 20px;
+            height: : 20px;
+        }
+
+        #canvas-container {
+            float: left;
+            width: 207px;
+            height: 414px;
+        }
+
+        #canvas-container {
+            float: unset;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+
+        /*
+        #arrow-container {
+            width: 50px;
+            height: 50px;
+            display: inline-block;
+            position: absolute;
+            box-sizing: border-box;
+            top: calc(50% - 14px);
+            left: 197px;
+            z-index: 1;
+            /* transform: rotate(90deg); */
+        }*/
+
+        #wheel-container, #arrow-container {
+            float: unset;
+            height: 414px;
+            width: 207px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        #wheel-container {
+            width: 414px;
+            margin: 0 auto;
+            transform: rotate(-90deg);
+        }
+
+        .wlo_gdpr_text p {
+            margin-left: 10px;
+        }
+    </style>
 </head>
+
 <body>
 <div class="wheelio_holder" style="display: block;">
   <div id="container" class="wlo_panel wlo-open wlo_gpuac wlo-panel-animate" left: 0px;">
   <div class="wlo_content ed_flex ed_flex_vert">
-    <div class="wlo_form wlo_gpuac wlo_font_color" >
+    <div class="wlo_form wlo_gpuac wlo_font_color">
       <div class="wlo_enter_email wlo_gpuac">
 
-        <img id="spin-to-win-box-close" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA/tJREFUeNqEVG1oW2UUfm9u7k1z89HU5TtiiW4Thpo4EzT+q7RiWf3XBn+0ds2fWJxzQ7aBFEbxAxWHq0OabhQrbcekUEqnFNaMgnUW29QfCitLi2hrVtKPZGvTmdwkPZ73zU0ZM9oDD/feN+c873NOzjkc+X9TIQSEWvkuIvLKs6Jx/3FehbAgDkqSdNBisVhVaPfQ0un073i+iLiL2EHAforMiGP19fUDQ0NDS6urq1lQbGtrqzA5ObkaCoW+FwShA/2eeEh9RTJXTU3NqcHBwSVKkM/n4Ub0Bly+chl6I71w/bvrcH/rPiOfnZ1Neb3eixhzRCnLv8yKdmZmZiZNA3r7euGo/wWwOKxgtpvhgM3M3p99/jno/qCbXba5uVkMBAJ9GHtIEbRnWp7nm8fHx+9SsrffPQFE4EBj0ILFaQXb4/YSXHbQmfSAofDasUbY3t6G5eXlHAo5hxyPPUz4VHNz8ygl+6LnIi0ytLwRhA8//gi0Rgn0NQaoNptApeHheKgDznefB8ITaA+1s/R7enp+xZiXyippUV+fmppKYgpgddqYgktfXYLyBRyqpZcE8ZJisQjzv8yDwWQElaiCWz/dgnQqnTcajSfRR6KEOrvdfpbW5Nq311igRhJBZ5Bg+OowI/30s0+gJdgChXwBYvMxcLocIIhq5vvOyRPMp66u7gptNapOcDqdNrVaTeJ37rD8eY4nclYmoY4Okstmydkz5wjGkB+npwkSk7W1NSJJWpKXCyQeX2QxtbW1tG+raM6cmrKhoYJSRXfxFl4guZxMotGbpQngOHJ74TZJJteIKIgEdkuueVkuieD5Ehc9S6VSaXrodLlKXpjMg+zfJNgSJF8PDJDpH6ZJIvEXCYffQsUyOX361N58WC1W9kwmk/fwkaPvIlrr4tJSJh6PQ5WoARWngjfb2tgfMDc3B+YDZjzjYHi4VNO+SB9oq7SshpFIBGRZ3nU4HO/jt748z96urq4Z6ny8vZ05Xvj8Ap0GsNtswBEOBLUAGlGEkZERiEajoNFo4OlDhyGTycDY2NifGNNAMy/3oQkXwHsrKyu59fV18Ho8jNRUXQ1qFQ86VCMhRCTVSzoQeDUY9Aa4icS0OzweDx1Bx6NzfBj/+m9QPiQSCXi1oQGUTYIKCagIt/f9pNsNExMTLP1wODyJZ/5K8ywijjY2Nl7d2NgoUOfR0VFoa22FlwMB8Pt80NTUxEqBW4fVt7Ozk5K9Um7oSqah28Ptdnf39/cv7OzsFOERKxQKtGZ/+Hy+LxVl0n4LllcG/QgO/Yt+v/8Z2rTYZxyWIh2LxRZwIfyMv/+GWFc2+L4bu0ysVVpBq5zRPssgHtA5qBT0jwADAKOeG2u13ga9AAAAAElFTkSuQmCC";/>
-
-
-
-
+        <img id="spin-to-win-box-close" />
 
         <div class="wlo_title wlo_main_title">
           <p id="form-title">Title</p>
@@ -479,13 +505,14 @@ label:not(.variant__button-label), .label {
         <div class="wlo_text">
           <p id="form-message">Message</p>
         </div>
-        <div class="wlo_toast enter_email_toast toast_animate_out">Please enter a valid email</div>
 
         <div id="wl_custom_fields_holder" class="wlo_invert_input">
-          <input class="wlo_email_input wlo_input" id="vl-form-input" name="vl-form-input" type="text" placeholder="Email" data-field-name="email" maxlength="99">
+          <input class="wlo_email_input wlo_input" id="vl-form-input" name="vl-form-input"
+                 type="email" placeholder="Email" data-field-name="email" maxlength="99">
 
           <div id="vl-form-consent" class="wlo_invert_input">
-            <input class="wlo_checkbox" type="checkbox" id="vl-form-checkbox" name="vl-form-checkbox" required-field="1" field-name="gdpr">
+            <input class="wlo_checkbox" type="checkbox" id="vl-form-checkbox"
+                   name="vl-form-checkbox" required-field="1" field-name="gdpr">
             <label class="wlo_gdpr_text vl-form-checkbox" for="vl-form-checkbox">
               <p id="vl-form-consent-text">Consent
               </p>
@@ -493,8 +520,10 @@ label:not(.variant__button-label), .label {
           </div>
 
           <div id="vl-permitform-email" class="wlo_invert_input">
-            <input class="wlo_checkbox" type="checkbox" id="vl-form-checkbox-emailpermit" name="vl-form-checkbox-emailpermit" required-field="1" field-name="gdpr">
-            <label class="wlo_gdpr_text vl-form-checkbox-emailpermit" for="vl-form-checkbox-emailpermit">
+            <input class="wlo_checkbox" type="checkbox" id="vl-form-checkbox-emailpermit"
+                   name="vl-form-checkbox-emailpermit" required-field="1" field-name="gdpr">
+            <label class="wlo_gdpr_text vl-form-checkbox-emailpermit"
+                   for="vl-form-checkbox-emailpermit">
               <p id="vl-permitform-email-text">Email Permit
               </p>
             </label>
@@ -502,16 +531,29 @@ label:not(.variant__button-label), .label {
 
         </div>
 
-        <div class="wlo_btn wlo_try_luck_btn" id="coupon-code" style="background-color: #eeeeee; color: #000000;">Coupon Code</div>
 
-        <div class="wlo_btn wlo_try_luck_btn form-submit-btn" id="form-submit-btn" style="background-color: #000000; color: #FFFFFF;">Submit</div>
+        <div class="wlo_text">
+          <p id="success-message">Success Message</p>
+        </div>
 
-        <div class="wlo_btn wlo_try_luck_btn form-submit-btn" id="form-copy-btn" style="background-color: #000000; color: #FFFFFF;">Copy</div>
+        <div class="wlo_text">
+          <p id="promocode-title">Promosyon Kodu</p>
+        </div>
 
-        <div id="vl-warning" class="vl-validationMessage" style="display: block;">
-          <ul style="padding-inline-start: 0px;">
-            <li id="invalid_email_message" style="display: block;">Please enter a valid E-Mail Address.</li>
-            <li style="display: block;">Please check consent.</li>
+        <div class="wlo_btn wlo_try_luck_btn" id="coupon-code"
+             style="background-color: #eeeeee; color: #000000;">Coupon Code</div>
+
+        <div class="wlo_btn wlo_try_luck_btn form-submit-btn" id="form-submit-btn"
+             style="background-color: #000000; color: #FFFFFF;">Submit</div>
+
+        <div class="wlo_btn wlo_try_luck_btn form-submit-btn" id="form-copy-btn"
+             style="background-color: #000000; color: #FFFFFF;">Copy</div>
+
+        <div id="vl-warning" class="vl-validationMessage" style="display: block; color:red;">
+          <ul style="padding-inline-start: 0px; list-style-type: none;">
+            <li id="invalid-email-message" style="display: block;">Please enter a valid E-Mail
+              Address.</li>
+            <li id="check-consent-message" style="display: block;">Please check consent.</li>
           </ul>
         </div>
 
@@ -521,7 +563,20 @@ label:not(.variant__button-label), .label {
     </div>
   </div>
 
-  <div id="canvas-container"><div id="arrow-container"><canvas id="arrow-canvas"></canvas></div><div id="wheel-container"><canvas id="wheel-canvas" width="375" height="375" style="transform: translateX(0px) rotate(42deg); transition: transform 0s ease-out 0s; border-radius: 50%;"></canvas></div></div>
+
+
+
+  <div id="canvas-container">
+    <div id="arrow-container" style="position:absolute;z-index:1;">
+      <!-- <img style="position: absolute; bottom: 0px; width: 50px; height: 50px;z-index: 2;display: block;" src="cone.png" /> -->
+      <canvas id="arrow-canvas"></canvas>
+    </div>
+    <div id="wheel-container"><canvas id="wheel-canvas"
+                                      style="transform: translateX(0px) rotate(42deg); transition: transform 0s ease-out 0s; border-radius: 50%;"></canvas>
+    </div>
+  </div>
+
+
 
 </div>
 
@@ -529,38 +584,111 @@ label:not(.variant__button-label), .label {
 
 </div>
 <script type="text/javascript">
-         var config = JSON.parse(Android.getResponse());
-         var spinToWin = new SpinToWin(config);
 
-         /*
-         İhtiyacımız olmayan field'ler
-         view_type
-         spin_to_win_content.title_style
-         spin_to_win_content.message_style
-         spin_to_win_content.button_style
-         spin_to_win_content.container_style
-         spin_to_win_content.input_style
-         spin_to_win_content.validation_message_style
-         spin_to_win_content.consent_text_container_style
-         spin_to_win_content.success_message_style
-         font_size    // burada her bir eleman için ayrı font_size belirliyorlar. genel font_size'a gerek yok.
-         circle_R    // çarkıfeleğin çapı cihazın ekran genişliğine göre hesaplanıyor. gerek yok.
-         Javascript
-         courseofaction
-         */
+        var config = {};
+        var spinToWin = {};
 
+        window.initSpinToWin = function (responseConfig) {
+            config = responseConfig;
+            spinToWin = new SpinToWin(config);
+        };
 
-         /* Soru işaretleri
-         sendemail bizim kullanmamız gereken bir parametre mi?
-         esp_cmpid bizim kullanmamız gereken bir parametre mi?
-         courseofaction bizim kullanmamız gereken bir parametre mi?
-         javascript sdk'sında aşağıdaki gibi bir kullanımı var
-         visilabs_object.AddParameter("promoAuth", promoAuth);
-         visilabs_object.AddParameter("promotionId", firstResult.code);
-         visilabs_object.AddParameter("actionid", actid);
-         sendemail bizi ilgilendimiyor sanırım. javascript sdk'sında bir kullanımını görmedim.
-         */
-         // http://s.visilabs.net/act.js?OM.cookieID=YVUNDRCCUYMDXBPB20210104142937&OM.oid=676D325830564761676D453D&OM.siteID=356467332F6533766975593D&OM.obj=_VTObjs%5B%22_VisilabsTarget_2%22%5D&dat=Wed,%2006%20Jan%202021%2009:47:01%20GMT&OM.pushnotifystatus=denied&OM.pushchannel=webpush&OM.pvt=2021-01-05%2022%3A27%3A46&OM.pviv=1&OM.tvc=4&OM.th=5&OM.lvt=2021-01-06%2012%3A47%3A01&OM.tvd=1089&OM.resol=3840x2160&OM.jv=No&OM.nrv=0&OM.domain=one2onestore.com&OM.uri=%2F&OM.title=visistore&test=Kitchenette&OM.viscap=%7B%22data%22%3A%7B%7D%7D
-      </script>
+        window.chooseSlice = function (sliceIndex, promotionCode) {
+            console.log("selectSlice");
+            console.log(sliceIndex + " : " + promotionCode);
+            window.spinToWin.spin(sliceIndex, promotionCode);
+        };
+
+        if (window.Android) {
+            config = JSON.parse(Android.getResponse());
+            initSpinToWin(config);
+        } else if (window.webkit && window.webkit.messageHandlers.eventHandler) {
+            window.webkit.messageHandlers.eventHandler.postMessage({ method: "initSpinToWin" });
+            window.console.log = function (message) {
+                var stringMessage = message;
+                if (typeof message !== "string") {
+                    stringMessage = JSON.stringify(message);
+                }
+                window.webkit.messageHandlers.eventHandler.postMessage({ method: "console.log", message: stringMessage });
+            };
+        } else {
+            window.BrowserTest = {
+                getPromotionCode: function() {
+                    window.chooseSlice(0, 'asd');
+                },
+                sendReport: function() {
+
+                }
+            };
+            config = {
+                "actid": 130,
+                "title": "Spin-To-Win Test",
+                "actiontype": "SpinToWin",
+                "actiondata": {
+                    "slices": [
+                        {
+                            "displayName": "Promotion1",
+                            "color": "#dc246d",
+                            "code": "190708hopa",
+                            "type": "promotion"
+                        },
+                        {
+                            "displayName": "Promotion2",
+                            "color": "#1ddeea",
+                            "code": "190708hopa",
+                            "type": "promotion"
+                        },
+                        {
+                            "displayName": "Static1",
+                            "color": "#d824dc",
+                            "code": "123456",
+                            "type": "staticcode"
+                        },
+                        {
+                            "displayName": "Pass1",
+                            "color": "#f5f400",
+                            "code": "",
+                            "type": "pass"
+                        },
+                        {
+                            "displayName": "Pass2",
+                            "color": "#f5a200",
+                            "code": "",
+                            "type": "pass"
+                        }
+                    ],
+                    "mail_subscription": true,
+                    "spin_to_win_content": {
+                        "title": "Title",
+                        "message": "Body Text",
+                        "placeholder": "Your e-mail",
+                        "button_label": "START",
+                        "consent_text": "I've read and accept.<LINK> url1 </LINK> Consent Text <LINK> url2  </LINK> asdfas",
+                        "invalid_email_message": "Invalid Email Message",
+                        "success_message": "Success Message",
+                        "emailpermit_text": "Email Permit Text",
+                        "check_consent_message": "Consent Text Not Checked",
+                        "promocode_title": "Promotion Code",
+                        "copybutton_label": "Copy to Clipboard"
+                    },
+                    "font_size": 0,
+                    "circle_R": 0,
+                    "waiting_time": 0,
+                    "promoAuth": "9AF019D4A6DA3AA668EE459D286F331BF271920C7BD190F2175F8CAB261CE7EE",
+                    "slice_count": "7",
+                    "sendemail": false,
+                    "courseofaction": "GetExistingPromoCode",
+                    "ExtendedProps": "%7B%22displayname_text_color%22%3A%22%230029ff%22%2C%22displayname_font_family%22%3A%22sansserif%22%2C%22displayname_text_size%22%3A%2210%22%2C%22title_text_color%22%3A%22%23301fb4%22%2C%22title_font_family%22%3A%22default%22%2C%22title_text_size%22%3A%2210%22%2C%22text_color%22%3A%22%237771e2%22%2C%22text_font_family%22%3A%22serif%22%2C%22text_size%22%3A%224%22%2C%22button_color%22%3A%22%233047bf%22%2C%22button_text_color%22%3A%22%23e1ebf0%22%2C%22button_font_family%22%3A%22default%22%2C%22button_text_size%22%3A%221%22%2C%22promocode_title_text_color%22%3A%22%233fd077%22%2C%22promocode_title_font_family%22%3A%22serif%22%2C%22promocode_title_text_size%22%3A%227%22%2C%22promocode_background_color%22%3A%22%23f4f2f3%22%2C%22promocode_text_color%22%3A%22%23000000%22%2C%22copybutton_color%22%3A%22%232da656%22%2C%22copybutton_text_color%22%3A%22%23f7f7f4%22%2C%22copybutton_font_family%22%3A%22sansserif%22%2C%22copybutton_text_size%22%3A%223%22%2C%22emailpermit_text_size%22%3A%225%22%2C%22emailpermit_text_url%22%3A%22https%3A%2F%2Fapp.visilabs.net%2F%22%2C%22consent_text_size%22%3A%222%22%2C%22consent_text_url%22%3A%22https%3A%2F%2Fapp.visilabs.net%2F%22%2C%22close_button_color%22%3A%22black%22%2C%22background_color%22%3A%22%23c6edee%22%7D",
+                    "report": {
+                        "impression": "",
+                        "click": "OM.zpc=acttype-27&OM.zn=act-130"
+                    }
+                }
+            };
+            initSpinToWin(config);
+        }
+
+    </script>
 </body>
+
 </html>

@@ -36,6 +36,7 @@ import com.visilabs.view.SmileRating;
 
 public class TemplateActivity extends Activity implements SmileRating.OnSmileySelectionListener, SmileRating.OnRatingSelectedListener {
 
+    private static final String LOG_TAG = "Template Activity";
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
     private static final String LOG_TAG = "Template Activity";
     private static final String CAROUSEL_LAST_INDEX_KEY = "carousel_last_index";
@@ -162,7 +163,14 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void setTemplate() {
 
-        binding.llBack.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+        if(mInAppMessage.getActionData().getBackground() != null && !mInAppMessage.getActionData().getBackground().equals("")) {
+            try {
+                binding.llBack.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse the data given for background color\nSetting the default value.");
+                e.printStackTrace();
+            }
+        }
         binding.ibClose.setBackgroundResource(getCloseIcon());
 
         switch (mInAppMessage.getActionData().getMsgType()) {
@@ -253,17 +261,46 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         binding.tvTitle.setVisibility(View.VISIBLE);
         binding.tvTitle.setTypeface(mInAppMessage.getActionData().getFontFamily(), Typeface.BOLD);
-        binding.tvTitle.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
-        binding.tvTitle.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
-        binding.tvTitle.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgBodyTextSize()) + 12);
+        binding.tvTitle.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n","\n"));
+        if(mInAppMessage.getActionData().getMsgTitleColor() != null && !mInAppMessage.getActionData().getMsgTitleColor().equals("")) {
+            try {
+                binding.tvTitle.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse the data given for message title color\nSetting the default value.");
+                e.printStackTrace();
+                binding.tvTitle.setTextColor(getResources().getColor(R.color.blue));
+            }
+        } else {
+            binding.tvTitle.setTextColor(getResources().getColor(R.color.blue));
+        }
+        try {
+            binding.tvTitle.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgBodyTextSize()) + 12);
+        } catch (Exception e) {
+            Log.w(LOG_TAG, "Could not parse the data given for message body text size\nSetting the default value.");
+            e.printStackTrace();
+            binding.tvTitle.setTextSize(16);
+        }
     }
 
     private void setBody() {
         binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n", "\n"));
         binding.tvBody.setTypeface(mInAppMessage.getActionData().getFontFamily());
         binding.tvBody.setVisibility(View.VISIBLE);
-        binding.tvBody.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyColor()));
-        binding.tvBody.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgBodyTextSize()) + 8);
+        if(mInAppMessage.getActionData().getMsgBodyColor() != null && !mInAppMessage.getActionData().getMsgBodyColor().equals("")) {
+            try {
+                binding.tvBody.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyColor()));
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse the data given for message body color\nSetting the default value.");
+                e.printStackTrace();
+            }
+        }
+        try {
+            binding.tvBody.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgBodyTextSize()) + 8);
+        } catch (Exception e) {
+            Log.w(LOG_TAG, "Could not parse the data given for message body text size\nSetting the default value.");
+            e.printStackTrace();
+            binding.tvBody.setTextSize(12);
+        }
     }
 
     private void setButton() {
@@ -271,8 +308,25 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.btnTemplate.setTypeface(mInAppMessage.getActionData().getFontFamily());
         binding.btnTemplate.setVisibility(View.VISIBLE);
         binding.btnTemplate.setText(mInAppMessage.getActionData().getBtnText());
-        binding.btnTemplate.setTextColor(Color.parseColor(mInAppMessage.getActionData().getButtonTextColor()));
-        binding.btnTemplate.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getButtonColor()));
+        if(mInAppMessage.getActionData().getButtonTextColor() != null && !mInAppMessage.getActionData().getButtonTextColor().equals("")) {
+            try {
+                binding.btnTemplate.setTextColor(Color.parseColor(mInAppMessage.getActionData().getButtonTextColor()));
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse the data given for button text color\nSetting the default value.");
+                e.printStackTrace();
+                binding.btnTemplate.setTextColor(getResources().getColor(R.color.black));
+            }
+        } else {
+            binding.btnTemplate.setTextColor(getResources().getColor(R.color.black));
+        }
+        if(mInAppMessage.getActionData().getButtonColor() != null && !mInAppMessage.getActionData().getButtonColor().equals("")) {
+            try {
+                binding.btnTemplate.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getButtonColor()));
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse the data given for button color\nSetting the default value.");
+                e.printStackTrace();
+            }
+        }
 
         binding.btnTemplate.setOnClickListener(new View.OnClickListener() {
             @Override

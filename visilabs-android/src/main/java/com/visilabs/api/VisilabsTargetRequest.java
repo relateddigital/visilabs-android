@@ -173,12 +173,17 @@ public class VisilabsTargetRequest extends VisilabsRemote {
     }
 
     @Override
-    public void executeAsyncAction(VisilabsMailSubsFormRequestCallback pCallback) {
+    public void executeAsyncAction(VisilabsActionsCallback pCallback) {
 
     }
 
     @Override
     public void executeAsyncAction(VisilabsFavsRequestCallback pCallback) {
+
+    }
+
+    @Override
+    public void executeAsyncPromotionCode(VisilabsCallback pCallback, HashMap<String, String> extraQueryParameters) {
 
     }
 

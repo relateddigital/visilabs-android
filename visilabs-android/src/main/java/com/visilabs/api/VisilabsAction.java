@@ -1,5 +1,7 @@
 package com.visilabs.api;
 
+import java.util.HashMap;
+
 /**
  * Represents a request call to Visilabs.
  *
@@ -68,7 +70,7 @@ public interface VisilabsAction {
      * @param pCallback the callback function
      * @throws Exception
      */
-    void executeAsyncAction(VisilabsMailSubsFormRequestCallback pCallback);
+    void executeAsyncAction(VisilabsActionsCallback pCallback);
 
     /**
      * Use this function when you want to get Favourites-type response
@@ -77,4 +79,11 @@ public interface VisilabsAction {
      * @throws Exception
      */
     void executeAsyncAction(VisilabsFavsRequestCallback pCallback);
+
+    /**
+     * Use this function to get promotion code from ad server (/promotion endpoint)
+     * @param pCallback the callback function
+     * @throws Exception
+     */
+    void executeAsyncPromotionCode(VisilabsCallback pCallback, HashMap<String, String> extraQueryParameters);
 }

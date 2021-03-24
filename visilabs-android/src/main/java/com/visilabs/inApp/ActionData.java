@@ -218,7 +218,7 @@ public class ActionData implements Parcelable {
     }
 
     public Typeface getFontFamily() {
-        if (mFontFamily == null) {
+        if (mFontFamily == null || mFontFamily.equals("")) {
             return Typeface.DEFAULT;
         }
         if (FontFamily.Monospace.toString().equals(mFontFamily.toLowerCase())) {

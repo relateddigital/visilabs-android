@@ -67,7 +67,11 @@ public class SocialProofFragment extends Fragment {
         binding = FragmentSocialProofBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-        //TODO: send impression report here
+        if(savedInstanceState != null) {
+            //TODO: get the json string here
+        } else {
+            //TODO: get the json string here
+        }
 
         if(isUnderThreshold()){
             endFragment();
@@ -75,6 +79,12 @@ public class SocialProofFragment extends Fragment {
 
         setupInitialView();
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //TODO: save the json string here
     }
 
     private void setupInitialView() {
@@ -182,6 +192,8 @@ public class SocialProofFragment extends Fragment {
         if(mTimer!=null){
             mTimer.cancel();
         }
-        getActivity().getFragmentManager().beginTransaction().remove(SocialProofFragment.this).commit();
+        if(getActivity() != null) {
+            getActivity().getFragmentManager().beginTransaction().remove(SocialProofFragment.this).commit();
+        }
     }
 }

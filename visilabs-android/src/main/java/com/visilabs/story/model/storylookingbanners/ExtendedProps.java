@@ -14,6 +14,8 @@ public class ExtendedProps implements Serializable {
 
     private String storylb_label_color;
 
+    private boolean moveShownToEnd;
+
     public String getStorylb_img_borderWidth() {
         return storylb_img_borderWidth;
     }
@@ -54,12 +56,21 @@ public class ExtendedProps implements Serializable {
         this.storylb_label_color = storylb_label_color;
     }
 
+    public boolean getMoveShownToEnd() {
+        return moveShownToEnd;
+    }
+
+    public void setMoveShownToEnd(boolean moveShownToEnd) {
+        this.moveShownToEnd = moveShownToEnd;
+    }
+
     @Override
     public String toString() {
         return "ExtendedProps [storylb_img_borderWidth = " + storylb_img_borderWidth +
                 ", storylb_img_borderRadius = " + storylb_img_borderRadius +
                 ", storylb_img_boxShadow = " + storylb_img_boxShadow +
                 ", storylb_img_borderColor = " + storylb_img_borderColor +
-                ", storylb_label_color = " + storylb_label_color + "]";
+                ", storylb_label_color = " + storylb_label_color +
+                ", moveShownToEnd = " + moveShownToEnd + "]";
     }
 }

@@ -1,28 +1,21 @@
 package com.relateddigital.visilabs;
 
-
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.relateddigital.visilabs.databinding.ActivityMainBinding;
 import com.visilabs.Visilabs;
-
 import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.CountdownTimerFragment;
-import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.SocialProofFragment;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.scratchToWin.ScratchToWinActivity;
-import com.visilabs.spinToWin.SpinToWinActivity;
 import com.visilabs.util.VisilabsConstant;
-
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
@@ -182,10 +175,7 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp13.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SpinToWinActivity.class);
-                startActivity(intent);
-                //TODO when backend side gets ready, use below
-                //sendInAppRequest("mailsubsform");
+                sendInAppRequest("spintowin");
             }
         });
 
