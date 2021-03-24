@@ -149,7 +149,13 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
     }
 
     public void setStoryList(VisilabsStoryLookingBannerResponse storyLookingBanner, String extendsProps) {
-        //TODO: check the value of moveShownToEnd parameter here in the real data and assign it to moveShownToEnd
+        try {
+            ExtendedProps extendedProps = new Gson().fromJson(new java.net.URI(storyLookingBanner.
+                    getStory().get(0).getActiondata().getExtendedProps()).getPath(), ExtendedProps.class);
+            moveShownToEnd = extendedProps.getMoveShownToEnd();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (moveShownToEnd) {
             Map<String, List<String>> shownStoriesMap = PersistentTargetManager.with(mContext).getShownStories();
 

@@ -90,7 +90,6 @@ public class VisilabsRecyclerView extends RecyclerView {
             @Override
             public void success(VisilabsResponse response) {
                 try {
-                    //TODO: moveShownToEnd parametresinin ekleneceği yere göre VisilabsStoryLookingBannerResponse ı güncelle.
                     VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse =
                             new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
 
@@ -116,7 +115,6 @@ public class VisilabsRecyclerView extends RecyclerView {
                     } else if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata()
                             .getTaTemplate().equals(VisilabsConstant.STORY_SKIN_BASED)) {
                         {
-                            //TODO: moveShownToEnd parametresinin ekleneceği yere göre VisilabsSkinBasedResponse ı güncelle.
                             VisilabsSkinBasedResponse skinBased = new Gson().fromJson(response
                                     .getRawResponse(), VisilabsSkinBasedResponse.class);
 
@@ -151,7 +149,6 @@ public class VisilabsRecyclerView extends RecyclerView {
             @Override
             public void success(final VisilabsResponse response) {
                 try {
-                    //TODO: moveShownToEnd parametresinin ekleneceği yere göre VisilabsStoryLookingBannerResponse ı güncelle.
                     final VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse =
                             new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
 
@@ -179,7 +176,6 @@ public class VisilabsRecyclerView extends RecyclerView {
 
                             } else if (visilabsStoryLookingBannerResponse.getStory().get(0).getActiondata()
                                     .getTaTemplate().equals(VisilabsConstant.STORY_SKIN_BASED)) {
-                                //TODO: moveShownToEnd parametresinin ekleneceği yere göre VisilabsSkinBasedResponse ı güncelle.
                                 VisilabsSkinBasedResponse skinBased = new Gson().fromJson(response
                                         .getRawResponse(), VisilabsSkinBasedResponse.class);
 
