@@ -5,7 +5,6 @@ buildscript {
         google()
         jcenter()
         maven {url 'http://developer.huawei.com/repo/'}
-
     }
     dependencies {
         classpath 'com.google.gms:google-services:4.3.4'
@@ -24,7 +23,7 @@ allprojects {
         google()
         jcenter()
         maven {url 'http://developer.huawei.com/repo/'}
-
+        maven { url 'https://jitpack.io' }
     }
 }
 

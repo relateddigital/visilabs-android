@@ -21,6 +21,7 @@ import com.visilabs.Visilabs;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
 import java.util.HashMap;
+
 import euromsg.com.euromobileandroid.EuroMobileManager;
 
 public class MainApplication extends MultiDexApplication {
