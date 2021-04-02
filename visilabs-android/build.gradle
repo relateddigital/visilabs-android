@@ -1,6 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.github.relateddigital'
+
+apply from: 'maven-push.gradle'
+
 ext {
     bintrayRepo = 'maven'
     bintrayName = 'visilabs-android'
