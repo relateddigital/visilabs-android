@@ -31,6 +31,7 @@
     <string name="social_proof">SOCIAL PROOF</string>
     <string name="countdown_timer">COUNTDOWN TIMER</string>
     <string name="inapp_carousel">CAROUSEL</string>
+    <string name="shake_to_win">SHAKE TO WIN</string>
 
     <string name="alert">Alert</string>
     <string name="story_id_optional">Story ID (optional)</string>

@@ -275,6 +275,13 @@
                 android:layout_weight="1.0"
                 android:text="@string/inapp_carousel" />
 
+            <Button
+                android:id="@+id/inApp17"
+                android:layout_width="0.0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:text="@string/shake_to_win" />
+
         </LinearLayout>
 
     </LinearLayout>

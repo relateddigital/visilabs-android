@@ -15,6 +15,7 @@ import com.visilabs.inApp.CountdownTimerFragment;
 import com.visilabs.inApp.SocialProofFragment;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.scratchToWin.ScratchToWinActivity;
+import com.visilabs.shakeToWin.ShakeToWinActivity;
 import com.visilabs.util.VisilabsConstant;
 import java.util.HashMap;
 
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, ScratchToWinActivity.class);
                 startActivity(intent);
                 //TODO when backend side gets ready, use below
-                //sendInAppRequest("mailsubsform");
+                //sendInAppRequest("scratchtowin");
             }
         });
 
@@ -214,6 +215,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //TODO: change this to "carousel" when BE gets ready
                 sendInAppRequest("image_text_button");
+            }
+        });
+
+        binding.inApp17.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ShakeToWinActivity.class);
+                startActivity(intent);
+                //TODO when backend side gets ready, use below
+                //sendInAppRequest("shaketowin");
             }
         });
 

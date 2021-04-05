@@ -12,6 +12,10 @@
             android:name="com.visilabs.scratchToWin.ScratchToWinActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
+            android:name="com.visilabs.shakeToWin.ShakeToWinActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="com.visilabs.spinToWin.SpinToWinActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
