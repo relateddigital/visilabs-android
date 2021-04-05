@@ -1,6 +1,10 @@
 package com.visilabs.shakeToWin;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -8,6 +12,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -16,11 +21,14 @@ import com.visilabs.android.R;
 import com.visilabs.android.databinding.ActivityShakeToWinStep1Binding;
 import com.visilabs.android.databinding.ActivityShakeToWinStep2Binding;
 import com.visilabs.android.databinding.ActivityShakeToWinStep3Binding;
+import com.visilabs.util.StringUtils;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ShakeToWinActivity extends Activity implements SensorEventListener {
+
+    private static final String LOG_TAG = "ShakeToWinActivity";
 
     private ActivityShakeToWinStep1Binding bindingStep1;
     private ActivityShakeToWinStep2Binding bindingStep2;
@@ -108,10 +116,6 @@ public class ShakeToWinActivity extends Activity implements SensorEventListener 
         return R.drawable.ic_close_black_24dp;*/
     }
 
-    private void cacheResources() {
-        //TODO : cache video in step 2 and picture in step 3 here
-    }
-
     private void initAccelerometer() {
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
@@ -123,7 +127,7 @@ public class ShakeToWinActivity extends Activity implements SensorEventListener 
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                if(!isShaken) {
+                if (!isShaken) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -138,12 +142,12 @@ public class ShakeToWinActivity extends Activity implements SensorEventListener 
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(!isStep3) {
+        if (!isStep3) {
             float x = event.values[0];
             float y = event.values[1];
             float z = event.values[2];
             mAccelerometerLast = mAccelerometerCurrent;
-            mAccelerometerCurrent = (float) Math.sqrt((double) (x * x + y * y + z * z));
+            mAccelerometerCurrent = (float) Math.sqrt(x * x + y * y + z * z);
             float delta = mAccelerometerCurrent - mAccelerometerLast;
             mAccelerometer = mAccelerometer * 0.9f + delta;
             if (mAccelerometer > 12) {
@@ -171,10 +175,10 @@ public class ShakeToWinActivity extends Activity implements SensorEventListener 
     }
 
     private void setupStep3View() {
-        if(mTimerWithoutShaking!=null) {
+        if (mTimerWithoutShaking != null) {
             mTimerWithoutShaking.cancel();
         }
-        if(mTimerAfterShaking!=null) {
+        if (mTimerAfterShaking != null) {
             mTimerAfterShaking.cancel();
         }
         isStep3 = true;
@@ -182,6 +186,80 @@ public class ShakeToWinActivity extends Activity implements SensorEventListener 
         bindingStep3 = ActivityShakeToWinStep3Binding.inflate(getLayoutInflater());
         setContentView(bindingStep3.getRoot());
 
+        //TODO : replace this dummy data with the real one later
+        //TODO : check and set the visibilities.
+        setupCloseButtonStep3();
+        bindingStep3.container.setBackgroundColor(Color.parseColor("#ff99de"));
+        Picasso.get().load("https://imgvisilabsnet.azureedge.net/in-app-message/uploaded_images/163_1100_490_20210319175823217.jpg")
+                .into(bindingStep3.imageView);
+        bindingStep3.titleView.setText("Title");
+        bindingStep3.titleView.setTextColor(Color.parseColor("#92008c"));
+        bindingStep3.titleView.setTextSize(32);
+        bindingStep3.bodyTextView.setText("Text");
+        bindingStep3.bodyTextView.setTextColor(Color.parseColor("#4060ff"));
+        bindingStep3.bodyTextView.setTextSize(24);
+        bindingStep3.couponView.setBackgroundColor(Color.parseColor("#00ffab"));
+        bindingStep3.couponCodeView.setText("SDFJSDKFMSASDAKASD");
+        bindingStep3.couponCodeView.setTextColor(Color.parseColor("#400080"));
+        bindingStep3.couponCopyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), "SDFJSDKFMSASDAKASD"); //TODO : real promo code here
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+            }
+        });
 
+        bindingStep3.buttonView.setText("Button");
+        bindingStep3.buttonView.setBackgroundColor(Color.parseColor("#79e7ff"));
+        bindingStep3.buttonView.setTextColor(Color.parseColor("#000000"));
+        bindingStep3.buttonView.setTextSize(24);
+
+        bindingStep3.buttonView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.
+                            getURIfromUrlString("https://www.relateddigital.com")); // TODO : real data here
+                    startActivity(viewIntent);
+
+                } catch (Exception e) {
+                    Log.i(LOG_TAG, "Error : Could not direct to the URI given");
+                }
+            }
+        });
+
+    }
+
+    private void setupCloseButtonStep3() {
+        bindingStep3.closeButton.setBackgroundResource(getCloseIconStep3());
+        bindingStep3.closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    private int getCloseIconStep3() {
+
+        return R.drawable.ic_close_black_24dp;
+        //TODO when real data comes:
+       /* switch (mInAppMessage.getActionData().getCloseButtonColor()) {
+
+            case "white":
+                return R.drawable.ic_close_white_24dp;
+
+            case "black":
+                return R.drawable.ic_close_black_24dp;
+        }
+        return R.drawable.ic_close_black_24dp;*/
+    }
+
+    private void cacheResources() {
+        //TODO : cache video in step 2 and picture in step 3 here
+        Picasso.get().load("https://imgvisilabsnet.azureedge.net/in-app-message/uploaded_images/163_1100_490_20210319175823217.jpg")
+                .fetch();
     }
 }
