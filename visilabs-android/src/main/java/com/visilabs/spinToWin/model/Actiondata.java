@@ -35,6 +35,10 @@ public class Actiondata implements Serializable {
     private String extendedProps;
     @SerializedName("report")
     private Report report;
+    @SerializedName("img")
+    private String img;
+    @SerializedName("taTemplate")
+    private String taTemplate;
 
     public List<Slice> getSlices() {
         return slices;
@@ -146,6 +150,22 @@ public class Actiondata implements Serializable {
 
     public void setReport(Report report) {
         this.report = report;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+    public String getTaTemplate() {
+        return taTemplate;
+    }
+
+    public void setTaTemplate(String taTemplate) {
+        this.taTemplate = taTemplate;
     }
 
 }

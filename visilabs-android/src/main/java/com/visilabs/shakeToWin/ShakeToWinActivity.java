@@ -10,12 +10,12 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.squareup.picasso.Picasso;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.ActivityShakeToWinStep1Binding;
@@ -41,11 +41,14 @@ public class ShakeToWinActivity extends Activity implements SensorEventListener 
     private Timer mTimerAfterShaking;
     private boolean isShaken = false;
     private boolean isStep3 = false;
+    private SimpleExoPlayer player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bindingStep1 = ActivityShakeToWinStep1Binding.inflate(getLayoutInflater());
+        bindingStep2 = ActivityShakeToWinStep2Binding.inflate(getLayoutInflater());
+        bindingStep3 = ActivityShakeToWinStep3Binding.inflate(getLayoutInflater());
         View view = bindingStep1.getRoot();
         setContentView(view);
 
@@ -54,6 +57,21 @@ public class ShakeToWinActivity extends Activity implements SensorEventListener 
         //mShakeToWinMessage = getShakeToWinMessage();
 
         setupStep1View();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mTimerWithoutShaking != null) {
+            mTimerWithoutShaking.cancel();
+        }
+        if (mTimerAfterShaking != null) {
+            mTimerAfterShaking.cancel();
+        }
+        if(mSensorManager != null) {
+            mSensorManager.unregisterListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
+        }
+        releasePlayer();
+        super.onDestroy();
     }
 
     private void setupStep1View() {
@@ -77,7 +95,6 @@ public class ShakeToWinActivity extends Activity implements SensorEventListener 
         bindingStep1.buttonView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bindingStep2 = ActivityShakeToWinStep2Binding.inflate(getLayoutInflater());
                 setContentView(bindingStep2.getRoot());
                 setupStep2View();
             }
@@ -85,9 +102,7 @@ public class ShakeToWinActivity extends Activity implements SensorEventListener 
     }
 
     private void setupStep2View() {
-        bindingStep2.videoView.setVideoURI(Uri.parse(
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4"));
-        bindingStep2.videoView.start();
+        startPlayer();
         initAccelerometer();
     }
 
@@ -175,6 +190,7 @@ public class ShakeToWinActivity extends Activity implements SensorEventListener 
     }
 
     private void setupStep3View() {
+        releasePlayer();
         if (mTimerWithoutShaking != null) {
             mTimerWithoutShaking.cancel();
         }
@@ -183,7 +199,6 @@ public class ShakeToWinActivity extends Activity implements SensorEventListener 
         }
         isStep3 = true;
         mSensorManager.unregisterListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
-        bindingStep3 = ActivityShakeToWinStep3Binding.inflate(getLayoutInflater());
         setContentView(bindingStep3.getRoot());
 
         //TODO : replace this dummy data with the real one later
@@ -257,9 +272,30 @@ public class ShakeToWinActivity extends Activity implements SensorEventListener 
         return R.drawable.ic_close_black_24dp;*/
     }
 
+    private void startPlayer() {
+        player.setPlayWhenReady(true);
+    }
+
+    private void releasePlayer() {
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+
     private void cacheResources() {
         //TODO : cache video in step 2 and picture in step 3 here
         Picasso.get().load("https://imgvisilabsnet.azureedge.net/in-app-message/uploaded_images/163_1100_490_20210319175823217.jpg")
                 .fetch();
+        initializePlayer();
+    }
+
+    private void initializePlayer() {
+        player = new SimpleExoPlayer.Builder(this).build();
+        bindingStep2.videoView.setPlayer(player);
+        MediaItem mediaItem = MediaItem.fromUri(
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"); //TODO : real url here
+        player.setMediaItem(mediaItem);
+        player.prepare();
     }
 }
