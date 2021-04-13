@@ -2,10 +2,222 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
-  <script type="text/javascript" src="spintowin.js"></script>
-  <style type="text/css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
+    <script type="text/javascript" src="spintowin.js"></script>
+
+    <style type="text/css">
+        .easyWheel {
+            position: relative;
+            max-width: 100%;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .easyWheel,
+        .easyWheel * {
+            overflow: visible !important;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .eWheel-wrapper {
+            position: relative;
+        }
+
+        .easyWheel .eWheel-inner {
+            display: block;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .easyWheel .eWheel {
+            border-radius: 100%;
+            overflow: hidden;
+        }
+
+        .easyWheel .eWheel,
+        .easyWheel .eWheel>.eWheel-bg-layer,
+        .easyWheel .eWheel>.eWheel-txt-wrap,
+        .easyWheel .eWheel>.eWheel-txt-wrap>.eWheel-txt {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .easyWheel .eWheel>.eWheel-txt-wrap>.eWheel-txt,
+        .easyWheel .eWheel>.eWheel-bg-layer {
+            margin: 0 auto;
+            border-radius: 100%;
+            padding: 0;
+            list-style: none;
+            overflow: hidden;
+            color: #ecf0f1;
+        }
+
+        .easyWheel .eWheel>.eWheel-txt-wrap,
+        .easyWheel .eWheel>.eWheel-bg-layer {
+            transform: rotate(-90deg);
+
+        }
+
+        .easyWheel .eWheel .eWheel-child .eWheel-inside {
+            display: table;
+            transform: rotate(0) skew(-45deg);
+            width: 50%;
+            height: 50%;
+            transform-origin: 0 0;
+            text-align: right;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .easyWheel .eWheel .eWheel-child .eWheel-inside>div {
+            display: table-cell;
+            vertical-align: middle;
+            width: 100%;
+            height: 100%;
+            transform: rotate(25deg);
+            transform-origin: 115% 25%;
+            padding-right: 40px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .easyWheel .eWheel>.eWheel-bg-layer>div {
+            overflow: hidden;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            -webkit-transform-origin: 0 0;
+            -moz-transform-origin: 0 0;
+            -ms-transform-origin: 0 0;
+            -o-transform-origin: 0 0;
+            transform-origin: 0 0;
+            border: 1px solid transparent;
+            background-color: #404040;
+        }
+
+        .easyWheel .eWheel>.eWheel-bg-layer>div:nth-child(odd) {
+            background-color: #616161;
+        }
+
+        .easyWheel .eWheel>.eWheel-txt-wrap>.eWheel-txt>div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            line-height: 1.2em;
+            max-height: 23.4em;
+            text-align: right;
+            -webkit-transform-origin: 0 0;
+            -moz-transform-origin: 0 0;
+            -ms-transform-origin: 0 0;
+            -o-transform-origin: 0 0;
+            transform-origin: 0 1px;
+            width: 50%;
+            padding-right: 6%;
+            font-weight: bold;
+            font-size: 100%;
+            cursor: default;
+            color: #fff;
+            text-align: right;
+        }
+
+        .easyWheel .eWheel-center {
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+            text-align: center;
+        }
+
+        .easyWheel .eWheel-center>.ew-center-empty,
+        .easyWheel .eWheel-center>.ew-center-html {
+            max-width: 100%;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            transform: translateX(-50%) translateY(-50%);
+            z-index: 2;
+        }
+
+        .easyWheel .eWheel-center>.ew-center-empty {
+            position: absolute;
+        }
+
+        .easyWheel .eWheel-center>img {
+            max-width: 100%;
+            width: 200px;
+            position: relative;
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+
+        .easyWheel .eWheel-center>div {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent !important;
+        }
+
+        .easyWheel .eWheel-marker {
+            border-spacing: 90px;
+            width: 16%;
+            height: 16%;
+            position: absolute;
+            left: 50%;
+            top: -18%;
+            margin-top: 7%;
+            margin-left: -8%;
+            transition: 0.2 rotate linear;
+            z-index: 3;
+            display: block;
+            transform: rotate(0deg);
+            transform-origin: 50% 35%;
+        }
+
+        .easyWheel .eWheel-marker>svg {
+            height: 100%;
+            display: block;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .easyWheel .rotate {
+            transform: rotate(100deg);
+        }
+
+        .eWheel>.eWheel-bg-layer>svg {
+            margin: 0 auto;
+            display: block;
+            width: 100%;
+            height: 100%;
+            transform: rotate(0deg);
+        }
+    </style>
+
+    <style type="text/css">
         *,
         input,
         :before,
@@ -102,8 +314,6 @@
         .wheelio_holder .wlo_panel {
             margin: 0;
             position: fixed;
-            /*position: absolute;*/
-            /*egemen*/
             overflow: hidden;
             z-index: 10;
             top: 0;
@@ -113,7 +323,6 @@
             box-sizing: border-box;
             -moz-box-sizing: border-box;
             -webkit-box-sizing: border-box;
-            /*background-color: #ffffff;*/
             -webkit-box-shadow: 5px 2px 60px 0 #000;
             -moz-box-shadow: 5px 2px 60px 0 #000;
             box-shadow: 5px 2px 60px 0 #000;
@@ -128,7 +337,6 @@
             left: 50%;
             top: 0;
             bottom: 0;
-            /*color: #fff;*/
             box-sizing: border-box;
             -moz-box-sizing: border-box;
             -webkit-box-sizing: border-box;
@@ -178,6 +386,7 @@
             backface-visibility: hidden;
             -webkit-perspective: 1000;
             perspective: none;
+            transform-style: flat;
             -webkit-transform-style: flat;
             -moz-transform-style: flat;
             -o-transform-style: flat;
@@ -185,7 +394,6 @@
             will-change: opacity;
         }
 
-        /*@media screen and (max-width: 750px)*/
         .wheelio_holder .wlo_content .wlo_title {
             font-size: 26px;
         }
@@ -199,7 +407,6 @@
             margin-bottom: 20px;
         }
 
-
         .wlo_enter_email p,
         .wlo_thank_you,
         .wlo_thank_you p {
@@ -207,26 +414,17 @@
             margin: 0 0 10px;
         }
 
-        /*@media screen and (max-width: 750px)*/
         .wheelio_holder .wlo_content .wlo_close,
-        .wheelio_holder .wlo_content .wlo_small_text,
         .wheelio_holder .wlo_content .wlo_text {
             font-size: 14px;
         }
 
         .wheelio_holder .wlo_content .wlo_close,
-        .wheelio_holder .wlo_content .wlo_small_text,
         .wheelio_holder .wlo_content .wlo_subtext,
         .wheelio_holder .wlo_content .wlo_text {
             font-size: 14px;
             color: inherit;
             text-shadow: none;
-        }
-
-        .wheelio_holder .wlo_content .wlo_small_text {
-            -moz-opacity: .6;
-            -khtml-opacity: .6;
-            opacity: .6;
         }
 
         .wheelio_holder .wlo_toast {
@@ -244,25 +442,9 @@
             box-shadow: 3px 5px 15px 0 rgba(0, 0, 0, .3);
         }
 
-        .toast_animate_out {
-            opacity: 0;
-            transition: .3s;
-        }
-
-        .enter_email_toast {
-            width: 100%;
-            text-align: center;
-        }
-
         #wl_custom_fields_holder {
             z-index: 1001;
             position: relative;
-        }
-
-        /*@media screen and (max-width: 470px)*/
-        .wheelio_holder .wlo_content .wlo_btn,
-        .wheelio_holder .wlo_content .wlo_email_input {
-            max-width: 360px !important;
         }
 
         .wheelio_holder .wlo_content input.wlo_input {
@@ -276,7 +458,6 @@
             -moz-box-sizing: border-box;
             -webkit-box-sizing: border-box;
             width: 100%;
-            max-width: 400px;
             font-size: 16px;
             text-indent: 10px;
             color: #333;
@@ -284,7 +465,6 @@
             background-color: #fff;
         }
 
-        /*@media screen and (max-width: 750px)*/
         .wheelio_holder .wlo_content input.wlo_input {
             line-height: 35px !important;
             height: 35px !important;
@@ -307,7 +487,6 @@
             transform: translate(-10000px, 0);
         }
 
-        /*@media screen and (max-width: 750px)*/
         .wheelio_holder .wlo_content input[type=checkbox]+label,
         .wheelio_holder .wlo_content textarea.wlo_textarea {
             font-size: 16px;
@@ -323,7 +502,6 @@
 
         label:not(.variant__button-label),
         .label {
-            /*letter-spacing: 0.2em;*/
             font-size: 0.8em;
         }
 
@@ -404,7 +582,6 @@
             text-decoration: underline;
         }
 
-        .link-accent-color,
         .wlo_gdpr_text a {
             color: unset;
         }
@@ -415,7 +592,6 @@
             padding: 8px 20px;
             line-height: 1.5em;
             max-width: inherit;
-            /*font-size: 16px!important;*/
             margin-top: 20px;
             box-sizing: border-box;
             -moz-box-sizing: border-box;
@@ -427,12 +603,6 @@
             min-height: 40px;
         }
 
-        .wheelio_holder .wlo_content .wlo_btn,
-        .wheelio_holder .wlo_content .wlo_email_input {
-            max-width: 360px !important;
-        }
-
-
         #spin-to-win-box-close {
             position: absolute;
             top: -10px;
@@ -441,47 +611,20 @@
             opacity: 0.7;
             z-index: 1;
             width: 20px;
-            height: : 20px;
+            height: 20px;
         }
 
-        #canvas-container {
+        #wheel-container {
             float: left;
             width: 207px;
             height: 414px;
         }
 
-        #canvas-container {
+        #wheel-container {
             float: unset;
             width: 100%;
             text-align: center;
             position: relative;
-        }
-
-        /*
-        #arrow-container {
-            width: 50px;
-            height: 50px;
-            display: inline-block;
-            position: absolute;
-            box-sizing: border-box;
-            top: calc(50% - 14px);
-            left: 197px;
-            z-index: 1;
-            /* transform: rotate(90deg); */
-        }*/
-
-        #wheel-container, #arrow-container {
-            float: unset;
-            height: 414px;
-            width: 207px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        #wheel-container {
-            width: 414px;
-            margin: 0 auto;
-            transform: rotate(-90deg);
         }
 
         .wlo_gdpr_text p {
@@ -491,99 +634,86 @@
 </head>
 
 <body>
-<div class="wheelio_holder" style="display: block;">
-  <div id="container" class="wlo_panel wlo-open wlo_gpuac wlo-panel-animate" left: 0px;">
-  <div class="wlo_content ed_flex ed_flex_vert">
-    <div class="wlo_form wlo_gpuac wlo_font_color">
-      <div class="wlo_enter_email wlo_gpuac">
+    <div class="wheelio_holder" style="display: block;">
+        <div id="container" class="wlo_panel wlo-open wlo_gpuac wlo-panel-animate" left: 0px;">
+            <div class="wlo_content ed_flex ed_flex_vert">
+                <div class="wlo_form wlo_gpuac wlo_font_color">
+                    <div class="wlo_enter_email wlo_gpuac">
 
-        <img id="spin-to-win-box-close" />
+                        <img id="spin-to-win-box-close" />
 
-        <div class="wlo_title wlo_main_title">
-          <p id="form-title">Title</p>
+                        <div class="wlo_title wlo_main_title">
+                            <p id="form-title">Title</p>
+                        </div>
+                        <div class="wlo_text">
+                            <p id="form-message">Message</p>
+                        </div>
+
+                        <div id="wl_custom_fields_holder" class="wlo_invert_input">
+                            <input class="wlo_email_input wlo_input" id="vl-form-input" name="vl-form-input"
+                                type="email" placeholder="Email" data-field-name="email" maxlength="99">
+
+                            <div id="vl-form-consent" class="wlo_invert_input">
+                                <input class="wlo_checkbox" type="checkbox" id="vl-form-checkbox"
+                                    name="vl-form-checkbox" required-field="1" field-name="gdpr">
+                                <label class="wlo_gdpr_text vl-form-checkbox" for="vl-form-checkbox">
+                                    <p id="vl-form-consent-text">Consent
+                                    </p>
+                                </label>
+                            </div>
+
+                            <div id="vl-permitform-email" class="wlo_invert_input">
+                                <input class="wlo_checkbox" type="checkbox" id="vl-form-checkbox-emailpermit"
+                                    name="vl-form-checkbox-emailpermit" required-field="1" field-name="gdpr">
+                                <label class="wlo_gdpr_text vl-form-checkbox-emailpermit"
+                                    for="vl-form-checkbox-emailpermit">
+                                    <p id="vl-permitform-email-text">Email Permit
+                                    </p>
+                                </label>
+                            </div>
+
+                        </div>
+
+
+                        <div class="wlo_text">
+                            <p id="success-message">Success Message</p>
+                        </div>
+
+                        <div class="wlo_text">
+                            <p id="promocode-title">Promosyon Kodu</p>
+                        </div>
+
+                        <div class="wlo_btn wlo_try_luck_btn" id="coupon-code"
+                            style="background-color: #eeeeee; color: #000000;">Coupon Code</div>
+
+                        <div class="wlo_btn wlo_try_luck_btn form-submit-btn" id="form-submit-btn"
+                            style="background-color: #000000; color: #FFFFFF;">Submit</div>
+
+                        <div class="wlo_btn wlo_try_luck_btn form-submit-btn" id="form-copy-btn"
+                            style="background-color: #000000; color: #FFFFFF;">Copy</div>
+
+                        <div id="vl-warning" class="vl-validationMessage" style="display: block; color:red;">
+                            <ul style="padding-inline-start: 0px; list-style-type: none;">
+                                <li id="invalid-email-message" style="display: block;">Please enter a valid E-Mail
+                                    Address.</li>
+                                <li id="check-consent-message" style="display: block;">Please check consent.</li>
+                            </ul>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="wheel-container">
+
+            </div>
+
         </div>
-        <div class="wlo_text">
-          <p id="form-message">Message</p>
-        </div>
 
-        <div id="wl_custom_fields_holder" class="wlo_invert_input">
-          <input class="wlo_email_input wlo_input" id="vl-form-input" name="vl-form-input"
-                 type="email" placeholder="Email" data-field-name="email" maxlength="99">
-
-          <div id="vl-form-consent" class="wlo_invert_input">
-            <input class="wlo_checkbox" type="checkbox" id="vl-form-checkbox"
-                   name="vl-form-checkbox" required-field="1" field-name="gdpr">
-            <label class="wlo_gdpr_text vl-form-checkbox" for="vl-form-checkbox">
-              <p id="vl-form-consent-text">Consent
-              </p>
-            </label>
-          </div>
-
-          <div id="vl-permitform-email" class="wlo_invert_input">
-            <input class="wlo_checkbox" type="checkbox" id="vl-form-checkbox-emailpermit"
-                   name="vl-form-checkbox-emailpermit" required-field="1" field-name="gdpr">
-            <label class="wlo_gdpr_text vl-form-checkbox-emailpermit"
-                   for="vl-form-checkbox-emailpermit">
-              <p id="vl-permitform-email-text">Email Permit
-              </p>
-            </label>
-          </div>
-
-        </div>
-
-
-        <div class="wlo_text">
-          <p id="success-message">Success Message</p>
-        </div>
-
-        <div class="wlo_text">
-          <p id="promocode-title">Promosyon Kodu</p>
-        </div>
-
-        <div class="wlo_btn wlo_try_luck_btn" id="coupon-code"
-             style="background-color: #eeeeee; color: #000000;">Coupon Code</div>
-
-        <div class="wlo_btn wlo_try_luck_btn form-submit-btn" id="form-submit-btn"
-             style="background-color: #000000; color: #FFFFFF;">Submit</div>
-
-        <div class="wlo_btn wlo_try_luck_btn form-submit-btn" id="form-copy-btn"
-             style="background-color: #000000; color: #FFFFFF;">Copy</div>
-
-        <div id="vl-warning" class="vl-validationMessage" style="display: block; color:red;">
-          <ul style="padding-inline-start: 0px; list-style-type: none;">
-            <li id="invalid-email-message" style="display: block;">Please enter a valid E-Mail
-              Address.</li>
-            <li id="check-consent-message" style="display: block;">Please check consent.</li>
-          </ul>
-        </div>
-
-
-
-      </div>
     </div>
-  </div>
-
-
-
-
-  <div id="canvas-container">
-    <div id="arrow-container" style="position:absolute;z-index:1;">
-      <!-- <img style="position: absolute; bottom: 0px; width: 50px; height: 50px;z-index: 2;display: block;" src="cone.png" /> -->
-      <canvas id="arrow-canvas"></canvas>
-    </div>
-    <div id="wheel-container"><canvas id="wheel-canvas"
-                                      style="transform: translateX(0px) rotate(42deg); transition: transform 0s ease-out 0s; border-radius: 50%;"></canvas>
-    </div>
-  </div>
-
-
-
-</div>
-
-
-
-</div>
-<script type="text/javascript">
+    <script type="text/javascript">
 
         var config = {};
         var spinToWin = {};
@@ -611,83 +741,7 @@
                 }
                 window.webkit.messageHandlers.eventHandler.postMessage({ method: "console.log", message: stringMessage });
             };
-        } else {
-            window.BrowserTest = {
-                getPromotionCode: function() {
-                    window.chooseSlice(0, 'asd');
-                },
-                sendReport: function() {
-
-                }
-            };
-            config = {
-                "actid": 130,
-                "title": "Spin-To-Win Test",
-                "actiontype": "SpinToWin",
-                "actiondata": {
-                    "slices": [
-                        {
-                            "displayName": "Promotion1",
-                            "color": "#dc246d",
-                            "code": "190708hopa",
-                            "type": "promotion"
-                        },
-                        {
-                            "displayName": "Promotion2",
-                            "color": "#1ddeea",
-                            "code": "190708hopa",
-                            "type": "promotion"
-                        },
-                        {
-                            "displayName": "Static1",
-                            "color": "#d824dc",
-                            "code": "123456",
-                            "type": "staticcode"
-                        },
-                        {
-                            "displayName": "Pass1",
-                            "color": "#f5f400",
-                            "code": "",
-                            "type": "pass"
-                        },
-                        {
-                            "displayName": "Pass2",
-                            "color": "#f5a200",
-                            "code": "",
-                            "type": "pass"
-                        }
-                    ],
-                    "mail_subscription": true,
-                    "spin_to_win_content": {
-                        "title": "Title",
-                        "message": "Body Text",
-                        "placeholder": "Your e-mail",
-                        "button_label": "START",
-                        "consent_text": "I've read and accept.<LINK> url1 </LINK> Consent Text <LINK> url2  </LINK> asdfas",
-                        "invalid_email_message": "Invalid Email Message",
-                        "success_message": "Success Message",
-                        "emailpermit_text": "Email Permit Text",
-                        "check_consent_message": "Consent Text Not Checked",
-                        "promocode_title": "Promotion Code",
-                        "copybutton_label": "Copy to Clipboard"
-                    },
-                    "font_size": 0,
-                    "circle_R": 0,
-                    "waiting_time": 0,
-                    "promoAuth": "9AF019D4A6DA3AA668EE459D286F331BF271920C7BD190F2175F8CAB261CE7EE",
-                    "slice_count": "7",
-                    "sendemail": false,
-                    "courseofaction": "GetExistingPromoCode",
-                    "ExtendedProps": "%7B%22displayname_text_color%22%3A%22%230029ff%22%2C%22displayname_font_family%22%3A%22sansserif%22%2C%22displayname_text_size%22%3A%2210%22%2C%22title_text_color%22%3A%22%23301fb4%22%2C%22title_font_family%22%3A%22default%22%2C%22title_text_size%22%3A%2210%22%2C%22text_color%22%3A%22%237771e2%22%2C%22text_font_family%22%3A%22serif%22%2C%22text_size%22%3A%224%22%2C%22button_color%22%3A%22%233047bf%22%2C%22button_text_color%22%3A%22%23e1ebf0%22%2C%22button_font_family%22%3A%22default%22%2C%22button_text_size%22%3A%221%22%2C%22promocode_title_text_color%22%3A%22%233fd077%22%2C%22promocode_title_font_family%22%3A%22serif%22%2C%22promocode_title_text_size%22%3A%227%22%2C%22promocode_background_color%22%3A%22%23f4f2f3%22%2C%22promocode_text_color%22%3A%22%23000000%22%2C%22copybutton_color%22%3A%22%232da656%22%2C%22copybutton_text_color%22%3A%22%23f7f7f4%22%2C%22copybutton_font_family%22%3A%22sansserif%22%2C%22copybutton_text_size%22%3A%223%22%2C%22emailpermit_text_size%22%3A%225%22%2C%22emailpermit_text_url%22%3A%22https%3A%2F%2Fapp.visilabs.net%2F%22%2C%22consent_text_size%22%3A%222%22%2C%22consent_text_url%22%3A%22https%3A%2F%2Fapp.visilabs.net%2F%22%2C%22close_button_color%22%3A%22black%22%2C%22background_color%22%3A%22%23c6edee%22%7D",
-                    "report": {
-                        "impression": "",
-                        "click": "OM.zpc=acttype-27&OM.zn=act-130"
-                    }
-                }
-            };
-            initSpinToWin(config);
         }
-
     </script>
 </body>
 
