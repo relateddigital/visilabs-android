@@ -74,6 +74,22 @@ It is shown as follows;
 
 ![mail-subscription-form](/Screenshots/mail-subscription-form.png)
 
+## Spin To Win
+
+After form is created at **RMC** panel, likewise **in-app message**, existence of spin to win is controlled by after each `customEvent` call.
+You need to call overload of `customEvent` which takes `Activity` as third parameter in order to show spin to win.
+
+```java
+customEvent(String pageName, HashMap<String, String> properties, Activity parent)
+```
+
+It is shown as follows;
+
+|               Spin to Win Full                                   |                        Spin to Win Half                                    |
+|:----------------------------------------------------------------:|----------------------------------------------------------------------------|
+| ![spin-to-win-full](/Screenshots/spin_to_win_full_en.jpeg)          | ![spin-to-win-half](/Screenshots/spin_to_win_half_en.jpeg)                    |
+
+
 ## Sending Campaign Parameters
 
 You can send campaign parameters using `sendCampaignParameters` :
