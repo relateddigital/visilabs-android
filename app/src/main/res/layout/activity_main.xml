@@ -282,6 +282,13 @@
                 android:layout_weight="1.0"
                 android:text="@string/shake_to_win" />
 
+            <Button
+                android:id="@+id/inApp18"
+                android:layout_width="0.0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:text="@string/app_tracker" />
+
         </LinearLayout>
 
     </LinearLayout>

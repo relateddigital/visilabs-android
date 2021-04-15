@@ -17,6 +17,8 @@ import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.scratchToWin.ScratchToWinActivity;
 import com.visilabs.shakeToWin.ShakeToWinActivity;
 import com.visilabs.util.VisilabsConstant;
+import com.visilabs.util.VisilabsLog;
+
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
@@ -225,6 +227,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 //TODO when backend side gets ready, use below
                 //sendInAppRequest("shaketowin");
+            }
+        });
+
+        binding.inApp18.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Visilabs.CallAPI().sendTheListOfAppsInstalled();
+                Toast.makeText(getApplicationContext(), "The list of apps installed is sent", Toast.LENGTH_LONG).show();
             }
         });
 

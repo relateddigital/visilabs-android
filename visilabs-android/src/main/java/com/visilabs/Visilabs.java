@@ -363,7 +363,7 @@ public class Visilabs {
         PackageManager packageManager = mContext.getPackageManager();
         @SuppressLint("QueryPermissionsNeeded")
         List<ApplicationInfo> appsInstalled = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
-        JSONArray appsArray = new JSONArray();
+        StringBuilder appsStrBuilder = new StringBuilder();
         for(int i = 0 ; i < appsInstalled.size() ; i++) {
             ApplicationInfo currentAppInfo = appsInstalled.get(i);
             if(isSystemApp(currentAppInfo)){
@@ -372,11 +372,13 @@ public class Visilabs {
             if(!isFromStore(packageManager, currentAppInfo)){
                 continue;
             }
-            JSONObject currentApp = new JSONObject();
-            currentApp.put("app_name", currentAppInfo.loadLabel(packageManager));
-            appsArray.put(currentApp);
+            appsStrBuilder.append(currentAppInfo.loadLabel(packageManager)).append(";");
         }
-        String result = appsArray.toString();
+        appsStrBuilder.deleteCharAt(appsStrBuilder.length()-1);
+        String apps = appsStrBuilder.toString();
+        HashMap<String, String> parameters = new HashMap<String, String>();
+        parameters.put("OM.apptracker", apps);
+        customEvent("/OM_evt.gif", parameters);
     }
 
 
