@@ -76,8 +76,8 @@ It is shown as follows;
 
 ## Spin To Win
 
-After form is created at **RMC** panel, likewise **in-app message**, existence of mail subscription form is controlled by after each `customEvent` call.
-You need to call overload of `customEvent` which takes `Activity` as third parameter in order to show mail subscription forms.
+After form is created at **RMC** panel, likewise **in-app message**, existence of spin to win is controlled by after each `customEvent` call.
+You need to call overload of `customEvent` which takes `Activity` as third parameter in order to show spin to win.
 
 ```java
 customEvent(String pageName, HashMap<String, String> properties, Activity parent)
