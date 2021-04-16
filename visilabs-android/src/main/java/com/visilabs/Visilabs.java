@@ -738,48 +738,61 @@ public class Visilabs {
 
         return new VisilabsInAppMessageCallback() {
             @Override
-            public void success(List<InAppMessage> messages, String url) {
+            public void success(final List<InAppMessage> messages, String url) {
                 Log.i(LOG_TAG, "Success InApp Request : " + url);
+                //TODO : Modify InAppMessage class when delay is added to the response
 
-                InAppMessage message = null;
-                if (actId > 0) {
-                    for (int i = 0; i < messages.size(); i++) {
-                        if (messages.get(i) != null && messages.get(i).getActId() == actId) {
-                            message = messages.get(i);
-                            break;
+                final Timer timer = new Timer("InApp Delay Timer", false);
+                TimerTask task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        timer.cancel();
+                        if(parent == null) {
+                            Log.e(LOG_TAG, "Could not display the in-app template since the user has changed the original page!");
+                            return;
+                        }
+                        InAppMessage message = null;
+                        if (actId > 0) {
+                            for (int i = 0; i < messages.size(); i++) {
+                                if (messages.get(i) != null && messages.get(i).getActId() == actId) {
+                                    message = messages.get(i);
+                                    break;
+                                }
+                            }
+                        }
+                        if (message == null && type != null) {
+                            for (int i = 0; i < messages.size(); i++) {
+                                if (messages.get(i) != null && messages.get(i).getActionData().getMsgType().toString().equals(type)) {
+                                    message = messages.get(i);
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (message == null && messages.size() != 0) {
+                            message = messages.get(0);
+                        }
+
+                        if(message != null) {
+                            new InAppMessageManager(mCookieID, mDataSource).showInAppMessage(message, parent);
+
+                            if (message.getActionData().getVisitData() != null && !message.getActionData().getVisitData().equals("")) {
+                                Log.v("mVisitData", message.getActionData().getVisitData());
+                                mVisitData = message.getActionData().getVisitData();
+                            }
+
+                            if (message.getActionData().getVisitorData() != null && !message.getActionData().getVisitorData().equals("")) {
+                                Prefs.saveToPrefs(parent, VisilabsConstant.VISITOR_DATA_PREF,
+                                        VisilabsConstant.VISITOR_DATA_PREF_KEY, message.getActionData().getVisitorData());
+
+                                mVisitorData = message.getActionData().getVisitorData();
+
+                                Log.v("mVisitorData", message.getActionData().getVisitorData());
+                            }
                         }
                     }
-                }
-                if (message == null && type != null) {
-                    for (int i = 0; i < messages.size(); i++) {
-                        if (messages.get(i) != null && messages.get(i).getActionData().getMsgType().toString().equals(type)) {
-                            message = messages.get(i);
-                            break;
-                        }
-                    }
-                }
-
-                if (message == null && messages.size() != 0) {
-                    message = messages.get(0);
-                }
-
-                if(message != null) {
-                    new InAppMessageManager(mCookieID, mDataSource).showInAppMessage(message, parent);
-
-                    if (message.getActionData().getVisitData() != null && !message.getActionData().getVisitData().equals("")) {
-                        Log.v("mVisitData", message.getActionData().getVisitData());
-                        mVisitData = message.getActionData().getVisitData();
-                    }
-
-                    if (message.getActionData().getVisitorData() != null && !message.getActionData().getVisitorData().equals("")) {
-                        Prefs.saveToPrefs(parent, VisilabsConstant.VISITOR_DATA_PREF,
-                                VisilabsConstant.VISITOR_DATA_PREF_KEY, message.getActionData().getVisitorData());
-
-                        mVisitorData = message.getActionData().getVisitorData();
-
-                        Log.v("mVisitorData", message.getActionData().getVisitorData());
-                    }
-                }
+                };
+                timer.schedule(task, 0); //TODO : real data here
             }
 
             @Override
