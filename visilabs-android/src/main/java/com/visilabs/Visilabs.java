@@ -740,6 +740,7 @@ public class Visilabs {
             @Override
             public void success(final List<InAppMessage> messages, String url) {
                 Log.i(LOG_TAG, "Success InApp Request : " + url);
+                //TODO : Modify InAppMessage class when delay is added to the response
 
                 final Timer timer = new Timer("InApp Delay Timer", false);
                 TimerTask task = new TimerTask() {
@@ -791,7 +792,7 @@ public class Visilabs {
                         }
                     }
                 };
-                timer.schedule(task, 0); //TODO real data here
+                timer.schedule(task, 0); //TODO : real data here
             }
 
             @Override
