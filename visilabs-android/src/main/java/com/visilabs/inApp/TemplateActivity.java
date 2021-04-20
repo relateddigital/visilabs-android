@@ -27,6 +27,7 @@ import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.ActivityTemplateBinding;
 import com.visilabs.android.databinding.ActivityTemplateCarouselBinding;
+import com.visilabs.android.databinding.NpsSecondPopUpBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.inApp.carousel.OnSwipeTouchListener;
 import com.visilabs.util.StringUtils;
@@ -35,6 +36,10 @@ import com.visilabs.view.SmileRating;
 
 
 public class TemplateActivity extends Activity implements SmileRating.OnSmileySelectionListener, SmileRating.OnRatingSelectedListener {
+    enum NpsSecondPopUpType {
+        IMAGE_TEXT_BUTTON,
+        FEEDBACK_FORM
+    }
 
     private static final String LOG_TAG = "Template Activity";
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
@@ -43,10 +48,13 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private VisilabsUpdateDisplayState mUpdateDisplayState;
     private int mIntentId = -1;
     private ActivityTemplateBinding binding;
+    private NpsSecondPopUpBinding bindingSecondPopUp;
     private ActivityTemplateCarouselBinding bindingCarousel;
     private boolean mIsCarousel = false;
     private int mCarouselPosition = -1;
     private boolean mIsRotation = false;
+    private boolean isNpsSecondPopUp = false;
+    private NpsSecondPopUpType secondPopUpType = NpsSecondPopUpType.IMAGE_TEXT_BUTTON;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -226,10 +234,10 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
 
             case NPS:
-
+                setNpsCloseButton();
                 setTitle();
                 setBody();
-                setButton();
+                setNpsButton();
                 showNps();
 
                 break;
@@ -253,6 +261,16 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
                 break;
 
+        }
+    }
+
+    private void setNpsCloseButton() {
+        //TODO : check if there is a second pop-up here and set the variable
+        isNpsSecondPopUp = false;
+        if(isNpsSecondPopUp) {
+            binding.ibClose.setVisibility(View.GONE);
+            //TODO : set the type of the second pop-up here
+            secondPopUpType = NpsSecondPopUpType.FEEDBACK_FORM;
         }
     }
 
@@ -349,6 +367,154 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 finish();
             }
         });
+    }
+
+    private void setNpsButton() {
+        binding.btnTemplate.setTypeface(mInAppMessage.getActionData().getFontFamily());
+        binding.btnTemplate.setVisibility(View.VISIBLE);
+        binding.btnTemplate.setText(mInAppMessage.getActionData().getBtnText());
+        if(mInAppMessage.getActionData().getButtonTextColor() != null && !mInAppMessage.getActionData().getButtonTextColor().equals("")) {
+            try {
+                binding.btnTemplate.setTextColor(Color.parseColor(mInAppMessage.getActionData().getButtonTextColor()));
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse the data given for button text color\nSetting the default value.");
+                e.printStackTrace();
+                binding.btnTemplate.setTextColor(getResources().getColor(R.color.black));
+            }
+        } else {
+            binding.btnTemplate.setTextColor(getResources().getColor(R.color.black));
+        }
+        if(mInAppMessage.getActionData().getButtonColor() != null && !mInAppMessage.getActionData().getButtonColor().equals("")) {
+            try {
+                binding.btnTemplate.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getButtonColor()));
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse the data given for button color\nSetting the default value.");
+                e.printStackTrace();
+            }
+        }
+
+        binding.btnTemplate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+                if(isNpsSecondPopUp) {
+                    if(secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
+                        if(isRatingAboveThreshold()) {
+                            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                            finish();
+                        } else {
+                            setupSecondPopUp();
+                        }
+                    } else {
+                        setupSecondPopUp();
+                    }
+                } else {
+                    if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
+                            startActivity(viewIntent);
+
+                        } catch (final ActivityNotFoundException e) {
+                            Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                        }
+                    }
+
+                    VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                    finish();
+                }
+            }
+        });
+    }
+
+    private boolean isRatingAboveThreshold() {
+        //TODO : real data here
+        int rating = (int)(binding.ratingBar.getRating() * 2);
+        return rating > 7; //TODO : the threshold in response here.
+    }
+
+    private void setupSecondPopUp () {
+        bindingSecondPopUp = NpsSecondPopUpBinding.inflate(getLayoutInflater());
+        setContentView(bindingSecondPopUp.getRoot());
+        switch (secondPopUpType) {
+            case IMAGE_TEXT_BUTTON: {
+                bindingSecondPopUp.commentBox.setVisibility(View.GONE);
+                //TODO : real data here
+                //TODO : set GONE if there is no
+                Picasso.get().load("https://www.globaltechmagazine.com/wp-content/uploads/2020/01/related-digital-globaltechmagazine.jpg")
+                        .into(bindingSecondPopUp.imageView2);
+                break;
+            }
+            case FEEDBACK_FORM: {
+                bindingSecondPopUp.imageView2.setVisibility(View.GONE);
+                bindingSecondPopUp.commentBox.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (hasFocus)
+                            bindingSecondPopUp.commentBox.setHint("");
+                        else
+                            bindingSecondPopUp.commentBox.setHint(getResources().getString(R.string.comment_box_hint));
+                    }
+                });
+                break;
+            }
+            default: {
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                finish();
+                break;
+            }
+        }
+        //TODO : real data here
+        //TODO : set GONE if there is no
+        bindingSecondPopUp.closeButton.setBackgroundResource(getCloseIcon());
+        bindingSecondPopUp.closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                finish();
+            }
+        });
+        Picasso.get().load("https://www.globaltechmagazine.com/wp-content/uploads/2020/01/related-digital-globaltechmagazine.jpg")
+                .into(bindingSecondPopUp.imageView);
+        bindingSecondPopUp.container.setBackgroundColor(Color.parseColor("#31F60C"));
+        bindingSecondPopUp.titleView.setText("Second Pop-Up Title");
+        bindingSecondPopUp.titleView.setTextColor(Color.parseColor("#E8F279"));
+        bindingSecondPopUp.titleView.setTextSize(32);
+        bindingSecondPopUp.bodyTextView.setText("Second Pop-Up Text");
+        bindingSecondPopUp.bodyTextView.setTextColor(Color.parseColor("#E3A9E7"));
+        bindingSecondPopUp.bodyTextView.setTextSize(24);
+        bindingSecondPopUp.button.setText("Button");
+        bindingSecondPopUp.button.setTextColor(Color.parseColor("#000000"));
+        bindingSecondPopUp.button.setBackgroundColor(Color.parseColor("#A9E7E4"));
+        bindingSecondPopUp.button.setTextSize(24);
+        bindingSecondPopUp.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendSecondPopUpReport();
+                if(secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
+                    sendCommentToLogger(bindingSecondPopUp.commentBox.getText().toString());
+                } else if(secondPopUpType == NpsSecondPopUpType.IMAGE_TEXT_BUTTON) {
+                    //TODO : Check if the link is empty here first
+                    try {
+                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
+                        viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(viewIntent);
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG, "The link is not formatted properly!");
+                    }
+                }
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                finish();
+            }
+        });
+    }
+
+    private void sendSecondPopUpReport () {
+        //TODO : send the second report here
+        //TODO : If trackInAppMessageClick is not proper add another method
+    }
+
+    private void sendCommentToLogger(String comment) {
+        //TODO : call customEvent with the proper parameter here
     }
 
     private void setPromotionCode() {
@@ -665,6 +831,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png").fetch();
         } else {
             Picasso.get().load(mInAppMessage.getActionData().getImg()).fetch();
+            if(mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS) {
+                // TODO : Cache the second pop up images here
+            }
         }
     }
 }

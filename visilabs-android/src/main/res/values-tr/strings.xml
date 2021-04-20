@@ -32,4 +32,6 @@
     <string name="minute_name" >Dakika</string>
     <string name="second_name" >Saniye</string>
     <string name="time_is_over" >Süre doldu!</string>
+
+    <string name="comment_box_hint" >en fazla 500 karakter</string>
 </resources>
