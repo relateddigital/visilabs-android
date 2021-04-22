@@ -23,6 +23,7 @@ import com.visilabs.api.VisilabsTargetRequest;
 import com.visilabs.exceptions.VisilabsNotReadyException;
 import com.visilabs.gps.factory.GpsFactory;
 import com.visilabs.gps.manager.GpsManager;
+import com.visilabs.inApp.InAppButtonInterface;
 import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.VisilabsActionRequest;
@@ -100,6 +101,7 @@ public class Visilabs {
     private VisilabsApiMethods mVisilabsRealTimeApiInterface;
     private VisilabsApiMethods mVisilabsSApiInterface;
 
+    private InAppButtonInterface mInAppButtonInterface = null;
 
     private Visilabs(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
             , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource, String targetURL, String actionURL, String geofenceURL, boolean geofenceEnabled) {
@@ -1721,5 +1723,13 @@ public class Visilabs {
         final String installerName = packageManager.getInstallerPackageName(applicationInfo.packageName);
 
         return installerName != null && validInstallers.contains(installerName);
+    }
+
+    public void setInAppButtonInterface(InAppButtonInterface inAppButtonInterface) {
+        mInAppButtonInterface = inAppButtonInterface;
+    }
+
+    public InAppButtonInterface getInAppButtonInterface() {
+        return mInAppButtonInterface;
     }
 }

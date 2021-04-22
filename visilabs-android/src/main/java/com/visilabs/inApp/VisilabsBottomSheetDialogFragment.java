@@ -99,16 +99,22 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
             public void onClick(View v) {
                 final InAppMessage inAppMessage = mInAppNotificationState.getInAppMessage();
                 final String uriString = inAppMessage.getActionData().getAndroidLnk();
-                Uri uri = null;
-                if (uriString != null && uriString.length() > 0) {
-                    try {
-                        uri = Uri.parse(uriString);
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        mParent.startActivity(viewIntent);
-                    } catch (IllegalArgumentException e) {
-                        Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                    } catch (ActivityNotFoundException e) {
-                        Log.i(LOG_TAG, "User doesn't have an activity for notification URI " + uri);
+                InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
+                if(buttonInterface != null) {
+                    Visilabs.CallAPI().setInAppButtonInterface(null);
+                    buttonInterface.onPress(uriString);
+                } else {
+                    Uri uri = null;
+                    if (uriString != null && uriString.length() > 0) {
+                        try {
+                            uri = Uri.parse(uriString);
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
+                            mParent.startActivity(viewIntent);
+                        } catch (IllegalArgumentException e) {
+                            Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
+                        } catch (ActivityNotFoundException e) {
+                            Log.i(LOG_TAG, "User doesn't have an activity for notification URI " + uri);
+                        }
                     }
                 }
                 Visilabs.CallAPI().trackInAppMessageClick(inAppMessage, null);

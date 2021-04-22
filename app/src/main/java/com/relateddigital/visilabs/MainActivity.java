@@ -17,7 +17,6 @@ import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.scratchToWin.ScratchToWinActivity;
 import com.visilabs.shakeToWin.ShakeToWinActivity;
 import com.visilabs.util.VisilabsConstant;
-import com.visilabs.util.VisilabsLog;
 
 import java.util.HashMap;
 

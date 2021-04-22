@@ -203,6 +203,26 @@ public class CountdownTimerFragment extends Fragment {
             public void onClick(View v) {
                 //TODO: send click report here
                 //TODO: Remove Toast
+                /*
+                InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
+                Visilabs.CallAPI().trackInAppMessageClick(mInApp, null);
+                if(buttonInterface != null) {
+                    Visilabs.CallAPI().setInAppButtonInterface(null);
+                    buttonInterface.onPress(mInApp.getActionData().getAndroidLnk());
+                } else {
+                    if (mInApp.getActionData().getAndroidLnk() != null && mInApp.getActionData().getAndroidLnk().length() > 0) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInApp.getActionData().getAndroidLnk()));
+                            VisilabsInAppActivity.this.startActivity(viewIntent);
+
+                        } catch (final ActivityNotFoundException e) {
+                            Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                        }
+                    }
+                }
+                finish();
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                */
                 Toast.makeText(getActivity(), "Go to the Link", Toast.LENGTH_LONG).show();
                 endFragment();
             }
@@ -216,6 +236,26 @@ public class CountdownTimerFragment extends Fragment {
             public void onClick(View v) {
                 //TODO: send click report here
                 //TODO: Remove Toast
+                                /*
+                InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
+                Visilabs.CallAPI().trackInAppMessageClick(mInApp, null);
+                if(buttonInterface != null) {
+                    Visilabs.CallAPI().setInAppButtonInterface(null);
+                    buttonInterface.onPress(mInApp.getActionData().getAndroidLnk());
+                } else {
+                    if (mInApp.getActionData().getAndroidLnk() != null && mInApp.getActionData().getAndroidLnk().length() > 0) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInApp.getActionData().getAndroidLnk()));
+                            VisilabsInAppActivity.this.startActivity(viewIntent);
+
+                        } catch (final ActivityNotFoundException e) {
+                            Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                        }
+                    }
+                }
+                finish();
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                */
                 Toast.makeText(getActivity(), "Go to the Link", Toast.LENGTH_LONG).show();
                 endFragment();
             }

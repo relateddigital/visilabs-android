@@ -131,16 +131,20 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
         binding.btnInApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
+                Visilabs.CallAPI().trackInAppMessageClick(mInApp, null);
+                if(buttonInterface != null) {
+                    Visilabs.CallAPI().setInAppButtonInterface(null);
+                    buttonInterface.onPress(mInApp.getActionData().getAndroidLnk());
+                } else {
+                    if (mInApp.getActionData().getAndroidLnk() != null && mInApp.getActionData().getAndroidLnk().length() > 0) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInApp.getActionData().getAndroidLnk()));
+                            VisilabsInAppActivity.this.startActivity(viewIntent);
 
-                if (mInApp.getActionData().getAndroidLnk() != null && mInApp.getActionData().getAndroidLnk().length() > 0) {
-
-                    try {
-                        Visilabs.CallAPI().trackInAppMessageClick(mInApp, null);
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInApp.getActionData().getAndroidLnk()));
-                        VisilabsInAppActivity.this.startActivity(viewIntent);
-
-                    } catch (final ActivityNotFoundException e) {
-                        Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                        } catch (final ActivityNotFoundException e) {
+                            Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                        }
                     }
                 }
                 finish();

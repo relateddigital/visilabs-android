@@ -177,25 +177,27 @@ public class VisilabsInAppFragment extends Fragment {
                 final InAppMessage inApp = mInAppNotificationState.getInAppMessage();
 
                 final String uriString = inApp.getActionData().getAndroidLnk();
-                if (uriString != null && uriString.length() > 0) {
-                    Uri uri;
-                    try {
-                        uri = Uri.parse(uriString);
-                    } catch (IllegalArgumentException e) {
-                        Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                        return true;
-                    }
+                InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
+                Visilabs.CallAPI().trackInAppMessageClick(inApp, null);
+                if(buttonInterface != null) {
+                    Visilabs.CallAPI().setInAppButtonInterface(null);
+                    buttonInterface.onPress(uriString);
+                } else {
+                    if (uriString != null && uriString.length() > 0) {
+                        Uri uri;
+                        try {
+                            uri = Uri.parse(uriString);
+                        } catch (IllegalArgumentException e) {
+                            Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
+                            return true;
+                        }
 
-                    try {
-                        Visilabs.CallAPI().trackInAppMessageClick(inApp, null);
-
-
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        mParent.startActivity(viewIntent);
-
-
-                    } catch (ActivityNotFoundException e) {
-                        Log.i(LOG_TAG, "User doesn't have an activity for notification URI " + uri);
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
+                            mParent.startActivity(viewIntent);
+                        } catch (ActivityNotFoundException e) {
+                            Log.i(LOG_TAG, "User doesn't have an activity for notification URI " + uri);
+                        }
                     }
                 }
 

@@ -55,6 +55,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private boolean mIsRotation = false;
     private boolean isNpsSecondPopUp = false;
     private NpsSecondPopUpType secondPopUpType = NpsSecondPopUpType.IMAGE_TEXT_BUTTON;
+    private InAppButtonInterface buttonCallback = null;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -68,6 +69,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         }
 
         mInAppMessage = getInAppMessage();
+        buttonCallback = Visilabs.CallAPI().getInAppButtonInterface();
 
         View view;
 
@@ -203,21 +205,21 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 binding.ivTemplate.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
-
-                            try {
-
-                                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
-                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
-                                startActivity(viewIntent);
-
-                            } catch (final ActivityNotFoundException e) {
-                                Log.i("Visilabs", "User doesn't have an activity for notification URI");
-                            }
+                        Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+                        if (buttonCallback != null) {
+                            Visilabs.CallAPI().setInAppButtonInterface(null);
+                            buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
                         } else {
-                            Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
-                        }
+                            if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
+                                try {
+                                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
+                                    startActivity(viewIntent);
 
+                                } catch (final ActivityNotFoundException e) {
+                                    Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                                }
+                            }
+                        }
                         VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                         finish();
                     }
@@ -348,21 +350,21 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.btnTemplate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
-
-                    try {
-
-                        Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
-                        startActivity(viewIntent);
-
-                    } catch (final ActivityNotFoundException e) {
-                        Log.i("Visilabs", "User doesn't have an activity for notification URI");
-                    }
+                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+                if(buttonCallback != null) {
+                    Visilabs.CallAPI().setInAppButtonInterface(null);
+                    buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
                 } else {
-                    Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
-                }
+                    if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
+                            startActivity(viewIntent);
 
+                        } catch (final ActivityNotFoundException e) {
+                            Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                        }
+                    }
+                }
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                 finish();
             }
@@ -409,13 +411,18 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                         setupSecondPopUp();
                     }
                 } else {
-                    if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
-                        try {
-                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
-                            startActivity(viewIntent);
+                    if (buttonCallback != null) {
+                        Visilabs.CallAPI().setInAppButtonInterface(null);
+                        buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
+                    } else {
+                        if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
+                            try {
+                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
+                                startActivity(viewIntent);
 
-                        } catch (final ActivityNotFoundException e) {
-                            Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                            } catch (final ActivityNotFoundException e) {
+                                Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                            }
                         }
                     }
 
@@ -493,13 +500,18 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 if(secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
                     sendCommentToLogger(bindingSecondPopUp.commentBox.getText().toString());
                 } else if(secondPopUpType == NpsSecondPopUpType.IMAGE_TEXT_BUTTON) {
-                    //TODO : Check if the link is empty here first
-                    try {
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
-                        viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(viewIntent);
-                    } catch (Exception e) {
-                        Log.e(LOG_TAG, "The link is not formatted properly!");
+                    if (buttonCallback != null) {
+                        Visilabs.CallAPI().setInAppButtonInterface(null);
+                        buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
+                    } else {
+                        //TODO : Check if the link is empty here first
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
+                            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(viewIntent);
+                        } catch (Exception e) {
+                            Log.e(LOG_TAG, "The link is not formatted properly!");
+                        }
                     }
                 }
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
@@ -712,12 +724,18 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        try {
-                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
-                            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(viewIntent);
-                        } catch (Exception e) {
-                            Log.e(LOG_TAG, "The link is not formatted properly!");
+                        //TODO : send report here
+                        if (buttonCallback != null) {
+                            Visilabs.CallAPI().setInAppButtonInterface(null);
+                            buttonCallback.onPress("https://www.relateddigital.com/");
+                        } else {
+                            try {
+                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
+                                viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(viewIntent);
+                            } catch (Exception e) {
+                                Log.e(LOG_TAG, "The link is not formatted properly!");
+                            }
                         }
                     }
                 });
@@ -739,12 +757,18 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        try {
-                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
-                            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(viewIntent);
-                        } catch (Exception e) {
-                            Log.e(LOG_TAG, "The link is not formatted properly!");
+                        //TODO : send report here
+                        if (buttonCallback != null) {
+                            Visilabs.CallAPI().setInAppButtonInterface(null);
+                            buttonCallback.onPress("https://www.relateddigital.com/");
+                        } else {
+                            try {
+                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
+                                viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(viewIntent);
+                            } catch (Exception e) {
+                                Log.e(LOG_TAG, "The link is not formatted properly!");
+                            }
                         }
                     }
                 });
@@ -778,12 +802,18 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        try {
-                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
-                            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(viewIntent);
-                        } catch (Exception e) {
-                            Log.e(LOG_TAG, "The link is not formatted properly!");
+                        //TODO : send report here
+                        if (buttonCallback != null) {
+                            Visilabs.CallAPI().setInAppButtonInterface(null);
+                            buttonCallback.onPress("https://www.relateddigital.com/");
+                        } else {
+                            try {
+                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
+                                viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(viewIntent);
+                            } catch (Exception e) {
+                                Log.e(LOG_TAG, "The link is not formatted properly!");
+                            }
                         }
                     }
                 });
