@@ -20,7 +20,7 @@ public class RealTimeApiClient {
                     new OkHttpClient.Builder()
                             .addInterceptor(interceptor)
                             .connectTimeout(connectTimeOutInSec, TimeUnit.SECONDS)
-                            .readTimeout(5, TimeUnit.SECONDS);
+                            .readTimeout(10, TimeUnit.SECONDS);
 
             synchronized (LoggerApiClient.class) {
                 if(retrofit == null) {

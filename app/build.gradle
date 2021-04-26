@@ -40,7 +40,7 @@ dependencies {
 
     implementation 'com.google.android.material:material:1.2.1'
 
-    implementation 'com.github.relateddigital:euromessage-android:4.4.0'
+    implementation 'com.github.relateddigital:euromessage-android:4.4.1'
 
     implementation 'com.android.support:multidex:2.0.1'
 

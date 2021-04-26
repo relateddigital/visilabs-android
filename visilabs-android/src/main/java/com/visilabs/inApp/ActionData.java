@@ -60,6 +60,8 @@ public class ActionData implements Parcelable {
     private final String mVisitData;
     @SerializedName("visitor_data")
     private final String mVisitorData;
+    @SerializedName("waiting_time")
+    private final String mWaitingTime;
 
     protected ActionData(Parcel in) {
         mAlertType = in.readString();
@@ -88,6 +90,7 @@ public class ActionData implements Parcelable {
         mQs = in.readString();
         mVisitData = in.readString();
         mVisitorData = in.readString();
+        mWaitingTime = in.readString();
     }
 
     public static final Creator<ActionData> CREATOR = new Creator<ActionData>() {
@@ -135,6 +138,7 @@ public class ActionData implements Parcelable {
         dest.writeString(mQs);
         dest.writeString(mVisitData);
         dest.writeString(mVisitorData);
+        dest.writeString(mWaitingTime);
     }
 
     public String getAlertType() {
@@ -361,5 +365,9 @@ public class ActionData implements Parcelable {
 
     public String getVisitorData() {
         return mVisitorData;
+    }
+
+    public String getWaitingTime() {
+        return mWaitingTime;
     }
 }
