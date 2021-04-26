@@ -39,6 +39,10 @@ public class Actiondata implements Serializable {
     private String img;
     @SerializedName("taTemplate")
     private String taTemplate;
+    @SerializedName("promocode_title")
+    private String promocodeTitle;
+    @SerializedName("copybutton_label")
+    private String copybuttonLabel;
 
     public List<Slice> getSlices() {
         return slices;
@@ -166,6 +170,22 @@ public class Actiondata implements Serializable {
 
     public void setTaTemplate(String taTemplate) {
         this.taTemplate = taTemplate;
+    }
+
+    public String getPromocodeTitle() {
+        return promocodeTitle;
+    }
+
+    public void setPromocodeTitle(String promocodeTitle) {
+        this.promocodeTitle = promocodeTitle;
+    }
+
+    public String getCopybuttonLabel() {
+        return copybuttonLabel;
+    }
+
+    public void setCopybuttonLabel(String copybuttonLabel) {
+        this.copybuttonLabel = copybuttonLabel;
     }
 
 }

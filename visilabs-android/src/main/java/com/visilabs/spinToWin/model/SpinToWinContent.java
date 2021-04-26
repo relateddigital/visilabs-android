@@ -24,10 +24,6 @@ public class SpinToWinContent implements Serializable {
     private String emailpermitText;
     @SerializedName("check_consent_message")
     private String checkConsentMessage;
-    @SerializedName("promocode_title")
-    private String promocodeTitle;
-    @SerializedName("copybutton_label")
-    private String copybuttonLabel;
 
     public String getTitle() {
         return title;
@@ -100,21 +96,4 @@ public class SpinToWinContent implements Serializable {
     public void setCheckConsentMessage(String checkConsentMessage) {
         this.checkConsentMessage = checkConsentMessage;
     }
-
-    public String getPromocodeTitle() {
-        return promocodeTitle;
-    }
-
-    public void setPromocodeTitle(String promocodeTitle) {
-        this.promocodeTitle = promocodeTitle;
-    }
-
-    public String getCopybuttonLabel() {
-        return copybuttonLabel;
-    }
-
-    public void setCopybuttonLabel(String copybuttonLabel) {
-        this.copybuttonLabel = copybuttonLabel;
-    }
-
 }
