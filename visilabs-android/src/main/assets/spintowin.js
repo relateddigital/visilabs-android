@@ -895,6 +895,8 @@ SpinToWin.prototype.convertConfigJson = function () {
   this.config.slices = this.config.actiondata.slices;
   this.config.img = this.config.actiondata.img;
   this.config.taTemplate = this.config.actiondata.taTemplate;
+  this.config.promocodeTitle = this.config.actiondata.promocode_title;
+  this.config.copyButtonLabel = this.config.actiondata.copybutton_label;
 
   //spin_to_win_content
   this.config.title = this.config.actiondata.spin_to_win_content.title;
@@ -906,9 +908,6 @@ SpinToWin.prototype.convertConfigJson = function () {
   this.config.successMessage = this.config.actiondata.spin_to_win_content.success_message;
   this.config.invalidEmailMessage = this.config.actiondata.spin_to_win_content.invalid_email_message;
   this.config.checkConsentMessage = this.config.actiondata.spin_to_win_content.check_consent_message;
-  this.config.promocodeTitle = this.config.actiondata.spin_to_win_content.promocode_title;
-  this.config.copyButtonLabel = this.config.actiondata.spin_to_win_content.copybutton_label;
-
 
   var extendedProps = JSON.parse(decodeURIComponent(this.config.actiondata.ExtendedProps));
   this.config.displaynameTextColor = extendedProps.displayname_text_color;
