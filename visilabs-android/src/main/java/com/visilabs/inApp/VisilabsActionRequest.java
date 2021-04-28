@@ -1,6 +1,7 @@
 package com.visilabs.inApp;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
@@ -50,8 +51,10 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
     public VisilabsActionRequest(Context context) {
         super(context);
-        mVisilabsSApiInterface = SApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds())
-                .create(VisilabsApiMethods.class);
+        if(SApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds()) != null) {
+            mVisilabsSApiInterface = SApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds())
+                    .create(VisilabsApiMethods.class);
+        }
     }
 
     public void setPath(String pPath) {
@@ -119,6 +122,10 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
     @Override
     public void executeAsync(final VisilabsCallback pCallback) throws Exception {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
@@ -169,6 +176,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
     @Override
     public void executeAsyncAction(final VisilabsCallback pCallback) throws Exception {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
+
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
@@ -219,6 +231,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
     @Override
     public void executeSyncAction(final VisilabsCallback pCallback) throws Exception {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
+
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
@@ -258,6 +275,10 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
     @Override
     public void executeAsync(final VisilabsInAppMessageCallback pCallback) {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
 
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
@@ -306,6 +327,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
     @Override
     public void executeAsyncAction(final VisilabsActionsCallback pCallback) {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
+
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
@@ -348,6 +374,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
     @Override
     public void executeAsyncAction(final VisilabsFavsRequestCallback pCallback) {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
+
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
@@ -390,6 +421,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
     @Override
     public void executeAsyncPromotionCode(final VisilabsCallback pCallback, HashMap<String, String> extraQueryParameters) {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
+
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 

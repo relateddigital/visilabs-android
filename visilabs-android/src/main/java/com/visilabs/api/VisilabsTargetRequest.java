@@ -1,6 +1,7 @@
 package com.visilabs.api;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
@@ -52,8 +53,10 @@ public class VisilabsTargetRequest extends VisilabsRemote {
 
     public VisilabsTargetRequest(Context context) {
         super(context);
-        mVisilabsSApiInterface = SApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds())
-                .create(VisilabsApiMethods.class);
+        if(SApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds()) != null) {
+            mVisilabsSApiInterface = SApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds())
+                    .create(VisilabsApiMethods.class);
+        }
     }
 
     public void setPath(String pPath) {
@@ -104,6 +107,11 @@ public class VisilabsTargetRequest extends VisilabsRemote {
 
     @Override
     public void executeAsync(final VisilabsCallback pCallback) throws Exception {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
+
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 

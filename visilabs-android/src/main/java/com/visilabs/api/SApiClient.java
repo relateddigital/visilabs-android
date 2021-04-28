@@ -1,5 +1,10 @@
 package com.visilabs.api;
 
+import android.os.Build;
+import android.util.Log;
+
+import com.visilabs.util.VisilabsConstant;
+
 import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -11,6 +16,10 @@ public class SApiClient {
     private static Retrofit retrofit;
 
     public static Retrofit getClient(int connectTimeOutInSec) {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return null;
+        }
 
         if(retrofit == null){
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();

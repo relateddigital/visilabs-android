@@ -26,7 +26,7 @@ public class VisilabsConstant {
     public static final String VISILABS_GEOFENCE_URL = "VisilabsGeofenceURL";
     public static final String VISILABS_GEOFENCE_ENABLED = "VisilabsGeofenceEnabled";
 
-    public static final int UI_FEATURES_MIN_API = 16;
+    public static final int UI_FEATURES_MIN_API = 21;
 
     public static boolean DEBUG = false;
 

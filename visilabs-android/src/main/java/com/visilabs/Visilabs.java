@@ -109,9 +109,15 @@ public class Visilabs {
             return;
         }
 
-        mVisilabsLoggerApiInterface = LoggerApiClient.getClient(requestTimeoutSeconds).create(VisilabsApiMethods.class);
-        mVisilabsRealTimeApiInterface = RealTimeApiClient.getClient(requestTimeoutSeconds).create(VisilabsApiMethods.class);
-        mVisilabsSApiInterface = SApiClient.getClient(requestTimeoutSeconds).create(VisilabsApiMethods.class);
+        if(LoggerApiClient.getClient(requestTimeoutSeconds)!=null) {
+            mVisilabsLoggerApiInterface = LoggerApiClient.getClient(requestTimeoutSeconds).create(VisilabsApiMethods.class);
+        }
+        if(RealTimeApiClient.getClient(requestTimeoutSeconds) != null) {
+            mVisilabsRealTimeApiInterface = RealTimeApiClient.getClient(requestTimeoutSeconds).create(VisilabsApiMethods.class);
+        }
+        if(SApiClient.getClient(requestTimeoutSeconds) != null) {
+            mVisilabsSApiInterface = SApiClient.getClient(requestTimeoutSeconds).create(VisilabsApiMethods.class);
+        }
 
         mGeofenceURL = geofenceURL;
         mGeofenceEnabled = geofenceEnabled;
@@ -376,11 +382,13 @@ public class Visilabs {
             }
             appsStrBuilder.append(currentAppInfo.loadLabel(packageManager)).append(";");
         }
-        appsStrBuilder.deleteCharAt(appsStrBuilder.length()-1);
-        String apps = appsStrBuilder.toString();
-        HashMap<String, String> parameters = new HashMap<String, String>();
-        parameters.put("OM.apptracker", apps);
-        customEvent("/OM_evt.gif", parameters);
+        if(appsStrBuilder.length() > 0) {
+            appsStrBuilder.deleteCharAt(appsStrBuilder.length() - 1);
+            String apps = appsStrBuilder.toString();
+            HashMap<String, String> parameters = new HashMap<String, String>();
+            parameters.put("OM.apptracker", apps);
+            customEvent("/OM_evt.gif", parameters);
+        }
     }
 
 
@@ -1268,6 +1276,10 @@ public class Visilabs {
     }
 
     public void send() {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
         synchronized (this) {
             if (mSendQueue == null || mSendQueue.size() == 0) {
                 return;
