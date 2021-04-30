@@ -237,6 +237,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        binding.inApp19.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("nps_and_second_pop_up");
+            }
+        });
+
         try {
             VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
             visilabsActionRequest.executeAsyncAction(getVisilabsCallback());

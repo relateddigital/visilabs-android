@@ -58,6 +58,29 @@
             android:textColor="#000000"
             android:textSize="15sp" />
 
+        <LinearLayout
+            android:id="@+id/coupon_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/coupon_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:drawableRight="@drawable/content_copy_24"
+                android:drawableEnd="@drawable/content_copy_24"
+                android:text="@string/coupon_code" />
+
+        </LinearLayout>
+
         <EditText
             android:id="@+id/commentBox"
             android:layout_width="match_parent"
@@ -72,7 +95,6 @@
             android:paddingTop="8dp"
             android:paddingRight="10dp"
             android:paddingBottom="8dp"
-            android:hint="@string/comment_box_hint"
             android:maxLength="500"
             android:gravity="center"/>
 

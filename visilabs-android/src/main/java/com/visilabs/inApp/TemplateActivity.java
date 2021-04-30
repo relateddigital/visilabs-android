@@ -38,6 +38,7 @@ import com.visilabs.view.SmileRating;
 public class TemplateActivity extends Activity implements SmileRating.OnSmileySelectionListener, SmileRating.OnRatingSelectedListener {
     enum NpsSecondPopUpType {
         IMAGE_TEXT_BUTTON,
+        IMAGE_TEXT_BUTTON_IMAGE,
         FEEDBACK_FORM
     }
 
@@ -53,7 +54,6 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private boolean mIsCarousel = false;
     private int mCarouselPosition = -1;
     private boolean mIsRotation = false;
-    private boolean isNpsSecondPopUp = false;
     private NpsSecondPopUpType secondPopUpType = NpsSecondPopUpType.IMAGE_TEXT_BUTTON;
     private InAppButtonInterface buttonCallback = null;
 
@@ -236,10 +236,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
 
             case NPS:
-                setNpsCloseButton();
                 setTitle();
                 setBody();
-                setNpsButton();
+                setButton();
                 showNps();
 
                 break;
@@ -263,17 +262,22 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
                 break;
 
+            case NPS_AND_SECOND_POP_UP:
+                setNpsSecondPopUpCloseButton();
+                setTitle();
+                setBody();
+                setNpsSecondPopUpButton();
+                showNps();
+
+                break;
+
         }
     }
 
-    private void setNpsCloseButton() {
-        //TODO : check if there is a second pop-up here and set the variable
-        isNpsSecondPopUp = false;
-        if(isNpsSecondPopUp) {
-            binding.ibClose.setVisibility(View.GONE);
-            //TODO : set the type of the second pop-up here
-            secondPopUpType = NpsSecondPopUpType.FEEDBACK_FORM;
-        }
+    private void setNpsSecondPopUpCloseButton() {
+        binding.ibClose.setVisibility(View.GONE);
+        //TODO : set the type of the second pop-up here
+        secondPopUpType = NpsSecondPopUpType.FEEDBACK_FORM;
     }
 
     private void setTitle() {
@@ -371,7 +375,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         });
     }
 
-    private void setNpsButton() {
+    private void setNpsSecondPopUpButton() {
         binding.btnTemplate.setTypeface(mInAppMessage.getActionData().getFontFamily());
         binding.btnTemplate.setVisibility(View.VISIBLE);
         binding.btnTemplate.setText(mInAppMessage.getActionData().getBtnText());
@@ -399,35 +403,15 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             @Override
             public void onClick(View v) {
                 Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
-                if(isNpsSecondPopUp) {
-                    if(secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
-                        if(isRatingAboveThreshold()) {
-                            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
-                            finish();
-                        } else {
-                            setupSecondPopUp();
-                        }
+                if(secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
+                    if(isRatingAboveThreshold()) {
+                        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                        finish();
                     } else {
                         setupSecondPopUp();
                     }
                 } else {
-                    if (buttonCallback != null) {
-                        Visilabs.CallAPI().setInAppButtonInterface(null);
-                        buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
-                    } else {
-                        if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
-                            try {
-                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
-                                startActivity(viewIntent);
-
-                            } catch (final ActivityNotFoundException e) {
-                                Log.i("Visilabs", "User doesn't have an activity for notification URI");
-                            }
-                        }
-                    }
-
-                    VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
-                    finish();
+                    setupSecondPopUp();
                 }
             }
         });
@@ -445,6 +429,28 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         switch (secondPopUpType) {
             case IMAGE_TEXT_BUTTON: {
                 bindingSecondPopUp.commentBox.setVisibility(View.GONE);
+                bindingSecondPopUp.imageView2.setVisibility(View.GONE);
+                //TODO : real data here
+                //TODO : set GONE if there is no
+                bindingSecondPopUp.couponContainer.setBackgroundColor(Color.parseColor("#FF0000"));
+                bindingSecondPopUp.couponCode.setText("ABCD100");
+                bindingSecondPopUp.couponCode.setTextColor(Color.parseColor("#FFFFFF"));
+                bindingSecondPopUp.couponCode.setTextSize(16);
+                bindingSecondPopUp.couponContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                        //TODO : Second pop up coupon code here
+                        ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), "ABCD100");
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+                    }
+                });
+                break;
+            }
+            case IMAGE_TEXT_BUTTON_IMAGE: {
+                bindingSecondPopUp.commentBox.setVisibility(View.GONE);
+                bindingSecondPopUp.couponContainer.setVisibility(View.GONE);
                 //TODO : real data here
                 //TODO : set GONE if there is no
                 Picasso.get().load("https://www.globaltechmagazine.com/wp-content/uploads/2020/01/related-digital-globaltechmagazine.jpg")
@@ -453,15 +459,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
             case FEEDBACK_FORM: {
                 bindingSecondPopUp.imageView2.setVisibility(View.GONE);
-                bindingSecondPopUp.commentBox.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if (hasFocus)
-                            bindingSecondPopUp.commentBox.setHint("");
-                        else
-                            bindingSecondPopUp.commentBox.setHint(getResources().getString(R.string.comment_box_hint));
-                    }
-                });
+                bindingSecondPopUp.couponContainer.setVisibility(View.GONE);
                 break;
             }
             default: {
@@ -499,7 +497,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 sendSecondPopUpReport();
                 if(secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
                     sendCommentToLogger(bindingSecondPopUp.commentBox.getText().toString());
-                } else if(secondPopUpType == NpsSecondPopUpType.IMAGE_TEXT_BUTTON) {
+                } else {
                     if (buttonCallback != null) {
                         Visilabs.CallAPI().setInAppButtonInterface(null);
                         buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());

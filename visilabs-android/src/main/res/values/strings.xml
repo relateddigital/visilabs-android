@@ -33,6 +33,4 @@
     <string name="minute_name" >Minute</string>
     <string name="second_name" >Second</string>
     <string name="time_is_over" >Time has expired!</string>
-
-    <string name="comment_box_hint" >maximum 500 characters</string>
 </resources>

@@ -145,6 +145,8 @@ public class InAppMessageManager {
 
                         case CAROUSEL:
 
+                        case NPS_AND_SECOND_POP_UP:
+
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
                             parent.startActivity(intent);

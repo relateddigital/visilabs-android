@@ -82,5 +82,13 @@ public enum InAppActionType {
         public String toString() {
             return "carousel"; //TODO: Check this string when the real data comes.
         }
+    },
+
+    NPS_AND_SECOND_POP_UP {
+        @NonNull
+        @Override
+        public String toString() {
+            return "nps_and_second_pop_up"; //TODO: Check this string when the real data comes.
+        }
     }
 }

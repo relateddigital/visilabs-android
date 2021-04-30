@@ -329,6 +329,8 @@ public class ActionData implements Parcelable {
             result = InAppActionType.NPS_WITH_NUMBERS;
         } else if(InAppActionType.CAROUSEL.toString().equals(mMsgType.toLowerCase())) {
             result = InAppActionType.CAROUSEL;
+        } else if(InAppActionType.NPS_AND_SECOND_POP_UP.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.NPS_AND_SECOND_POP_UP;
         } else {
             result = InAppActionType.UNKNOWN;
         }
