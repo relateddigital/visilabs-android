@@ -1044,6 +1044,15 @@ public class Visilabs {
         send();
     }
 
+    /**
+     * This method clears the exVisitorID
+     * and creates a new cookieID
+     */
+    public void logout() {
+        setExVisitorID(null);
+        setCookieID(null);
+    }
+
     public void sendCampaignParameters(HashMap<String, String> properties) {
         if(properties == null || properties.isEmpty()){
             Log.w(LOG_TAG, "properties cannot be null or empty.");
