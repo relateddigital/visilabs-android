@@ -306,7 +306,21 @@
                 android:layout_width="0.0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1.0"
-                android:text="@string/nps_and_second_pop_up" />
+                android:text="@string/nps_1" />
+
+            <Button
+                android:id="@+id/inApp20"
+                android:layout_width="0.0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:text="@string/nps_2" />
+
+            <Button
+                android:id="@+id/inApp21"
+                android:layout_width="0.0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:text="@string/nps_3" />
 
         </LinearLayout>
 

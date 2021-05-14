@@ -88,7 +88,7 @@ public enum InAppActionType {
         @NonNull
         @Override
         public String toString() {
-            return "nps_and_second_pop_up"; //TODO: Check this string when the real data comes.
+            return "nps_with_secondpopup";
         }
     }
 }

@@ -240,7 +240,21 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp19.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendInAppRequest("nps_and_second_pop_up");
+                sendInAppRequest("nps-image-test-button");
+            }
+        });
+
+        binding.inApp20.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("nps-image-test-button-image");
+            }
+        });
+
+        binding.inApp21.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("nps-feedback");
             }
         });
 
