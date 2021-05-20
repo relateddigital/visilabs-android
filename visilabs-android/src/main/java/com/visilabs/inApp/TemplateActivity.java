@@ -56,6 +56,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private boolean mIsRotation = false;
     private NpsSecondPopUpType secondPopUpType = NpsSecondPopUpType.IMAGE_TEXT_BUTTON;
     private InAppButtonInterface buttonCallback = null;
+    private Boolean isNpsSecondPopupButtonClicked = false;
+    private Boolean isNpsSecondPopupActivated = false;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -416,9 +418,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.btnTemplate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
                 if(secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
                     if(isRatingAboveThreshold()) {
+                        Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
                         VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                         finish();
                     } else {
@@ -437,6 +439,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setupSecondPopUp () {
+        isNpsSecondPopupActivated = true;
         bindingSecondPopUp = NpsSecondPopUpBinding.inflate(getLayoutInflater());
         setContentView(bindingSecondPopUp.getRoot());
         if(mInAppMessage.getActionData().getBackground() != null && !mInAppMessage.getActionData().getBackground().equals("")) {
@@ -522,41 +525,30 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         bindingSecondPopUp.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendSecondPopUpReport();
-                if(secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
-                    sendCommentToLogger(bindingSecondPopUp.commentBox.getText().toString());
+                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getNpsSecondPopupRateReport());
+                isNpsSecondPopupButtonClicked = true;
+                if (buttonCallback != null) {
+                    Visilabs.CallAPI().setInAppButtonInterface(null);
+                    buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
                 } else {
-                    if (buttonCallback != null) {
-                        Visilabs.CallAPI().setInAppButtonInterface(null);
-                        buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
-                    } else {
-                        if(getInAppMessage().getActionData().getAndroidLnk()!=null &&
-                                !getInAppMessage().getActionData().getAndroidLnk().isEmpty()) {
-                            try {
-                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                        getInAppMessage().getActionData().getAndroidLnk()));
-                                viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(viewIntent);
-                            } catch (Exception e) {
-                                Log.e(LOG_TAG, "The link is not formatted properly!");
-                            }
-                        } else {
-                            Log.e(LOG_TAG, "The link is empty or not in a proper format!");
+                    if(getInAppMessage().getActionData().getAndroidLnk()!=null &&
+                            !getInAppMessage().getActionData().getAndroidLnk().isEmpty()) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                    getInAppMessage().getActionData().getAndroidLnk()));
+                            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(viewIntent);
+                        } catch (Exception e) {
+                            Log.e(LOG_TAG, "The link is not formatted properly!");
                         }
+                    } else {
+                        Log.e(LOG_TAG, "The link is empty or not in a proper format!");
                     }
                 }
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                 finish();
             }
         });
-    }
-
-    private void sendSecondPopUpReport () {
-        Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, null);
-    }
-
-    private void sendCommentToLogger(String comment) {
-        //TODO Second Popup : call customEvent with the proper parameter here
     }
 
     private void setPromotionCode() {
@@ -587,6 +579,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 return "OM.s_point=" + binding.smileRating.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId();
 
             case NPS:
+
+            case NPS_AND_SECOND_POP_UP:
                 return "OM.s_point=" + binding.ratingBar.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId();
 
             case NPS_WITH_NUMBERS:
@@ -594,6 +588,29 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         }
 
         return "";
+    }
+
+    private String getNpsSecondPopupRateReport() {
+        switch (secondPopUpType) {
+            case IMAGE_TEXT_BUTTON:
+
+            case IMAGE_TEXT_BUTTON_IMAGE: {
+                return "OM.s_point=" + binding.ratingBar.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType()
+                        + "&OM.s_page=act-" + mInAppMessage.getActId() +
+                        "&OM.btn_title=" + "Android Link Yonlendirme" +
+                        "&OM.btn_source=" + "OM.act-" + mInAppMessage.getActId();
+            }
+
+            case FEEDBACK_FORM: {
+                return "OM.s_point=" + binding.ratingBar.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType()
+                        + "&OM.s_page=act-" + mInAppMessage.getActId() + "&OM.s_feed=" +
+                        bindingSecondPopUp.commentBox.getText().toString();
+            }
+            default: {
+                return "OM.s_point=" + binding.ratingBar.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType()
+                        + "&OM.s_page=act-" + mInAppMessage.getActId();
+            }
+        }
     }
 
 
@@ -696,6 +713,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             mIsRotation = false;
         } else {
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+        }
+        if(mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS_AND_SECOND_POP_UP) {
+            if(!isNpsSecondPopupButtonClicked && isNpsSecondPopupActivated) {
+                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+            }
         }
     }
 
