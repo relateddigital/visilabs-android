@@ -33,7 +33,9 @@
     <string name="inapp_carousel">CAROUSEL</string>
     <string name="shake_to_win">SHAKE TO WIN</string>
     <string name="app_tracker">APP TRACKER</string>
-    <string name="nps_and_second_pop_up">NPS &amp; Second Popup</string>
+    <string name="nps_1">NPS 1</string>
+    <string name="nps_2">NPS 2</string>
+    <string name="nps_3">NPS 3</string>
 
     <string name="alert">Alert</string>
     <string name="story_id_optional">Story ID (optional)</string>

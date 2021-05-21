@@ -62,6 +62,22 @@ public class ActionData implements Parcelable {
     private final String mVisitorData;
     @SerializedName("waiting_time")
     private final String mWaitingTime;
+    @SerializedName("secondPopup_type")
+    private final String mSecondPopupType;
+    @SerializedName("secondPopup_msg_title")
+    private final String mSecondPopupMsgTitle;
+    @SerializedName("secondPopup_msg_body")
+    private final String mSecondPopupMsgBody;
+    @SerializedName("secondPopup_btn_text")
+    private final String mSecondPopupBtnText;
+    @SerializedName("secondPopup_msg_body_textsize")
+    private final String mSecondPopupMsgBodyTextSize;
+    @SerializedName("secondPopup_feedbackform_minpoint")
+    private final String mSecondPopupFeecbackFormMinPoint;
+    @SerializedName("secondPopup_image1")
+    private final String mSecondPopupImg1;
+    @SerializedName("secondPopup_image2")
+    private final String mSecondPopupImg2;
 
     protected ActionData(Parcel in) {
         mAlertType = in.readString();
@@ -91,6 +107,14 @@ public class ActionData implements Parcelable {
         mVisitData = in.readString();
         mVisitorData = in.readString();
         mWaitingTime = in.readString();
+        mSecondPopupType = in.readString();
+        mSecondPopupMsgTitle = in.readString();
+        mSecondPopupMsgBody = in.readString();
+        mSecondPopupBtnText = in.readString();
+        mSecondPopupMsgBodyTextSize = in.readString();
+        mSecondPopupFeecbackFormMinPoint = in.readString();
+        mSecondPopupImg1 = in.readString();
+        mSecondPopupImg2 = in.readString();
     }
 
     public static final Creator<ActionData> CREATOR = new Creator<ActionData>() {
@@ -139,6 +163,14 @@ public class ActionData implements Parcelable {
         dest.writeString(mVisitData);
         dest.writeString(mVisitorData);
         dest.writeString(mWaitingTime);
+        dest.writeString(mSecondPopupType);
+        dest.writeString(mSecondPopupMsgTitle);
+        dest.writeString(mSecondPopupMsgBody);
+        dest.writeString(mSecondPopupBtnText);
+        dest.writeString(mSecondPopupMsgBodyTextSize);
+        dest.writeString(mSecondPopupFeecbackFormMinPoint);
+        dest.writeString(mSecondPopupImg1);
+        dest.writeString(mSecondPopupImg2);
     }
 
     public String getAlertType() {
@@ -371,5 +403,37 @@ public class ActionData implements Parcelable {
 
     public String getWaitingTime() {
         return mWaitingTime;
+    }
+
+    public String getSecondPopupType() {
+        return mSecondPopupType;
+    }
+
+    public String getSecondPopupMsgTitle() {
+        return mSecondPopupMsgTitle;
+    }
+
+    public String getSecondPopupMsgBody() {
+        return mSecondPopupMsgBody;
+    }
+
+    public String getSecondPopupBtnText() {
+        return mSecondPopupBtnText;
+    }
+
+    public String getSecondPopupMsgBodyTextSize() {
+        return mSecondPopupMsgBodyTextSize;
+    }
+
+    public String getSecondPopupFeecbackFormMinPoint() {
+        return mSecondPopupFeecbackFormMinPoint;
+    }
+
+    public String getSecondPopupImg1() {
+        return mSecondPopupImg1;
+    }
+
+    public String getSecondPopupImg2() {
+        return mSecondPopupImg2;
     }
 }

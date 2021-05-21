@@ -56,6 +56,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private boolean mIsRotation = false;
     private NpsSecondPopUpType secondPopUpType = NpsSecondPopUpType.IMAGE_TEXT_BUTTON;
     private InAppButtonInterface buttonCallback = null;
+    private Boolean isNpsSecondPopupButtonClicked = false;
+    private Boolean isNpsSecondPopupActivated = false;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -276,8 +278,22 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void setNpsSecondPopUpCloseButton() {
         binding.ibClose.setVisibility(View.GONE);
-        //TODO : set the type of the second pop-up here
-        secondPopUpType = NpsSecondPopUpType.FEEDBACK_FORM;
+        switch (mInAppMessage.getActionData().getSecondPopupType()) {
+            case "image_text_button": {
+                secondPopUpType = NpsSecondPopUpType.IMAGE_TEXT_BUTTON;
+                break;
+            }
+
+            case "image_text_button_image": {
+                secondPopUpType = NpsSecondPopUpType.IMAGE_TEXT_BUTTON_IMAGE;
+                break;
+            }
+
+            case "feedback_form": {
+                secondPopUpType = NpsSecondPopUpType.FEEDBACK_FORM;
+                break;
+            }
+        }
     }
 
     private void setTitle() {
@@ -402,9 +418,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.btnTemplate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
                 if(secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
                     if(isRatingAboveThreshold()) {
+                        Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
                         VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                         finish();
                     } else {
@@ -418,43 +434,57 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private boolean isRatingAboveThreshold() {
-        //TODO : real data here
         int rating = (int)(binding.ratingBar.getRating() * 2);
-        return rating > 7; //TODO : the threshold in response here.
+        return rating > (Integer.parseInt(mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint()) * 2);
     }
 
     private void setupSecondPopUp () {
+        isNpsSecondPopupActivated = true;
         bindingSecondPopUp = NpsSecondPopUpBinding.inflate(getLayoutInflater());
         setContentView(bindingSecondPopUp.getRoot());
+        if(mInAppMessage.getActionData().getBackground() != null && !mInAppMessage.getActionData().getBackground().equals("")) {
+            try {
+                bindingSecondPopUp.container.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse the data given for background color\nSetting the default value.");
+                e.printStackTrace();
+            }
+        }
         switch (secondPopUpType) {
             case IMAGE_TEXT_BUTTON: {
                 bindingSecondPopUp.commentBox.setVisibility(View.GONE);
                 bindingSecondPopUp.imageView2.setVisibility(View.GONE);
-                //TODO : real data here
-                //TODO : set GONE if there is no
-                bindingSecondPopUp.couponContainer.setBackgroundColor(Color.parseColor("#FF0000"));
-                bindingSecondPopUp.couponCode.setText("ABCD100");
-                bindingSecondPopUp.couponCode.setTextColor(Color.parseColor("#FFFFFF"));
-                bindingSecondPopUp.couponCode.setTextSize(16);
-                bindingSecondPopUp.couponContainer.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                        //TODO : Second pop up coupon code here
-                        ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), "ABCD100");
-                        clipboard.setPrimaryClip(clip);
-                        Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
-                    }
-                });
+                if(mInAppMessage.getActionData().getPromotionCode()!=null &&
+                        !mInAppMessage.getActionData().getPromotionCode().isEmpty()) {
+                    bindingSecondPopUp.couponContainer.setBackgroundColor(Color.parseColor(
+                            mInAppMessage.getActionData().getPromoCodeBackgroundColor()
+                    ));
+                    bindingSecondPopUp.couponCode.setText(mInAppMessage.getActionData().getPromotionCode());
+                    bindingSecondPopUp.couponCode.setTextColor(Color.parseColor(
+                            mInAppMessage.getActionData().getPromoCodeTextColor()
+                    ));
+                    bindingSecondPopUp.couponContainer.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                            ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), mInAppMessage.getActionData().getPromotionCode());
+                            clipboard.setPrimaryClip(clip);
+                            Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    bindingSecondPopUp.couponContainer.setVisibility(View.GONE);
+                }
                 break;
             }
             case IMAGE_TEXT_BUTTON_IMAGE: {
                 bindingSecondPopUp.commentBox.setVisibility(View.GONE);
                 bindingSecondPopUp.couponContainer.setVisibility(View.GONE);
-                //TODO : real data here
-                //TODO : set GONE if there is no
-                Picasso.get().load("https://www.globaltechmagazine.com/wp-content/uploads/2020/01/related-digital-globaltechmagazine.jpg")
-                        .into(bindingSecondPopUp.imageView2);
+                if(mInAppMessage.getActionData().getSecondPopupImg2()!=null &&
+                        !mInAppMessage.getActionData().getSecondPopupImg2().isEmpty()){
+                    Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg2())
+                            .into(bindingSecondPopUp.imageView2);
+                }
                 break;
             }
             case FEEDBACK_FORM: {
@@ -468,8 +498,6 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
             }
         }
-        //TODO : real data here
-        //TODO : set GONE if there is no
         bindingSecondPopUp.closeButton.setBackgroundResource(getCloseIcon());
         bindingSecondPopUp.closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -478,53 +506,49 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 finish();
             }
         });
-        Picasso.get().load("https://www.globaltechmagazine.com/wp-content/uploads/2020/01/related-digital-globaltechmagazine.jpg")
-                .into(bindingSecondPopUp.imageView);
-        bindingSecondPopUp.container.setBackgroundColor(Color.parseColor("#31F60C"));
-        bindingSecondPopUp.titleView.setText("Second Pop-Up Title");
-        bindingSecondPopUp.titleView.setTextColor(Color.parseColor("#E8F279"));
-        bindingSecondPopUp.titleView.setTextSize(32);
-        bindingSecondPopUp.bodyTextView.setText("Second Pop-Up Text");
-        bindingSecondPopUp.bodyTextView.setTextColor(Color.parseColor("#E3A9E7"));
-        bindingSecondPopUp.bodyTextView.setTextSize(24);
-        bindingSecondPopUp.button.setText("Button");
-        bindingSecondPopUp.button.setTextColor(Color.parseColor("#000000"));
-        bindingSecondPopUp.button.setBackgroundColor(Color.parseColor("#A9E7E4"));
-        bindingSecondPopUp.button.setTextSize(24);
+        if(mInAppMessage.getActionData().getSecondPopupImg1()!=null &&
+        !mInAppMessage.getActionData().getSecondPopupImg1().isEmpty()){
+            Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg1())
+                    .into(bindingSecondPopUp.imageView);
+        }
+        bindingSecondPopUp.titleView.setTypeface(mInAppMessage.getActionData().getFontFamily(), Typeface.BOLD);
+        bindingSecondPopUp.titleView.setText(mInAppMessage.getActionData().getSecondPopupMsgTitle().replace("\\n","\n"));
+        bindingSecondPopUp.titleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+        bindingSecondPopUp.bodyTextView.setTypeface(mInAppMessage.getActionData().getFontFamily());
+        bindingSecondPopUp.bodyTextView.setText(mInAppMessage.getActionData().getSecondPopupMsgBody().replace("\\n","\n"));
+        bindingSecondPopUp.bodyTextView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyColor()));
+        bindingSecondPopUp.bodyTextView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getSecondPopupMsgBodyTextSize()) + 8);
+        bindingSecondPopUp.button.setTypeface(mInAppMessage.getActionData().getFontFamily());
+        bindingSecondPopUp.button.setText(mInAppMessage.getActionData().getSecondPopupBtnText());
+        bindingSecondPopUp.button.setTextColor(Color.parseColor(mInAppMessage.getActionData().getButtonTextColor()));
+        bindingSecondPopUp.button.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getButtonColor()));
         bindingSecondPopUp.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendSecondPopUpReport();
-                if(secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
-                    sendCommentToLogger(bindingSecondPopUp.commentBox.getText().toString());
+                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getNpsSecondPopupRateReport());
+                isNpsSecondPopupButtonClicked = true;
+                if (buttonCallback != null) {
+                    Visilabs.CallAPI().setInAppButtonInterface(null);
+                    buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
                 } else {
-                    if (buttonCallback != null) {
-                        Visilabs.CallAPI().setInAppButtonInterface(null);
-                        buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
-                    } else {
-                        //TODO : Check if the link is empty here first
+                    if(getInAppMessage().getActionData().getAndroidLnk()!=null &&
+                            !getInAppMessage().getActionData().getAndroidLnk().isEmpty()) {
                         try {
-                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.relateddigital.com/"));
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                    getInAppMessage().getActionData().getAndroidLnk()));
                             viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(viewIntent);
                         } catch (Exception e) {
                             Log.e(LOG_TAG, "The link is not formatted properly!");
                         }
+                    } else {
+                        Log.e(LOG_TAG, "The link is empty or not in a proper format!");
                     }
                 }
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                 finish();
             }
         });
-    }
-
-    private void sendSecondPopUpReport () {
-        //TODO : send the second report here
-        //TODO : If trackInAppMessageClick is not proper add another method
-    }
-
-    private void sendCommentToLogger(String comment) {
-        //TODO : call customEvent with the proper parameter here
     }
 
     private void setPromotionCode() {
@@ -555,6 +579,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 return "OM.s_point=" + binding.smileRating.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId();
 
             case NPS:
+
+            case NPS_AND_SECOND_POP_UP:
                 return "OM.s_point=" + binding.ratingBar.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId();
 
             case NPS_WITH_NUMBERS:
@@ -562,6 +588,29 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         }
 
         return "";
+    }
+
+    private String getNpsSecondPopupRateReport() {
+        switch (secondPopUpType) {
+            case IMAGE_TEXT_BUTTON:
+
+            case IMAGE_TEXT_BUTTON_IMAGE: {
+                return "OM.s_point=" + binding.ratingBar.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType()
+                        + "&OM.s_page=act-" + mInAppMessage.getActId() +
+                        "&OM.btn_title=" + "Android Link Yonlendirme" +
+                        "&OM.btn_source=" + "OM.act-" + mInAppMessage.getActId();
+            }
+
+            case FEEDBACK_FORM: {
+                return "OM.s_point=" + binding.ratingBar.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType()
+                        + "&OM.s_page=act-" + mInAppMessage.getActId() + "&OM.s_feed=" +
+                        bindingSecondPopUp.commentBox.getText().toString();
+            }
+            default: {
+                return "OM.s_point=" + binding.ratingBar.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType()
+                        + "&OM.s_page=act-" + mInAppMessage.getActId();
+            }
+        }
     }
 
 
@@ -664,6 +713,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             mIsRotation = false;
         } else {
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+        }
+        if(mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS_AND_SECOND_POP_UP) {
+            if(!isNpsSecondPopupButtonClicked && isNpsSecondPopupActivated) {
+                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+            }
         }
     }
 
@@ -859,8 +913,15 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png").fetch();
         } else {
             Picasso.get().load(mInAppMessage.getActionData().getImg()).fetch();
-            if(mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS) {
-                // TODO : Cache the second pop up images here
+            if(mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS_AND_SECOND_POP_UP) {
+                if(mInAppMessage.getActionData().getSecondPopupImg1()!=null &&
+                        !mInAppMessage.getActionData().getSecondPopupImg1().isEmpty()){
+                    Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg1()).fetch();
+                }
+                if(mInAppMessage.getActionData().getSecondPopupImg2()!=null &&
+                        !mInAppMessage.getActionData().getSecondPopupImg2().isEmpty()){
+                    Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg2()).fetch();
+                }
             }
         }
     }
