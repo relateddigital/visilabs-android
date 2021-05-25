@@ -437,7 +437,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private boolean isRatingAboveThreshold() {
         int rating = (int)(binding.ratingBar.getRating() * 2);
-        return rating > (Integer.parseInt(mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint()) * 2);
+        return rating >= (Integer.parseInt(mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint()) * 2);
     }
 
     private void setupSecondPopUp () {
@@ -604,6 +604,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
 
             case FEEDBACK_FORM: {
+                Toast.makeText(this, getString(R.string.feedback_toast), Toast.LENGTH_SHORT).show();
                 return "OM.s_point=" + binding.ratingBar.getRating() + "&OM.s_cat=" + mInAppMessage.getActionData().getMsgType()
                         + "&OM.s_page=act-" + mInAppMessage.getActId() + "&OM.s_feed=" +
                         bindingSecondPopUp.commentBox.getText().toString();
