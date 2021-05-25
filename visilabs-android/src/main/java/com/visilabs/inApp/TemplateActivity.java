@@ -157,7 +157,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setUpView() {
-        if (!mInAppMessage.getActionData().getImg().equals("")) {
+        if (!mInAppMessage.getActionData().getImg().equals("")
+                && mInAppMessage.getActionData().getImg() != null &&
+                !mInAppMessage.getActionData().getImg().isEmpty()) {
             binding.ivTemplate.setVisibility(View.VISIBLE);
             Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivTemplate);
         } else {
@@ -912,7 +914,10 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             Picasso.get().
                     load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png").fetch();
         } else {
-            Picasso.get().load(mInAppMessage.getActionData().getImg()).fetch();
+            if(mInAppMessage.getActionData().getImg()!=null &&
+                    !mInAppMessage.getActionData().getImg().isEmpty()) {
+                Picasso.get().load(mInAppMessage.getActionData().getImg()).fetch();
+            }
             if(mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS_AND_SECOND_POP_UP) {
                 if(mInAppMessage.getActionData().getSecondPopupImg1()!=null &&
                         !mInAppMessage.getActionData().getSecondPopupImg1().isEmpty()){
