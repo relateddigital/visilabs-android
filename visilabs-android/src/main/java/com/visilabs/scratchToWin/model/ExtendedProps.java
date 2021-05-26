@@ -1,6 +1,9 @@
 package com.visilabs.scratchToWin.model;
 
+import android.graphics.Typeface;
+
 import com.google.gson.annotations.SerializedName;
+import com.visilabs.inApp.FontFamily;
 
 import java.io.Serializable;
 
@@ -64,8 +67,21 @@ public class ExtendedProps implements Serializable {
         content_title_font_family = contentTitleFontFamily;
     }
 
-    public String getContentTitleFontFamily() {
-        return content_title_font_family;
+    public Typeface getContentTitleFontFamily() {
+        if (content_title_font_family == null || content_title_font_family.equals("")) {
+            return Typeface.DEFAULT;
+        }
+        if (FontFamily.Monospace.toString().equals(content_title_font_family.toLowerCase())) {
+            return Typeface.MONOSPACE;
+        }
+        if (FontFamily.SansSerif.toString().equals(content_title_font_family.toLowerCase())) {
+            return Typeface.SANS_SERIF;
+        }
+        if (FontFamily.Serif.toString().equals(content_title_font_family.toLowerCase())) {
+            return Typeface.SERIF;
+        }
+
+        return Typeface.DEFAULT;
     }
 
     public void setContentTitleTextSize(String contentTitleTextSize) {
@@ -88,8 +104,21 @@ public class ExtendedProps implements Serializable {
         content_body_text_font_family = contentBodyTextFontFamily;
     }
 
-    public String getContentBodyTextFontFamily() {
-        return content_body_text_font_family;
+    public Typeface getContentBodyTextFontFamily() {
+        if (content_body_text_font_family == null || content_body_text_font_family.equals("")) {
+            return Typeface.DEFAULT;
+        }
+        if (FontFamily.Monospace.toString().equals(content_body_text_font_family.toLowerCase())) {
+            return Typeface.MONOSPACE;
+        }
+        if (FontFamily.SansSerif.toString().equals(content_body_text_font_family.toLowerCase())) {
+            return Typeface.SANS_SERIF;
+        }
+        if (FontFamily.Serif.toString().equals(content_body_text_font_family.toLowerCase())) {
+            return Typeface.SERIF;
+        }
+
+        return Typeface.DEFAULT;
     }
 
     public void setContentBodyTextSize(String contentBodyTextSize) {
@@ -120,8 +149,21 @@ public class ExtendedProps implements Serializable {
         button_font_family = buttonFontFamily;
     }
 
-    public String getButtonFontFamily() {
-        return button_font_family;
+    public Typeface getButtonFontFamily() {
+        if (button_font_family == null || button_font_family.equals("")) {
+            return Typeface.DEFAULT;
+        }
+        if (FontFamily.Monospace.toString().equals(button_font_family.toLowerCase())) {
+            return Typeface.MONOSPACE;
+        }
+        if (FontFamily.SansSerif.toString().equals(button_font_family.toLowerCase())) {
+            return Typeface.SANS_SERIF;
+        }
+        if (FontFamily.Serif.toString().equals(button_font_family.toLowerCase())) {
+            return Typeface.SERIF;
+        }
+
+        return Typeface.DEFAULT;
     }
 
     public void setButtonTextSize(String buttonTextSize) {
@@ -144,8 +186,21 @@ public class ExtendedProps implements Serializable {
         promocode_font_family = promoCodeFontFamily;
     }
 
-    public String getPromoCodeFontFamily() {
-        return promocode_font_family;
+    public Typeface getPromoCodeFontFamily() {
+        if (promocode_font_family == null || promocode_font_family.equals("")) {
+            return Typeface.DEFAULT;
+        }
+        if (FontFamily.Monospace.toString().equals(promocode_font_family.toLowerCase())) {
+            return Typeface.MONOSPACE;
+        }
+        if (FontFamily.SansSerif.toString().equals(promocode_font_family.toLowerCase())) {
+            return Typeface.SANS_SERIF;
+        }
+        if (FontFamily.Serif.toString().equals(promocode_font_family.toLowerCase())) {
+            return Typeface.SERIF;
+        }
+
+        return Typeface.DEFAULT;
     }
 
     public void setPromoCodeTextSize(String promoCodeTextSize) {
@@ -176,8 +231,21 @@ public class ExtendedProps implements Serializable {
         copybutton_font_family = copyButtonFontFamily;
     }
 
-    public String getCopyButtonFontFamily() {
-        return copybutton_font_family;
+    public Typeface getCopyButtonFontFamily() {
+        if (copybutton_font_family == null || copybutton_font_family.equals("")) {
+            return Typeface.DEFAULT;
+        }
+        if (FontFamily.Monospace.toString().equals(copybutton_font_family.toLowerCase())) {
+            return Typeface.MONOSPACE;
+        }
+        if (FontFamily.SansSerif.toString().equals(copybutton_font_family.toLowerCase())) {
+            return Typeface.SANS_SERIF;
+        }
+        if (FontFamily.Serif.toString().equals(copybutton_font_family.toLowerCase())) {
+            return Typeface.SERIF;
+        }
+
+        return Typeface.DEFAULT;
     }
 
     public void setCopyButtonTextSize(String copyButtonTextSize) {
