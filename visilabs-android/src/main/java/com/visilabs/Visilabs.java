@@ -32,6 +32,8 @@ import com.visilabs.json.JSONObject;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.Report;
 import com.visilabs.model.VisilabsActionsResponse;
+import com.visilabs.scratchToWin.ScratchToWinActivity;
+import com.visilabs.scratchToWin.model.ScratchToWinModel;
 import com.visilabs.spinToWin.SpinToWinActivity;
 import com.visilabs.spinToWin.model.SpinToWinModel;
 import com.visilabs.util.NetworkManager;
@@ -574,7 +576,7 @@ public class Visilabs {
             return;
         }
         try {
-            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin");
+            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin");
             visilabsActionRequest.setPageName(pageName);
             visilabsActionRequest.setProperties(properties);
             visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback(parent));
@@ -594,14 +596,19 @@ public class Visilabs {
 
                     if (!response.getSpinToWinList().isEmpty()) {
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                           Log.e(LOG_TAG, "SpinToWin feature is not supported for API levels smaller than 19!"
-                           + " Currently, " + Build.VERSION.SDK_INT + ".");
+                            Log.e(LOG_TAG, "SpinToWin feature is not supported for API levels smaller than 19!"
+                                    + " Currently, " + Build.VERSION.SDK_INT + ".");
                         } else {
                             Intent intent = new Intent(parent, SpinToWinActivity.class);
                             SpinToWinModel spinToWinModel = (SpinToWinModel) response.getSpinToWinList().get(0);
                             intent.putExtra("spin-to-win-data", spinToWinModel);
                             parent.startActivity(intent);
                         }
+                    } else if (!response.getScratchToWinList().isEmpty()) {
+                        Intent intent = new Intent(parent, ScratchToWinActivity.class);
+                        ScratchToWinModel scratchToWinModel = (ScratchToWinModel) response.getScratchToWinList().get(0);
+                        intent.putExtra("scratch-to-win-data", scratchToWinModel);
+                        parent.startActivity(intent);
                     } else if (!response.getMailSubscriptionForm().isEmpty()) {
                         MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm) response.getMailSubscriptionForm().get(0);
                         new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);

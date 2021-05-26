@@ -3,6 +3,7 @@ package com.visilabs.model;
 import com.google.gson.annotations.SerializedName;
 import com.visilabs.favs.FavoriteAttributeAction;
 import com.visilabs.mailSub.MailSubscriptionForm;
+import com.visilabs.scratchToWin.model.ScratchToWinModel;
 import com.visilabs.spinToWin.model.SpinToWinModel;
 import com.visilabs.story.model.storylookingbanners.Story;
 
@@ -16,6 +17,8 @@ public class VisilabsActionsResponse implements Serializable {
     private List<MailSubscriptionForm> mMailSubscriptionForm = null;
     @SerializedName("SpinToWin")
     private List<SpinToWinModel> mSpinToWinList = null;
+    @SerializedName("ScratchToWin")
+    private List<ScratchToWinModel> mScratchToWinList = null;
     @SerializedName("Story")
     private List<Story> mStory = null;
     @SerializedName("VERSION")
@@ -45,6 +48,14 @@ public class VisilabsActionsResponse implements Serializable {
 
     public void setSpinToWinList(List<SpinToWinModel> spinToWinList) {
         mSpinToWinList = spinToWinList;
+    }
+
+    public List<ScratchToWinModel> getScratchToWinList() {
+        return mScratchToWinList;
+    }
+
+    public void setScratchToWinList(List<ScratchToWinModel> scratchToWinList) {
+        mScratchToWinList = scratchToWinList;
     }
 
     public List<Story> getStory() {

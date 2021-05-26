@@ -167,10 +167,7 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp12.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ScratchToWinActivity.class);
-                startActivity(intent);
-                //TODO when backend side gets ready, use below
-                //sendInAppRequest("scratchtowin");
+                sendInAppRequest("scratchtowin");
             }
         });
 

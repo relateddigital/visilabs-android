@@ -4,20 +4,29 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.ActivityScratchToWinBinding;
+import com.visilabs.scratchToWin.model.ExtendedProps;
+import com.visilabs.scratchToWin.model.ScratchToWinModel;
 
 public class ScratchToWinActivity extends Activity implements ScratchToWinInterface {
 
     private ActivityScratchToWinBinding binding;
+    private ScratchToWinModel mScratchToWinMessage;
+    private static final String LOG_TAG = "ScratchToWinActivity";
+    private Boolean isMailSubsForm = false;
+    private ExtendedProps mExtendedProps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,22 +35,30 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         View view = binding.getRoot();
         setContentView(view);
 
-        //mScratchToWinMessage = getScratchToWinMessage();
-
+        getScratchToWinMessage();
+        parseExtendedProps();
         setupInitialView();
     }
 
     private void getScratchToWinMessage() {
-        //TODO get and set message from intent extras.
+        Intent intent = getIntent();
+        if(intent != null) {
+            if(intent.hasExtra("scratch-to-win-data")) {
+                mScratchToWinMessage = (ScratchToWinModel) intent.getSerializableExtra("scratch-to-win-data");
+            }
+        }
+        if(mScratchToWinMessage == null) {
+            Log.e(LOG_TAG, "Could not get the content from the server!");
+            finish();
+        }
     }
 
     private void setupInitialView() {
         //TODO: send impression report here
         setupCloseButton();
         setupScratchToWin();
-        //TODO control if there is email
-        //TODO change this when real data gets ready
-        if (true) {
+        isMailSubsForm = mScratchToWinMessage.getActiondata().getMailSubscription();
+        if (isMailSubsForm) {
             setupEmail();
         } else {
             removeEmailViews();
@@ -60,21 +77,21 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
     }
 
     private void setupScratchToWin() {
-        //TODO When real data comes, change the code below
-        //TODO if img = "", dont use Picasso -> crash
-        binding.scratchToWinContainer.setBackgroundColor(getResources().getColor(R.color.yellow));
-        /*
-        if(!imgUrl.equals("")) {
-            Picasso.get().load(imgUrl).into(binding.mainImage);
+        //TODO : Add the extra fields
+        if (mExtendedProps.getBackgroundColor() != null &&
+                !mExtendedProps.getBackgroundColor().isEmpty()) {
+            binding.scratchToWinContainer.setBackgroundColor(getResources().getColor(R.color.yellow));
         }
-        */
-        Picasso.get().load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_153_20210201150721831.jpg").into(binding.mainImage);
-        binding.titleText.setText("scratch-to-win title here");
-        binding.bodyText.setText("scratch-to-win body text here");
-        binding.promotionCodeText.setText("ABFSODAFABFA");
-        binding.copyToClipboard.setText("Copy the Code");
-        binding.viewToBeScratched.setColor(Color.parseColor("#000000"));
 
+        if(!mScratchToWinMessage.getActiondata().getImg().isEmpty()) {
+            Picasso.get().load(mScratchToWinMessage.getActiondata().getImg()).into(binding.mainImage);
+        }
+
+        binding.titleText.setText(mScratchToWinMessage.getActiondata().getContentTitle().replace("\\n", "\n"));
+        binding.bodyText.setText(mScratchToWinMessage.getActiondata().getContentBody().replace("\\n", "\n"));
+        binding.promotionCodeText.setText(mScratchToWinMessage.getActiondata().getPromotionCode());
+        binding.copyToClipboard.setText(mScratchToWinMessage.getActiondata().getCopybuttonLabel());
+        binding.viewToBeScratched.setColor(Color.parseColor(mScratchToWinMessage.getActiondata().getScratchColor()));
 
         binding.copyToClipboard.setVisibility(View.GONE);
         binding.viewToBeScratched.setContainer(binding.scratchToWinContainer);
@@ -84,9 +101,8 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
             @Override
             public void onClick(View v) {
                 //TODO: send click report here
-                String promotionCode = binding.promotionCodeText.getText().toString();
                 ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clipData = ClipData.newPlainText("", promotionCode);
+                ClipData clipData = ClipData.newPlainText("", mScratchToWinMessage.getActiondata().getPromotionCode());
                 clipboardManager.setPrimaryClip(clipData);
 
                 Toast.makeText(getApplicationContext(), "Copied", Toast.LENGTH_SHORT).show();
@@ -155,18 +171,24 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
     }
 
     private int getCloseIcon() {
-
-        return R.drawable.ic_close_black_24dp;
-        //TODO when real data comes:
-       /* switch (mInAppMessage.getActionData().getCloseButtonColor()) {
-
+        switch (mExtendedProps.getCloseButtonColor()) {
             case "white":
                 return R.drawable.ic_close_white_24dp;
 
             case "black":
                 return R.drawable.ic_close_black_24dp;
         }
-        return R.drawable.ic_close_black_24dp;*/
+        return R.drawable.ic_close_black_24dp;
+    }
+
+    private void parseExtendedProps() {
+        try {
+            mExtendedProps = new Gson().fromJson(new java.net.URI(mScratchToWinMessage.getActiondata().
+                    getExtendedProps()).getPath(), ExtendedProps.class);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Extended properties could not be parsed properly!");
+            finish();
+        }
     }
 
     private void hideKeyboard(View view) {
