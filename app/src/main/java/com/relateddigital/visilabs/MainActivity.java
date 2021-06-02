@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp12.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendInAppRequest("scratchtowin");
+                sendInAppRequest("scratch-to-win");
             }
         });
 

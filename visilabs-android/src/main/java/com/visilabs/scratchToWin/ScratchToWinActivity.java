@@ -89,7 +89,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
     private void setupScratchToWin() {
         if (mExtendedProps.getBackgroundColor() != null &&
                 !mExtendedProps.getBackgroundColor().isEmpty()) {
-            binding.scratchToWinContainer.setBackgroundColor(getResources().getColor(R.color.yellow));
+            binding.scratchToWinContainer.setBackgroundColor(Color.parseColor(mExtendedProps.getBackgroundColor()));
         }
 
         if(!mScratchToWinMessage.getActiondata().getImg().isEmpty()) {
