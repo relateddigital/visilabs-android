@@ -248,6 +248,10 @@ public class VisilabsTargetRequest extends VisilabsRemote {
             queryMap.put(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
         }
 
+        if(Visilabs.CallAPI().getChannelName() != null && !Visilabs.CallAPI().getChannelName().equals("")){
+            queryMap.put(VisilabsConstant.CHANNEL_KEY, Visilabs.CallAPI().getChannelName());
+        }
+
         if(mZoneID != null && !mZoneID.equals("")){
             queryMap.put(VisilabsConstant.ZONE_ID_KEY, mZoneID);
         }

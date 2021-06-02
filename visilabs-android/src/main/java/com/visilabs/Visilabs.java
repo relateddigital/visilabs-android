@@ -693,6 +693,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.SITEID_KEY, mSiteID);
         queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
+        queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.TYPE_KEY, type);
         queryMap.put(VisilabsConstant.ACTION_ID_KEY, actId);
         queryMap.put(VisilabsConstant.AUTH_KEY, auth);

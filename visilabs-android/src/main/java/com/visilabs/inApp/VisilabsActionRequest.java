@@ -529,6 +529,10 @@ public class VisilabsActionRequest extends VisilabsRemote {
             queryMap.put(VisilabsConstant.URI_KEY, "");
         }
 
+        if(Visilabs.CallAPI().getChannelName() != null && !Visilabs.CallAPI().getChannelName().equals("")){
+            queryMap.put(VisilabsConstant.CHANNEL_KEY, Visilabs.CallAPI().getChannelName());
+        }
+
         if(mVisitorData != null && !mVisitorData.equals("")){
             queryMap.put(VisilabsConstant.VIS_CAP_KEY, mVisitorData);
         }
@@ -684,6 +688,10 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
         if(Visilabs.CallAPI().getExVisitorID() != null && !Visilabs.CallAPI().getExVisitorID().equals("")){
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
+        }
+
+        if(Visilabs.CallAPI().getChannelName() != null && !Visilabs.CallAPI().getChannelName().equals("")){
+            queryMap.put(VisilabsConstant.CHANNEL_KEY, Visilabs.CallAPI().getChannelName());
         }
     }
 }
