@@ -9,12 +9,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -69,6 +72,10 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         setupScratchToWin();
         isMailSubsForm = mScratchToWinMessage.getActiondata().getMailSubscription();
         if (isMailSubsForm) {
+            binding.viewToBeScratched.setInvalidEmailMessage(mScratchToWinMessage.getActiondata()
+                    .getMailSubscriptionForm().getInvalidEmailMessage());
+            binding.viewToBeScratched.setMissingConsentMessage(mScratchToWinMessage.getActiondata()
+                    .getMailSubscriptionForm().getCheckConsentMessage());
             setupEmail();
         } else {
             removeEmailViews();
@@ -178,12 +185,51 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
             }
         });
 
+        binding.emailPermitCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    binding.viewToBeScratched.setConsent1Status(true);
+                } else {
+                    binding.viewToBeScratched.setConsent1Status(false);
+                }
+            }
+        });
+
+        binding.consentCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    binding.viewToBeScratched.setConsent2Status(true);
+                } else {
+                    binding.viewToBeScratched.setConsent2Status(false);
+                }
+            }
+        });
+
         binding.emailEdit.setHint(mScratchToWinMessage.getActiondata().getMailSubscriptionForm().getPlaceholder());
         binding.saveMail.setText(mScratchToWinMessage.getActiondata().getMailSubscriptionForm().getButtonLabel());
         binding.saveMail.setTextColor(Color.parseColor(mExtendedProps.getButtonTextColor()));
         binding.saveMail.setTextSize(Float.parseFloat(mExtendedProps.getButtonTextSize()) + 10);
         binding.saveMail.setTypeface(mExtendedProps.getButtonFontFamily());
         binding.saveMail.setBackgroundColor(Color.parseColor(mExtendedProps.getButtonColor()));
+
+        binding.emailEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                binding.viewToBeScratched.setEmailStatus(checkEmail(binding.emailEdit.getText().toString()));
+            }
+        });
 
         binding.emailEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -217,6 +263,8 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
                             mScratchToWinMessage.getActiondata().getAuth(), email);
 
                     binding.viewToBeScratched.enableScratching();
+                    Toast.makeText(getApplicationContext(), mScratchToWinMessage.getActiondata().
+                            getMailSubscriptionForm().getSuccessMessage(), Toast.LENGTH_SHORT).show();
                 } else {
                     if (!checkEmail(email)) {
                         binding.invalidEmailMessage.setVisibility(View.VISIBLE);

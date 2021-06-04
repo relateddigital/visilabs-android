@@ -24,6 +24,11 @@ public class EraseView extends View {
     private final Path mDestPath = new Path();
     private int mColor;
     private boolean isEnabled;
+    private boolean isEmailEntered;
+    private boolean isConsent1Entered;
+    private boolean isConsent2Entered;
+    private String invalidEmailMessage;
+    private String missingConsentMessage;
     private ContainerScrollView mContainer;
     private ScratchToWinInterface mListener;
     private int mCodeWidth;
@@ -98,7 +103,13 @@ public class EraseView extends View {
             invalidate();
             return true;
         } else {
-            Toast.makeText(mContext, mContext.getString(R.string.missing_subs_email), Toast.LENGTH_LONG).show();
+            if(!isEmailEntered) {
+                Toast.makeText(mContext, invalidEmailMessage, Toast.LENGTH_SHORT).show();
+            } else if(!isConsent1Entered || !isConsent2Entered){
+                Toast.makeText(mContext, missingConsentMessage, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mContext, mContext.getString(R.string.missing_subs_email), Toast.LENGTH_SHORT).show();
+            }
             return false;
         }
     }
@@ -113,6 +124,26 @@ public class EraseView extends View {
     public void setColor(int color) {
         mColor = color;
         mSourceCanvas.drawColor(mColor);
+    }
+
+    public void setEmailStatus(boolean value) {
+        isEmailEntered = value;
+    }
+
+    public void setConsent1Status(boolean value) {
+        isConsent1Entered = value;
+    }
+
+    public void setConsent2Status(boolean value) {
+        isConsent2Entered = value;
+    }
+
+    public void setInvalidEmailMessage (String message) {
+        invalidEmailMessage = message;
+    }
+
+    public void setMissingConsentMessage (String message) {
+        missingConsentMessage = message;
     }
 
     public void setContainer(ContainerScrollView container) {

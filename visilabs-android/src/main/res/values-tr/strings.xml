@@ -23,7 +23,7 @@
         <item>@string/smile_rating_great</item>
     </string-array>
 
-    <string name="missing_subs_email">Lütfen, önce email adresini girin</string>
+    <string name="missing_subs_email">Lütfen, butona tıklayarak bilgilerinizi gönderin.</string>
 
     <!-- Countdown Timer strings -->
     <string name="week_name" >Hafta</string>
