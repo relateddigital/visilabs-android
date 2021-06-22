@@ -67,12 +67,12 @@ public class SmileRating extends BaseRating {
     private final Paint mTextPaint = new Paint();
 
     @Smiley
-    private int mSelectedSmile = NONE;
+    private int mSelectedSmile = GREAT;
     @SuppressLint("WrongConstant")
     @Smiley
-    private int mPreviousSmile = -1;
+    private int mPreviousSmile = GOOD;
     @Smiley
-    private int mNearestSmile = NONE;
+    private int mNearestSmile = GOOD;
     @Smiley
     private int mPendingActionSmile = NONE;
     private Smileys mSmileys;
@@ -164,6 +164,7 @@ public class SmileRating extends BaseRating {
         mValueAnimator.addListener(mAnimatorListener);
         mValueAnimator.addUpdateListener(mAnimatorUpdateListener);
         mValueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        setSelectedSmile(GREAT);
     }
 
     private final ValueAnimator.AnimatorUpdateListener mAnimatorUpdateListener

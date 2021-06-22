@@ -42,6 +42,14 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         FEEDBACK_FORM
     }
 
+    enum NpsType {
+        NPS,
+        SMILE_RATING,
+        NPS_WITH_NUMBERS,
+        NPS_WITH_SECOND_POPUP,
+        NONE
+    }
+
     private static final String LOG_TAG = "Template Activity";
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
     private static final String CAROUSEL_LAST_INDEX_KEY = "carousel_last_index";
@@ -55,6 +63,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private int mCarouselPosition = -1;
     private boolean mIsRotation = false;
     private NpsSecondPopUpType secondPopUpType = NpsSecondPopUpType.IMAGE_TEXT_BUTTON;
+    private NpsType npsType = NpsType.NONE;
     private InAppButtonInterface buttonCallback = null;
     private Boolean isNpsSecondPopupButtonClicked = false;
     private Boolean isNpsSecondPopupActivated = false;
@@ -240,6 +249,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
 
             case NPS:
+                npsType = NpsType.NPS;
                 setTitle();
                 setBody();
                 setButton();
@@ -248,7 +258,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
 
             case SMILE_RATING:
-
+                npsType = NpsType.SMILE_RATING;
                 setBody();
                 setTitle();
                 setButton();
@@ -257,7 +267,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
 
             case NPS_WITH_NUMBERS:
-
+                npsType = NpsType.NPS_WITH_NUMBERS;
                 binding.smileRating.setVisibility(View.GONE);
                 setBody();
                 setTitle();
@@ -267,6 +277,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
 
             case NPS_AND_SECOND_POP_UP:
+                npsType = NpsType.NPS_WITH_SECOND_POPUP;
                 setNpsSecondPopUpCloseButton();
                 setTitle();
                 setBody();
@@ -372,25 +383,70 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.btnTemplate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
-                if(buttonCallback != null) {
-                    Visilabs.CallAPI().setInAppButtonInterface(null);
-                    buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
-                } else {
-                    if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
-                        try {
-                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
-                            startActivity(viewIntent);
+                if(npsType == NpsType.NONE) {
+                    Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+                    if (buttonCallback != null) {
+                        Visilabs.CallAPI().setInAppButtonInterface(null);
+                        buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
+                    } else {
+                        if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
+                            try {
+                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
+                                startActivity(viewIntent);
 
-                        } catch (final ActivityNotFoundException e) {
-                            Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                            } catch (final ActivityNotFoundException e) {
+                                Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                            }
                         }
                     }
+                    VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                    finish();
+                } else {
+                    if(isRatingEntered()) {
+                        Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+                        if (buttonCallback != null) {
+                            Visilabs.CallAPI().setInAppButtonInterface(null);
+                            buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
+                        } else {
+                            if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
+                                try {
+                                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
+                                    startActivity(viewIntent);
+
+                                } catch (final ActivityNotFoundException e) {
+                                    Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                                }
+                            }
+                        }
+                        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                        finish();
+                    }
                 }
-                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
-                finish();
             }
         });
+    }
+
+    private boolean isRatingEntered() {
+        boolean result = false;
+        switch (npsType) {
+            case NPS: {
+                if(binding.ratingBar.getRating()!=0) {
+                    result = true;
+                }
+                break;
+            }
+            case SMILE_RATING: {
+                result = true; // Since the default is "GREAT", no need to check if the user chose something.
+                break;
+            }
+            case NPS_WITH_NUMBERS: {
+                if(binding.npsWithNumbersView.getSelectedRate()!=0) {
+                    result = true;
+                }
+                break;
+            }
+        }
+        return result;
     }
 
     private void setNpsSecondPopUpButton() {
@@ -420,16 +476,18 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.btnTemplate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
-                    if(isRatingAboveThreshold()) {
-                        Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
-                        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
-                        finish();
+                if(binding.ratingBar.getRating()!=0) {
+                    if (secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
+                        if (isRatingAboveThreshold()) {
+                            Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+                            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                            finish();
+                        } else {
+                            setupSecondPopUp();
+                        }
                     } else {
                         setupSecondPopUp();
                     }
-                } else {
-                    setupSecondPopUp();
                 }
             }
         });
