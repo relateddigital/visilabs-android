@@ -249,6 +249,10 @@ public class VisilabsTargetRequest extends VisilabsRemote {
         }
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMNrv()));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMPviv()));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMTvc()));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMLvt()));
 
         if(Visilabs.CallAPI().getChannelName() != null && !Visilabs.CallAPI().getChannelName().equals("")){
             queryMap.put(VisilabsConstant.CHANNEL_KEY, Visilabs.CallAPI().getChannelName());

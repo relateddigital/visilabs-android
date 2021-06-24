@@ -14,6 +14,10 @@ import java.util.List;
 public class VisilabsConstant {
     public static final String SDK_VERSION = BuildConfig.VERSION_NAME;
 
+    public static final String LAST_EVENT_TIME_KEY = "last_event_time";
+    public static final String PVIV_KEY = "pviv";
+    public static final String TVC_KEY = "tvc";
+
     public static final String VISILABS_ORGANIZATION_ID = "VisilabsOrganizationID";
     public static final String VISILABS_SITE_ID = "VisilabsSiteID";
     public static final String VISILABS_SEGMENT_URL = "VisilabsSegmentURL";
@@ -39,6 +43,9 @@ public class VisilabsConstant {
     public static final String OM_3_KEY = "OM.3rd";
     public static final String COOKIEID_PREF = "VisilabsCookieIDPreferences";
     public static final String EXVISITORID_PREF = "VisilabsExVisitorIDPreferences";
+    public static final String LAST_EVENT_TIME_PREF = "VisilabsLastEventTimePreferences";
+    public static final String PVIV_PREF = "VisilabsPvivPreferences";
+    public static final String TVC_PREF = "VisilabsTvcPreferences";
     public static final String TOKENID_PREF = "VisilabsTokenIDPreferences";
     public static final String APPID_PREF = "VisilabsAppIDPreferences";
     public static final String TARGET_PREF = "VisilabsTargetPreferences";
@@ -70,6 +77,10 @@ public class VisilabsConstant {
     public static final String TOKENID_KEY = "OM.sys.TokenID";
     public static final String APPID_KEY = "OM.sys.AppID";
     public static final String SDK_VERSION_KEY = "sdk_version";
+    public static final String NRV_REQUEST_KEY = "OM.nrv";
+    public static final String PVIV_REQUEST_KEY = "OM.pviv";
+    public static final String TVC_REQUEST_KEY = "OM.tvc";
+    public static final String LVT_REQUEST_KEY = "OM.lvt";
 
     public static final String FILTER_KEY = "OM.w.f";
     public static final String APIVER_KEY = "OM.apiver";

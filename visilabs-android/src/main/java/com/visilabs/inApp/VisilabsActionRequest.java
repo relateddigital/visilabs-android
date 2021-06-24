@@ -518,6 +518,10 @@ public class VisilabsActionRequest extends VisilabsRemote {
         }
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMNrv()));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMPviv()));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMTvc()));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMLvt()));
 
         if(mApiVer != null && !mApiVer.equals("")){
             queryMap.put(VisilabsConstant.APIVER_KEY, mApiVer);
@@ -602,6 +606,10 @@ public class VisilabsActionRequest extends VisilabsRemote {
         }
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMNrv()));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMPviv()));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMTvc()));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMLvt()));
 
         if(mApiVer != null && !mApiVer.equals("")){
             queryMap.put(VisilabsConstant.APIVER_KEY, mApiVer);
@@ -691,6 +699,10 @@ public class VisilabsActionRequest extends VisilabsRemote {
         }
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMNrv()));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMPviv()));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMTvc()));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMLvt()));
 
         if(Visilabs.CallAPI().getExVisitorID() != null && !Visilabs.CallAPI().getExVisitorID().equals("")){
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());

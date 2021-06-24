@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -27,8 +28,6 @@ import com.visilabs.inApp.InAppButtonInterface;
 import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.VisilabsActionRequest;
-import com.visilabs.json.JSONArray;
-import com.visilabs.json.JSONObject;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.Report;
 import com.visilabs.model.VisilabsActionsResponse;
@@ -46,9 +45,13 @@ import com.visilabs.util.VisilabsLog;
 import com.visilabs.util.VisilabsParameter;
 
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -87,6 +90,10 @@ public class Visilabs {
     private String mVisitorData = "";
 
     private Cookie mCookie;
+    private int mNrv;
+    private int mPviv;
+    private int mTvc;
+    private String mLvt;
 
     private Boolean mCheckForNotificationsOnLoggerRequest;
 
@@ -422,6 +429,11 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(mLvt));
 
         if (mExVisitorID != null && mExVisitorID.length() > 0) {
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, mExVisitorID);
@@ -482,6 +494,11 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(mLvt));
 
         if (mExVisitorID != null && mExVisitorID.length() > 0) {
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, mExVisitorID);
@@ -534,6 +551,11 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(mLvt));
 
         if (mExVisitorID != null && mExVisitorID.length() > 0) {
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, mExVisitorID);
@@ -649,6 +671,11 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(mLvt));
 
         if (mExVisitorID != null && mExVisitorID.length() > 0) {
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, mExVisitorID);
@@ -701,6 +728,11 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.ACTION_ID_KEY, actId);
         queryMap.put(VisilabsConstant.AUTH_KEY, auth);
         queryMap.put(VisilabsConstant.SUBS_EMAIL_KEY, email);
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(mLvt));
 
         if (mExVisitorID != null && mExVisitorID.length() > 0) {
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, mExVisitorID);
@@ -958,6 +990,11 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(mLvt));
 
         if (mIdentifierForAdvertising != null) {
             queryMap.put(VisilabsConstant.ADVERTISER_ID_KEY, mIdentifierForAdvertising);
@@ -1021,6 +1058,11 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(mLvt));
 
         if (mIdentifierForAdvertising != null) {
             queryMap.put(VisilabsConstant.ADVERTISER_ID_KEY, mIdentifierForAdvertising);
@@ -1130,6 +1172,11 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(mLvt));
 
         if (mIdentifierForAdvertising != null) {
             queryMap.put(VisilabsConstant.ADVERTISER_ID_KEY, mIdentifierForAdvertising);
@@ -1178,6 +1225,9 @@ public class Visilabs {
             Log.w(LOG_TAG, "Name cannot be null");
             return;
         }
+
+        updateSessionParameters(pageName);
+
         if (properties == null) {
             properties = new HashMap<>();
         }
@@ -1191,6 +1241,8 @@ public class Visilabs {
             Log.w(LOG_TAG, "Name cannot be null");
             return;
         }
+
+        updateSessionParameters(pageName);
 
         Context context = mContext;
 
@@ -1247,6 +1299,11 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(mLvt));
 
         if (mIdentifierForAdvertising != null) {
             queryMap.put(VisilabsConstant.ADVERTISER_ID_KEY, mIdentifierForAdvertising);
@@ -1322,8 +1379,6 @@ public class Visilabs {
             if(mUserAgent!=null) {
                 headers.put(VisilabsConstant.USER_AGENT_KEY, mUserAgent);
             }
-
-            nextQueryParameters.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
 
             switch (nextQueryParameters.get("client")) {
                 case "logger": {
@@ -1581,6 +1636,22 @@ public class Visilabs {
         return mSdkVersion;
     }
 
+    public int getOMNrv() {
+        return mNrv;
+    }
+
+    public int getOMPviv() {
+        return mPviv;
+    }
+
+    public int getOMTvc() {
+        return mTvc;
+    }
+
+    public String getOMLvt() {
+        return mLvt;
+    }
+
     public String getCookieID() {
         return mCookieID;
     }
@@ -1760,6 +1831,86 @@ public class Visilabs {
         final String installerName = packageManager.getInstallerPackageName(applicationInfo.packageName);
 
         return installerName != null && validInstallers.contains(installerName);
+    }
+
+    private void updateSessionParameters(String pageName) {
+        String dateNow = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+        String lastEventTime = Prefs.getFromPrefs(mContext, VisilabsConstant.LAST_EVENT_TIME_PREF,
+                VisilabsConstant.LAST_EVENT_TIME_KEY, "");
+        if(lastEventTime == null || lastEventTime.isEmpty()) {
+            mNrv = 1;
+            mPviv = 1;
+            mTvc = 1;
+            mLvt = dateNow;
+            Prefs.saveToPrefs(mContext, VisilabsConstant.TVC_PREF, VisilabsConstant.TVC_KEY,
+                    "1");
+            Prefs.saveToPrefs(mContext, VisilabsConstant.LAST_EVENT_TIME_PREF, VisilabsConstant.LAST_EVENT_TIME_KEY,
+                    dateNow);
+        } else {
+            if(isPreviousSessionOver(lastEventTime, dateNow)) {
+                mPviv = 1;
+                Prefs.saveToPrefs(mContext, VisilabsConstant.PVIV_PREF, VisilabsConstant.PVIV_KEY,
+                        String.valueOf(mPviv));
+
+                int prevTvc = Integer.parseInt(Prefs.getFromPrefs(mContext, VisilabsConstant.TVC_PREF,
+                        VisilabsConstant.TVC_KEY, "1"));
+                mTvc = prevTvc + 1;
+                Prefs.saveToPrefs(mContext, VisilabsConstant.TVC_PREF, VisilabsConstant.TVC_KEY,
+                        String.valueOf(mTvc));
+
+                if(!pageName.equals("/OM_evt.gif")) {
+                    mLvt = dateNow;
+                    Prefs.saveToPrefs(mContext, VisilabsConstant.LAST_EVENT_TIME_PREF, VisilabsConstant.LAST_EVENT_TIME_KEY,
+                            dateNow);
+                } else {
+                    mLvt = lastEventTime;
+                }
+
+            } else {
+                if(!pageName.equals("/OM_evt.gif")) {
+                    int prevPviv = Integer.parseInt(Prefs.getFromPrefs(mContext, VisilabsConstant.PVIV_PREF,
+                            VisilabsConstant.PVIV_KEY, "1"));
+                    mPviv = prevPviv + 1;
+                    Prefs.saveToPrefs(mContext, VisilabsConstant.PVIV_PREF, VisilabsConstant.PVIV_KEY,
+                            String.valueOf(mPviv));
+                } else {
+                    mPviv = Integer.parseInt(Prefs.getFromPrefs(mContext, VisilabsConstant.PVIV_PREF,
+                            VisilabsConstant.PVIV_KEY, "1"));
+                }
+
+                mTvc = Integer.parseInt(Prefs.getFromPrefs(mContext, VisilabsConstant.TVC_PREF,
+                        VisilabsConstant.TVC_KEY, "1"));
+
+                mLvt = lastEventTime;
+            }
+            if(mTvc > 1) {
+                mNrv = 0;
+            } else {
+                mNrv = 1;
+            }
+        }
+    }
+
+    private boolean isPreviousSessionOver(String lastEventTime, String dateNow) {
+        boolean res;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        try {
+            Date previousEventDate = simpleDateFormat.parse(lastEventTime);
+            Date currentEventDate = simpleDateFormat.parse(dateNow);
+
+            long differenceInMs = currentEventDate.getTime() - previousEventDate.getTime();
+
+            if(differenceInMs > 1800000) { //30 mins
+                res = true;
+            } else {
+                res = false;
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            res = false;
+        }
+        return res;
     }
 
     public void setInAppButtonInterface(InAppButtonInterface inAppButtonInterface) {
