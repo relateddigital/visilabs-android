@@ -37,6 +37,7 @@ android {
         targetSdkVersion 30
         versionCode 4
         versionName "5.6.1"
+        buildConfigField 'String', 'VERSION_NAME', "\"5.6.1\""
     }
     buildTypes {
         release {

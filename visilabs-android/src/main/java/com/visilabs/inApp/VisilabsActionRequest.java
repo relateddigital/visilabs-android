@@ -517,6 +517,8 @@ public class VisilabsActionRequest extends VisilabsRemote {
             queryMap.put(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
         }
 
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
+
         if(mApiVer != null && !mApiVer.equals("")){
             queryMap.put(VisilabsConstant.APIVER_KEY, mApiVer);
         }else{
@@ -598,6 +600,8 @@ public class VisilabsActionRequest extends VisilabsRemote {
         if(Visilabs.CallAPI().getSysAppID() != null && !Visilabs.CallAPI().getSysAppID().equals("")){
             queryMap.put(VisilabsConstant.APPID_KEY, Visilabs.CallAPI().getSysAppID());
         }
+
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
 
         if(mApiVer != null && !mApiVer.equals("")){
             queryMap.put(VisilabsConstant.APIVER_KEY, mApiVer);
@@ -685,6 +689,8 @@ public class VisilabsActionRequest extends VisilabsRemote {
         if(Visilabs.CallAPI().getCookieID() != null && !Visilabs.CallAPI().getCookieID().equals("")){
             queryMap.put(VisilabsConstant.COOKIEID_KEY, Visilabs.CallAPI().getCookieID());
         }
+
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
 
         if(Visilabs.CallAPI().getExVisitorID() != null && !Visilabs.CallAPI().getExVisitorID().equals("")){
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());

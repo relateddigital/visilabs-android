@@ -65,6 +65,7 @@ public class Visilabs {
     private static String mTargetURL;
     private static String mActionURL;
     private static String mUserAgent;
+    private String mSdkVersion;
     private List<HashMap<String, String>> mSendQueue;
 
     private static Visilabs visilabs = null;
@@ -145,6 +146,8 @@ public class Visilabs {
         mRealTimeURL = realTimeURL;
         mTargetURL = targetURL;
         mActionURL = actionURL;
+
+        mSdkVersion = VisilabsConstant.SDK_VERSION;
 
         mExVisitorID = Prefs.getFromPrefs(mContext, VisilabsConstant.EXVISITORID_PREF,
                 VisilabsConstant.EXVISITORID_PREF_KEY, null);
@@ -1320,6 +1323,8 @@ public class Visilabs {
                 headers.put(VisilabsConstant.USER_AGENT_KEY, mUserAgent);
             }
 
+            nextQueryParameters.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+
             switch (nextQueryParameters.get("client")) {
                 case "logger": {
 
@@ -1570,6 +1575,10 @@ public class Visilabs {
 
     public String getExVisitorID() {
         return mExVisitorID;
+    }
+
+    public String getSdkVersion() {
+        return mSdkVersion;
     }
 
     public String getCookieID() {

@@ -6,10 +6,13 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.util.Log;
+
+import com.visilabs.android.BuildConfig;
 import com.visilabs.inApp.VisilabsInAppActivity;
 import java.util.List;
 
 public class VisilabsConstant {
+    public static final String SDK_VERSION = BuildConfig.VERSION_NAME;
 
     public static final String VISILABS_ORGANIZATION_ID = "VisilabsOrganizationID";
     public static final String VISILABS_SITE_ID = "VisilabsSiteID";
@@ -66,6 +69,7 @@ public class VisilabsConstant {
 
     public static final String TOKENID_KEY = "OM.sys.TokenID";
     public static final String APPID_KEY = "OM.sys.AppID";
+    public static final String SDK_VERSION_KEY = "sdk_version";
 
     public static final String FILTER_KEY = "OM.w.f";
     public static final String APIVER_KEY = "OM.apiver";
