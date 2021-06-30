@@ -50,9 +50,11 @@ public class VisilabsConstant {
     public static final String APPID_PREF = "VisilabsAppIDPreferences";
     public static final String TARGET_PREF = "VisilabsTargetPreferences";
     public static final String SHOWN_STORIES_PREF = "VisilabsShownStories";
+    public static final String VISILABS_PARAMETERS_PREF = "VisilabsParametersPreferences";
 
     public static final String VISITOR_DATA_PREF = "VisilabsVisitorDataPreferences";
     public static final String VISITOR_DATA_PREF_KEY = "visitorData";
+    public static final String VISILABS_PARAMETERS_PREF_KEY = "visilabs_parameters";
 
     public static final String COOKIEID_PREF_KEY = "cookieID";
     public static final String EXVISITORID_PREF_KEY = "exVisitorID";

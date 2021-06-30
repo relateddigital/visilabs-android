@@ -12,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 import androidx.core.content.ContextCompat;
+
+import com.google.gson.Gson;
 import com.visilabs.api.LoggerApiClient;
 import com.visilabs.api.RealTimeApiClient;
 import com.visilabs.api.SApiClient;
@@ -31,6 +33,7 @@ import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.Report;
 import com.visilabs.model.VisilabsActionsResponse;
+import com.visilabs.model.VisilabsParameters;
 import com.visilabs.scratchToWin.ScratchToWinActivity;
 import com.visilabs.scratchToWin.model.ScratchToWinModel;
 import com.visilabs.spinToWin.SpinToWinActivity;
@@ -128,6 +131,41 @@ public class Visilabs {
         if(SApiClient.getClient(requestTimeoutSeconds) != null) {
             mVisilabsSApiInterface = SApiClient.getClient(requestTimeoutSeconds).create(VisilabsApiMethods.class);
         }
+
+        VisilabsParameters parameters = new VisilabsParameters(
+                organizationID,
+                siteID,
+                segmentURL,
+                dataSource,
+                realTimeURL,
+                channel,
+                requestTimeoutSeconds,
+                RESTURL,
+                encryptedDataSource,
+                targetURL,
+                actionURL,
+                geofenceURL,
+                geofenceEnabled
+        );
+
+        String parametersStr = new Gson().toJson(parameters);
+        Prefs.saveToPrefs(context, VisilabsConstant.VISILABS_PARAMETERS_PREF,
+                VisilabsConstant.VISILABS_PARAMETERS_PREF_KEY, parametersStr);
+
+        VisilabsParameters parameters2 = new Gson().fromJson(parametersStr, VisilabsParameters.class);
+        organizationID = parameters2.getOrganizationId();
+        siteID = parameters2.getSiteId();
+        segmentURL = parameters2.getSegmentUrl();
+        dataSource = parameters2.getDataSource();
+        realTimeURL = parameters2.getRealTimeUrl();
+        channel = parameters2.getChannel();
+        requestTimeoutSeconds = parameters2.getRequestTimeoutSeconds();
+        RESTURL = parameters2.getRestUrl();
+        encryptedDataSource = parameters2.getEncryptedDataSource();
+        targetURL = parameters2.getTargetUrl();
+        actionURL = parameters2.getActionUrl();
+        geofenceURL = parameters2.getGeofenceUrl();
+        geofenceEnabled = parameters2.getGeofenceEnabled();
 
         mGeofenceURL = geofenceURL;
         mGeofenceEnabled = geofenceEnabled;
@@ -282,48 +320,43 @@ public class Visilabs {
                 dataSource = ai.metaData.getString(VisilabsConstant.VISILABS_DATA_SOURCE);
                 realTimeURL = ai.metaData.getString(VisilabsConstant.VISILABS_REAL_TIME_URL);
                 channel = ai.metaData.getString(VisilabsConstant.VISILABS_CHANNEL);
-
-                try {
-                    requestTimeoutSeconds = ai.metaData.getInt(VisilabsConstant.VISILABS_REQUEST_TIMEOUT_IN_SECONDS,
-                            30);
-                } catch (Exception ex) {
-                    Log.d("CreateApi", ex.toString());
-                }
-                try {
-                    RESTURL = ai.metaData.getString(VisilabsConstant.VISILABS_REST_URL);
-                } catch (Exception ex) {
-                    Log.d("CreateApi", ex.toString());
-                }
-                try {
-                    encryptedDataSource = ai.metaData.getString(VisilabsConstant.VISILABS_ENCRYPTED_DATA_SOURCE);
-                } catch (Exception ex) {
-                    Log.d("CreateApi", ex.toString());
-                }
-                try {
-                    targetURL = ai.metaData.getString(VisilabsConstant.VISILABS_TARGET_URL);
-                } catch (Exception ex) {
-                    Log.d("CreateApi", ex.toString());
-                }
-                try {
-                    actionURL = ai.metaData.getString(VisilabsConstant.VISILABS_ACTION_URL);
-                } catch (Exception ex) {
-                    Log.d("CreateApi", ex.toString());
-                }
-                try {
-                    geofenceURL = ai.metaData.getString(VisilabsConstant.VISILABS_GEOFENCE_URL);
-                } catch (Exception ex) {
-                    Log.d("CreateApi", ex.toString());
-                }
-                try {
-                    geofenceEnabled = ai.metaData.getBoolean(VisilabsConstant.VISILABS_GEOFENCE_ENABLED,
-                            false);
-                } catch (Exception ex) {
-                    Log.d("CreateApi", ex.toString());
-                }
-
+                requestTimeoutSeconds = ai.metaData.getInt(VisilabsConstant.VISILABS_REQUEST_TIMEOUT_IN_SECONDS,
+                        30);
+                RESTURL = ai.metaData.getString(VisilabsConstant.VISILABS_REST_URL);
+                encryptedDataSource = ai.metaData.getString(VisilabsConstant.VISILABS_ENCRYPTED_DATA_SOURCE);
+                targetURL = ai.metaData.getString(VisilabsConstant.VISILABS_TARGET_URL);
+                actionURL = ai.metaData.getString(VisilabsConstant.VISILABS_ACTION_URL);
+                geofenceURL = ai.metaData.getString(VisilabsConstant.VISILABS_GEOFENCE_URL);
+                geofenceEnabled = ai.metaData.getBoolean(VisilabsConstant.VISILABS_GEOFENCE_ENABLED,
+                        false);
 
             } catch (Exception e) {
                 Log.d("CreateApi", e.toString());
+                Log.i("VisilabsParameters", "Failed to read the parameters from AndroidManifest.xml." +
+                        "Starting to read them from Shared Preferences...");
+                String parametersStr = Prefs.getFromPrefs(context, VisilabsConstant.VISILABS_PARAMETERS_PREF,
+                        VisilabsConstant.VISILABS_PARAMETERS_PREF_KEY, "");
+
+                if(parametersStr.isEmpty()) {
+                    Log.e(LOG_TAG, "Could not create Visilabs instance!!!");
+                    return null;
+                } else {
+                    VisilabsParameters parameters = new Gson().fromJson(parametersStr, VisilabsParameters.class);
+                    organizationID = parameters.getOrganizationId();
+                    siteID = parameters.getSiteId();
+                    segmentURL = parameters.getSegmentUrl();
+                    dataSource = parameters.getDataSource();
+                    realTimeURL = parameters.getRealTimeUrl();
+                    channel = parameters.getChannel();
+                    requestTimeoutSeconds = parameters.getRequestTimeoutSeconds();
+                    RESTURL = parameters.getRestUrl();
+                    encryptedDataSource = parameters.getEncryptedDataSource();
+                    targetURL = parameters.getTargetUrl();
+                    actionURL = parameters.getActionUrl();
+                    geofenceURL = parameters.getGeofenceUrl();
+                    geofenceEnabled = parameters.getGeofenceEnabled();
+                }
+
             }
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
