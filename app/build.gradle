@@ -9,7 +9,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 30
         versionCode 1
-        versionName "5.6.1"
+        versionName "5.6.2"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,7 +40,7 @@ dependencies {
 
     implementation 'com.google.android.material:material:1.2.1'
 
-    implementation 'com.github.relateddigital:euromessage-android:4.4.7'
+    implementation 'com.github.relateddigital:euromessage-android:4.5.0'
 
     implementation 'com.android.support:multidex:2.0.1'
 
