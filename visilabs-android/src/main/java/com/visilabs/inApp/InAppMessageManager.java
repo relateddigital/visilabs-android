@@ -249,6 +249,8 @@ public class InAppMessageManager {
             visilabsAlertDialogFragment.setCancelable(false);
             visilabsAlertDialogFragment.setInAppState(stateID, state, parent);
             visilabsAlertDialogFragment.show(fragmentActivity.getSupportFragmentManager(), "visilabs_alert_dialog_fragment");
+        } else {
+            VisilabsUpdateDisplayState.releaseDisplayState(stateID);
         }
     }
 
