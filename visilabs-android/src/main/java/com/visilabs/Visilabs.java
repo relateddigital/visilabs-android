@@ -46,6 +46,7 @@ import com.visilabs.util.VisilabsConstant;
 import com.visilabs.util.VisilabsEncoder;
 import com.visilabs.util.VisilabsLog;
 import com.visilabs.util.VisilabsParameter;
+import com.visilabs.util.VisilabsTimerTask;
 
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -571,7 +572,6 @@ public class Visilabs {
         send();
     }
 
-
     public void impressionStory(String report) {
 
         long timeOfEvent = System.currentTimeMillis() / 1000;
@@ -627,7 +627,6 @@ public class Visilabs {
 
         send();
     }
-
 
     private void showActions(String pageName, Activity parent, HashMap<String, String> properties) {
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
@@ -826,58 +825,9 @@ public class Visilabs {
             @Override
             public void success(final List<InAppMessage> messages, String url) {
                 Log.i(LOG_TAG, "Success InApp Request : " + url);
-
                 final Timer timer = new Timer("InApp Delay Timer", false);
-                TimerTask task = new TimerTask() {
-                    @Override
-                    public void run() {
-                        timer.cancel();
-                        if(parent == null) {
-                            Log.e(LOG_TAG, "Could not display the in-app template since the user has changed the original page!");
-                            return;
-                        }
-                        InAppMessage message = null;
-                        if (actId > 0) {
-                            for (int i = 0; i < messages.size(); i++) {
-                                if (messages.get(i) != null && messages.get(i).getActId() == actId) {
-                                    message = messages.get(i);
-                                    break;
-                                }
-                            }
-                        }
-                        if (message == null && type != null) {
-                            for (int i = 0; i < messages.size(); i++) {
-                                if (messages.get(i) != null && messages.get(i).getActionData().getMsgType().toString().equals(type)) {
-                                    message = messages.get(i);
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (message == null && messages.size() != 0) {
-                            message = messages.get(0);
-                        }
-
-                        if(message != null) {
-                            new InAppMessageManager(mCookieID, mDataSource).showInAppMessage(message, parent);
-
-                            if (message.getActionData().getVisitData() != null && !message.getActionData().getVisitData().equals("")) {
-                                Log.v("mVisitData", message.getActionData().getVisitData());
-                                mVisitData = message.getActionData().getVisitData();
-                            }
-
-                            if (message.getActionData().getVisitorData() != null && !message.getActionData().getVisitorData().equals("")) {
-                                Prefs.saveToPrefs(parent, VisilabsConstant.VISITOR_DATA_PREF,
-                                        VisilabsConstant.VISITOR_DATA_PREF_KEY, message.getActionData().getVisitorData());
-
-                                mVisitorData = message.getActionData().getVisitorData();
-
-                                Log.v("mVisitorData", message.getActionData().getVisitorData());
-                            }
-                        }
-                    }
-                };
-                timer.schedule(task, Integer.parseInt(messages.get(0).getActionData().getWaitingTime()) * 1000);
+                VisilabsTimerTask timerTask = new VisilabsTimerTask(type, actId, messages, parent);
+                timer.schedule(timerTask, Integer.parseInt(timerTask.getMessage() == null ? "0" : timerTask.getMessage().getActionData().getWaitingTime()) * 1000);
             }
 
             @Override
@@ -1571,6 +1521,16 @@ public class Visilabs {
         }
     }
 
+    synchronized public void setVisitData(String visitData) {
+        mVisitData = visitData;
+    }
+
+    synchronized public void setVisitorData(String visitorData) {
+        mVisitorData = visitorData;
+        Prefs.saveToPrefs(mContext, VisilabsConstant.VISITOR_DATA_PREF,
+                VisilabsConstant.VISITOR_DATA_PREF_KEY, visitorData);
+    }
+
     private void addQueryParametersToQueue(HashMap<String, String> queryParameters) {
         if (queryParameters != null && queryParameters.size() > 0) {
             mSendQueue.add(queryParameters);
@@ -1701,13 +1661,16 @@ public class Visilabs {
         return mChannel;
     }
 
-
     public String getOrganizationID() {
         return mOrganizationID;
     }
 
     public String getSiteID() {
         return mSiteID;
+    }
+
+    public String getDataSource() {
+        return mDataSource;
     }
 
     public static boolean isOnline() {
