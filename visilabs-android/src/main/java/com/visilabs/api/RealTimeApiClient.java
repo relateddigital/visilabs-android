@@ -31,7 +31,7 @@ public class RealTimeApiClient {
                             .connectTimeout(connectTimeOutInSec, TimeUnit.SECONDS)
                             .readTimeout(10, TimeUnit.SECONDS);
 
-            synchronized (LoggerApiClient.class) {
+            synchronized (RealTimeApiClient.class) {
                 if(retrofit == null) {
                     retrofit = new Retrofit.Builder()
                             .baseUrl("https://rt.visilabs.net/")

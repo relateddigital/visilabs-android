@@ -31,7 +31,7 @@ public class SApiClient {
                             .connectTimeout(connectTimeOutInSec, TimeUnit.SECONDS)
                             .readTimeout(10, TimeUnit.SECONDS);
 
-            synchronized (LoggerApiClient.class) {
+            synchronized (SApiClient.class) {
                 if(retrofit == null) {
                     retrofit = new Retrofit.Builder()
                             .baseUrl("https://s.visilabs.net/")
