@@ -100,7 +100,7 @@ public class RatingGrid extends GridView {
             drawable.setShape(GradientDrawable.OVAL);
 
             if(cellValue == mSelectedRate) {
-                drawable.setStroke(5, Color.WHITE);
+                drawable.setStroke(5, Color.BLACK);
                 ratingCell.setBackground(drawable);
             } else {
                 ratingCell.setBackground(drawable);
