@@ -312,7 +312,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private void setTitle() {
 
         binding.tvTitle.setVisibility(View.VISIBLE);
-        binding.tvTitle.setTypeface(mInAppMessage.getActionData().getFontFamily(), Typeface.BOLD);
+        binding.tvTitle.setTypeface(mInAppMessage.getActionData().getFontFamily());
         binding.tvTitle.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n","\n"));
         if(mInAppMessage.getActionData().getMsgTitleColor() != null && !mInAppMessage.getActionData().getMsgTitleColor().equals("")) {
             try {
@@ -571,7 +571,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg1())
                     .into(bindingSecondPopUp.imageView);
         }
-        bindingSecondPopUp.titleView.setTypeface(mInAppMessage.getActionData().getFontFamily(), Typeface.BOLD);
+        bindingSecondPopUp.titleView.setTypeface(mInAppMessage.getActionData().getFontFamily());
         bindingSecondPopUp.titleView.setText(mInAppMessage.getActionData().getSecondPopupMsgTitle().replace("\\n","\n"));
         bindingSecondPopUp.titleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
         bindingSecondPopUp.bodyTextView.setTypeface(mInAppMessage.getActionData().getFontFamily());
