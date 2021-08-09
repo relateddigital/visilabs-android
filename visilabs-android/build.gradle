@@ -4,30 +4,6 @@ group = 'com.github.relateddigital'
 
 //apply from: 'maven-push.gradle'
 
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'visilabs-android'
-
-    publishedGroupId = 'com.visilabs.android'
-    libraryName = 'Visilabs Android'
-    artifact = 'visilabs-android'
-
-    libraryDescription = 'SDK for Visilabs\' analytics and target modules.'
-
-    siteUrl = 'http://visilabs.com/'
-    gitUrl = 'http://visilabs.com/'
-
-    libraryVersion = '5.6.5'
-
-    developerId = 'visilabs'
-    developerName = 'Visilabs'
-    developerEmail = 'egemen@visilabs.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-}
-
 android {
     compileSdkVersion 30
     buildToolsVersion '30.0.3'
@@ -54,28 +30,28 @@ android {
 
 dependencies {
 
-    api 'com.google.android.gms:play-services-base:17.5.0'
-    api 'com.google.android.gms:play-services-location:17.1.0'
+    api 'com.google.android.gms:play-services-base:17.6.0'
+    api 'com.google.android.gms:play-services-location:18.0.0'
     api 'com.google.code.gson:gson:2.8.6'
     api 'com.squareup.picasso:picasso:2.71828'
     api 'androidx.multidex:multidex:2.0.1'
 
     api 'de.hdodenhof:circleimageview:3.1.0'
-    api 'androidx.recyclerview:recyclerview:1.1.0'
-    api 'androidx.constraintlayout:constraintlayout:2.0.4'
+    api 'androidx.recyclerview:recyclerview:1.2.1'
+    api 'androidx.constraintlayout:constraintlayout:2.1.0'
 
     api 'com.squareup.retrofit2:retrofit:2.9.0'
     api 'com.squareup.retrofit2:converter-gson:2.9.0'
     api 'com.squareup.okhttp3:logging-interceptor:4.9.0'
 
-    api 'com.google.android.exoplayer:exoplayer-core:2.13.2'
-    api 'com.google.android.exoplayer:exoplayer-ui:2.13.2'
+    api 'com.google.android.exoplayer:exoplayer-core:2.14.2'
+    api 'com.google.android.exoplayer:exoplayer-ui:2.14.2'
 
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
 
 }
 
@@ -84,6 +60,3 @@ allprojects {
         enabled = false
     }
 }
-
-apply from: 'bintray-install.gradle'
-apply from: 'bintray-upload.gradle'
