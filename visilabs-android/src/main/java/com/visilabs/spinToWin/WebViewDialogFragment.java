@@ -1,6 +1,7 @@
 package com.visilabs.spinToWin;
 
 import android.app.Dialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import com.visilabs.android.R;
+import com.visilabs.util.VisilabsConstant;
 
 public class WebViewDialogFragment extends DialogFragment {
 
@@ -92,6 +94,11 @@ public class WebViewDialogFragment extends DialogFragment {
         webView = view.findViewById(R.id.webview);
         webView.setWebChromeClient(getWebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
+
+        if (Build.VERSION.SDK_INT >= VisilabsConstant.UI_FEATURES_MIN_API) {
+            webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
+        }
+
         webView.addJavascriptInterface(mJavaScriptInterface, "Android");
         String folderPath = "file:android_asset/";
         String fileName = this.fileName;
