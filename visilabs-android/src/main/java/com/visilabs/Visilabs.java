@@ -1484,7 +1484,7 @@ public class Visilabs {
 
         String previousCookieID = Prefs.getFromPrefs(mContext, VisilabsConstant.COOKIEID_PREF,
                 VisilabsConstant.COOKIEID_PREF_KEY, null);
-        if (previousCookieID != null && previousCookieID.equals(cookieID)) {
+        if (previousCookieID != null && !previousCookieID.equals(cookieID)) {
             PersistentTargetManager.with(mContext).clearParameters();
         }
 
