@@ -79,6 +79,7 @@ public class VisilabsConstant {
     public static final String TOKENID_KEY = "OM.sys.TokenID";
     public static final String APPID_KEY = "OM.sys.AppID";
     public static final String SDK_VERSION_KEY = "sdk_version";
+    public static final String APP_VERSION_KEY = "OM.appVersion";
     public static final String NRV_REQUEST_KEY = "OM.nrv";
     public static final String PVIV_REQUEST_KEY = "OM.pviv";
     public static final String TVC_REQUEST_KEY = "OM.tvc";

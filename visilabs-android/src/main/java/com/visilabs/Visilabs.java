@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -38,6 +37,7 @@ import com.visilabs.scratchToWin.ScratchToWinActivity;
 import com.visilabs.scratchToWin.model.ScratchToWinModel;
 import com.visilabs.spinToWin.SpinToWinActivity;
 import com.visilabs.spinToWin.model.SpinToWinModel;
+import com.visilabs.util.AppUtils;
 import com.visilabs.util.NetworkManager;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.Prefs;
@@ -73,6 +73,7 @@ public class Visilabs {
     private static String mActionURL;
     private static String mUserAgent;
     private String mSdkVersion;
+    private String mAppVersion;
     private List<HashMap<String, String>> mSendQueue;
 
     private static Visilabs visilabs = null;
@@ -194,6 +195,7 @@ public class Visilabs {
         mActionURL = actionURL;
 
         mSdkVersion = VisilabsConstant.SDK_VERSION;
+        mAppVersion = AppUtils.appVersion(context);
 
         mExVisitorID = Prefs.getFromPrefs(mContext, VisilabsConstant.EXVISITORID_PREF,
                 VisilabsConstant.EXVISITORID_PREF_KEY, null);
@@ -464,6 +466,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
@@ -529,6 +532,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
@@ -585,6 +589,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
@@ -704,6 +709,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
@@ -761,6 +767,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.AUTH_KEY, auth);
         queryMap.put(VisilabsConstant.SUBS_EMAIL_KEY, email);
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
@@ -974,6 +981,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
@@ -1042,6 +1050,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
@@ -1156,6 +1165,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
@@ -1283,6 +1293,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
@@ -1627,6 +1638,10 @@ public class Visilabs {
 
     public String getSdkVersion() {
         return mSdkVersion;
+    }
+
+    public String getAppVersion() {
+        return mAppVersion;
     }
 
     public int getOMNrv() {

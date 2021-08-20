@@ -518,6 +518,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
         }
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, Visilabs.CallAPI().getAppVersion());
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMNrv()));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMPviv()));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMTvc()));
@@ -606,6 +607,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
         }
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, Visilabs.CallAPI().getAppVersion());
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMNrv()));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMPviv()));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMTvc()));
@@ -699,6 +701,7 @@ public class VisilabsActionRequest extends VisilabsRemote {
         }
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, Visilabs.CallAPI().getAppVersion());
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMNrv()));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMPviv()));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMTvc()));

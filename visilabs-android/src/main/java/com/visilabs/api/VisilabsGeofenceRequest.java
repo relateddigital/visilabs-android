@@ -279,6 +279,7 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
         }
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, Visilabs.CallAPI().getAppVersion());
 
         if(Visilabs.CallAPI().getChannelName() != null && !Visilabs.CallAPI().getChannelName().equals("")){
             queryMap.put(VisilabsConstant.CHANNEL_KEY, Visilabs.CallAPI().getChannelName());
