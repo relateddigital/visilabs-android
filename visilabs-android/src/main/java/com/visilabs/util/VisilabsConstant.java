@@ -176,6 +176,13 @@ public class VisilabsConstant {
     public static final String STORY_PHOTO_KEY = "photo";
     public static final String STORY_VIDEO_KEY = "video";
 
+    public static final String APP_TRACKER_REQUEST_KEY = "OM.apptracker";
+    public static final String LOCATION_PERMISSION_REQUEST_KEY = "OM.locpermit";
+    public static final String PAGE_NAME_REQUEST_VAL = "/OM_evt.gif";
+    public static final String LOC_PERMISSION_ALWAYS_REQUEST_VAL = "always";
+    public static final String LOC_PERMISSION_APP_OPEN_REQUEST_VAL = "appopen";
+    public static final String LOC_PERMISSION_NONE_REQUEST_VAL = "none";
+
     public static boolean checkNotificationActivityAvailable(Context context) {
         if (Build.VERSION.SDK_INT < UI_FEATURES_MIN_API) {
             return false;

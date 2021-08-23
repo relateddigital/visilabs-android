@@ -69,21 +69,19 @@ public class MainActivity extends AppCompatActivity {
         binding.customEvent2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, String> parameters = new HashMap<>();
-                //Add the parameters here
-                Visilabs.CallAPI().customEvent("test", parameters, MainActivity.this);
-            }
-        });
-
-        binding.customEvent3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 HashMap<String, String> properties = new HashMap<>();
                 properties.put("utm_campaign", "android-test-campaign");
                 properties.put("utm_source", "euromsg");
                 properties.put("utm_medium", "push");
                 Visilabs.CallAPI().sendCampaignParameters(properties);
                 Toast.makeText(getApplicationContext(), "The campaign parameters are sent.", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        binding.customEvent3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Visilabs.CallAPI().sendLocationPermission();
             }
         });
 

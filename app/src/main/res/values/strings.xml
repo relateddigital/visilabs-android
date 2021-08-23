@@ -13,7 +13,7 @@
 
     <string name="custom_event_1">CUSTOM EVENT 1</string>
     <string name="custom_event_2">CUSTOM EVENT 2</string>
-    <string name="custom_event_3">CUSTOM EVENT 3</string>
+    <string name="custom_event_3">SEND LOCATION PERMISSION</string>
 
     <string name="mini">MINI</string>
     <string name="full">FULL</string>

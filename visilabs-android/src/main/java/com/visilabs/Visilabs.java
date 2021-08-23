@@ -31,6 +31,7 @@ import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.Report;
+import com.visilabs.model.LocationPermission;
 import com.visilabs.model.VisilabsActionsResponse;
 import com.visilabs.model.VisilabsParameters;
 import com.visilabs.scratchToWin.ScratchToWinActivity;
@@ -434,8 +435,8 @@ public class Visilabs {
             appsStrBuilder.deleteCharAt(appsStrBuilder.length() - 1);
             String apps = appsStrBuilder.toString();
             HashMap<String, String> parameters = new HashMap<String, String>();
-            parameters.put("OM.apptracker", apps);
-            customEvent("/OM_evt.gif", parameters);
+            parameters.put(VisilabsConstant.APP_TRACKER_REQUEST_KEY, apps);
+            customEvent(VisilabsConstant.PAGE_NAME_REQUEST_VAL, parameters);
         }
     }
 
@@ -461,7 +462,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.ORGANIZATIONID_KEY, mOrganizationID);
         queryMap.put(VisilabsConstant.SITEID_KEY, mSiteID);
         queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
-        queryMap.put(VisilabsConstant.URI_KEY, "/OM_evt.gif");
+        queryMap.put(VisilabsConstant.URI_KEY, VisilabsConstant.PAGE_NAME_REQUEST_VAL);
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
@@ -527,7 +528,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.ORGANIZATIONID_KEY, mOrganizationID);
         queryMap.put(VisilabsConstant.SITEID_KEY, mSiteID);
         queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
-        queryMap.put(VisilabsConstant.URI_KEY, "/OM_evt.gif");
+        queryMap.put(VisilabsConstant.URI_KEY, VisilabsConstant.PAGE_NAME_REQUEST_VAL);
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
@@ -584,7 +585,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.ORGANIZATIONID_KEY, mOrganizationID);
         queryMap.put(VisilabsConstant.SITEID_KEY, mSiteID);
         queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
-        queryMap.put(VisilabsConstant.URI_KEY, "/OM_evt.gif");
+        queryMap.put(VisilabsConstant.URI_KEY, VisilabsConstant.PAGE_NAME_REQUEST_VAL);
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
@@ -704,7 +705,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.ORGANIZATIONID_KEY, mOrganizationID);
         queryMap.put(VisilabsConstant.SITEID_KEY, mSiteID);
         queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
-        queryMap.put(VisilabsConstant.URI_KEY, "/OM_evt.gif");
+        queryMap.put(VisilabsConstant.URI_KEY, VisilabsConstant.PAGE_NAME_REQUEST_VAL);
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
@@ -1869,7 +1870,7 @@ public class Visilabs {
                 Prefs.saveToPrefs(mContext, VisilabsConstant.TVC_PREF, VisilabsConstant.TVC_KEY,
                         String.valueOf(mTvc));
 
-                if(!pageName.equals("/OM_evt.gif")) {
+                if(!pageName.equals(VisilabsConstant.PAGE_NAME_REQUEST_VAL)) {
                     mLvt = dateNow;
                     Prefs.saveToPrefs(mContext, VisilabsConstant.LAST_EVENT_TIME_PREF, VisilabsConstant.LAST_EVENT_TIME_KEY,
                             dateNow);
@@ -1878,7 +1879,7 @@ public class Visilabs {
                 }
 
             } else {
-                if(!pageName.equals("/OM_evt.gif")) {
+                if(!pageName.equals(VisilabsConstant.PAGE_NAME_REQUEST_VAL)) {
                     int prevPviv = Integer.parseInt(Prefs.getFromPrefs(mContext, VisilabsConstant.PVIV_PREF,
                             VisilabsConstant.PVIV_KEY, "1"));
                     mPviv = prevPviv + 1;
@@ -1926,6 +1927,29 @@ public class Visilabs {
 
     public void setInAppButtonInterface(InAppButtonInterface inAppButtonInterface) {
         mInAppButtonInterface = inAppButtonInterface;
+    }
+
+    public void sendLocationPermission() {
+        LocationPermission locationPermission = AppUtils.getLocationPermissionStatus(mContext);
+        String locationPermissionStr = "";
+        switch (locationPermission) {
+            case ALWAYS: {
+                locationPermissionStr = VisilabsConstant.LOC_PERMISSION_ALWAYS_REQUEST_VAL;
+                break;
+            }
+            case APP_OPEN: {
+                locationPermissionStr = VisilabsConstant.LOC_PERMISSION_APP_OPEN_REQUEST_VAL;
+                break;
+            }
+            default: {
+                locationPermissionStr = VisilabsConstant.LOC_PERMISSION_NONE_REQUEST_VAL;
+                break;
+            }
+        }
+
+        HashMap<String, String> parameters = new HashMap<String, String>();
+        parameters.put(VisilabsConstant.LOCATION_PERMISSION_REQUEST_KEY, locationPermissionStr);
+        customEvent(VisilabsConstant.PAGE_NAME_REQUEST_VAL, parameters);
     }
 
     public InAppButtonInterface getInAppButtonInterface() {
