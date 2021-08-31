@@ -178,6 +178,11 @@ public class VisilabsConstant {
 
     public static final String APP_TRACKER_REQUEST_KEY = "OM.apptracker";
     public static final String LOCATION_PERMISSION_REQUEST_KEY = "OM.locpermit";
+    public static final String PROMOTION_CODE_REQUEST_KEY = "OM.promoaction";
+    public static final String ACTION_ID_REQUEST_KEY = "OM.actionid";
+    public static final String PROMOTION_CODE_EMAIL_REQUEST_KEY = "OM.promoemail";
+    public static final String PROMOTION_CODE_TITLE_REQUEST_KEY = "OM.promotitle";
+    public static final String PROMOTION_CODE_SLICE_TEXT_REQUEST_KEY = "OM.promoslice";
     public static final String PAGE_NAME_REQUEST_VAL = "/OM_evt.gif";
     public static final String LOC_PERMISSION_ALWAYS_REQUEST_VAL = "always";
     public static final String LOC_PERMISSION_APP_OPEN_REQUEST_VAL = "appopen";
