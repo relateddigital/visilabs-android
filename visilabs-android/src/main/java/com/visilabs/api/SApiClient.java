@@ -29,7 +29,7 @@ public class SApiClient {
                     new OkHttpClient.Builder()
                             .addInterceptor(interceptor)
                             .connectTimeout(connectTimeOutInSec, TimeUnit.SECONDS)
-                            .readTimeout(10, TimeUnit.SECONDS);
+                            .readTimeout(30, TimeUnit.SECONDS);
 
             synchronized (SApiClient.class) {
                 if(retrofit == null) {
