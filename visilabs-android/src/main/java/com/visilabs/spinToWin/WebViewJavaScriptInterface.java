@@ -220,7 +220,7 @@ public class WebViewJavaScriptInterface {
     private void sendPromotionCodeInfo(final String promotionCode, final String sliceText) {
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put(VisilabsConstant.PROMOTION_CODE_REQUEST_KEY, promotionCode);
-        parameters.put(VisilabsConstant.ACTION_ID_REQUEST_KEY, spinToWinModel.
+        parameters.put(VisilabsConstant.ACTION_ID_REQUEST_KEY, "act-" + spinToWinModel.
                 getActid().toString());
         if (!subEmail.isEmpty()) {
             parameters.put(VisilabsConstant.PROMOTION_CODE_EMAIL_REQUEST_KEY,
