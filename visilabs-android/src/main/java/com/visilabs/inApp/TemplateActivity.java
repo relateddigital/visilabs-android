@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -80,61 +79,68 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         }
 
         mInAppMessage = getInAppMessage();
-        buttonCallback = Visilabs.CallAPI().getInAppButtonInterface();
-
-        View view;
-
-        //TODO: Open this line to test carousel.
-        //mInAppMessage.getActionData().setMsgType(InAppActionType.CAROUSEL.toString());
-
-        if (mInAppMessage.getActionData().getMsgType() == InAppActionType.CAROUSEL) {
-            mIsCarousel = true;
-            bindingCarousel = ActivityTemplateCarouselBinding.inflate(getLayoutInflater());
-            view = bindingCarousel.getRoot();
-            if (savedInstanceState != null) {
-                mCarouselPosition = savedInstanceState.getInt(CAROUSEL_LAST_INDEX_KEY, -1);
-            }
-        } else {
-            mIsCarousel = false;
-            binding = ActivityTemplateBinding.inflate(getLayoutInflater());
-            view = binding.getRoot();
-        }
-
-        cacheImages();
-
-        setContentView(view);
-        this.setFinishOnTouchOutside(false);
-
-        if (isShowingInApp() && mInAppMessage != null) {
-            if (mIsCarousel) {
-                if (mCarouselPosition == -1) {
-                    mCarouselPosition = 0;
-                }
-                bindingCarousel.carouselContainer.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
-                    public void onSwipeRight() {
-                        if (!isFirstCarousel()) {
-                            mCarouselPosition--;
-                            setupViewCarousel();
-                        }
-                    }
-
-                    public void onSwipeLeft() {
-                        if (!isLastCarousel()) {
-                            mCarouselPosition++;
-                            setupViewCarousel();
-                        }
-                    }
-                });
-                setupInitialViewCarousel();
-            } else {
-                setUpView();
-            }
-        } else {
+        if(mInAppMessage == null) {
+            Log.w(LOG_TAG, "Could not get display state! Being used by some other notification!");
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             finish();
-        }
+        } else {
 
-        this.setFinishOnTouchOutside(true);
+            buttonCallback = Visilabs.CallAPI().getInAppButtonInterface();
+
+            View view;
+
+            //TODO: Open this line to test carousel.
+            //mInAppMessage.getActionData().setMsgType(InAppActionType.CAROUSEL.toString());
+
+            if (mInAppMessage.getActionData().getMsgType() == InAppActionType.CAROUSEL) {
+                mIsCarousel = true;
+                bindingCarousel = ActivityTemplateCarouselBinding.inflate(getLayoutInflater());
+                view = bindingCarousel.getRoot();
+                if (savedInstanceState != null) {
+                    mCarouselPosition = savedInstanceState.getInt(CAROUSEL_LAST_INDEX_KEY, -1);
+                }
+            } else {
+                mIsCarousel = false;
+                binding = ActivityTemplateBinding.inflate(getLayoutInflater());
+                view = binding.getRoot();
+            }
+
+            cacheImages();
+
+            setContentView(view);
+            this.setFinishOnTouchOutside(false);
+
+            if (isShowingInApp()) {
+                if (mIsCarousel) {
+                    if (mCarouselPosition == -1) {
+                        mCarouselPosition = 0;
+                    }
+                    bindingCarousel.carouselContainer.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+                        public void onSwipeRight() {
+                            if (!isFirstCarousel()) {
+                                mCarouselPosition--;
+                                setupViewCarousel();
+                            }
+                        }
+
+                        public void onSwipeLeft() {
+                            if (!isLastCarousel()) {
+                                mCarouselPosition++;
+                                setupViewCarousel();
+                            }
+                        }
+                    });
+                    setupInitialViewCarousel();
+                } else {
+                    setUpView();
+                }
+            } else {
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                finish();
+            }
+
+            this.setFinishOnTouchOutside(true);
+        }
     }
 
     @Override
@@ -154,8 +160,6 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         mUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(mIntentId);
 
         if (mUpdateDisplayState == null || mUpdateDisplayState.getDisplayState() == null) {
-            Log.e("Visilabs", "VisilabsNotificationActivity intent received, but nothing was found to show.");
-
             return null;
         } else {
             inAppNotificationState =
@@ -591,11 +595,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     Visilabs.CallAPI().setInAppButtonInterface(null);
                     buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
                 } else {
-                    if(getInAppMessage().getActionData().getAndroidLnk()!=null &&
-                            !getInAppMessage().getActionData().getAndroidLnk().isEmpty()) {
+                    if(mInAppMessage.getActionData().getAndroidLnk()!=null &&
+                            !mInAppMessage.getActionData().getAndroidLnk().isEmpty()) {
                         try {
                             Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                    getInAppMessage().getActionData().getAndroidLnk()));
+                                    mInAppMessage.getActionData().getAndroidLnk()));
                             viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(viewIntent);
                         } catch (Exception e) {
