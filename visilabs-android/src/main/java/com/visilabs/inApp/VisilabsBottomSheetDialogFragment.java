@@ -29,6 +29,7 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
     private int mInAppStateId;
     private InAppNotificationState mInAppNotificationState;
     private FragmentInAppBottomSheetBinding binding;
+    private InAppMessage mInAppMessage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,14 +42,14 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
         super.onCreateView(inflater, container, savedInstanceState);
         binding = FragmentInAppBottomSheetBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        if (mInAppNotificationState == null) {
+        if (mInAppMessage == null) {
+            cleanUp();
             return view;
         }
-        InAppMessage inApp = mInAppNotificationState.getInAppMessage();
-        binding.tvTitle.setText(inApp.getActionData().getMsgTitle().replace("\\n","\n"));
-        binding.tvBody.setText(inApp.getActionData().getMsgBody().replace("\\n","\n"));
-        binding.tvButton.setText(inApp.getActionData().getBtnText().toUpperCase());
-        binding.tvClose.setText(inApp.getActionData().getCloseButtonText().toUpperCase());
+        binding.tvTitle.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n","\n"));
+        binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n","\n"));
+        binding.tvButton.setText(mInAppMessage.getActionData().getBtnText().toUpperCase());
+        binding.tvClose.setText(mInAppMessage.getActionData().getCloseButtonText().toUpperCase());
         setListeners();
         return view;
     }
@@ -73,7 +74,8 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
     public void onAttach(Context context) {
         super.onAttach(context);
         mParent = context;
-        if (mInAppNotificationState == null) {
+        if (mInAppMessage == null || mInAppNotificationState == null) {
+            Log.e(LOG_TAG, "InAppMessage is null! Could not get display state!");
             cleanUp();
         }
     }
@@ -91,14 +93,16 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
     public void setInAppState(int stateId, InAppNotificationState inAppState) {
         mInAppStateId = stateId;
         mInAppNotificationState = inAppState;
+        if(mInAppNotificationState != null) {
+            mInAppMessage = mInAppNotificationState.getInAppMessage();
+        }
     }
 
     private void setListeners() {
         binding.tvButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final InAppMessage inAppMessage = mInAppNotificationState.getInAppMessage();
-                final String uriString = inAppMessage.getActionData().getAndroidLnk();
+                final String uriString = mInAppMessage.getActionData().getAndroidLnk();
                 InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
                 if(buttonInterface != null) {
                     Visilabs.CallAPI().setInAppButtonInterface(null);
@@ -117,7 +121,7 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
                         }
                     }
                 }
-                Visilabs.CallAPI().trackInAppMessageClick(inAppMessage, null);
+                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, null);
                 cleanUp();
             }
         });

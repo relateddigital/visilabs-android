@@ -80,7 +80,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         mInAppMessage = getInAppMessage();
         if(mInAppMessage == null) {
-            Log.w(LOG_TAG, "Could not get display state! Being used by some other notification!");
+            Log.e(LOG_TAG, "InAppMessage is null! Could not get display state!");
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             finish();
         } else {
@@ -164,8 +164,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         } else {
             inAppNotificationState =
                     (InAppNotificationState) mUpdateDisplayState.getDisplayState();
-            return inAppNotificationState.getInAppMessage();
-
+            if(inAppNotificationState != null) {
+                return inAppNotificationState.getInAppMessage();
+            } else {
+                return null;
+            }
         }
     }
 
@@ -774,14 +777,16 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mIsRotation) {
-            mIsRotation = false;
-        } else {
-            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
-        }
-        if(mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS_AND_SECOND_POP_UP) {
-            if(!isNpsSecondPopupButtonClicked && isNpsSecondPopupActivated) {
-                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+        if(mInAppMessage != null) {
+            if (mIsRotation) {
+                mIsRotation = false;
+            } else {
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+            }
+            if (mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS_AND_SECOND_POP_UP) {
+                if (!isNpsSecondPopupButtonClicked && isNpsSecondPopupActivated) {
+                    Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+                }
             }
         }
     }

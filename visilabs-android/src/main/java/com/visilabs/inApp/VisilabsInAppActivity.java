@@ -28,6 +28,7 @@ import com.visilabs.util.StringUtils;
 public class VisilabsInAppActivity extends Activity implements IVisilabs {
 
     public static final String INTENT_ID_KEY = "INTENT_ID_KEY";
+    public static final String LOG_TAG = "InAppActivityFull";
 
     InAppMessage mInApp;
     private VisilabsUpdateDisplayState mUpdateDisplayState;
@@ -52,9 +53,10 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
         mUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(mIntentId);
 
 
-        if (null == mUpdateDisplayState) {
+        if (mUpdateDisplayState == null) {
 
             Log.e("Visilabs", "VisilabsNotificationActivity intent received, but nothing was found to show.");
+            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             finish();
             return;
         }
@@ -62,6 +64,7 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
         if (isShowingInApp()) {
             setUpView();
         } else {
+            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             finish();
         }
     }
@@ -79,11 +82,22 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
         InAppNotificationState inAppNotificationState =
                 (InAppNotificationState) mUpdateDisplayState.getDisplayState();
 
-        mInApp = inAppNotificationState.getInAppMessage();
-
-        setInAppData();
-        setPromotionCode();
-        clickEvents();
+        if(inAppNotificationState != null) {
+            mInApp = inAppNotificationState.getInAppMessage();
+            if(mInApp != null) {
+                setInAppData();
+                setPromotionCode();
+                clickEvents();
+            } else {
+                Log.e(LOG_TAG, "InAppMessage is null! Could not get display state!");
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                finish();
+            }
+        } else {
+            Log.e(LOG_TAG, "InAppMessage is null! Could not get display state!");
+            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+            finish();
+        }
     }
 
     private void setInAppData() {

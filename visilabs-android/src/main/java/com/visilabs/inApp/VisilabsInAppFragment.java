@@ -35,6 +35,7 @@ public class VisilabsInAppFragment extends Fragment {
     private Handler mHandler;
     private int mInAppStateId;
     private InAppNotificationState mInAppNotificationState;
+    private InAppMessage mInAppMessage;
     private Runnable mRemover, mDisplayMini;
     private boolean mCleanedUp;
     private FragmentInAppMiniBinding binding;
@@ -52,18 +53,21 @@ public class VisilabsInAppFragment extends Fragment {
         View view = binding.getRoot();
 
         if (mInAppNotificationState != null) {
-            InAppMessage inApp = mInAppNotificationState.getInAppMessage();
-
-            binding.tvInAppTitleMini.setText(inApp.getActionData().getMsgTitle().replace("\\n","\n"));
-
-            if(!inApp.getActionData().getImg().equals("")) {
-                binding.ivInAppImageMini.setVisibility(View.VISIBLE);
-                Picasso.get().load(inApp.getActionData().getImg()).into(binding.ivInAppImageMini);
+            if(mInAppMessage == null) {
+                remove();
             } else {
-                binding.ivInAppImageMini.setVisibility(View.GONE);
-            }
 
-            mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
+                binding.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
+
+                if (!mInAppMessage.getActionData().getImg().equals("")) {
+                    binding.ivInAppImageMini.setVisibility(View.VISIBLE);
+                    Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivInAppImageMini);
+                } else {
+                    binding.ivInAppImageMini.setVisibility(View.GONE);
+                }
+
+                mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
+            }
 
         } else {
             cleanUp();
@@ -76,6 +80,9 @@ public class VisilabsInAppFragment extends Fragment {
     public void setInAppState(int stateId, InAppNotificationState inAppState) {
         mInAppStateId = stateId;
         mInAppNotificationState = inAppState;
+        if(mInAppNotificationState != null) {
+            mInAppMessage = mInAppNotificationState.getInAppMessage();
+        }
     }
 
     @Override
@@ -90,7 +97,9 @@ public class VisilabsInAppFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mHandler.postDelayed(mDisplayMini, 500);
+        if(mInAppMessage != null) {
+            mHandler.postDelayed(mDisplayMini, 500);
+        }
     }
 
     @Override
@@ -102,23 +111,21 @@ public class VisilabsInAppFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
         mParent = activity;
-        if (mInAppNotificationState == null) {
-            cleanUp();
-            return;
-        }
-
         mHandler = new Handler();
         mRemover = new Runnable() {
             public void run() {
                 VisilabsInAppFragment.this.remove();
             }
         };
+        if(mInAppMessage == null || mInAppNotificationState == null) {
+            Log.e(LOG_TAG, "InAppMessage is null! Could not get display state!");
+            cleanUp();
+        } else {
+            displayMiniInApp();
 
-        displayMiniInApp();
-
-        setGestureDetector(getActivity());
+            setGestureDetector(getActivity());
+        }
     }
 
     private void displayMiniInApp() {
@@ -174,11 +181,10 @@ public class VisilabsInAppFragment extends Fragment {
 
             @Override
             public boolean onSingleTapUp(MotionEvent event) {
-                final InAppMessage inApp = mInAppNotificationState.getInAppMessage();
 
-                final String uriString = inApp.getActionData().getAndroidLnk();
+                final String uriString = mInAppMessage.getActionData().getAndroidLnk();
                 InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
-                Visilabs.CallAPI().trackInAppMessageClick(inApp, null);
+                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, null);
                 if(buttonInterface != null) {
                     Visilabs.CallAPI().setInAppButtonInterface(null);
                     buttonInterface.onPress(uriString);

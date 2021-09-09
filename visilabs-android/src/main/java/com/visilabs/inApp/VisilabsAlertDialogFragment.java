@@ -25,55 +25,60 @@ public class VisilabsAlertDialogFragment extends DialogFragment {
     private int mInAppStateId;
     private InAppNotificationState mInAppNotificationState;
     private Activity mParent;
+    private InAppMessage mInAppMessage;
 
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        final InAppMessage inAppMessage = mInAppNotificationState.getInAppMessage();
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mParent, R.style.AlertDialogStyle);
-        alertDialogBuilder.setTitle(inAppMessage.getActionData().getMsgTitle().replace("\\n","\n"))
-                .setMessage(inAppMessage.getActionData().getMsgBody().replace("\\n","\n"))
-                .setCancelable(false)
-                .setPositiveButton(inAppMessage.getActionData().getBtnText(), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        final String uriString = inAppMessage.getActionData().getAndroidLnk();
-                        InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
-                        if(buttonInterface != null) {
-                            Visilabs.CallAPI().setInAppButtonInterface(null);
-                            buttonInterface.onPress(uriString);
-                        } else {
-                            Uri uri = null;
-                            if (uriString != null && uriString.length() > 0) {
-                                try {
-                                    uri = Uri.parse(uriString);
-                                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                                    mParent.startActivity(viewIntent);
-                                } catch (IllegalArgumentException e) {
-                                    Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                                } catch (ActivityNotFoundException e) {
-                                    Log.i(LOG_TAG, "User doesn't have an activity for notification URI " + uri);
+        if(mInAppMessage == null) {
+            cleanUp();
+        } else {
+            alertDialogBuilder.setTitle(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"))
+                    .setMessage(mInAppMessage.getActionData().getMsgBody().replace("\\n", "\n"))
+                    .setCancelable(false)
+                    .setPositiveButton(mInAppMessage.getActionData().getBtnText(), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            final String uriString = mInAppMessage.getActionData().getAndroidLnk();
+                            InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
+                            if (buttonInterface != null) {
+                                Visilabs.CallAPI().setInAppButtonInterface(null);
+                                buttonInterface.onPress(uriString);
+                            } else {
+                                Uri uri = null;
+                                if (uriString != null && uriString.length() > 0) {
+                                    try {
+                                        uri = Uri.parse(uriString);
+                                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
+                                        mParent.startActivity(viewIntent);
+                                    } catch (IllegalArgumentException e) {
+                                        Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
+                                    } catch (ActivityNotFoundException e) {
+                                        Log.i(LOG_TAG, "User doesn't have an activity for notification URI " + uri);
+                                    }
                                 }
                             }
+                            Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, null);
+                            VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
+                            dismiss();
                         }
-                        Visilabs.CallAPI().trackInAppMessageClick(inAppMessage, null);
-                        VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
-                        dismiss();
-                    }
-                })
-                .setNegativeButton(inAppMessage.getActionData().getCloseButtonText(), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
-                        dismiss();
-                    }
-                });
+                    })
+                    .setNegativeButton(mInAppMessage.getActionData().getCloseButtonText(), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
+                            dismiss();
+                        }
+                    });
+        }
         return alertDialogBuilder.create();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (mInAppNotificationState == null) {
+        if(mInAppMessage == null || mInAppNotificationState == null) {
+            Log.e(LOG_TAG, "InAppMessage is null! Could not get display state!");
             cleanUp();
         }
     }
@@ -91,6 +96,9 @@ public class VisilabsAlertDialogFragment extends DialogFragment {
     public void setInAppState(int stateId, InAppNotificationState inAppState, Activity parent) {
         this.mInAppStateId = stateId;
         mInAppNotificationState = inAppState;
+        if(mInAppNotificationState != null) {
+            mInAppMessage = mInAppNotificationState.getInAppMessage();
+        }
         mParent = parent;
     }
 
