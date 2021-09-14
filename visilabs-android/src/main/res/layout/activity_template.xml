@@ -88,9 +88,9 @@
                         android:paddingTop="5dp"
                         android:paddingRight="10dp"
                         android:paddingBottom="5dp"
-                        android:drawableRight="@drawable/content_copy_24"
-                        android:drawableEnd="@drawable/content_copy_24"
-                        android:text="@string/coupon_code" />
+                        android:text="@string/coupon_code"
+                        app:drawableEndCompat="@drawable/content_copy_24"
+                        app:drawableRightCompat="@drawable/content_copy_24" />
 
                 </LinearLayout>
 
