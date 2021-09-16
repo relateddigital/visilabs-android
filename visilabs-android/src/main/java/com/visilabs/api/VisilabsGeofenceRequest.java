@@ -114,6 +114,11 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
             return;
         }
 
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load!");
+            return;
+        }
+
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
@@ -170,6 +175,11 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
     public void executeAsync(final VisilabsGeofenceGetListCallback pCallback) {
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
             Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
+
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load!");
             return;
         }
 

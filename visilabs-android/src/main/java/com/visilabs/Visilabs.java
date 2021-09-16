@@ -4,12 +4,16 @@ package com.visilabs;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
@@ -34,6 +38,7 @@ import com.visilabs.mailSub.Report;
 import com.visilabs.model.LocationPermission;
 import com.visilabs.model.VisilabsActionsResponse;
 import com.visilabs.model.VisilabsParameters;
+import com.visilabs.remoteConfig.RemoteConfigHelper;
 import com.visilabs.scratchToWin.ScratchToWinActivity;
 import com.visilabs.scratchToWin.model.ScratchToWinModel;
 import com.visilabs.spinToWin.SpinToWinActivity;
@@ -224,6 +229,8 @@ public class Visilabs {
             checkNetworkStatus(mContext);
             mIsCreated = true;
         }
+
+        //createRemoteConfigJob(); // TODO : This is for remote config
     }
 
     public static synchronized Visilabs CreateAPI(String organizationID, String siteID,
@@ -959,6 +966,10 @@ public class Visilabs {
     }
 
     public void login(String exVisitorID) {
+        if(isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load!");
+            return;
+        }
         if (exVisitorID == null || exVisitorID.length() == 0) {
             Log.w(LOG_TAG, "Attempted to use null or empty exVisitorID. Ignoring.");
             return;
@@ -1022,6 +1033,10 @@ public class Visilabs {
     }
 
     public void signUp(String exVisitorID) {
+        if(isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load!");
+            return;
+        }
         if (exVisitorID == null || exVisitorID.length() == 0) {
             VisilabsLog.w(LOG_TAG, "Attempted to use nil or empty exVisitorID. Ignoring.");
             return;
@@ -1100,10 +1115,16 @@ public class Visilabs {
     }
 
     public void sendCampaignParameters(HashMap<String, String> properties) {
+        if(isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load!");
+            return;
+        }
+
         if(properties == null || properties.isEmpty()){
             Log.w(LOG_TAG, "properties cannot be null or empty.");
             return;
         }
+
         sendEvent(properties);
     }
 
@@ -1220,6 +1241,11 @@ public class Visilabs {
             return;
         }
 
+        if(isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load!");
+            return;
+        }
+
         updateSessionParameters(pageName);
 
         if (properties == null) {
@@ -1233,6 +1259,11 @@ public class Visilabs {
     public void customEvent(String pageName, HashMap<String, String> properties, Activity parent) {
         if (pageName == null || pageName.length() == 0) {
             Log.w(LOG_TAG, "Name cannot be null");
+            return;
+        }
+
+        if(isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load!");
             return;
         }
 
@@ -1954,5 +1985,29 @@ public class Visilabs {
 
     public InAppButtonInterface getInAppButtonInterface() {
         return mInAppButtonInterface;
+    }
+
+    private void createRemoteConfigJob() {
+        final Handler handler = new Handler();
+        Runnable runnableCode = new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void run() {
+                RemoteConfigHelper.checkRemoteConfigs();
+                ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
+                ActivityManager.getMyMemoryState(myProcess);
+                if(myProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_GONE) {
+                    handler.postDelayed(this, 180000);
+                }
+            }
+        };
+        handler.post(runnableCode);
+    }
+
+    public boolean isBlocked() {
+        String isBlocked = Prefs.getFromPrefs(mContext, VisilabsConstant.VISILABS_BLOCK_PREF,
+                VisilabsConstant.VISILABS_BLOCK_PREF_KEY, "f");
+
+        return isBlocked.equals("t");
     }
 }
