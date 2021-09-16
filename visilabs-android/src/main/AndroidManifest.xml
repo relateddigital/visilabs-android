@@ -12,26 +12,33 @@
             android:name="com.visilabs.scratchToWin.ScratchToWinActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:noHistory="true"/>
         <activity
             android:name="com.visilabs.shakeToWin.ShakeToWinActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:noHistory="true"/>
         <activity
             android:name="com.visilabs.spinToWin.SpinToWinActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:noHistory="true"/>
         <activity
             android:name="com.visilabs.inApp.VisilabsInAppActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
+            android:noHistory="true"/>
         <activity
             android:name="com.visilabs.inApp.TemplateActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
+            android:noHistory="true"/>
         <activity
             android:name="com.visilabs.mailSub.MailSubscriptionFormActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
-            android:windowSoftInputMode="adjustResize" />
-        <activity android:name="com.visilabs.story.StoryActivity"/>
+            android:windowSoftInputMode="adjustResize"
+            android:noHistory="true"/>
+        <activity android:name="com.visilabs.story.StoryActivity"
+            android:noHistory="true"/>
     </application>
 
 </manifest>
