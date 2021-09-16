@@ -116,6 +116,9 @@ public class Visilabs {
     private String mSysAppID;
     private String mSysTokenID;
 
+    private Handler mHandler;
+    private Runnable mRunnable;
+
     private GpsManager gpsManager = null;
 
     private VisilabsApiMethods mVisilabsLoggerApiInterface;
@@ -1988,8 +1991,8 @@ public class Visilabs {
     }
 
     private void createRemoteConfigJob() {
-        final Handler handler = new Handler();
-        Runnable runnableCode = new Runnable() {
+        mHandler = new Handler();
+        mRunnable = new Runnable() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void run() {
@@ -1997,11 +2000,13 @@ public class Visilabs {
                 ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
                 ActivityManager.getMyMemoryState(myProcess);
                 if(myProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_GONE) {
-                    handler.postDelayed(this, 180000);
+                    mHandler.postDelayed(this, 180000); // 3-min
+                } else {
+                    mHandler.removeCallbacks(mRunnable);
                 }
             }
         };
-        handler.post(runnableCode);
+        mHandler.post(mRunnable);
     }
 
     public boolean isBlocked() {
