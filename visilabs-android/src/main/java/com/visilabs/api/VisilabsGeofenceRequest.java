@@ -114,11 +114,10 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
             return;
         }
 
-        /*
         if(Visilabs.CallAPI().isBlocked()) {
-            Log.w(LOG_TAG, "Too much server load!");
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
-        }*/ // TODO : remote config
+        }
 
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
@@ -179,11 +178,10 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
             return;
         }
 
-        /*
         if(Visilabs.CallAPI().isBlocked()) {
-            Log.w(LOG_TAG, "Too much server load!");
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
-        }*/ // TODO : remote config
+        }
 
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();

@@ -37,11 +37,10 @@ public class VisilabsRecyclerView extends RecyclerView {
     }
 
     public void setStoryAction(Context context, StoryItemClickListener storyItemClickListener) {
-        /*
         if(Visilabs.CallAPI().isBlocked()) {
-            Log.w(TAG, "Too much server load!");
+            Log.w(TAG, "Too much server load, ignoring the request!");
             return;
-        }*/ // TODO : remote config
+        }
         mStoryItemClickListener = storyItemClickListener;
         VisilabsActionRequest visilabsActionRequest;
         try {
@@ -54,11 +53,10 @@ public class VisilabsRecyclerView extends RecyclerView {
     }
 
     public void setStoryActionSync(Context context, Activity activity, StoryItemClickListener storyItemClickListener) {
-        /*
         if(Visilabs.CallAPI().isBlocked()) {
-            Log.w(TAG, "Too much server load!");
+            Log.w(TAG, "Too much server load, ignoring the request!");
             return;
-        }*/ // TODO : remote config
+        }
         mStoryItemClickListener = storyItemClickListener;
         VisilabsActionRequest visilabsActionRequest;
         try {
@@ -71,11 +69,10 @@ public class VisilabsRecyclerView extends RecyclerView {
     }
 
     public void setStoryActionId(Context context, String actionId, StoryItemClickListener storyItemClickListener) {
-        /*
         if(Visilabs.CallAPI().isBlocked()) {
-            Log.w(TAG, "Too much server load!");
+            Log.w(TAG, "Too much server load, ignoring the request!");
             return;
-        }*/ // TODO : remote config
+        }
         mStoryItemClickListener = storyItemClickListener;
         VisilabsActionRequest visilabsActionRequest;
         try {
@@ -88,11 +85,10 @@ public class VisilabsRecyclerView extends RecyclerView {
     }
 
     public void setStoryActionIdSync(Context context, Activity activity, String actionId, StoryItemClickListener storyItemClickListener) {
-        /*
         if(Visilabs.CallAPI().isBlocked()) {
-            Log.w(TAG, "Too much server load!");
+            Log.w(TAG, "Too much server load, ignoring the request!");
             return;
-        }*/ // TODO : remote config
+        }
         mStoryItemClickListener = storyItemClickListener;
         VisilabsActionRequest visilabsActionRequest;
         try {

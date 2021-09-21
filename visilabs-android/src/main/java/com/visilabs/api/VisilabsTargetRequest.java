@@ -112,6 +112,11 @@ public class VisilabsTargetRequest extends VisilabsRemote {
             return;
         }
 
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
+            return;
+        }
+
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 

@@ -126,6 +126,10 @@ public class VisilabsActionRequest extends VisilabsRemote {
             Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
             return;
         }
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
+            return;
+        }
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
@@ -178,6 +182,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
     public void executeAsyncAction(final VisilabsCallback pCallback) throws Exception {
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
             Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
+
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
         }
 
@@ -236,6 +245,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
             return;
         }
 
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
+            return;
+        }
+
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
@@ -277,6 +291,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
     public void executeAsync(final VisilabsInAppMessageCallback pCallback) {
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
             Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
+
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
         }
 
@@ -332,6 +351,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
             return;
         }
 
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
+            return;
+        }
+
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
@@ -379,6 +403,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
             return;
         }
 
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
+            return;
+        }
+
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
@@ -423,6 +452,11 @@ public class VisilabsActionRequest extends VisilabsRemote {
     public void executeAsyncPromotionCode(final VisilabsCallback pCallback, HashMap<String, String> extraQueryParameters) {
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
             Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
+
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
         }
 

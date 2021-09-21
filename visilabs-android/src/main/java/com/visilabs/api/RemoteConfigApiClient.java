@@ -35,7 +35,7 @@ public class RemoteConfigApiClient {
             synchronized (RemoteConfigApiClient.class) {
                 if(retrofit == null) {
                     retrofit = new Retrofit.Builder()
-                            .baseUrl("https://lgr.visilabs.net/") // TODO : remote config url here
+                            .baseUrl("https://mbls.visilabs.net/")
                             .addConverterFactory(GsonConverterFactory.create())
                             .client(httpClient.build())
                             .build();

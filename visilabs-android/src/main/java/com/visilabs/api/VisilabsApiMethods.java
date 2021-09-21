@@ -102,4 +102,10 @@ public interface VisilabsApiMethods {
             @HeaderMap Map<String, String> headers,
             @QueryMap Map<String, String> queryParameters
     );
+
+    //Methods for remote config
+    @GET("rc.json")
+    Call<List<String>> getRemoteConfig(
+            @HeaderMap Map<String, String> headers
+    );
 }

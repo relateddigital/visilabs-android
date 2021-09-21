@@ -233,7 +233,7 @@ public class Visilabs {
             mIsCreated = true;
         }
 
-        //createRemoteConfigJob(); // TODO : remote config
+        createRemoteConfigJob();
     }
 
     public static synchronized Visilabs CreateAPI(String organizationID, String siteID,
@@ -969,11 +969,10 @@ public class Visilabs {
     }
 
     public void login(String exVisitorID) {
-        /*
         if(isBlocked()) {
-            Log.w(LOG_TAG, "Too much server load!");
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
-        }*/ // TODO : remote config
+        }
         if (exVisitorID == null || exVisitorID.length() == 0) {
             Log.w(LOG_TAG, "Attempted to use null or empty exVisitorID. Ignoring.");
             return;
@@ -1037,11 +1036,10 @@ public class Visilabs {
     }
 
     public void signUp(String exVisitorID) {
-        /*
         if(isBlocked()) {
-            Log.w(LOG_TAG, "Too much server load!");
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
-        }*/ // TODO : remote config
+        }
         if (exVisitorID == null || exVisitorID.length() == 0) {
             VisilabsLog.w(LOG_TAG, "Attempted to use nil or empty exVisitorID. Ignoring.");
             return;
@@ -1120,11 +1118,10 @@ public class Visilabs {
     }
 
     public void sendCampaignParameters(HashMap<String, String> properties) {
-        /*
         if(isBlocked()) {
-            Log.w(LOG_TAG, "Too much server load!");
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
-        }*/ // TODO : remote config
+        }
 
         if(properties == null || properties.isEmpty()){
             Log.w(LOG_TAG, "properties cannot be null or empty.");
@@ -1247,11 +1244,10 @@ public class Visilabs {
             return;
         }
 
-        /*
         if(isBlocked()) {
-            Log.w(LOG_TAG, "Too much server load!");
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
-        }*/ // TODO : remote config
+        }
 
         updateSessionParameters(pageName);
 
@@ -1269,11 +1265,10 @@ public class Visilabs {
             return;
         }
 
-        /*
         if(isBlocked()) {
-            Log.w(LOG_TAG, "Too much server load!");
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
-        }*/ // TODO : remote config
+        }
 
         updateSessionParameters(pageName);
 
@@ -2001,7 +1996,7 @@ public class Visilabs {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void run() {
-                RemoteConfigHelper.checkRemoteConfigs();
+                RemoteConfigHelper.checkRemoteConfigs(mContext);
                 ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
                 ActivityManager.getMyMemoryState(myProcess);
                 if(myProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_GONE) {
