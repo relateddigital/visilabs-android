@@ -14,10 +14,8 @@ import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.CountdownTimerFragment;
 import com.visilabs.inApp.SocialProofFragment;
 import com.visilabs.inApp.VisilabsActionRequest;
-import com.visilabs.scratchToWin.ScratchToWinActivity;
 import com.visilabs.shakeToWin.ShakeToWinActivity;
 import com.visilabs.util.VisilabsConstant;
-
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {

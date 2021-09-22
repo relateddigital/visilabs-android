@@ -136,7 +136,7 @@ public class VisilabsTargetRequest extends VisilabsRemote {
                         rawJsonResponse = response.body().string();
                         if (!rawJsonResponse.equals("")) {
                             Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
-                            VisilabsResponse visilabsResponse = new VisilabsResponse(null, new JSONArray(rawJsonResponse), null, null, null);
+                            VisilabsResponse visilabsResponse = new VisilabsResponse(formJsonObject(rawJsonResponse), formJsonArray(rawJsonResponse), null, null, null);
                             pCallback.success(visilabsResponse);
                         } else {
                             Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
@@ -314,6 +314,63 @@ public class VisilabsTargetRequest extends VisilabsRemote {
                     && this.mProperties != null && !this.mProperties.containsKey(entry.getKey())){
                 queryMap.put(entry.getKey(), entry.getValue());
             }
+        }
+    }
+
+    private JSONObject formJsonObject(String rawResponse) {
+        JSONArray initialArray = new JSONArray(rawResponse);
+        JSONArray finalArray = new JSONArray();
+        JSONObject finalObject = new JSONObject();
+        for(int i = 0 ; i < initialArray.length() ; i++) {
+            JSONObject currentObject = initialArray.getJSONObject(i);
+            currentObject.put("qs", getQueryString(currentObject.optString("dest_url")));
+            finalArray.put(currentObject);
+            if(i == 0) {
+                try {
+                    finalObject.put("title", currentObject.getString("wdt"));
+                } catch (Exception e) {
+                    finalObject.put("title", "");
+                }
+            }
+        }
+        finalObject.put("recommendations", finalArray);
+        return finalObject;
+    }
+
+    private JSONArray formJsonArray(String rawResponse) {
+        JSONArray initialArray = new JSONArray(rawResponse);
+        JSONArray finalArray = new JSONArray();
+        for(int i = 0 ; i < initialArray.length() ; i++) {
+            JSONObject currentObject = initialArray.getJSONObject(i);
+            currentObject.put("qs", getQueryString(currentObject.getString("dest_url")));
+            finalArray.put(currentObject);
+        }
+
+        return finalArray;
+    }
+
+    private String getQueryString(String destUrl) {
+        StringBuilder sb = new StringBuilder();
+        if(destUrl!=null && !destUrl.equals("")) {
+            try {
+                String[] tempQueryParameter = destUrl.split("\\?", 2);
+                String[] tempMultiQuery = tempQueryParameter[1].split("&");
+                for (String s : tempMultiQuery) {
+                    String[] tempQueryString = s.split("=", 2);
+                    if (tempQueryString.length == 2) {
+                        if(tempQueryString[0].equals("OM.zn") || tempQueryString[0].equals("OM.zpc")) {
+                            sb.append(s).append("&");
+                        }
+                    }
+                }
+                sb.deleteCharAt(sb.length()-1);
+                return sb.toString();
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse dest url!");
+                return "";
+            }
+        } else {
+            return "";
         }
     }
 }

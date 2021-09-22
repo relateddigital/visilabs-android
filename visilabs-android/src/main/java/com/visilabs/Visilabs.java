@@ -644,6 +644,63 @@ public class Visilabs {
         send();
     }
 
+    public void trackRecommendationClick(String qs) {
+
+        long timeOfEvent = System.currentTimeMillis() / 1000;
+
+        HashMap<String, String> queryMap = new HashMap<>();
+        queryMap.put(VisilabsConstant.ORGANIZATIONID_KEY, mOrganizationID);
+        queryMap.put(VisilabsConstant.SITEID_KEY, mSiteID);
+        queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
+        queryMap.put(VisilabsConstant.URI_KEY, VisilabsConstant.PAGE_NAME_REQUEST_VAL);
+        queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
+        queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
+        queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
+        queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
+        queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(mNrv));
+        queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(mPviv));
+        queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
+        queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(mLvt));
+
+        if (mExVisitorID != null && mExVisitorID.length() > 0) {
+            queryMap.put(VisilabsConstant.EXVISITORID_KEY, mExVisitorID);
+        }
+
+        if(qs != null && !qs.equals("")) {
+            String[] tempMultiQuery = qs.split("&");
+            for (String s : tempMultiQuery) {
+                String[] tempQueryString = s.split("=", 2);
+                if(tempQueryString.length == 2) {
+                    queryMap.put(tempQueryString[0], tempQueryString[1]);
+                }
+            }
+        }
+
+        queryMap.put("client", "logger");
+
+        synchronized (this) {
+            addQueryParametersToQueue(queryMap);
+            if (mRealTimeURL != null && !mRealTimeURL.equals("")) {
+                HashMap<String, String> queryMapRealTime = new HashMap<>();
+                for(int i=0; i<queryMap.size(); i++){
+                    if(!((String) queryMap.keySet().toArray()[i]).equals("client")) {
+                        queryMapRealTime.put((String) queryMap.keySet().toArray()[i], queryMap.get(queryMap.keySet().toArray()[i]));
+                    }
+                }
+                queryMapRealTime.put("client", "realTime");
+                addQueryParametersToQueue(queryMapRealTime);
+            }
+        }
+
+
+        if (VisilabsConstant.DEBUG) {
+            Log.v(LOG_TAG, "A recommended product is clicked");
+        }
+
+        send();
+    }
+
     private void showActions(String pageName, Activity parent, HashMap<String, String> properties) {
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
             return;
