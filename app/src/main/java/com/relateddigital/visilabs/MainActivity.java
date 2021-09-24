@@ -12,6 +12,7 @@ import com.visilabs.Visilabs;
 import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.CountdownTimerFragment;
+import com.visilabs.inApp.HalfScreenFragment;
 import com.visilabs.inApp.SocialProofFragment;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.shakeToWin.ShakeToWinActivity;
@@ -248,6 +249,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendInAppRequest("nps-feedback");
+            }
+        });
+
+        binding.inApp22.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HalfScreenFragment halfScreenFragment = HalfScreenFragment.newInstance(0, null);
+
+                halfScreenFragment.setRetainInstance(true);
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.add(android.R.id.content, halfScreenFragment);
+                transaction.commit();
+                //TODO when backend side gets ready, check below
+                //sendInAppRequest("half-screen");
             }
         });
 
