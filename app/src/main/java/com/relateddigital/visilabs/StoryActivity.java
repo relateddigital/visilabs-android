@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.relateddigital.visilabs.databinding.ActivityStoryDemoBinding;
+import com.visilabs.story.StoryRequestListener;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.util.PersistentTargetManager;
 
@@ -76,10 +77,17 @@ public class StoryActivity extends AppCompatActivity {
 
     private void showStory() {
         String storyId = binding.etStoryId.getText().toString().trim();
+        StoryRequestListener storyRequestListener = isAvailable -> {
+            if(!isAvailable) {
+                binding.vrvStory.setVisibility(View.GONE);
+            }
+        };
         if(storyId.isEmpty()) {
-            binding.vrvStory.setStoryAction(getApplicationContext(), storyItemClickListener);
+            binding.vrvStory.setStoryActionWithRequestCallback(getApplicationContext(),
+                    storyItemClickListener, storyRequestListener);
         } else {
-            binding.vrvStory.setStoryActionId(getApplicationContext(), storyId, storyItemClickListener);
+            binding.vrvStory.setStoryActionIdWithRequestCallback(getApplicationContext(), storyId,
+                    storyItemClickListener, storyRequestListener);
         }
     }
 

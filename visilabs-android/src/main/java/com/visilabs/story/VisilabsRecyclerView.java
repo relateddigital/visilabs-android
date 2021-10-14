@@ -45,7 +45,24 @@ public class VisilabsRecyclerView extends RecyclerView {
         VisilabsActionRequest visilabsActionRequest;
         try {
             visilabsActionRequest = Visilabs.CallAPI().requestAction("Story");
-            visilabsActionRequest.executeAsyncAction(getVisilabsStoryCallback(context));
+            visilabsActionRequest.executeAsyncAction(getVisilabsStoryCallback(context, null));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setStoryActionWithRequestCallback(Context context, StoryItemClickListener storyItemClickListener,
+                                                  StoryRequestListener storyRequestListener) {
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(TAG, "Too much server load, ignoring the request!");
+            return;
+        }
+        mStoryItemClickListener = storyItemClickListener;
+        VisilabsActionRequest visilabsActionRequest;
+        try {
+            visilabsActionRequest = Visilabs.CallAPI().requestAction("Story");
+            visilabsActionRequest.executeAsyncAction(getVisilabsStoryCallback(context, storyRequestListener));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,7 +94,25 @@ public class VisilabsRecyclerView extends RecyclerView {
         VisilabsActionRequest visilabsActionRequest;
         try {
             visilabsActionRequest = Visilabs.CallAPI().requestActionId(actionId);
-            visilabsActionRequest.executeAsyncAction(getVisilabsStoryCallback(context));
+            visilabsActionRequest.executeAsyncAction(getVisilabsStoryCallback(context, null));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setStoryActionIdWithRequestCallback(Context context, String actionId,
+                                                    StoryItemClickListener storyItemClickListener,
+                                                    StoryRequestListener storyRequestListener) {
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(TAG, "Too much server load, ignoring the request!");
+            return;
+        }
+        mStoryItemClickListener = storyItemClickListener;
+        VisilabsActionRequest visilabsActionRequest;
+        try {
+            visilabsActionRequest = Visilabs.CallAPI().requestActionId(actionId);
+            visilabsActionRequest.executeAsyncAction(getVisilabsStoryCallback(context, storyRequestListener));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,11 +135,15 @@ public class VisilabsRecyclerView extends RecyclerView {
         }
     }
 
-    public VisilabsCallback getVisilabsStoryCallback(final Context context) {
+    public VisilabsCallback getVisilabsStoryCallback(final Context context,
+                                                     final StoryRequestListener storyRequestListener) {
 
         return new VisilabsCallback() {
             @Override
             public void success(VisilabsResponse response) {
+                if(storyRequestListener!=null) {
+                    storyRequestListener.onRequestResult(true);
+                }
                 try {
                     VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse =
                             new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
@@ -150,12 +189,18 @@ public class VisilabsRecyclerView extends RecyclerView {
 
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getMessage(), ex);
+                    if(storyRequestListener!=null) {
+                        storyRequestListener.onRequestResult(false);
+                    }
                 }
             }
 
             @Override
             public void fail(VisilabsResponse response) {
                 Log.e(TAG, response.getRawResponse());
+                if(storyRequestListener!=null) {
+                    storyRequestListener.onRequestResult(false);
+                }
             }
         };
     }
