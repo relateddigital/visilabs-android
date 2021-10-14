@@ -38,6 +38,7 @@
             android:windowSoftInputMode="adjustResize"
             android:noHistory="true"/>
         <activity android:name="com.visilabs.story.StoryActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:noHistory="true"/>
     </application>
 
