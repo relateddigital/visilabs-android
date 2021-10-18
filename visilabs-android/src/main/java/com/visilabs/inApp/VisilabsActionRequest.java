@@ -210,9 +210,17 @@ public class VisilabsActionRequest extends VisilabsRemote {
                             rawJsonResponse = response.body().string();
 
                             if (!rawJsonResponse.equals("")) {
-                                Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
-                                VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(rawJsonResponse), null, null, null, null);
-                                pCallback.success(visilabsResponse);
+                                JSONObject mainObject = new JSONObject(rawJsonResponse);
+                                JSONArray storyArray = mainObject.optJSONArray("Story");
+                                if(storyArray != null && storyArray.length() > 0) {
+                                    Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
+                                    VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(rawJsonResponse), null, null, null, null);
+                                    pCallback.success(visilabsResponse);
+                                } else {
+                                    Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
+                                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "empty string", null, "empty string");
+                                    pCallback.fail(visilabsResponse);
+                                }
                             } else {
                                 Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
                                 VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "empty string", null, "empty string");
