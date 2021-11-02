@@ -118,7 +118,7 @@ public class WebViewJavaScriptInterface {
 
         for (int i = 0; i < spinToWinModel.getActiondata().getSlices().size(); i++) {
             Slice slice = spinToWinModel.getActiondata().getSlices().get(i);
-            if (slice.getType().equals("promotion")) {
+            if (slice.getType().equals("promotion") && slice.getIsAvailable()) {
                 promotionCodes.add(slice.getCode());
                 promotionIndexes.add(i);
                 sliceTexts.add(slice.getDisplayName());
@@ -132,13 +132,6 @@ public class WebViewJavaScriptInterface {
                 selectedCode = promotionCodes.get(randomIndex);
                 selectedIndex = promotionIndexes.get(randomIndex);
                 selectedSliceText = sliceTexts.get(randomIndex);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (selectedIndex != -1) {
-            try {
                 HashMap<String, String> queryParameters = new HashMap<>();
                 queryParameters.put("promotionid", selectedCode);
                 queryParameters.put("promoauth", promoAuth);
@@ -149,8 +142,52 @@ public class WebViewJavaScriptInterface {
                         selectedSliceText), queryParameters);
             } catch (Exception e) {
                 e.printStackTrace();
+                selectedIndex = -1;
             }
-        } else {
+        }
+
+        if(selectedIndex == -1) {
+            List<String> staticCodes = new ArrayList<String>();
+            List<String> staticSliceTexts = new ArrayList<String>();
+            List<Integer> staticIndexes = new ArrayList<Integer>();
+            for (int i = 0; i < spinToWinModel.getActiondata().getSlices().size(); i++) {
+                Slice slice = spinToWinModel.getActiondata().getSlices().get(i);
+                if (slice.getType().equals("staticcode")) {
+                    staticCodes.add(slice.getCode());
+                    staticIndexes.add(i);
+                    staticSliceTexts.add(slice.getDisplayName());
+                }
+            }
+
+            if (staticCodes.size() > 0) {
+                try {
+                    Random random = new Random();
+                    int randomIndex = random.nextInt(staticCodes.size());
+                    selectedCode = staticCodes.get(randomIndex);
+                    selectedIndex = staticIndexes.get(randomIndex);
+                    selectedSliceText = staticSliceTexts.get(randomIndex);
+                    Handler mainHandler = new Handler(Looper.getMainLooper());
+                    final String finalSelectedCode = selectedCode;
+                    final String finalSelectedSliceText = selectedSliceText;
+                    final int finalSelectedIndex = selectedIndex;
+                    Runnable myRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            sendPromotionCodeInfo(finalSelectedCode, finalSelectedSliceText);
+                            mWebViewDialogFragment.getWebView().evaluateJavascript(
+                                    "window.chooseSlice(" + finalSelectedIndex + ",'" + finalSelectedCode + "');",
+                                    null);
+                        }
+                    };
+                    mainHandler.post(myRunnable);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    selectedIndex = -1;
+                }
+            }
+        }
+
+        if(selectedIndex == -1) {
             Handler mainHandler = new Handler(Looper.getMainLooper());
             Runnable myRunnable = new Runnable() {
                 @Override
@@ -188,15 +225,58 @@ public class WebViewJavaScriptInterface {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void fail(VisilabsResponse response) {
-                Handler mainHandler = new Handler(Looper.getMainLooper());
-                Runnable myRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        mWebViewDialogFragment.getWebView().evaluateJavascript(
-                                "window.chooseSlice(-1, undefined);", null);
+                Log.e("SpinToWin", "Could not get the promotion code!");
+                List<String> staticCodes = new ArrayList<String>();
+                List<String> staticSliceTexts = new ArrayList<String>();
+                List<Integer> staticIndexes = new ArrayList<Integer>();
+                int selectedIndex = -1;
+                for (int i = 0; i < spinToWinModel.getActiondata().getSlices().size(); i++) {
+                    Slice slice = spinToWinModel.getActiondata().getSlices().get(i);
+                    if (slice.getType().equals("staticcode")) {
+                        staticCodes.add(slice.getCode());
+                        staticIndexes.add(i);
+                        staticSliceTexts.add(slice.getDisplayName());
                     }
-                };
-                mainHandler.post(myRunnable);
+                }
+
+                if (staticCodes.size() > 0) {
+                    final String finalSelectedCode;
+                    final String finalSelectedSliceText;
+                    try {
+                        Random random = new Random();
+                        int randomIndex = random.nextInt(staticCodes.size());
+                        finalSelectedCode = staticCodes.get(randomIndex);
+                        selectedIndex = staticIndexes.get(randomIndex);
+                        finalSelectedSliceText = staticSliceTexts.get(randomIndex);
+                        Handler mainHandler = new Handler(Looper.getMainLooper());
+                        final int finalSelectedIndex = selectedIndex;
+                        Runnable myRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                sendPromotionCodeInfo(finalSelectedCode, finalSelectedSliceText);
+                                mWebViewDialogFragment.getWebView().evaluateJavascript(
+                                        "window.chooseSlice(" + finalSelectedIndex + ",'" + finalSelectedCode + "');",
+                                        null);
+                            }
+                        };
+                        mainHandler.post(myRunnable);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        selectedIndex = -1;
+                    }
+                }
+
+                if(selectedIndex == -1) {
+                    Handler mainHandler = new Handler(Looper.getMainLooper());
+                    Runnable myRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            mWebViewDialogFragment.getWebView().evaluateJavascript(
+                                    "window.chooseSlice(-1, undefined);", null);
+                        }
+                    };
+                    mainHandler.post(myRunnable);
+                }
             }
         };
     }

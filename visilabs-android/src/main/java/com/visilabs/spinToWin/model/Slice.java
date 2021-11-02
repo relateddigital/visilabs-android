@@ -14,6 +14,8 @@ public class Slice implements Serializable {
     private String code;
     @SerializedName("type")
     private String type;
+    @SerializedName("is_available")
+    private boolean isAvailable;
 
     public String getDisplayName() {
         return displayName;
@@ -45,6 +47,14 @@ public class Slice implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
     }
 
 }
