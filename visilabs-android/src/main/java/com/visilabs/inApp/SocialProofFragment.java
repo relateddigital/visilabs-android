@@ -1,15 +1,22 @@
 package com.visilabs.inApp;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.text.SpannableString;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.visilabs.InAppNotificationState;
+import com.google.gson.Gson;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.FragmentSocialProofBinding;
-
+import com.visilabs.util.AppUtils;
+import com.visilabs.util.UtilResultModel;
+import java.net.URISyntaxException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,16 +28,16 @@ import java.util.TimerTask;
 public class SocialProofFragment extends Fragment {
 
     private static final String LOG_TAG = "SocialProofFragment";
+    private static final String ARG_PARAM1 = "dataKey";
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "stateIdKey";
-    private static final String ARG_PARAM2 = "inAppStateKey";
-
-    private int mStateId;
-    private InAppNotificationState mInAppState;
+    private ProductStatNotifierModel mModel;
     private boolean mIsTop;
     private Timer mTimer;
     private FragmentSocialProofBinding binding;
+    private int mNumber;
+    private ProductStatNotifierExtendedProps mExtendedProps;
+    private UtilResultModel utilResultModel;
+    private Typeface mFontFamily = Typeface.DEFAULT;
 
     public SocialProofFragment() {
         // Required empty public constructor
@@ -40,16 +47,13 @@ public class SocialProofFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param stateId Parameter 1.
-     * @param inAppState Parameter 2.
+     * @param model Parameter 1.
      * @return A new instance of fragment SocialProofFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static SocialProofFragment newInstance(int stateId, InAppNotificationState inAppState) {
+    public static SocialProofFragment newInstance(ProductStatNotifierModel model) {
         SocialProofFragment fragment = new SocialProofFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1, stateId);
-        args.putParcelable(ARG_PARAM2, inAppState);
+        args.putSerializable(ARG_PARAM1, model);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,8 +61,7 @@ public class SocialProofFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mStateId = getArguments().getInt(ARG_PARAM1);
-        mInAppState = getArguments().getParcelable(ARG_PARAM2);
+        mModel = (ProductStatNotifierModel) getArguments().getSerializable(ARG_PARAM1);
     }
 
     @Override
@@ -67,11 +70,7 @@ public class SocialProofFragment extends Fragment {
         binding = FragmentSocialProofBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-        if(savedInstanceState != null) {
-            //TODO: get the json string here
-        } else {
-            //TODO: get the json string here
-        }
+        checkNumber();
 
         if(isUnderThreshold()){
             endFragment();
@@ -84,95 +83,123 @@ public class SocialProofFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //TODO: save the json string here
+        if(mTimer!=null){
+            mTimer.cancel();
+        }
     }
 
     private void setupInitialView() {
-        //Check the position and assign it to mIsTop
-        mIsTop = true;
+        try {
+            mExtendedProps = new Gson().fromJson(new java.net.URI(mModel.
+                    getActiondata().getExtendedProps()).getPath(), ProductStatNotifierExtendedProps.class);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            endFragment();
+        } catch (Exception e) {
+            e.printStackTrace();
+            endFragment();
+        }
+        getFontFamily();
+        mIsTop = mModel.getActiondata().getPos().equals("top");
         if(mIsTop){
             adjustTop();
         } else {
             adjustBottom();
         }
-        //TODO check if there is timer
+
         setTimer();
         setupCloseButton();
     }
 
     private void adjustTop() {
-        //TODO remove the code below when the actual data gets ready
-        binding.socialProofContainerTop.setBackgroundColor(getResources().getColor(R.color.yellow));
-        binding.numberTextViewTop.setTextColor(getResources().getColor(R.color.design_default_color_error));
-        binding.explanationTextViewTop.setTextColor(getResources().getColor(R.color.bottom_sheet_button_color));
+        binding.socialProofContainerTop.setBackgroundColor(Color.parseColor(mModel.getActiondata().getBgcolor()));
+        String text = mModel.getActiondata().getContent();
+        SpannableString spannableString=  new SpannableString(text);
+        spannableString.setSpan(new AbsoluteSizeSpan(Integer.parseInt(mExtendedProps.getContentcount_text_size()) * 2 + 14, true),
+                utilResultModel.getStartIdx(),utilResultModel.getEndIdx(), 0);
+        spannableString.setSpan(new ForegroundColorSpan(Color.parseColor(mExtendedProps.getContentcount_text_color())),
+                utilResultModel.getStartIdx(), utilResultModel.getEndIdx(), 0);
+        binding.textViewTop.setText(spannableString);
+        binding.textViewTop.setTypeface(mFontFamily);
+        binding.textViewTop.setTextSize(Float.parseFloat(mExtendedProps.getContent_text_size()) * 2 + 14);
+        binding.textViewTop.setTextColor(Color.parseColor(mExtendedProps.getContent_text_color()));
 
         binding.socialProofContainerBot.setVisibility(View.GONE);
     }
 
     private void adjustBottom() {
-        //TODO remove the code below when the actual data gets ready
-        binding.socialProofContainerBot.setBackgroundColor(getResources().getColor(R.color.yellow));
-        binding.numberTextViewBot.setTextColor(getResources().getColor(R.color.design_default_color_error));
-        binding.explanationTextViewBot.setTextColor(getResources().getColor(R.color.bottom_sheet_button_color));
+        binding.socialProofContainerBot.setBackgroundColor(Color.parseColor(mModel.getActiondata().getBgcolor()));
+        String text = mModel.getActiondata().getContent();
+        SpannableString spannableString=  new SpannableString(text);
+        spannableString.setSpan(new AbsoluteSizeSpan(Integer.parseInt(mExtendedProps.getContentcount_text_size()) * 2 + 14, true),
+                utilResultModel.getStartIdx(),utilResultModel.getEndIdx(), 0);
+        spannableString.setSpan(new ForegroundColorSpan(Color.parseColor(mExtendedProps.getContentcount_text_color())),
+                utilResultModel.getStartIdx(), utilResultModel.getEndIdx(), 0);
+        binding.textViewBot.setText(spannableString);
+        binding.textViewBot.setTypeface(mFontFamily);
+        binding.textViewBot.setTextSize(Float.parseFloat(mExtendedProps.getContent_text_size()) * 2 + 14);
+        binding.textViewBot.setTextColor(Color.parseColor(mExtendedProps.getContent_text_color()));
 
         binding.socialProofContainerTop.setVisibility(View.GONE);
     }
 
     private void setTimer() {
-        //TODO check the data if it is "will stay until clicked"
-        mTimer = new Timer("SocialProofTimer", false);
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                endFragment();
-            }
-        };
-        mTimer.schedule(task, 5000); // TODO instead of dummy here, put real data.
+        if (!mModel.getActiondata().getTimeout().equals("0")) {
+            mTimer = new Timer("SocialProofTimer", false);
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    endFragment();
+                }
+            };
+            mTimer.schedule(task, Integer.parseInt(mModel.getActiondata().getTimeout()));
 
-        //TODO If will stay until clicked, then
-        /*if(mIsTop){
-            binding.socialProofContainerTop.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    endFragment();
-                }
-            });
         } else {
-            binding.socialProofContainerBot.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    endFragment();
-                }
-            });
-        }*/
+            if (mIsTop) {
+                binding.socialProofContainerTop.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        endFragment();
+                    }
+                });
+            } else {
+                binding.socialProofContainerBot.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        endFragment();
+                    }
+                });
+            }
+        }
     }
 
     private void setupCloseButton() {
-        //TODO check if close button will be displayed first
-        if(mIsTop){
-            binding.closeButtonTop.setBackgroundResource(getCloseIcon());
-            binding.closeButtonTop.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    endFragment();
-                }
-            });
+        if(mModel.getActiondata().getShowclosebtn()) {
+            if (mIsTop) {
+                binding.closeButtonTop.setBackgroundResource(getCloseIcon());
+                binding.closeButtonTop.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        endFragment();
+                    }
+                });
+            } else {
+                binding.closeButtonBot.setBackgroundResource(getCloseIcon());
+                binding.closeButtonBot.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        endFragment();
+                    }
+                });
+            }
         } else {
-            binding.closeButtonBot.setBackgroundResource(getCloseIcon());
-            binding.closeButtonBot.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    endFragment();
-                }
-            });
+            binding.closeButtonTop.setVisibility(View.GONE);
+            binding.closeButtonBot.setVisibility(View.GONE);
         }
     }
 
     private int getCloseIcon() {
-
-        return R.drawable.ic_close_black_24dp;
-        //TODO when real data comes:
-       /* switch (mInAppMessage.getActionData().getCloseButtonColor()) {
+        switch (mExtendedProps.getClose_button_color()) {
 
             case "white":
                 return R.drawable.ic_close_white_24dp;
@@ -180,12 +207,36 @@ public class SocialProofFragment extends Fragment {
             case "black":
                 return R.drawable.ic_close_black_24dp;
         }
-        return R.drawable.ic_close_black_24dp;*/
+        return R.drawable.ic_close_black_24dp;
+    }
+
+    private void checkNumber() {
+        utilResultModel = AppUtils.getNumberFromText(mModel.getActiondata().getContent());
+        if(utilResultModel == null) {
+            Log.e(LOG_TAG, "Invalid Inputs!");
+            endFragment();
+        } else {
+            mNumber = utilResultModel.getNumber();
+        }
+    }
+
+    private void getFontFamily() {
+        if (FontFamily.Monospace.toString().equals(mExtendedProps.getContent_font_family().toLowerCase())) {
+            mFontFamily = Typeface.MONOSPACE;
+        }
+        if (FontFamily.SansSerif.toString().equals(mExtendedProps.getContent_font_family().toLowerCase())) {
+            mFontFamily = Typeface.SANS_SERIF;
+        }
+        if (FontFamily.Serif.toString().equals(mExtendedProps.getContent_font_family().toLowerCase())) {
+            mFontFamily = Typeface.SERIF;
+        }
+        if (FontFamily.Default.toString().equals(mExtendedProps.getContent_font_family().toLowerCase())) {
+            mFontFamily = Typeface.DEFAULT;
+        }
     }
 
     private boolean isUnderThreshold() {
-        //TODO Check if the number is smaller than the threshold
-        return false;
+        return mNumber < mModel.getActiondata().getThreshold();
     }
 
     private void endFragment() {

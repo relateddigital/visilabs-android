@@ -178,15 +178,10 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp14.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SocialProofFragment socialProofFragment = SocialProofFragment.newInstance(0, null);
-
-                socialProofFragment.setRetainInstance(true);
-
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.add(android.R.id.content, socialProofFragment);
-                transaction.commit();
-                //TODO when backend side gets ready, check below
-                //sendInAppRequest("socialproof");
+                HashMap<String, String> parameters = new HashMap<>();
+                parameters.put("OM.inapptype", "socialproof");
+                parameters.put("OM.pv", "CV7933-837-837");
+                Visilabs.CallAPI().customEvent("in-app", parameters, MainActivity.this);
             }
         });
 
@@ -255,15 +250,7 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp22.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HalfScreenFragment halfScreenFragment = HalfScreenFragment.newInstance(0, null);
-
-                halfScreenFragment.setRetainInstance(true);
-
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.add(android.R.id.content, halfScreenFragment);
-                transaction.commit();
-                //TODO when backend side gets ready, check below
-                //sendInAppRequest("half-screen");
+                sendInAppRequest("halfscreen");
             }
         });
 

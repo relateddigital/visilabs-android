@@ -5,11 +5,15 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.telephony.emergency.EmergencyNumber;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
 import com.visilabs.model.LocationPermission;
+
+import okhttp3.internal.Util;
 
 public final class AppUtils {
     public static String appVersion(Context context) {
@@ -50,5 +54,22 @@ public final class AppUtils {
             }
         }
         return locationPermission;
+    }
+
+    public static UtilResultModel getNumberFromText(String text) {
+        UtilResultModel model = null;
+
+        if(text != null && !text.isEmpty()) {
+            String number = text.replaceAll("\\D+", "");
+
+            if (!number.isEmpty()) {
+                model = new UtilResultModel();
+                model.setNumber(Integer.parseInt(number));
+                model.setStartIdx(text.indexOf(number));
+                model.setEndIdx(text.indexOf(number) + number.length());
+            }
+        }
+
+        return model;
     }
 }

@@ -5,6 +5,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -26,13 +27,16 @@ import com.visilabs.api.VisilabsApiMethods;
 import com.visilabs.api.VisilabsInAppMessageCallback;
 import com.visilabs.api.VisilabsTargetFilter;
 import com.visilabs.api.VisilabsTargetRequest;
+import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.exceptions.VisilabsNotReadyException;
 import com.visilabs.gps.factory.GpsFactory;
 import com.visilabs.gps.manager.GpsManager;
 import com.visilabs.inApp.InAppButtonInterface;
 import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.inApp.InAppMessage;
+import com.visilabs.inApp.SocialProofFragment;
 import com.visilabs.inApp.VisilabsActionRequest;
+import com.visilabs.inApp.VisilabsInAppFragment;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.Report;
 import com.visilabs.model.LocationPermission;
@@ -706,7 +710,7 @@ public class Visilabs {
             return;
         }
         try {
-            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin");
+            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier");
             visilabsActionRequest.setPageName(pageName);
             visilabsActionRequest.setProperties(properties);
             visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback(parent));
@@ -742,6 +746,14 @@ public class Visilabs {
                     } else if (!response.getMailSubscriptionForm().isEmpty()) {
                         MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm) response.getMailSubscriptionForm().get(0);
                         new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
+                    } else if (!response.getProductStatNotifierList().isEmpty()) {
+                        SocialProofFragment socialProofFragment = SocialProofFragment.newInstance(response.getProductStatNotifierList().get(0));
+
+                        socialProofFragment.setRetainInstance(true);
+
+                        FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
+                        transaction.add(android.R.id.content, socialProofFragment);
+                        transaction.commit();
                     } else {
                         Log.e(LOG_TAG, "Response is null : " + url);
                     }
@@ -1260,7 +1272,9 @@ public class Visilabs {
         if (properties != null) {
             for (int i = 0; i < properties.keySet().size(); i++) {
                 String key = (String) properties.keySet().toArray()[i];
-                queryMap.put(key, properties.get(key));
+                if(properties.get(key) != null) {
+                    queryMap.put(key, properties.get(key));
+                }
             }
         }
 
@@ -1398,7 +1412,9 @@ public class Visilabs {
         if (properties != null) {
             for (int i = 0; i < properties.keySet().size(); i++) {
                 String key = (String) properties.keySet().toArray()[i];
-                queryMap.put(key, properties.get(key));
+                if(properties.get(key) != null) {
+                    queryMap.put(key, properties.get(key));
+                }
             }
         }
 
