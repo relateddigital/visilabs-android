@@ -193,16 +193,11 @@ public class VisilabsInAppFragment extends Fragment {
                         Uri uri;
                         try {
                             uri = Uri.parse(uriString);
-                        } catch (IllegalArgumentException e) {
-                            Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                            return true;
-                        }
-
-                        try {
                             Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
                             mParent.startActivity(viewIntent);
-                        } catch (ActivityNotFoundException e) {
-                            Log.i(LOG_TAG, "User doesn't have an activity for notification URI " + uri);
+                        } catch (Exception e) {
+                            Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
+                            return true;
                         }
                     }
                 }

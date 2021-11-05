@@ -78,6 +78,10 @@ public class ActionData implements Parcelable {
     private final String mSecondPopupImg1;
     @SerializedName("secondPopup_image2")
     private final String mSecondPopupImg2;
+    @SerializedName("pos")
+    private final String mPos;
+    @SerializedName("msg_title_textsize")
+    private final String mMsgTitleTextSize;
 
     protected ActionData(Parcel in) {
         mAlertType = in.readString();
@@ -115,6 +119,8 @@ public class ActionData implements Parcelable {
         mSecondPopupFeecbackFormMinPoint = in.readString();
         mSecondPopupImg1 = in.readString();
         mSecondPopupImg2 = in.readString();
+        mPos = in.readString();
+        mMsgTitleTextSize = in.readString();
     }
 
     public static final Creator<ActionData> CREATOR = new Creator<ActionData>() {
@@ -171,6 +177,8 @@ public class ActionData implements Parcelable {
         dest.writeString(mSecondPopupFeecbackFormMinPoint);
         dest.writeString(mSecondPopupImg1);
         dest.writeString(mSecondPopupImg2);
+        dest.writeString(mPos);
+        dest.writeString(mMsgTitleTextSize);
     }
 
     public String getAlertType() {
@@ -363,6 +371,8 @@ public class ActionData implements Parcelable {
             result = InAppActionType.CAROUSEL;
         } else if(InAppActionType.NPS_AND_SECOND_POP_UP.toString().equals(mMsgType.toLowerCase())) {
             result = InAppActionType.NPS_AND_SECOND_POP_UP;
+        } else if(InAppActionType.HALF_SCREEN.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.HALF_SCREEN;
         } else {
             result = InAppActionType.UNKNOWN;
         }
@@ -435,5 +445,13 @@ public class ActionData implements Parcelable {
 
     public String getSecondPopupImg2() {
         return mSecondPopupImg2;
+    }
+
+    public String getPos() {
+        return mPos;
+    }
+
+    public String getMsgTitleTextSize() {
+        return mMsgTitleTextSize;
     }
 }

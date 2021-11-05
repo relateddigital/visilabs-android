@@ -90,5 +90,13 @@ public enum InAppActionType {
         public String toString() {
             return "nps_with_secondpopup";
         }
+    },
+
+    HALF_SCREEN {
+        @NonNull
+        @Override
+        public String toString() {
+            return "half_screen_image";
+        }
     }
 }

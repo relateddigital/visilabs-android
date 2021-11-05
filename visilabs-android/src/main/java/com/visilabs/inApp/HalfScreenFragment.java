@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -12,8 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
+import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.FragmentHalfScreenBinding;
+import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.StringUtils;
 
 /**
@@ -31,6 +34,7 @@ public class HalfScreenFragment extends Fragment {
 
     private int mStateId;
     private InAppNotificationState mInAppState;
+    private InAppMessage mInAppMessage;
     private boolean mIsTop;
     private FragmentHalfScreenBinding binding;
 
@@ -46,7 +50,6 @@ public class HalfScreenFragment extends Fragment {
      * @param inAppState Parameter 2.
      * @return A new instance of fragment SocialProofFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static HalfScreenFragment newInstance(int stateId, InAppNotificationState inAppState) {
         HalfScreenFragment fragment = new HalfScreenFragment();
         Bundle args = new Bundle();
@@ -61,6 +64,9 @@ public class HalfScreenFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mStateId = getArguments().getInt(ARG_PARAM1);
         mInAppState = getArguments().getParcelable(ARG_PARAM2);
+        if(mInAppState != null) {
+            mInAppMessage = mInAppState.getInAppMessage();
+        }
     }
 
     @Override
@@ -69,25 +75,23 @@ public class HalfScreenFragment extends Fragment {
         binding = FragmentHalfScreenBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-        if(savedInstanceState != null) {
-            //TODO: get the json string here
-        } else {
-            //TODO: get the json string here
-        }
+        if (mInAppState != null) {
+            if(mInAppMessage == null) {
+                endFragment();
+                Log.e(LOG_TAG, "Could not get the data, closing in app");
+            } else {
+                setupInitialView();
+            }
 
-        setupInitialView();
+        } else {
+            endFragment();
+            Log.e(LOG_TAG, "Could not get the data, closing in app");
+        }
         return view;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        //TODO: save the json string here
-    }
-
     private void setupInitialView() {
-        //Check the position and assign it to mIsTop
-        mIsTop = true;
+        mIsTop = mInAppMessage.getActionData().getPos().equals("top");
         if(mIsTop){
             adjustTop();
         } else {
@@ -97,14 +101,12 @@ public class HalfScreenFragment extends Fragment {
     }
 
     private void adjustTop() {
-        //TODO remove the code below when the actual data gets ready
-        //TODO check if title is on
-        if(true) {
-            binding.halfScreenContainerTop.setBackgroundColor(getResources().getColor(R.color.black));
-            binding.topTitleView.setText("30 Ağustos Zafer Bayramı");
-            binding.topTitleView.setTextColor(Color.parseColor("#E02B19"));
-            binding.topTitleView.setTextSize(20);
-            binding.topTitleView.setTypeface(Typeface.SANS_SERIF);
+        if(mInAppMessage.getActionData().getMsgTitle() != null && !mInAppMessage.getActionData().getMsgTitle().isEmpty()) {
+            binding.halfScreenContainerTop.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+            binding.topTitleView.setText(mInAppMessage.getActionData().getMsgTitle());
+            binding.topTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+            binding.topTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 14);
+            binding.topTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily());
         } else {
             binding.topTitleView.setVisibility(View.GONE);
         }
@@ -114,14 +116,23 @@ public class HalfScreenFragment extends Fragment {
         binding.topImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO click report here
-                //TODO Check if there is buttonCallback
-                try {
-                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString("https://www.relateddigital.com/"));
-                    startActivity(viewIntent);
-
-                } catch (final ActivityNotFoundException e) {
-                    Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                final String uriString = mInAppMessage.getActionData().getAndroidLnk();
+                InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
+                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, null);
+                if(buttonInterface != null) {
+                    Visilabs.CallAPI().setInAppButtonInterface(null);
+                    buttonInterface.onPress(uriString);
+                } else {
+                    if (uriString != null && uriString.length() > 0) {
+                        Uri uri;
+                        try {
+                            uri = Uri.parse(uriString);
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
+                            getActivity().startActivity(viewIntent);
+                        } catch (Exception e) {
+                            Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
+                        }
+                    }
                 }
                 endFragment();
             }
@@ -131,14 +142,12 @@ public class HalfScreenFragment extends Fragment {
     }
 
     private void adjustBottom() {
-        //TODO remove the code below when the actual data gets ready
-        //TODO check if title is on
-        if(true) {
-            binding.halfScreenContainerBot.setBackgroundColor(getResources().getColor(R.color.black));
-            binding.botTitleView.setText("30 Ağustos Zafer Bayramı");
-            binding.botTitleView.setTextColor(Color.parseColor("#E02B19"));
-            binding.botTitleView.setTextSize(20);
-            binding.botTitleView.setTypeface(Typeface.SANS_SERIF);
+        if(mInAppMessage.getActionData().getMsgTitle() != null && !mInAppMessage.getActionData().getMsgTitle().isEmpty()) {
+            binding.halfScreenContainerBot.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+            binding.botTitleView.setText(mInAppMessage.getActionData().getMsgTitle());
+            binding.botTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+            binding.botTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 14);
+            binding.botTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily());
         } else {
             binding.botTitleView.setVisibility(View.GONE);
         }
@@ -148,14 +157,23 @@ public class HalfScreenFragment extends Fragment {
         binding.botImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO click report here
-                //TODO Check if there is buttonCallback
-                try {
-                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString("https://www.relateddigital.com/"));
-                    startActivity(viewIntent);
-
-                } catch (final ActivityNotFoundException e) {
-                    Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                final String uriString = mInAppMessage.getActionData().getAndroidLnk();
+                InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
+                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, null);
+                if(buttonInterface != null) {
+                    Visilabs.CallAPI().setInAppButtonInterface(null);
+                    buttonInterface.onPress(uriString);
+                } else {
+                    if (uriString != null && uriString.length() > 0) {
+                        Uri uri;
+                        try {
+                            uri = Uri.parse(uriString);
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
+                            getActivity().startActivity(viewIntent);
+                        } catch (Exception e) {
+                            Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
+                        }
+                    }
                 }
                 endFragment();
             }
@@ -165,7 +183,6 @@ public class HalfScreenFragment extends Fragment {
     }
 
     private void setupCloseButton() {
-        //TODO check if close button will be displayed first
         if(mIsTop){
             binding.topCloseButton.setBackgroundResource(getCloseIcon());
             binding.topCloseButton.setOnClickListener(new View.OnClickListener() {
@@ -186,10 +203,7 @@ public class HalfScreenFragment extends Fragment {
     }
 
     private int getCloseIcon() {
-
-        return R.drawable.ic_close_white_24dp;
-        //TODO when real data comes:
-       /* switch (mInAppMessage.getActionData().getCloseButtonColor()) {
+        switch (mInAppMessage.getActionData().getCloseButtonColor()) {
 
             case "white":
                 return R.drawable.ic_close_white_24dp;
@@ -197,12 +211,12 @@ public class HalfScreenFragment extends Fragment {
             case "black":
                 return R.drawable.ic_close_black_24dp;
         }
-        return R.drawable.ic_close_black_24dp;*/
+        return R.drawable.ic_close_black_24dp;
     }
 
     private void endFragment() {
-        //TODO Release display state here
         if(getActivity() != null) {
+            VisilabsUpdateDisplayState.releaseDisplayState(mStateId);
             getActivity().getFragmentManager().beginTransaction().remove(HalfScreenFragment.this).commit();
         }
     }

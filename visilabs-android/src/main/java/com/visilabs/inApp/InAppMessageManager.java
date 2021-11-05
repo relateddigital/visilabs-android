@@ -124,6 +124,19 @@ public class InAppMessageManager {
 
                             break;
 
+                        case HALF_SCREEN:
+
+                            stateId = getStateId(parent, inAppMessage);
+
+                            visilabsUpdateDisplayState = VisilabsUpdateDisplayState.claimDisplayState(stateId);
+
+                            if (visilabsUpdateDisplayState == null) {
+                                showDebugMessage("Notification's display proposal was already consumed, no notification will be shown.");
+                            } else {
+                                openInAppHalfScreenFragment(stateId, parent, visilabsUpdateDisplayState);
+                            }
+
+                            break;
 
                         case FULL:
 
@@ -224,6 +237,18 @@ public class InAppMessageManager {
 
             FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
             transaction.add(android.R.id.content, visilabsInAppFragment);
+            transaction.commit();
+        }
+    }
+
+    private void openInAppHalfScreenFragment(int stateID, Activity parent, VisilabsUpdateDisplayState visilabsUpdateDisplayState) {
+        if (visilabsUpdateDisplayState.getDisplayState() != null) {
+            HalfScreenFragment halfScreenFragment = HalfScreenFragment.newInstance(stateID, (InAppNotificationState) visilabsUpdateDisplayState.getDisplayState());
+
+            halfScreenFragment.setRetainInstance(true);
+
+            FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
+            transaction.add(android.R.id.content, halfScreenFragment);
             transaction.commit();
         }
     }
