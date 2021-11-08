@@ -113,7 +113,7 @@ public class HalfScreenFragment extends Fragment {
         Picasso.get().
                 load("https://brtk.net/wp-content/uploads/2021/08/28/30agustossss.jpg?ver=cf14dae8e18a0da9aee40b2c8f3f2b39")
                 .into(binding.topImageView);
-        binding.topImageView.setOnClickListener(new View.OnClickListener() {
+        binding.halfScreenContainerTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String uriString = mInAppMessage.getActionData().getAndroidLnk();
@@ -154,7 +154,7 @@ public class HalfScreenFragment extends Fragment {
         Picasso.get().
                 load("https://brtk.net/wp-content/uploads/2021/08/28/30agustossss.jpg?ver=cf14dae8e18a0da9aee40b2c8f3f2b39")
                 .into(binding.botImageView);
-        binding.botImageView.setOnClickListener(new View.OnClickListener() {
+        binding.halfScreenContainerBot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String uriString = mInAppMessage.getActionData().getAndroidLnk();
