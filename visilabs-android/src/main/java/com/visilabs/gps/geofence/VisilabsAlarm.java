@@ -44,7 +44,14 @@ public class VisilabsAlarm extends BroadcastReceiver {
     public void setAlarmCheckIn(final Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, VisilabsAlarm.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+
+        PendingIntent pi;
+
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
+            pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pi = PendingIntent.getBroadcast(context, 0, i, 0);
+        }
 
         int fifteenMinutes = 15 * 60 * 1000;
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0,fifteenMinutes, pi);

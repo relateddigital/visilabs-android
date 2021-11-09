@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Looper;
 import android.util.Log;
 
@@ -337,7 +338,13 @@ public class GpsManager {
             return mGeofencePendingIntent;
         }
         Intent intent = new Intent(mApplication, GeofenceBroadcastReceiver.class);
-        mGeofencePendingIntent = PendingIntent.getBroadcast(mApplication, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
+            mGeofencePendingIntent = PendingIntent.getBroadcast(mApplication, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            mGeofencePendingIntent = PendingIntent.getBroadcast(mApplication, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
         return mGeofencePendingIntent;
     }
 
