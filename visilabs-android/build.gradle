@@ -1,16 +1,12 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.github.relateddigital'
 
-//apply from: 'maven-push.gradle'
-
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 4
         versionName "5.7.9"
         buildConfigField 'String', 'VERSION_NAME', "\"5.7.9\""

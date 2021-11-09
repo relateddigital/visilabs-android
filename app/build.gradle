@@ -3,13 +3,12 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.huawei.agconnect'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "com.relateddigital.visilabs"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "5.7.9"
         multiDexEnabled true
@@ -40,7 +39,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:22.0.0'
     implementation 'com.huawei.agconnect:agconnect-core:1.5.0.300'
     implementation 'com.google.android.material:material:1.4.0'
-    implementation 'com.github.relateddigital:euromessage-android:5.0.0'
+    implementation 'com.github.relateddigital:euromessage-android:5.0.1'
     implementation 'com.android.support:multidex:2.0.1'
     //implementation 'com.github.relateddigital:visilabs-android:5.7.8'
     implementation project(path: ':visilabs-android')
