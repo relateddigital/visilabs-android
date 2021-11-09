@@ -25,8 +25,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 31
         versionCode 4
-        versionName "5.8.2"
-        buildConfigField 'String', 'VERSION_NAME', "\"5.8.2\""
+        versionName "5.8.3"
+        buildConfigField 'String', 'VERSION_NAME', "\"5.8.3\""
     }
     buildTypes {
         release {
@@ -38,6 +38,10 @@ android {
     buildFeatures {
         viewBinding true
         dataBinding true
+    }
+
+    lintOptions {
+        abortOnError false
     }
 }
 
