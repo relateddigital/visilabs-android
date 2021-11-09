@@ -8,8 +8,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 31
         versionCode 4
-        versionName "5.8.0"
-        buildConfigField 'String', 'VERSION_NAME', "\"5.8.0\""
+        versionName "5.8.1"
+        buildConfigField 'String', 'VERSION_NAME', "\"5.8.1\""
     }
     buildTypes {
         release {
