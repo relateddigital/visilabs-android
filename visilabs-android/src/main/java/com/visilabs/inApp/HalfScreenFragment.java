@@ -111,7 +111,7 @@ public class HalfScreenFragment extends Fragment {
             binding.topTitleView.setVisibility(View.GONE);
         }
         Picasso.get().
-                load("https://brtk.net/wp-content/uploads/2021/08/28/30agustossss.jpg?ver=cf14dae8e18a0da9aee40b2c8f3f2b39")
+                load(mInAppMessage.getActionData().getImg())
                 .into(binding.topImageView);
         binding.halfScreenContainerTop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +152,7 @@ public class HalfScreenFragment extends Fragment {
             binding.botTitleView.setVisibility(View.GONE);
         }
         Picasso.get().
-                load("https://brtk.net/wp-content/uploads/2021/08/28/30agustossss.jpg?ver=cf14dae8e18a0da9aee40b2c8f3f2b39")
+                load(mInAppMessage.getActionData().getImg())
                 .into(binding.botImageView);
         binding.halfScreenContainerBot.setOnClickListener(new View.OnClickListener() {
             @Override
