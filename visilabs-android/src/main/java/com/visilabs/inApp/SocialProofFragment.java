@@ -34,7 +34,6 @@ public class SocialProofFragment extends Fragment {
     private boolean mIsTop;
     private Timer mTimer;
     private FragmentSocialProofBinding binding;
-    private int mNumber;
     private ProductStatNotifierExtendedProps mExtendedProps;
     private UtilResultModel utilResultModel;
     private Typeface mFontFamily = Typeface.DEFAULT;
@@ -70,13 +69,9 @@ public class SocialProofFragment extends Fragment {
         binding = FragmentSocialProofBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-        checkNumber();
-
-        if(isUnderThreshold()){
-            endFragment();
+        if(checkNumber()) {
+            setupInitialView();
         }
-
-        setupInitialView();
         return view;
     }
 
@@ -112,44 +107,44 @@ public class SocialProofFragment extends Fragment {
     }
 
     private void adjustTop() {
-        if(utilResultModel.getStartIdx() == -1) {
-            Log.e(LOG_TAG, "There cannot be more than one number in the message!");
-            endFragment();
-        } else {
-            binding.socialProofContainerTop.setBackgroundColor(Color.parseColor(mModel.getActiondata().getBgcolor()));
-            String text = mModel.getActiondata().getContent();
+        binding.socialProofContainerTop.setBackgroundColor(Color.parseColor(mModel.getActiondata().getBgcolor()));
+        String text = utilResultModel.getMessage();
+        binding.textViewTop.setTypeface(mFontFamily);
+        binding.textViewTop.setTextSize(Float.parseFloat(mExtendedProps.getContent_text_size()) * 2 + 14);
+        binding.textViewTop.setTextColor(Color.parseColor(mExtendedProps.getContent_text_color()));
+        binding.socialProofContainerBot.setVisibility(View.GONE);
+        if(utilResultModel.getIsTag()) {
             SpannableString spannableString = new SpannableString(text);
-            spannableString.setSpan(new AbsoluteSizeSpan(Integer.parseInt(mExtendedProps.getContentcount_text_size()) * 2 + 14, true),
-                    utilResultModel.getStartIdx(), utilResultModel.getEndIdx(), 0);
-            spannableString.setSpan(new ForegroundColorSpan(Color.parseColor(mExtendedProps.getContentcount_text_color())),
-                    utilResultModel.getStartIdx(), utilResultModel.getEndIdx(), 0);
+            for(int i = 0 ; i < utilResultModel.getNumbers().size() ; i++) {
+                spannableString.setSpan(new AbsoluteSizeSpan(Integer.parseInt(mExtendedProps.getContentcount_text_size()) * 2 + 14, true),
+                        utilResultModel.getStartIdxs().get(i), utilResultModel.getEndIdxs().get(i), 0);
+                spannableString.setSpan(new ForegroundColorSpan(Color.parseColor(mExtendedProps.getContentcount_text_color())),
+                        utilResultModel.getStartIdxs().get(i), utilResultModel.getEndIdxs().get(i), 0);
+            }
             binding.textViewTop.setText(spannableString);
-            binding.textViewTop.setTypeface(mFontFamily);
-            binding.textViewTop.setTextSize(Float.parseFloat(mExtendedProps.getContent_text_size()) * 2 + 14);
-            binding.textViewTop.setTextColor(Color.parseColor(mExtendedProps.getContent_text_color()));
-
-            binding.socialProofContainerBot.setVisibility(View.GONE);
+        } else {
+            binding.textViewTop.setText(text);
         }
     }
 
     private void adjustBottom() {
-        if(utilResultModel.getStartIdx() == -1) {
-            Log.e(LOG_TAG, "There cannot be more than one number in the message!");
-            endFragment();
-        } else {
-            binding.socialProofContainerBot.setBackgroundColor(Color.parseColor(mModel.getActiondata().getBgcolor()));
-            String text = mModel.getActiondata().getContent();
+        binding.socialProofContainerBot.setBackgroundColor(Color.parseColor(mModel.getActiondata().getBgcolor()));
+        String text = utilResultModel.getMessage();
+        binding.textViewBot.setTypeface(mFontFamily);
+        binding.textViewBot.setTextSize(Float.parseFloat(mExtendedProps.getContent_text_size()) * 2 + 14);
+        binding.textViewBot.setTextColor(Color.parseColor(mExtendedProps.getContent_text_color()));
+        binding.socialProofContainerTop.setVisibility(View.GONE);
+        if(utilResultModel.getIsTag()) {
             SpannableString spannableString = new SpannableString(text);
-            spannableString.setSpan(new AbsoluteSizeSpan(Integer.parseInt(mExtendedProps.getContentcount_text_size()) * 2 + 14, true),
-                    utilResultModel.getStartIdx(), utilResultModel.getEndIdx(), 0);
-            spannableString.setSpan(new ForegroundColorSpan(Color.parseColor(mExtendedProps.getContentcount_text_color())),
-                    utilResultModel.getStartIdx(), utilResultModel.getEndIdx(), 0);
+            for(int i = 0 ; i < utilResultModel.getNumbers().size() ; i++) {
+                spannableString.setSpan(new AbsoluteSizeSpan(Integer.parseInt(mExtendedProps.getContentcount_text_size()) * 2 + 14, true),
+                        utilResultModel.getStartIdxs().get(i), utilResultModel.getEndIdxs().get(i), 0);
+                spannableString.setSpan(new ForegroundColorSpan(Color.parseColor(mExtendedProps.getContentcount_text_color())),
+                        utilResultModel.getStartIdxs().get(i), utilResultModel.getEndIdxs().get(i), 0);
+            }
             binding.textViewBot.setText(spannableString);
-            binding.textViewBot.setTypeface(mFontFamily);
-            binding.textViewBot.setTextSize(Float.parseFloat(mExtendedProps.getContent_text_size()) * 2 + 14);
-            binding.textViewBot.setTextColor(Color.parseColor(mExtendedProps.getContent_text_color()));
-
-            binding.socialProofContainerTop.setVisibility(View.GONE);
+        } else {
+            binding.textViewBot.setText(text);
         }
     }
 
@@ -220,13 +215,14 @@ public class SocialProofFragment extends Fragment {
         return R.drawable.ic_close_black_24dp;
     }
 
-    private void checkNumber() {
+    private boolean checkNumber() {
         utilResultModel = AppUtils.getNumberFromText(mModel.getActiondata().getContent());
         if(utilResultModel == null) {
             Log.e(LOG_TAG, "Invalid Inputs!");
             endFragment();
+            return false;
         } else {
-            mNumber = utilResultModel.getNumber();
+            return true;
         }
     }
 
@@ -243,10 +239,6 @@ public class SocialProofFragment extends Fragment {
         if (FontFamily.Default.toString().equals(mExtendedProps.getContent_font_family().toLowerCase())) {
             mFontFamily = Typeface.DEFAULT;
         }
-    }
-
-    private boolean isUnderThreshold() {
-        return mNumber < mModel.getActiondata().getThreshold();
     }
 
     private void endFragment() {

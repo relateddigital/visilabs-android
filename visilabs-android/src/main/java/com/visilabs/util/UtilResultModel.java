@@ -1,31 +1,51 @@
 package com.visilabs.util;
 
+import java.util.ArrayList;
+
 public class UtilResultModel {
-    private int number;
-    private int startIdx;
-    private int endIdx;
+    private ArrayList<Integer> numbers = new ArrayList<>();
+    private ArrayList<Integer> startIdxs = new ArrayList<>();
+    private ArrayList<Integer> endIdxs = new ArrayList<>();
+    private String message;
+    private boolean isTag;
 
-    public int getNumber() {
-        return number;
+    public ArrayList<Integer> getNumbers() {
+        return numbers;
     }
 
-    public int getStartIdx() {
-        return startIdx;
+    public ArrayList<Integer> getStartIdxs() {
+        return startIdxs;
     }
 
-    public int getEndIdx() {
-        return endIdx;
+    public ArrayList<Integer> getEndIdxs() {
+        return endIdxs;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
+    public void addNumber(int number) {
+        numbers.add(number);
     }
 
-    public void setStartIdx(int startIdx) {
-        this.startIdx = startIdx;
+    public void addStartIdx(int startIdx) {
+        startIdxs.add(startIdx);
     }
 
-    public void setEndIdx(int endIdx) {
-        this.endIdx = endIdx;
+    public void addEndIdx(int endIdx) {
+        endIdxs.add(endIdx);
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean getIsTag() {
+        return isTag;
+    }
+
+    public void setIsTag(boolean isTag) {
+        this.isTag = isTag;
     }
 }

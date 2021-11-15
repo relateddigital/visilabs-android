@@ -13,6 +13,11 @@ import androidx.core.content.ContextCompat;
 
 import com.visilabs.model.LocationPermission;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import okhttp3.internal.Util;
 
 public final class AppUtils {
@@ -59,14 +64,44 @@ public final class AppUtils {
     public static UtilResultModel getNumberFromText(String text) {
         UtilResultModel model = null;
 
-        if(text != null && !text.isEmpty()) {
-            String number = text.replaceAll("\\D+", "");
-
-            if (!number.isEmpty()) {
-                model = new UtilResultModel();
-                model.setNumber(Integer.parseInt(number));
-                model.setStartIdx(text.indexOf(number));
-                model.setEndIdx(text.indexOf(number) + number.length());
+        if (text != null && !text.isEmpty()) {
+            try {
+                List<String> numbers = new ArrayList<String>();
+                final Pattern pattern = Pattern.compile("<COUNT>(.+?)</COUNT>", Pattern.DOTALL);
+                final Matcher matcher = pattern.matcher(text);
+                while(matcher.find()) {
+                    numbers.add(matcher.group(1));
+                }
+                if (!numbers.isEmpty()) {
+                    model = new UtilResultModel();
+                    text = text.replaceAll("<COUNT>", "");
+                    text = text.replaceAll("</COUNT>", "");
+                    model.setIsTag(true);
+                    model.setMessage(text);
+                    int idxToStart = 0;
+                    for(int i = 0 ; i < numbers.size() ; i++) {
+                        int number = Integer.parseInt(numbers.get(i));
+                        int idx = text.indexOf(numbers.get(i), idxToStart);
+                        if(idx != -1) {
+                            model.addStartIdx(idx);
+                            model.addEndIdx(idx + numbers.get(i).length());
+                            model.addNumber(number);
+                        }
+                        idxToStart = text.indexOf(numbers.get(i)) + 1;
+                    }
+                } else {
+                    if(text.contains("<COUNT>")) {
+                        Log.e("SocialProof", "Could not parse the number!");
+                    } else {
+                        Log.e("SocialProof", "Tag COUNT is not used!");
+                        model = new UtilResultModel();
+                        model.setMessage(text);
+                        model.setIsTag(false);
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("SocialProof", "Could not parse the number!");
+                model = null;
             }
         }
 
