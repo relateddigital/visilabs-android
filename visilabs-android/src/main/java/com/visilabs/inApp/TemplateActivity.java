@@ -319,7 +319,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private void setTitle() {
 
         binding.tvTitle.setVisibility(View.VISIBLE);
-        binding.tvTitle.setTypeface(mInAppMessage.getActionData().getFontFamily());
+        binding.tvTitle.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
         binding.tvTitle.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n","\n"));
         if(mInAppMessage.getActionData().getMsgTitleColor() != null && !mInAppMessage.getActionData().getMsgTitleColor().equals("")) {
             try {
@@ -343,7 +343,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void setBody() {
         binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n", "\n"));
-        binding.tvBody.setTypeface(mInAppMessage.getActionData().getFontFamily());
+        binding.tvBody.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
         binding.tvBody.setVisibility(View.VISIBLE);
         if(mInAppMessage.getActionData().getMsgBodyColor() != null && !mInAppMessage.getActionData().getMsgBodyColor().equals("")) {
             try {
@@ -364,7 +364,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void setButton() {
 
-        binding.btnTemplate.setTypeface(mInAppMessage.getActionData().getFontFamily());
+        binding.btnTemplate.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
         binding.btnTemplate.setVisibility(View.VISIBLE);
         binding.btnTemplate.setText(mInAppMessage.getActionData().getBtnText());
         if(mInAppMessage.getActionData().getButtonTextColor() != null && !mInAppMessage.getActionData().getButtonTextColor().equals("")) {
@@ -457,7 +457,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setNpsSecondPopUpButton() {
-        binding.btnTemplate.setTypeface(mInAppMessage.getActionData().getFontFamily());
+        binding.btnTemplate.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
         binding.btnTemplate.setVisibility(View.VISIBLE);
         binding.btnTemplate.setText(mInAppMessage.getActionData().getBtnText());
         if(mInAppMessage.getActionData().getButtonTextColor() != null && !mInAppMessage.getActionData().getButtonTextColor().equals("")) {
@@ -578,14 +578,14 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg1())
                     .into(bindingSecondPopUp.imageView);
         }
-        bindingSecondPopUp.titleView.setTypeface(mInAppMessage.getActionData().getFontFamily());
+        bindingSecondPopUp.titleView.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
         bindingSecondPopUp.titleView.setText(mInAppMessage.getActionData().getSecondPopupMsgTitle().replace("\\n","\n"));
         bindingSecondPopUp.titleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
-        bindingSecondPopUp.bodyTextView.setTypeface(mInAppMessage.getActionData().getFontFamily());
+        bindingSecondPopUp.bodyTextView.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
         bindingSecondPopUp.bodyTextView.setText(mInAppMessage.getActionData().getSecondPopupMsgBody().replace("\\n","\n"));
         bindingSecondPopUp.bodyTextView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyColor()));
         bindingSecondPopUp.bodyTextView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getSecondPopupMsgBodyTextSize()) + 8);
-        bindingSecondPopUp.button.setTypeface(mInAppMessage.getActionData().getFontFamily());
+        bindingSecondPopUp.button.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
         bindingSecondPopUp.button.setText(mInAppMessage.getActionData().getSecondPopupBtnText());
         bindingSecondPopUp.button.setTextColor(Color.parseColor(mInAppMessage.getActionData().getButtonTextColor()));
         bindingSecondPopUp.button.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getButtonColor()));

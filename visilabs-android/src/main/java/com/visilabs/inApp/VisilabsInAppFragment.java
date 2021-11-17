@@ -58,6 +58,7 @@ public class VisilabsInAppFragment extends Fragment {
             } else {
 
                 binding.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
+                binding.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
 
                 if (!mInAppMessage.getActionData().getImg().equals("")) {
                     binding.ivInAppImageMini.setVisibility(View.VISIBLE);

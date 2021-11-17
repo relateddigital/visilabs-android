@@ -1,10 +1,14 @@
 package com.visilabs.inApp;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.core.content.res.ResourcesCompat;
+
 import com.google.gson.annotations.SerializedName;
+import com.visilabs.util.AppUtils;
 import com.visilabs.util.SizeUtil;
 
 public class ActionData implements Parcelable {
@@ -261,7 +265,7 @@ public class ActionData implements Parcelable {
         mCourseOfAction = courseOfAction;
     }
 
-    public Typeface getFontFamily() {
+    public Typeface getFontFamily(Context context) {
         if (mFontFamily == null || mFontFamily.equals("")) {
             return Typeface.DEFAULT;
         }
@@ -273,6 +277,10 @@ public class ActionData implements Parcelable {
         }
         if (FontFamily.Serif.toString().equals(mFontFamily.toLowerCase())) {
             return Typeface.SERIF;
+        }
+        if(AppUtils.isResourceAvailable(context, mFontFamily)){
+            int id = context.getResources().getIdentifier(mFontFamily, "font", context.getPackageName());
+            return ResourcesCompat.getFont(context, id);
         }
 
         return Typeface.DEFAULT;

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Build;
 import android.telephony.emergency.EmergencyNumber;
 import android.text.TextUtils;
@@ -106,5 +107,10 @@ public final class AppUtils {
         }
 
         return model;
+    }
+
+    public static boolean isResourceAvailable(Context context, String name) {
+        int res = context.getResources().getIdentifier(name, "font", context.getPackageName());
+        return res != 0;
     }
 }

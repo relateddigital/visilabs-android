@@ -106,7 +106,7 @@ public class HalfScreenFragment extends Fragment {
             binding.topTitleView.setText(mInAppMessage.getActionData().getMsgTitle());
             binding.topTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
             binding.topTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 14);
-            binding.topTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily());
+            binding.topTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
         } else {
             binding.topTitleView.setVisibility(View.GONE);
         }
@@ -147,7 +147,7 @@ public class HalfScreenFragment extends Fragment {
             binding.botTitleView.setText(mInAppMessage.getActionData().getMsgTitle());
             binding.botTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
             binding.botTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 14);
-            binding.botTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily());
+            binding.botTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
         } else {
             binding.botTitleView.setVisibility(View.GONE);
         }
