@@ -108,7 +108,6 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             cacheImages();
 
             setContentView(view);
-            this.setFinishOnTouchOutside(false);
 
             if (isShowingInApp()) {
                 if (mIsCarousel) {
@@ -138,8 +137,6 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                 finish();
             }
-
-            this.setFinishOnTouchOutside(true);
         }
     }
 
@@ -200,7 +197,6 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 e.printStackTrace();
             }
         }
-        binding.ibClose.setBackgroundResource(getCloseIcon());
 
         switch (mInAppMessage.getActionData().getMsgType()) {
 
@@ -565,14 +561,20 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
             }
         }
-        bindingSecondPopUp.closeButton.setBackgroundResource(getCloseIcon());
-        bindingSecondPopUp.closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
-                finish();
-            }
-        });
+        if(mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
+            bindingSecondPopUp.closeButton.setVisibility(View.GONE);
+            this.setFinishOnTouchOutside(true);
+        } else {
+            this.setFinishOnTouchOutside(!mInAppMessage.getActionData().getCloseEventTrigger().equals("closebutton"));
+            bindingSecondPopUp.closeButton.setBackgroundResource(getCloseIcon());
+            bindingSecondPopUp.closeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                    finish();
+                }
+            });
+        }
         if(mInAppMessage.getActionData().getSecondPopupImg1()!=null &&
         !mInAppMessage.getActionData().getSecondPopupImg1().isEmpty()){
             Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg1())
@@ -684,14 +686,22 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     public void setCloseButton() {
 
-        binding.ibClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+        if(mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
+            binding.ibClose.setVisibility(View.GONE);
+            this.setFinishOnTouchOutside(true);
+        } else {
+            this.setFinishOnTouchOutside(!mInAppMessage.getActionData().getCloseEventTrigger().equals("closebutton"));
+            binding.ibClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
 
-                finish();
-            }
-        });
+                    finish();
+                }
+            });
+
+            binding.ibClose.setBackgroundResource(getCloseIcon());
+        }
     }
 
     void showNps() {
@@ -792,14 +802,20 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setupInitialViewCarousel() {
-        bindingCarousel.carouselCloseButton.setBackgroundResource(getCloseIcon());
-        bindingCarousel.carouselCloseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
-                finish();
-            }
-        });
+        if(mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
+            bindingCarousel.carouselCloseButton.setVisibility(View.GONE);
+            this.setFinishOnTouchOutside(true);
+        } else {
+            this.setFinishOnTouchOutside(!mInAppMessage.getActionData().getCloseEventTrigger().equals("closebutton"));
+            bindingCarousel.carouselCloseButton.setBackgroundResource(getCloseIcon());
+            bindingCarousel.carouselCloseButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                    finish();
+                }
+            });
+        }
         for (int i = 0; i < getCarouselItemCount(); i++) {
             View view = new View(getApplicationContext());
             view.setBackgroundResource(R.drawable.dot_indicator_default);

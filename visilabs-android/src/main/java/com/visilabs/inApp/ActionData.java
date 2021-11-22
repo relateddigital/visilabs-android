@@ -86,6 +86,8 @@ public class ActionData implements Parcelable {
     private final String mPos;
     @SerializedName("msg_title_textsize")
     private final String mMsgTitleTextSize;
+    @SerializedName("close_event_trigger")
+    private final String mCloseEventTrigger;
 
     protected ActionData(Parcel in) {
         mAlertType = in.readString();
@@ -125,6 +127,7 @@ public class ActionData implements Parcelable {
         mSecondPopupImg2 = in.readString();
         mPos = in.readString();
         mMsgTitleTextSize = in.readString();
+        mCloseEventTrigger = in.readString();
     }
 
     public static final Creator<ActionData> CREATOR = new Creator<ActionData>() {
@@ -183,6 +186,7 @@ public class ActionData implements Parcelable {
         dest.writeString(mSecondPopupImg2);
         dest.writeString(mPos);
         dest.writeString(mMsgTitleTextSize);
+        dest.writeString(mCloseEventTrigger);
     }
 
     public String getAlertType() {
@@ -461,5 +465,9 @@ public class ActionData implements Parcelable {
 
     public String getMsgTitleTextSize() {
         return mMsgTitleTextSize;
+    }
+
+    public String getCloseEventTrigger() {
+        return mCloseEventTrigger;
     }
 }
