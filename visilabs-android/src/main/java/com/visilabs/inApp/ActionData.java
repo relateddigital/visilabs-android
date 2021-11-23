@@ -88,6 +88,10 @@ public class ActionData implements Parcelable {
     private final String mMsgTitleTextSize;
     @SerializedName("close_event_trigger")
     private final String mCloseEventTrigger;
+    @SerializedName("custom_font_family_ios")
+    private final String mCustomFontFamilyIos;
+    @SerializedName("custom_font_family_android")
+    private final String mCustomFontFamilyAndroid;
 
     protected ActionData(Parcel in) {
         mAlertType = in.readString();
@@ -128,6 +132,8 @@ public class ActionData implements Parcelable {
         mPos = in.readString();
         mMsgTitleTextSize = in.readString();
         mCloseEventTrigger = in.readString();
+        mCustomFontFamilyIos = in.readString();
+        mCustomFontFamilyAndroid = in.readString();
     }
 
     public static final Creator<ActionData> CREATOR = new Creator<ActionData>() {
@@ -187,6 +193,8 @@ public class ActionData implements Parcelable {
         dest.writeString(mPos);
         dest.writeString(mMsgTitleTextSize);
         dest.writeString(mCloseEventTrigger);
+        dest.writeString(mCustomFontFamilyIos);
+        dest.writeString(mCustomFontFamilyAndroid);
     }
 
     public String getAlertType() {
@@ -282,9 +290,11 @@ public class ActionData implements Parcelable {
         if (FontFamily.Serif.toString().equals(mFontFamily.toLowerCase())) {
             return Typeface.SERIF;
         }
-        if(AppUtils.isResourceAvailable(context, mFontFamily)){
-            int id = context.getResources().getIdentifier(mFontFamily, "font", context.getPackageName());
-            return ResourcesCompat.getFont(context, id);
+        if(mCustomFontFamilyAndroid != null && !mCustomFontFamilyAndroid.isEmpty()) {
+            if (AppUtils.isResourceAvailable(context, mCustomFontFamilyAndroid)) {
+                int id = context.getResources().getIdentifier(mCustomFontFamilyAndroid, "font", context.getPackageName());
+                return ResourcesCompat.getFont(context, id);
+            }
         }
 
         return Typeface.DEFAULT;
@@ -469,5 +479,13 @@ public class ActionData implements Parcelable {
 
     public String getCloseEventTrigger() {
         return mCloseEventTrigger;
+    }
+
+    public java.lang.String getCustomFontFamilyIos() {
+        return mCustomFontFamilyIos;
+    }
+
+    public String getCustomFontFamilyAndroid() {
+        return mCustomFontFamilyAndroid;
     }
 }
