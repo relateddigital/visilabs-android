@@ -10,6 +10,7 @@ import android.telephony.emergency.EmergencyNumber;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.visilabs.model.LocationPermission;
@@ -112,5 +113,13 @@ public final class AppUtils {
     public static boolean isResourceAvailable(Context context, String name) {
         int res = context.getResources().getIdentifier(name, "font", context.getPackageName());
         return res != 0;
+    }
+
+    public static String getNotificationPermissionStatus(Context context) {
+        if(NotificationManagerCompat.from(context).areNotificationsEnabled()){
+            return "Y";
+        } else {
+            return "N";
+        }
     }
 }

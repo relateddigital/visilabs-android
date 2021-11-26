@@ -9,6 +9,7 @@ import com.visilabs.VisilabsResponse;
 import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
+import com.visilabs.util.AppUtils;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
@@ -290,6 +291,8 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, Visilabs.CallAPI().getAppVersion());
+        queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
+                AppUtils.getNotificationPermissionStatus(mContext));
 
         if(Visilabs.CallAPI().getChannelName() != null && !Visilabs.CallAPI().getChannelName().equals("")){
             queryMap.put(VisilabsConstant.CHANNEL_KEY, Visilabs.CallAPI().getChannelName());

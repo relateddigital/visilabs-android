@@ -17,6 +17,7 @@ import com.visilabs.favs.FavsResponse;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
 import com.visilabs.model.VisilabsActionsResponse;
+import com.visilabs.util.AppUtils;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
@@ -569,6 +570,8 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, Visilabs.CallAPI().getAppVersion());
+        queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
+                AppUtils.getNotificationPermissionStatus(mContext));
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMNrv()));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMPviv()));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMTvc()));
@@ -665,6 +668,8 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, Visilabs.CallAPI().getAppVersion());
+        queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
+                AppUtils.getNotificationPermissionStatus(mContext));
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMNrv()));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMPviv()));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMTvc()));
@@ -759,6 +764,8 @@ public class VisilabsActionRequest extends VisilabsRemote {
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, Visilabs.CallAPI().getAppVersion());
+        queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
+                AppUtils.getNotificationPermissionStatus(mContext));
         queryMap.put(VisilabsConstant.NRV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMNrv()));
         queryMap.put(VisilabsConstant.PVIV_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMPviv()));
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(Visilabs.CallAPI().getOMTvc()));
