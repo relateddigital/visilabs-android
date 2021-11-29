@@ -117,9 +117,9 @@ public final class AppUtils {
 
     public static String getNotificationPermissionStatus(Context context) {
         if(NotificationManagerCompat.from(context).areNotificationsEnabled()){
-            return "Y";
+            return "granted";
         } else {
-            return "N";
+            return "denied";
         }
     }
 }
