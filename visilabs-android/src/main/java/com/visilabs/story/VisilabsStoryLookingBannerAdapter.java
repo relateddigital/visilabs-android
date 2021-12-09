@@ -21,6 +21,7 @@ import com.visilabs.story.model.storylookingbanners.ExtendedProps;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.storylookingbanners.Stories;
 import com.visilabs.story.model.storylookingbanners.VisilabsStoryLookingBannerResponse;
+import com.visilabs.util.AppUtils;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.VisilabsConstant;
 
@@ -103,6 +104,10 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
         storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps !=
                 null ? extendedProps.getStorylb_label_color() : null));
+
+        storyHolder.tvStoryName.setTypeface(AppUtils.getFontFamily(mContext,
+                extendedProps != null ? extendedProps.getFont_family() : null,
+                extendedProps != null ? extendedProps.getCustom_font_family_android() : null));
 
         assert extendedProps != null;
         if (extendedProps.getStorylb_img_boxShadow().equals("")){

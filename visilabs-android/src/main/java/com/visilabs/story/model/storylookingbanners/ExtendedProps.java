@@ -14,6 +14,12 @@ public class ExtendedProps implements Serializable {
 
     private String storylb_label_color;
 
+    private String font_family;
+
+    private String custom_font_family_ios;
+
+    private String custom_font_family_android;
+
     private boolean moveShownToEnd;
 
     public String getStorylb_img_borderWidth() {
@@ -54,6 +60,30 @@ public class ExtendedProps implements Serializable {
 
     public void setStorylb_label_color(String storylb_label_color) {
         this.storylb_label_color = storylb_label_color;
+    }
+
+    public String getFont_family() {
+        return font_family;
+    }
+
+    public void setFont_family(String font_family) {
+        this.font_family = font_family;
+    }
+
+    public String getCustom_font_family_ios() {
+        return custom_font_family_ios;
+    }
+
+    public void setCustom_font_family_ios(String custom_font_family_ios) {
+        this.custom_font_family_ios = custom_font_family_ios;
+    }
+
+    public String getCustom_font_family_android() {
+        return custom_font_family_android;
+    }
+
+    public void setCustom_font_family_android(String custom_font_family_android) {
+        this.custom_font_family_android = custom_font_family_android;
     }
 
     public boolean getMoveShownToEnd() {

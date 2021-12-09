@@ -20,17 +20,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.story.action.StoriesProgressView;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.skinbased.Actiondata;
+import com.visilabs.story.model.skinbased.ExtendedProps;
 import com.visilabs.story.model.skinbased.Items;
 import com.visilabs.story.model.skinbased.Stories;
+import com.visilabs.util.AppUtils;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.VisilabsConstant;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,6 +50,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     long mLimit = 500L;
     Stories mStories;
     Actiondata mActionData;
+    private ExtendedProps mExtendedProps;
     String mActionId;
     Button mBtnStory;
     View mReverse, mSkip;
@@ -83,6 +88,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         if(getIntent() != null) {
             try {
                 mActionData = (Actiondata) getIntent().getSerializableExtra(VisilabsConstant.ACTION_DATA);
+                mExtendedProps = new Gson().fromJson(new java.net.URI(mActionData.getExtendedProps()).getPath(), ExtendedProps.class);
                 mActionId = (String) getIntent().getSerializableExtra(VisilabsConstant.ACTION_ID);
                 mStoryPosition = getIntent().getExtras().getInt(VisilabsConstant.STORY_POSITION);
                 mStoryItemPosition = getIntent().getExtras().getInt(VisilabsConstant.STORY_ITEM_POSITION);
@@ -177,6 +183,14 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
             Picasso.get().load(mStories.getThumbnail()).into(mIvCover);
         }
         mTvCover.setText(mStories.getTitle());
+
+        if(mExtendedProps != null && mExtendedProps.getStoryz_label_color() != null) {
+            mTvCover.setTextColor(Color.parseColor(mExtendedProps.getStoryz_label_color()));
+        }
+
+        mTvCover.setTypeface(AppUtils.getFontFamily(this,
+                mExtendedProps != null ? mExtendedProps.getFont_family() : null,
+                mExtendedProps != null ? mExtendedProps.getCustom_font_family_android() : null));
 
         setStoryItem(mStories.getItems().get(mStoryItemPosition));
         mIvClose.setOnClickListener(new View.OnClickListener() {

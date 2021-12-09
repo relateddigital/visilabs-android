@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../../layout/custom_preview.xml" value="0.27708333333333335" />
         <entry key="..\:/Users/emre.eken/Desktop/AndroidProjects/visilabs/visilabs-android/src/main/res/layout/fragment_half_screen.xml" value="0.15172101449275363" />
+        <entry key="visilabs-android/src/main/res/layout/activity_story.xml" value="0.12760416666666666" />
       </map>
     </option>
   </component>

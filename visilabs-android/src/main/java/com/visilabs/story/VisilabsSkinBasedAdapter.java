@@ -21,6 +21,7 @@ import com.visilabs.story.model.skinbased.Actiondata;
 import com.visilabs.story.model.skinbased.Stories;
 import com.visilabs.story.model.skinbased.VisilabsSkinBasedResponse;
 import com.visilabs.story.model.skinbased.ExtendedProps;
+import com.visilabs.util.AppUtils;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.VisilabsConstant;
 import java.net.URISyntaxException;
@@ -83,6 +84,14 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+
+        if(extendedProps != null && extendedProps.getStoryz_label_color() != null) {
+            storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps.getStoryz_label_color()));
+        }
+
+        storyHolder.tvStoryName.setTypeface(AppUtils.getFontFamily(mContext,
+                extendedProps != null ? extendedProps.getFont_family() : null,
+                extendedProps != null ? extendedProps.getCustom_font_family_android() : null));
 
         storyHolder.civStory.setOnClickListener(new View.OnClickListener() {
             @Override

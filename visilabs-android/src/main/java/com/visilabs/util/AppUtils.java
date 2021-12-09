@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.telephony.emergency.EmergencyNumber;
 import android.text.TextUtils;
@@ -12,7 +13,9 @@ import android.util.Log;
 
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
+import com.visilabs.inApp.FontFamily;
 import com.visilabs.model.LocationPermission;
 
 import java.util.ArrayList;
@@ -121,5 +124,28 @@ public final class AppUtils {
         } else {
             return "denied";
         }
+    }
+
+    public static Typeface getFontFamily(Context context, String fontFamily, String fontName) {
+        if (fontFamily == null || fontFamily.equals("")) {
+            return Typeface.DEFAULT;
+        }
+        if (FontFamily.Monospace.toString().equals(fontFamily.toLowerCase())) {
+            return Typeface.MONOSPACE;
+        }
+        if (FontFamily.SansSerif.toString().equals(fontFamily.toLowerCase())) {
+            return Typeface.SANS_SERIF;
+        }
+        if (FontFamily.Serif.toString().equals(fontFamily.toLowerCase())) {
+            return Typeface.SERIF;
+        }
+        if(fontName != null && !fontName.isEmpty()) {
+            if (AppUtils.isResourceAvailable(context, fontName)) {
+                int id = context.getResources().getIdentifier(fontName, "font", context.getPackageName());
+                return ResourcesCompat.getFont(context, id);
+            }
+        }
+
+        return Typeface.DEFAULT;
     }
 }
