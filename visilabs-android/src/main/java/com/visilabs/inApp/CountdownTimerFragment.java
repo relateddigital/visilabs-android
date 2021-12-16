@@ -1,5 +1,6 @@
 package com.visilabs.inApp;
 
+import android.app.ActionBar;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -12,6 +13,10 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
@@ -90,6 +95,8 @@ public class CountdownTimerFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentCountdownTimerBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+
+        hideStatusBar();
 
         if(savedInstanceState != null) {
             //TODO: get the remaining time here
@@ -466,4 +473,31 @@ public class CountdownTimerFragment extends Fragment {
             getActivity().getFragmentManager().beginTransaction().remove(CountdownTimerFragment.this).commit();
         }
     }
+
+    private void hideStatusBar() {
+        View decorView = getActivity().getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar != null) {
+            actionBar.hide();
+        }
+    }
+
+    private void showStatusBar() {
+        if(getActivity() != null) {
+            WindowInsetsControllerCompat windowInsetsController =
+                    ViewCompat.getWindowInsetsController(getActivity().getWindow().getDecorView());
+            if (windowInsetsController != null) {
+                windowInsetsController.show(WindowInsetsCompat.Type.systemBars());
+            }
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        showStatusBar();
+    }
+
 }
