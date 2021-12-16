@@ -1,9 +1,8 @@
 package com.visilabs.inApp;
 
-import android.content.ActivityNotFoundException;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -11,13 +10,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.FragmentHalfScreenBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
-import com.visilabs.util.StringUtils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,6 +77,8 @@ public class HalfScreenFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentHalfScreenBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+
+        hideStatusBar();
 
         if (mInAppState != null) {
             if(mInAppMessage == null) {
@@ -219,5 +224,31 @@ public class HalfScreenFragment extends Fragment {
             VisilabsUpdateDisplayState.releaseDisplayState(mStateId);
             getActivity().getFragmentManager().beginTransaction().remove(HalfScreenFragment.this).commit();
         }
+    }
+
+    private void hideStatusBar() {
+        View decorView = getActivity().getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar != null) {
+            actionBar.hide();
+        }
+    }
+
+    private void showStatusBar() {
+        if(getActivity() != null) {
+            WindowInsetsControllerCompat windowInsetsController =
+                    ViewCompat.getWindowInsetsController(getActivity().getWindow().getDecorView());
+            if (windowInsetsController != null) {
+                windowInsetsController.show(WindowInsetsCompat.Type.systemBars());
+            }
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        showStatusBar();
     }
 }
