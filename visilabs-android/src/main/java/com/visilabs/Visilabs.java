@@ -124,6 +124,7 @@ public class Visilabs {
     private Runnable mRunnable;
 
     private GpsManager gpsManager = null;
+    private Timer geofencePermissionTimer = null;
 
     private VisilabsApiMethods mVisilabsLoggerApiInterface;
     private VisilabsApiMethods mVisilabsRealTimeApiInterface;
@@ -1863,14 +1864,17 @@ public class Visilabs {
     public void startGpsManager() {
         int per = ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION);
         if (per != PackageManager.PERMISSION_GRANTED) {
-            Timer timer = new Timer("startGpsManager", false);
+            if(geofencePermissionTimer!=null) {
+                geofencePermissionTimer.cancel();
+            }
+            geofencePermissionTimer = new Timer("startGpsManager", false);
             TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
                     startGpsManager();
                 }
             };
-            timer.schedule(task, 5000);
+            geofencePermissionTimer.schedule(task, 5000);
             return;
         }
         gpsManager = GpsFactory.createManager(mContext);
