@@ -1,9 +1,13 @@
 package com.visilabs.scratchToWin.model;
 
+import android.content.Context;
 import android.graphics.Typeface;
+
+import androidx.core.content.res.ResourcesCompat;
 
 import com.google.gson.annotations.SerializedName;
 import com.visilabs.inApp.FontFamily;
+import com.visilabs.util.AppUtils;
 
 import java.io.Serializable;
 
@@ -12,12 +16,20 @@ public class ExtendedProps implements Serializable {
     private String content_title_text_color;
     @SerializedName("content_title_font_family")
     private String content_title_font_family;
+    @SerializedName("content_title_custom_font_family_ios")
+    private String content_title_custom_font_family_ios;
+    @SerializedName("content_title_custom_font_family_android")
+    private String content_title_custom_font_family_android;
     @SerializedName("content_title_text_size")
     private String content_title_text_size;
     @SerializedName("content_body_text_color")
     private String content_body_text_color;
-    @SerializedName("content_body_text_font_family")
-    private String content_body_text_font_family;
+    @SerializedName("content_body_font_family")
+    private String content_body_font_family;
+    @SerializedName("content_body_custom_font_family_ios")
+    private String content_body_custom_font_family_ios;
+    @SerializedName("content_body_custom_font_family_android")
+    private String content_body_custom_font_family_android;
     @SerializedName("content_body_text_size")
     private String content_body_text_size;
     @SerializedName("button_color")
@@ -26,12 +38,20 @@ public class ExtendedProps implements Serializable {
     private String button_text_color;
     @SerializedName("button_font_family")
     private String button_font_family;
+    @SerializedName("button_custom_font_family_ios")
+    private String button_custom_font_family_ios;
+    @SerializedName("button_custom_font_family_android")
+    private String button_custom_font_family_android;
     @SerializedName("button_text_size")
     private String button_text_size;
     @SerializedName("promocode_text_color")
     private String promocode_text_color;
     @SerializedName("promocode_font_family")
     private String promocode_font_family;
+    @SerializedName("promocode_custom_font_family_ios")
+    private String promocode_custom_font_family_ios;
+    @SerializedName("promocode_custom_font_family_android")
+    private String promocode_custom_font_family_android;
     @SerializedName("promocode_text_size")
     private String promocode_text_size;
     @SerializedName("copybutton_color")
@@ -40,6 +60,10 @@ public class ExtendedProps implements Serializable {
     private String copybutton_text_color;
     @SerializedName("copybutton_font_family")
     private String copybutton_font_family;
+    @SerializedName("copybutton_custom_font_family_ios")
+    private String copybutton_custom_font_family_ios;
+    @SerializedName("copybutton_custom_font_family_android")
+    private String copybutton_custom_font_family_android;
     @SerializedName("copybutton_text_size")
     private String copybutton_text_size;
     @SerializedName("emailpermit_text_size")
@@ -67,7 +91,7 @@ public class ExtendedProps implements Serializable {
         content_title_font_family = contentTitleFontFamily;
     }
 
-    public Typeface getContentTitleFontFamily() {
+    public Typeface getContentTitleFontFamily(Context context) {
         if (content_title_font_family == null || content_title_font_family.equals("")) {
             return Typeface.DEFAULT;
         }
@@ -79,6 +103,12 @@ public class ExtendedProps implements Serializable {
         }
         if (FontFamily.Serif.toString().equals(content_title_font_family.toLowerCase())) {
             return Typeface.SERIF;
+        }
+        if(content_title_custom_font_family_android != null && !content_title_custom_font_family_android.isEmpty()) {
+            if (AppUtils.isResourceAvailable(context, content_title_custom_font_family_android)) {
+                int id = context.getResources().getIdentifier(content_title_custom_font_family_android, "font", context.getPackageName());
+                return ResourcesCompat.getFont(context, id);
+            }
         }
 
         return Typeface.DEFAULT;
@@ -100,22 +130,28 @@ public class ExtendedProps implements Serializable {
         return content_body_text_color;
     }
 
-    public void setContentBodyTextFontFamily(String contentBodyTextFontFamily) {
-        content_body_text_font_family = contentBodyTextFontFamily;
+    public void setContentBodyFontFamily(String contentBodyFontFamily) {
+        content_body_font_family = contentBodyFontFamily;
     }
 
-    public Typeface getContentBodyTextFontFamily() {
-        if (content_body_text_font_family == null || content_body_text_font_family.equals("")) {
+    public Typeface getContentBodyFontFamily(Context context) {
+        if (content_body_font_family == null || content_body_font_family.equals("")) {
             return Typeface.DEFAULT;
         }
-        if (FontFamily.Monospace.toString().equals(content_body_text_font_family.toLowerCase())) {
+        if (FontFamily.Monospace.toString().equals(content_body_font_family.toLowerCase())) {
             return Typeface.MONOSPACE;
         }
-        if (FontFamily.SansSerif.toString().equals(content_body_text_font_family.toLowerCase())) {
+        if (FontFamily.SansSerif.toString().equals(content_body_font_family.toLowerCase())) {
             return Typeface.SANS_SERIF;
         }
-        if (FontFamily.Serif.toString().equals(content_body_text_font_family.toLowerCase())) {
+        if (FontFamily.Serif.toString().equals(content_body_font_family.toLowerCase())) {
             return Typeface.SERIF;
+        }
+        if(content_body_custom_font_family_android != null && !content_body_custom_font_family_android.isEmpty()) {
+            if (AppUtils.isResourceAvailable(context, content_body_custom_font_family_android)) {
+                int id = context.getResources().getIdentifier(content_body_custom_font_family_android, "font", context.getPackageName());
+                return ResourcesCompat.getFont(context, id);
+            }
         }
 
         return Typeface.DEFAULT;
@@ -149,7 +185,7 @@ public class ExtendedProps implements Serializable {
         button_font_family = buttonFontFamily;
     }
 
-    public Typeface getButtonFontFamily() {
+    public Typeface getButtonFontFamily(Context context) {
         if (button_font_family == null || button_font_family.equals("")) {
             return Typeface.DEFAULT;
         }
@@ -161,6 +197,12 @@ public class ExtendedProps implements Serializable {
         }
         if (FontFamily.Serif.toString().equals(button_font_family.toLowerCase())) {
             return Typeface.SERIF;
+        }
+        if(button_custom_font_family_android != null && !button_custom_font_family_android.isEmpty()) {
+            if (AppUtils.isResourceAvailable(context, button_custom_font_family_android)) {
+                int id = context.getResources().getIdentifier(button_custom_font_family_android, "font", context.getPackageName());
+                return ResourcesCompat.getFont(context, id);
+            }
         }
 
         return Typeface.DEFAULT;
@@ -186,7 +228,7 @@ public class ExtendedProps implements Serializable {
         promocode_font_family = promoCodeFontFamily;
     }
 
-    public Typeface getPromoCodeFontFamily() {
+    public Typeface getPromoCodeFontFamily(Context context) {
         if (promocode_font_family == null || promocode_font_family.equals("")) {
             return Typeface.DEFAULT;
         }
@@ -198,6 +240,12 @@ public class ExtendedProps implements Serializable {
         }
         if (FontFamily.Serif.toString().equals(promocode_font_family.toLowerCase())) {
             return Typeface.SERIF;
+        }
+        if(promocode_custom_font_family_android != null && !promocode_custom_font_family_android.isEmpty()) {
+            if (AppUtils.isResourceAvailable(context, promocode_custom_font_family_android)) {
+                int id = context.getResources().getIdentifier(promocode_custom_font_family_android, "font", context.getPackageName());
+                return ResourcesCompat.getFont(context, id);
+            }
         }
 
         return Typeface.DEFAULT;
@@ -231,7 +279,7 @@ public class ExtendedProps implements Serializable {
         copybutton_font_family = copyButtonFontFamily;
     }
 
-    public Typeface getCopyButtonFontFamily() {
+    public Typeface getCopyButtonFontFamily(Context context) {
         if (copybutton_font_family == null || copybutton_font_family.equals("")) {
             return Typeface.DEFAULT;
         }
@@ -243,6 +291,12 @@ public class ExtendedProps implements Serializable {
         }
         if (FontFamily.Serif.toString().equals(copybutton_font_family.toLowerCase())) {
             return Typeface.SERIF;
+        }
+        if(copybutton_custom_font_family_android != null && !copybutton_custom_font_family_android.isEmpty()) {
+            if (AppUtils.isResourceAvailable(context, copybutton_custom_font_family_android)) {
+                int id = context.getResources().getIdentifier(copybutton_custom_font_family_android, "font", context.getPackageName());
+                return ResourcesCompat.getFont(context, id);
+            }
         }
 
         return Typeface.DEFAULT;

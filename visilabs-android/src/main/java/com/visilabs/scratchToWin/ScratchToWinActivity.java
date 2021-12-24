@@ -106,22 +106,22 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         binding.titleText.setText(mScratchToWinMessage.getActiondata().getContentTitle().replace("\\n", "\n"));
         binding.titleText.setTextColor(Color.parseColor(mExtendedProps.getContentTitleTextColor()));
         binding.titleText.setTextSize(Float.parseFloat(mExtendedProps.getContentTitleTextSize()) + 12);
-        binding.titleText.setTypeface(mExtendedProps.getContentTitleFontFamily(), Typeface.BOLD);
+        binding.titleText.setTypeface(mExtendedProps.getContentTitleFontFamily(this), Typeface.BOLD);
 
         binding.bodyText.setText(mScratchToWinMessage.getActiondata().getContentBody().replace("\\n", "\n"));
         binding.bodyText.setTextColor(Color.parseColor(mExtendedProps.getContentBodyTextColor()));
         binding.bodyText.setTextSize(Float.parseFloat(mExtendedProps.getContentBodyTextSize()) + 8);
-        binding.bodyText.setTypeface(mExtendedProps.getContentBodyTextFontFamily());
+        binding.bodyText.setTypeface(mExtendedProps.getContentBodyFontFamily(this));
 
         binding.promotionCodeText.setText(mScratchToWinMessage.getActiondata().getPromotionCode());
         binding.promotionCodeText.setTextColor(Color.parseColor(mExtendedProps.getPromoCodeTextColor()));
         binding.promotionCodeText.setTextSize(Float.parseFloat(mExtendedProps.getPromoCodeTextSize()) + 12);
-        binding.promotionCodeText.setTypeface(mExtendedProps.getPromoCodeFontFamily());
+        binding.promotionCodeText.setTypeface(mExtendedProps.getPromoCodeFontFamily(this));
 
         binding.copyToClipboard.setText(mScratchToWinMessage.getActiondata().getCopybuttonLabel());
         binding.copyToClipboard.setTextColor(Color.parseColor(mExtendedProps.getCopyButtonTextColor()));
         binding.copyToClipboard.setTextSize(Float.parseFloat(mExtendedProps.getCopyButtonTextSize()) + 10);
-        binding.copyToClipboard.setTypeface(mExtendedProps.getCopyButtonFontFamily());
+        binding.copyToClipboard.setTypeface(mExtendedProps.getCopyButtonFontFamily(this));
         binding.copyToClipboard.setBackgroundColor(Color.parseColor(mExtendedProps.getCopyButtonColor()));
 
         binding.viewToBeScratched.setColor(Color.parseColor(mScratchToWinMessage.getActiondata().getScratchColor()));
@@ -211,7 +211,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         binding.saveMail.setText(mScratchToWinMessage.getActiondata().getMailSubscriptionForm().getButtonLabel());
         binding.saveMail.setTextColor(Color.parseColor(mExtendedProps.getButtonTextColor()));
         binding.saveMail.setTextSize(Float.parseFloat(mExtendedProps.getButtonTextSize()) + 10);
-        binding.saveMail.setTypeface(mExtendedProps.getButtonFontFamily());
+        binding.saveMail.setTypeface(mExtendedProps.getButtonFontFamily(this));
         binding.saveMail.setBackgroundColor(Color.parseColor(mExtendedProps.getButtonColor()));
 
         binding.emailEdit.addTextChangedListener(new TextWatcher() {
