@@ -686,11 +686,25 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     public void setCloseButton() {
 
-        if(mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
-            binding.ibClose.setVisibility(View.GONE);
-            this.setFinishOnTouchOutside(true);
+        if(mInAppMessage.getActionData().getCloseEventTrigger() != null) {
+            if (mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
+                binding.ibClose.setVisibility(View.GONE);
+                this.setFinishOnTouchOutside(true);
+            } else {
+                this.setFinishOnTouchOutside(!mInAppMessage.getActionData().getCloseEventTrigger().equals("closebutton"));
+                binding.ibClose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+
+                        finish();
+                    }
+                });
+
+                binding.ibClose.setBackgroundResource(getCloseIcon());
+            }
         } else {
-            this.setFinishOnTouchOutside(!mInAppMessage.getActionData().getCloseEventTrigger().equals("closebutton"));
+            this.setFinishOnTouchOutside(true);
             binding.ibClose.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
