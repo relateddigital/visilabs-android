@@ -104,7 +104,7 @@ public class MailSubscriptionFormActivity extends Activity {
     }
 
     private void setTitle() {
-        binding.tvTitle.setTypeface(getFont_family(mExtendedProps.getTitle_font_family()), Typeface.BOLD);
+        binding.tvTitle.setTypeface(mExtendedProps.getTitle_font_family(this), Typeface.BOLD);
         binding.tvTitle.setText(mMailSubscriptionForm.getActiondata().getTitle().replace("\\n","\n"));
         binding.tvTitle.setTextColor(Color.parseColor(mExtendedProps.getTitle_text_color()));
         binding.tvTitle.setTextSize(Float.parseFloat(mExtendedProps.getTitle_text_size()) + 12);
@@ -112,7 +112,7 @@ public class MailSubscriptionFormActivity extends Activity {
 
     private void setBody() {
         binding.tvBody.setText(mMailSubscriptionForm.getActiondata().getMessage().replace("\\n","\n"));
-        binding.tvBody.setTypeface(getFont_family(mExtendedProps.getText_font_family()));
+        binding.tvBody.setTypeface(mExtendedProps.getText_font_family(this));
         binding.tvBody.setTextColor(Color.parseColor(mExtendedProps.getText_color()));
         binding.tvBody.setTextSize(Float.parseFloat(mExtendedProps.getText_size()) + 8);
     }
@@ -154,7 +154,7 @@ public class MailSubscriptionFormActivity extends Activity {
 
     private void setButton() {
         binding.btn.setText(mMailSubscriptionForm.getActiondata().getButton_label());
-        binding.btn.setTypeface(getFont_family(mExtendedProps.getButton_font_family()));
+        binding.btn.setTypeface(mExtendedProps.getButton_font_family(this));
         binding.btn.setTextColor(Color.parseColor(mExtendedProps.getButton_text_color()));
         binding.btn.setBackgroundColor(Color.parseColor(mExtendedProps.getButton_color()));
         binding.btn.setTextSize(Float.parseFloat(mExtendedProps.getButton_text_size()) + 8);
@@ -250,27 +250,6 @@ public class MailSubscriptionFormActivity extends Activity {
         }
         return Html.fromHtml(text);
     }
-
-    private Typeface getFont_family(String font_family) {
-        if (font_family == null) {
-            return Typeface.DEFAULT;
-        }
-        if (FontFamily.Monospace.toString().equals(font_family.toLowerCase())) {
-            return Typeface.MONOSPACE;
-        }
-        if (FontFamily.SansSerif.toString().equals(font_family.toLowerCase())) {
-            return Typeface.SANS_SERIF;
-        }
-        if (FontFamily.Serif.toString().equals(font_family.toLowerCase())) {
-            return Typeface.SERIF;
-        }
-        if (FontFamily.Default.toString().equals(font_family.toLowerCase())) {
-            return Typeface.DEFAULT;
-        }
-        return Typeface.DEFAULT;
-    }
-
-
 
     private int getCloseIcon() {
         switch (mExtendedProps.getClose_button_color()) {
