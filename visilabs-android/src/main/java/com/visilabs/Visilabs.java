@@ -1036,6 +1036,20 @@ public class Visilabs {
         }
     }
 
+    public void signUp(String exVisitorID, HashMap<String, String> properties, Activity parent) {
+        if (StringUtils.isNullOrWhiteSpace(exVisitorID)) {
+            VisilabsLog.w(LOG_TAG, "Attempted to use null or empty exVisitorID. Ignoring.");
+        } else {
+            if (properties == null) {
+                properties = new HashMap<>();
+            }
+            properties.put(VisilabsConstant.EXVISITORID_KEY, exVisitorID);
+            properties.put(VisilabsConstant.SIGN_UP_KEY, exVisitorID);
+            properties.put(VisilabsConstant.B_SIGN_UP_KEY, "SignUp");
+            customEvent("SignUpPage", properties, parent);
+        }
+    }
+
     public void login(String exVisitorID, HashMap<String, String> properties) {
         if (StringUtils.isNullOrWhiteSpace(exVisitorID)) {
             VisilabsLog.w(LOG_TAG, "Attempted to use null or empty exVisitorID. Ignoring.");
@@ -1047,6 +1061,20 @@ public class Visilabs {
             properties.put(VisilabsConstant.LOGIN_KEY, exVisitorID);
             properties.put(VisilabsConstant.B_LOGIN_KEY, "Login");
             customEvent("LoginPage", properties);
+        }
+    }
+
+    public void login(String exVisitorID, HashMap<String, String> properties, Activity parent) {
+        if (StringUtils.isNullOrWhiteSpace(exVisitorID)) {
+            VisilabsLog.w(LOG_TAG, "Attempted to use null or empty exVisitorID. Ignoring.");
+        } else {
+            if (properties == null) {
+                properties = new HashMap<>();
+            }
+            properties.put(VisilabsConstant.EXVISITORID_KEY, exVisitorID);
+            properties.put(VisilabsConstant.LOGIN_KEY, exVisitorID);
+            properties.put(VisilabsConstant.B_LOGIN_KEY, "Login");
+            customEvent("LoginPage", properties, parent);
         }
     }
 
