@@ -194,7 +194,7 @@ public final class AppUtils {
         if(titleFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getTitleCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getDisplayNameCustomFontFamilyAndroid(), fontExtension);
+                htmlStr = writeToFile(context, extendedProps.getTitleCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
@@ -202,7 +202,7 @@ public final class AppUtils {
         if(textFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getTextCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getDisplayNameCustomFontFamilyAndroid(), fontExtension);
+                htmlStr = writeToFile(context, extendedProps.getTextCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
@@ -210,7 +210,7 @@ public final class AppUtils {
         if(buttonFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getButtonCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getDisplayNameCustomFontFamilyAndroid(), fontExtension);
+                htmlStr = writeToFile(context, extendedProps.getButtonCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
@@ -218,7 +218,7 @@ public final class AppUtils {
         if(promoCodeTitleFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getPromocodeTitleCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getDisplayNameCustomFontFamilyAndroid(), fontExtension);
+                htmlStr = writeToFile(context, extendedProps.getPromocodeTitleCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
@@ -226,7 +226,7 @@ public final class AppUtils {
         if(copyButtonFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getCopyButtonCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getDisplayNameCustomFontFamilyAndroid(), fontExtension);
+                htmlStr = writeToFile(context, extendedProps.getCopyButtonCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
@@ -234,7 +234,7 @@ public final class AppUtils {
         if(promoCodesSoldOutMessageFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getPromocodesSoldOutMessageCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getDisplayNameCustomFontFamilyAndroid(), fontExtension);
+                htmlStr = writeToFile(context, extendedProps.getPromocodesSoldOutMessageCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
