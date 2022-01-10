@@ -121,7 +121,7 @@ public class ExtendedProps implements Serializable {
     }
 
     public void setDisplayNameCustomFontFamilyAndroid(String displayNameCustomFontFamilyAndroid) {
-        displayname_custom_font_family_android = displayname_custom_font_family_android;
+        displayname_custom_font_family_android = displayNameCustomFontFamilyAndroid;
     }
 
     public String getDisplayNameCustomFontFamilyAndroid() {
