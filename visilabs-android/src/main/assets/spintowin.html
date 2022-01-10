@@ -612,14 +612,9 @@
         }
 
         #wheel-container {
-            float: left;
+            float: unset;
             width: 207px;
             height: 414px;
-        }
-
-        #wheel-container {
-            float: unset;
-            width: 100%;
             text-align: center;
             position: relative;
         }
@@ -748,6 +743,7 @@
             };
 
             config = {
+                "fontFiles":["sydneysignature.ttf"],
                 "actid": 100,
                 "title": "Spin-To-Win-Finger-Test",
                 "actiontype": "SpinToWin",
@@ -811,7 +807,7 @@
                     "slice_count": "8",
                     "sendemail": false,
                     "courseofaction": "GetExistingPromoCode",
-                    "ExtendedProps": "%7B%22displayname_text_color%22%3A%22%23ffffff%22%2C%22displayname_font_family%22%3A%22sansserif%22%2C%22displayname_text_size%22%3A%223%22%2C%22title_text_color%22%3A%22%23422de8%22%2C%22title_font_family%22%3A%22sansserif%22%2C%22title_text_size%22%3A%225%22%2C%22text_color%22%3A%22%23422de8%22%2C%22text_font_family%22%3A%22sansserif%22%2C%22text_size%22%3A%224%22%2C%22button_color%22%3A%22%23ffa3bf%22%2C%22button_text_color%22%3A%22%23ffffff%22%2C%22button_font_family%22%3A%22sansserif%22%2C%22button_text_size%22%3A%223%22%2C%22promocode_title_text_color%22%3A%22%233047bf%22%2C%22promocode_title_font_family%22%3A%22sansserif%22%2C%22promocode_title_text_size%22%3A%223%22%2C%22promocode_background_color%22%3A%22%233047bf%22%2C%22promocode_text_color%22%3A%22%23ffffff%22%2C%22copybutton_color%22%3A%22%233047bf%22%2C%22copybutton_text_color%22%3A%22%23ffffff%22%2C%22copybutton_font_family%22%3A%22sansserif%22%2C%22copybutton_text_size%22%3A%223%22%2C%22emailpermit_text_size%22%3A%222%22%2C%22emailpermit_text_url%22%3A%22%22%2C%22consent_text_size%22%3A%222%22%2C%22consent_text_url%22%3A%22https%3A%2F%2Fwww.relateddigital.com%2F%22%2C%22close_button_color%22%3A%22black%22%2C%22background_color%22%3A%22%2348a4af%22%2C%22promocodes_soldout_message_text_color%22%3A%22%23a51a4f%22%2C%22promocodes_soldout_message_font_family%22%3A%22sansserif%22%2C%22promocodes_soldout_message_text_size%22%3A%224%22%2C%22promocodes_soldout_message_background_color%22%3A%22%238b9b18%22%7D",
+                    "ExtendedProps": "%7B%22displayname_text_color%22%3A%22%23ffffff%22%2C%22displayname_font_family%22%3A%22custom%22%2C%22displayname_custom_font_family_ios%22%3A%22sidneySignature%22%2C%22displayname_custom_font_family_android%22%3A%22sydneysignature%22%2C%22displayname_text_size%22%3A%223%22%2C%22title_text_color%22%3A%22%23422de8%22%2C%22title_font_family%22%3A%22custom%22%2C%22title_custom_font_family_ios%22%3A%22ios%22%2C%22title_custom_font_family_android%22%3A%22sydney_signature%22%2C%22title_text_size%22%3A%225%22%2C%22text_color%22%3A%22%23422de8%22%2C%22text_font_family%22%3A%22custom%22%2C%22text_custom_font_family_ios%22%3A%22ios%22%2C%22text_custom_font_family_android%22%3A%22sydney_signature%22%2C%22text_size%22%3A%224%22%2C%22button_color%22%3A%22%23ffa3bf%22%2C%22button_text_color%22%3A%22%23ffffff%22%2C%22button_font_family%22%3A%22custom%22%2C%22button_custom_font_family_ios%22%3A%22ios%22%2C%22button_custom_font_family_android%22%3A%22sydney_signature%22%2C%22button_text_size%22%3A%223%22%2C%22promocode_title_text_color%22%3A%22%233047bf%22%2C%22promocode_title_font_family%22%3A%22custom%22%2C%22promocode_title_custom_font_family_ios%22%3A%22sidneySignature%22%2C%22promocode_title_custom_font_family_android%22%3A%22sydney_signature%22%2C%22promocode_title_text_size%22%3A%223%22%2C%22promocode_background_color%22%3A%22%233047bf%22%2C%22promocode_text_color%22%3A%22%23ffffff%22%2C%22copybutton_color%22%3A%22%233047bf%22%2C%22copybutton_text_color%22%3A%22%23ffffff%22%2C%22copybutton_font_family%22%3A%22custom%22%2C%22copybutton_custom_font_family_ios%22%3A%22sidneySignature%22%2C%22copybutton_custom_font_family_android%22%3A%22sydney_signature%22%2C%22copybutton_text_size%22%3A%223%22%2C%22emailpermit_text_size%22%3A%222%22%2C%22emailpermit_text_url%22%3A%22%22%2C%22consent_text_size%22%3A%222%22%2C%22consent_text_url%22%3A%22https%3A%2F%2Fwww.relateddigital.com%2F%22%2C%22close_button_color%22%3A%22black%22%2C%22background_color%22%3A%22%2348a4af%22%2C%22promocodes_soldout_message_text_color%22%3A%22%23a51a4f%22%2C%22promocodes_soldout_message_font_family%22%3A%22custom%22%2C%22promocodes_soldout_message_custom_font_family_ios%22%3A%22sidneySignature%22%2C%22promocodes_soldout_message_custom_font_family_android%22%3A%22sydney_signature%22%2C%22promocodes_soldout_message_text_size%22%3A%224%22%2C%22promocodes_soldout_message_background_color%22%3A%22%238b9b18%22%7D",
                     "report": {
                         "impression": "",
                         "click": "OM.zn=acttype-27&OM.zpc=act-100"

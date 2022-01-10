@@ -4,31 +4,38 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
+
 import com.google.gson.Gson;
 import com.visilabs.android.R;
 import com.visilabs.spinToWin.model.SpinToWinModel;
+import com.visilabs.util.AppUtils;
+
+import java.util.ArrayList;
 
 public class SpinToWinActivity extends FragmentActivity implements SpinToWinCompleteInterface, SpinToWinCopyToClipboardInterface {
     private static final String LOG_TAG = "SpinToWin";
 
     private String jsonStr = "";
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             jsonStr = savedInstanceState.getString("spin-to-win-json-str", "");
         } else {
             Intent intent = getIntent();
-            if(intent != null && intent.hasExtra("spin-to-win-data")) {
+            if (intent != null && intent.hasExtra("spin-to-win-data")) {
                 final SpinToWinModel response = (SpinToWinModel) intent.getSerializableExtra("spin-to-win-data");
-                if(response != null) {
+                if (response != null) {
                     jsonStr = new Gson().toJson(response);
                 } else {
                     Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");
@@ -39,10 +46,17 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
                 finish();
             }
         }
-        if(jsonStr != null && !jsonStr.equals("")){
-            WebViewDialogFragment webViewDialogFragment = WebViewDialogFragment.newInstance("spintowin.html", jsonStr);
-            webViewDialogFragment.setSpinToWinListeners(this, this);
-            webViewDialogFragment.display(getSupportFragmentManager());
+
+        if (jsonStr != null && !jsonStr.equals("")) {
+            ArrayList<String> res = AppUtils.createSpinToWinCustomFontFiles(this, jsonStr);
+            if(res == null) {
+                Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");
+                finish();
+            } else {
+                WebViewDialogFragment webViewDialogFragment = WebViewDialogFragment.newInstance(res.get(0), res.get(1), res.get(2));
+                webViewDialogFragment.setSpinToWinListeners(this, this);
+                webViewDialogFragment.display(getSupportFragmentManager());
+            }
         } else {
             Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");
             finish();

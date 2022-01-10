@@ -3,8 +3,11 @@ package com.visilabs.spinToWin.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class SpinToWinModel implements Serializable {
+
+    public ArrayList<String> fontFiles = new ArrayList<>();
 
     @SerializedName("actid")
     private Integer actid;

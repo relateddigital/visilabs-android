@@ -2861,8 +2861,11 @@ function SpinToWin(config) {
 
 	this.setContent();
 	this.styleHandler();
+	this.addFonts();
+	this.setFonts();
 	window.onresize = function () {
-		window.spinToWin.styleHandler()
+		window.spinToWin.styleHandler();
+		window.spinToWin.setFonts();
 	};
 	window.spinToWin = this;
 	this.createItems();
@@ -2983,7 +2986,7 @@ SpinToWin.prototype.createEasyWheel = function () {
 };
 SpinToWin.prototype.convertConfigJson = function () {
 	//actiondata
-	
+
 	this.config.promocodesSoldoutMessage = this.config.actiondata.promocodes_soldout_message;
 	this.config.mailSubscription = this.config.actiondata.mail_subscription;
 	this.config.sliceCount = this.config.actiondata.slice_count;
@@ -2997,7 +3000,7 @@ SpinToWin.prototype.convertConfigJson = function () {
 	this.config.promocodeTitle = this.config.actiondata.promocode_title;
 	this.config.wheelSpinAction = this.config.actiondata.wheel_spin_action;
 	this.config.copyButtonLabel = this.config.actiondata.copybutton_label;
-	
+
 	//spin_to_win_content
 	this.config.title = this.config.actiondata.spin_to_win_content.title;
 	this.config.message = this.config.actiondata.spin_to_win_content.message;
@@ -3045,7 +3048,41 @@ SpinToWin.prototype.convertConfigJson = function () {
 	this.config.promocodes_soldout_message_text_size = extendedProps.promocodes_soldout_message_text_size;
 	this.config.promocodes_soldout_message_background_color = extendedProps.promocodes_soldout_message_background_color;
 
+	this.config.displaynameCustomFontFamilyAndroid = extendedProps.displayname_custom_font_family_android;
+	this.config.titleCustomFontFamilyAndroid = extendedProps.title_custom_font_family_android;
+	this.config.textCustomFontFamilyAndroid = extendedProps.text_custom_font_family_android;
+	this.config.buttonCustomFontFamilyAndroid = extendedProps.button_custom_font_family_android;
+	this.config.promocodeTitleCustomFontFamilyAndroid = extendedProps.promocode_title_custom_font_family_android;
+	this.config.copybuttonCustomFontFamilyAndroid = extendedProps.copybutton_custom_font_family_android;
+	this.config.promocodesSoldoutMessageCustomFontFamilyAndroid = extendedProps.promocodes_soldout_message_custom_font_family_android;
+
 };
+SpinToWin.prototype.addFonts = function () {
+	if(this.config.fontFiles === undefined) {
+		return
+	}
+	for (var fontFileIndex in this.config.fontFiles) {
+	    var fontFile = this.config.fontFiles[fontFileIndex];
+	    var fontFamily = fontFile.split(".")[0];
+		var newStyle = document.createElement('style');
+        var cssContent = "@font-face{font-family:"+fontFamily+";src:url('"+fontFile+"');}";
+        newStyle.appendChild(document.createTextNode(cssContent));
+        document.head.appendChild(newStyle);
+	}
+};
+
+SpinToWin.prototype.setFonts = function () {
+	if (window.Android || window.BrowserTest) {
+		if (typeof this.config.displaynameFontFamily === "string" && this.config.displaynameFontFamily.toLowerCase() === "custom") {
+			this.wheelContainer.style.fontFamily = this.config.displaynameCustomFontFamilyAndroid;
+		}
+	} else if (window.webkit && window.webkit.messageHandlers) {
+		if (typeof this.config.displaynameFontFamily === "string" && this.config.displaynameFontFamily.toLowerCase() === "custom") {
+			this.wheelContainer.style.fontFamily = this.config.displaynameCustomFontFamilyIOS;
+		}
+	}
+};
+
 SpinToWin.prototype.getPromotionCode = function () {
 	if (window.Android) {
 		Android.getPromotionCode()
@@ -3157,10 +3194,10 @@ SpinToWin.prototype.setContent = function () {
 	this.promocodeTitleElement.style.fontFamily = this.config.promocodeTitleFontFamily;
 	this.promocodeTitleElement.style.fontSize = this.config.promocodeTitleTextSize + 20 + "px";
 
-	if(this.config.promocodesSoldoutMessage !== undefined && this.config.promocodesSoldoutMessage.length > 0) {
+	if (this.config.promocodesSoldoutMessage !== undefined && this.config.promocodesSoldoutMessage.length > 0) {
 		this.promocodesSoldoutMessageElement.innerHTML = this.config.promocodesSoldoutMessage.replace(/\\n/g, "<br/>");
 	}
-	
+
 	this.promocodesSoldoutMessageElement.style.color = this.config.promocodes_soldout_message_text_color;
 	this.promocodesSoldoutMessageElement.style.fontFamily = this.config.promocodes_soldout_message_font_family;
 	this.promocodesSoldoutMessageElement.style.fontSize = this.config.promocodes_soldout_message_text_size + 20 + "px";

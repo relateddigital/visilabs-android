@@ -19,25 +19,27 @@ import com.visilabs.util.VisilabsConstant;
 public class WebViewDialogFragment extends DialogFragment {
 
     public static final String TAG = "WebViewDialogFragment";
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "filename";
-    private static final String ARG_PARAM2 = "response";
+    private static final String ARG_PARAM1 = "response";
+    private static final String ARG_PARAM2 = "baseUrl";
+    private static final String ARG_PARAM3 = "htmlString";
 
     WebView webView;
     private static WebViewJavaScriptInterface mJavaScriptInterface;
     private String mResponse;
-    private String fileName = "";
+    private String baseUrl = "";
+    private String htmlString = "";
     private boolean mIsRotation = false;
     private SpinToWinCompleteInterface mListener;
     private SpinToWinCopyToClipboardInterface mCopyToClipboardInterface;
 
     public WebViewDialogFragment (){}
 
-    public static WebViewDialogFragment newInstance(String filename, String response) {
+    public static WebViewDialogFragment newInstance(String baseUrl, String htmlString , String response) {
         WebViewDialogFragment fragment = new WebViewDialogFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, filename);
-        args.putString(ARG_PARAM2, response);
+        args.putString(ARG_PARAM1, response);
+        args.putString(ARG_PARAM2, baseUrl);
+        args.putString(ARG_PARAM3, htmlString);
         mJavaScriptInterface = new WebViewJavaScriptInterface(fragment, response);
         fragment.setArguments(args);
         return fragment;
@@ -64,7 +66,8 @@ public class WebViewDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_FullScreenDialog);
         if(getArguments() != null) {
-            this.fileName = getArguments().getString("filename");
+            this.baseUrl = getArguments().getString("baseUrl");
+            this.htmlString = getArguments().getString("htmlString");
             mResponse = getArguments().getString("response");
             mJavaScriptInterface = new WebViewJavaScriptInterface(this, mResponse);
             mJavaScriptInterface.setSpinToWinListeners(mListener, mCopyToClipboardInterface);
@@ -94,16 +97,17 @@ public class WebViewDialogFragment extends DialogFragment {
         webView = view.findViewById(R.id.webview);
         webView.setWebChromeClient(getWebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAllowContentAccess(true);
+        webView.getSettings().setAllowFileAccess(true);
 
         if (Build.VERSION.SDK_INT >= VisilabsConstant.UI_FEATURES_MIN_API) {
             webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
         }
 
         webView.addJavascriptInterface(mJavaScriptInterface, "Android");
-        String folderPath = "file:android_asset/";
-        String fileName = this.fileName;
-        String file = folderPath + fileName;
-        webView.loadUrl(file);
+
+        webView.loadDataWithBaseURL(baseUrl , htmlString, "text/html", "utf-8", "about:blank");
+
         webView.reload();
         return view;
     }
