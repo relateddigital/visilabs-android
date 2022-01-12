@@ -16,12 +16,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
 import com.visilabs.Visilabs;
 import com.visilabs.android.databinding.ActivityInAppFullBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
+import com.visilabs.util.AppUtils;
 import com.visilabs.util.StringUtils;
 
 
@@ -111,7 +113,13 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
         }
         if(!mInApp.getActionData().getImg().equals("")) {
             binding.fivInAppImage.setVisibility(View.VISIBLE);
-            Picasso.get().load(mInApp.getActionData().getImg()).into(binding.fivInAppImage);
+            if (AppUtils.isAnImage(mInApp.getActionData().getImg())) {
+                Picasso.get().load(mInApp.getActionData().getImg()).into(binding.fivInAppImage);
+            } else {
+                Glide.with(this)
+                        .load(mInApp.getActionData().getImg())
+                        .into(binding.fivInAppImage);
+            }
         } else {
             binding.fivInAppImage.setVisibility(View.GONE);
         }

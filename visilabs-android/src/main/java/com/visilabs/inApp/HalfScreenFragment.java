@@ -15,12 +15,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.FragmentHalfScreenBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
+import com.visilabs.util.AppUtils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -115,9 +117,15 @@ public class HalfScreenFragment extends Fragment {
         } else {
             binding.topTitleView.setVisibility(View.GONE);
         }
-        Picasso.get().
-                load(mInAppMessage.getActionData().getImg())
-                .into(binding.topImageView);
+        if (AppUtils.isAnImage(mInAppMessage.getActionData().getImg())) {
+            Picasso.get().
+                    load(mInAppMessage.getActionData().getImg())
+                    .into(binding.topImageView);
+        } else {
+            Glide.with(getActivity())
+                    .load(mInAppMessage.getActionData().getImg())
+                    .into(binding.topImageView);
+        }
         binding.halfScreenContainerTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,9 +164,15 @@ public class HalfScreenFragment extends Fragment {
         } else {
             binding.botTitleView.setVisibility(View.GONE);
         }
-        Picasso.get().
-                load(mInAppMessage.getActionData().getImg())
-                .into(binding.botImageView);
+        if (AppUtils.isAnImage(mInAppMessage.getActionData().getImg())) {
+            Picasso.get().
+                    load(mInAppMessage.getActionData().getImg())
+                    .into(binding.botImageView);
+        } else {
+            Glide.with(getActivity())
+                    .load(mInAppMessage.getActionData().getImg())
+                    .into(binding.botImageView);
+        }
         binding.halfScreenContainerBot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

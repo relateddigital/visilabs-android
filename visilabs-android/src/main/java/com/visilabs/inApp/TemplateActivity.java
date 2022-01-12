@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
@@ -29,6 +30,7 @@ import com.visilabs.android.databinding.ActivityTemplateCarouselBinding;
 import com.visilabs.android.databinding.NpsSecondPopUpBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.inApp.carousel.OnSwipeTouchListener;
+import com.visilabs.util.AppUtils;
 import com.visilabs.util.StringUtils;
 import com.visilabs.view.BaseRating;
 import com.visilabs.view.SmileRating;
@@ -174,7 +176,13 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 && mInAppMessage.getActionData().getImg() != null &&
                 !mInAppMessage.getActionData().getImg().isEmpty()) {
             binding.ivTemplate.setVisibility(View.VISIBLE);
-            Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivTemplate);
+            if (AppUtils.isAnImage(mInAppMessage.getActionData().getImg())) {
+                Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivTemplate);
+            } else {
+                Glide.with(this)
+                        .load(mInAppMessage.getActionData().getImg())
+                        .into(binding.ivTemplate);
+            }
         } else {
             binding.ivTemplate.setVisibility(View.GONE);
         }
@@ -545,8 +553,14 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 bindingSecondPopUp.couponContainer.setVisibility(View.GONE);
                 if(mInAppMessage.getActionData().getSecondPopupImg2()!=null &&
                         !mInAppMessage.getActionData().getSecondPopupImg2().isEmpty()){
-                    Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg2())
-                            .into(bindingSecondPopUp.imageView2);
+                    if (AppUtils.isAnImage(mInAppMessage.getActionData().getSecondPopupImg2())) {
+                        Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg2())
+                                .into(bindingSecondPopUp.imageView2);
+                    } else {
+                        Glide.with(this)
+                                .load(mInAppMessage.getActionData().getSecondPopupImg2())
+                                .into(bindingSecondPopUp.imageView2);
+                    }
                 }
                 break;
             }
@@ -577,8 +591,14 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         }
         if(mInAppMessage.getActionData().getSecondPopupImg1()!=null &&
         !mInAppMessage.getActionData().getSecondPopupImg1().isEmpty()){
-            Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg1())
-                    .into(bindingSecondPopUp.imageView);
+            if (AppUtils.isAnImage(mInAppMessage.getActionData().getSecondPopupImg1())) {
+                Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg1())
+                        .into(bindingSecondPopUp.imageView);
+            } else {
+                Glide.with(this)
+                        .load(mInAppMessage.getActionData().getSecondPopupImg1())
+                        .into(bindingSecondPopUp.imageView);
+            }
         }
         bindingSecondPopUp.titleView.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
         bindingSecondPopUp.titleView.setText(mInAppMessage.getActionData().getSecondPopupMsgTitle().replace("\\n","\n"));
@@ -859,9 +879,15 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         switch (mCarouselPosition) {
             case 0: {
                 bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#CD2F2F"));
-                Picasso.get().
-                        load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg")
-                        .into(bindingCarousel.carouselImage);
+                if (AppUtils.isAnImage("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg")) {
+                    Picasso.get().
+                            load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg")
+                            .into(bindingCarousel.carouselImage);
+                } else {
+                    Glide.with(this)
+                            .load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg")
+                            .into(bindingCarousel.carouselImage);
+                }
 
                 bindingCarousel.carouselTitle.setText("Title1");
                 bindingCarousel.carouselTitle.setTextColor(Color.parseColor("#E8F279"));
@@ -928,9 +954,15 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
             case 2: {
                 bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#2FBBCD"));
-                Picasso.get().
-                        load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg")
-                        .into(bindingCarousel.carouselImage);
+                if (AppUtils.isAnImage("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg")) {
+                    Picasso.get().
+                            load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg")
+                            .into(bindingCarousel.carouselImage);
+                } else {
+                    Glide.with(this)
+                            .load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg")
+                            .into(bindingCarousel.carouselImage);
+                }
                 bindingCarousel.carouselTitle.setText("Title3");
                 bindingCarousel.carouselTitle.setTextColor(Color.parseColor("#FFFFFF"));
                 bindingCarousel.carouselTitle.setTextSize(32);
@@ -973,9 +1005,15 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
             case 4: {
                 bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor("#CD2FC5"));
-                Picasso.get().
-                        load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png")
-                        .into(bindingCarousel.carouselImage);
+                if (AppUtils.isAnImage("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png")) {
+                    Picasso.get().
+                            load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png")
+                            .into(bindingCarousel.carouselImage);
+                } else {
+                    Glide.with(this)
+                            .load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png")
+                            .into(bindingCarousel.carouselImage);
+                }
                 bindingCarousel.carouselTitle.setVisibility(View.GONE);
                 bindingCarousel.carouselBodyText.setText("Text5");
                 bindingCarousel.carouselBodyText.setTextColor(getResources().getColor(R.color.yellow));
@@ -1005,25 +1043,37 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private void cacheImages() {
         if (mIsCarousel) {
             //TODO: cache all images for carousel
-            Picasso.get().
-                    load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg").fetch();
-            Picasso.get().
-                    load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg").fetch();
-            Picasso.get().
-                    load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png").fetch();
+            if (AppUtils.isAnImage("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg")) {
+                Picasso.get().
+                        load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_154_20200603160304969.jpg").fetch();
+            }
+            if (AppUtils.isAnImage("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg")) {
+                Picasso.get().
+                        load("https://img.visilabs.net/in-app-message/uploaded_images/163_1100_411_20210121113801841.jpg").fetch();
+            }
+            if (AppUtils.isAnImage("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png")) {
+                Picasso.get().
+                        load("https://e7.pngegg.com/pngimages/994/882/png-clipart-new-super-mario-bros-2-new-super-mario-bros-2-mario-luigi-superstar-saga-mario-heroes-super-mario-bros.png").fetch();
+            }
         } else {
             if(mInAppMessage.getActionData().getImg()!=null &&
                     !mInAppMessage.getActionData().getImg().isEmpty()) {
-                Picasso.get().load(mInAppMessage.getActionData().getImg()).fetch();
+                if(AppUtils.isAnImage(mInAppMessage.getActionData().getImg())) {
+                    Picasso.get().load(mInAppMessage.getActionData().getImg()).fetch();
+                }
             }
             if(mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS_AND_SECOND_POP_UP) {
                 if(mInAppMessage.getActionData().getSecondPopupImg1()!=null &&
                         !mInAppMessage.getActionData().getSecondPopupImg1().isEmpty()){
-                    Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg1()).fetch();
+                    if(AppUtils.isAnImage(mInAppMessage.getActionData().getSecondPopupImg1())) {
+                        Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg1()).fetch();
+                    }
                 }
                 if(mInAppMessage.getActionData().getSecondPopupImg2()!=null &&
                         !mInAppMessage.getActionData().getSecondPopupImg2().isEmpty()){
-                    Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg2()).fetch();
+                    if(AppUtils.isAnImage(mInAppMessage.getActionData().getSecondPopupImg2())) {
+                        Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg2()).fetch();
+                    }
                 }
             }
         }

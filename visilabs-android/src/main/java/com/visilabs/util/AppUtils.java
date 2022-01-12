@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -153,6 +154,26 @@ public final class AppUtils {
         }
 
         return Typeface.DEFAULT;
+    }
+
+    public static boolean isAnImage(String url) {
+        boolean result = true;
+        String[] splitArr;
+        String extension;
+
+        try {
+            if (url != null && !url.isEmpty()) {
+                splitArr = url.split("\\.");
+                extension = splitArr[splitArr.length - 1];
+                if (!extension.toLowerCase(Locale.ROOT).equals("jpg") &&
+                        !extension.toLowerCase(Locale.ROOT).equals("png")) {
+                    result = false;
+                }
+            }
+        } catch (Exception e) {
+            Log.w("isAnImage", "Could not get the extension from url string!");
+        }
+        return result;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
