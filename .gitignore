@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 /.idea/compiler.xml
+/app/google-services.json
+/app/agconnect-services.json
