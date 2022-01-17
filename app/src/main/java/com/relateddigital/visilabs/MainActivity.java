@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
                 transaction.commit();
 
                 //TODO : When BE is ready
-                sendInAppRequest("notification");
+                //sendInAppRequest("notification");
             }
         });
 
