@@ -89,7 +89,7 @@ public class NotificationSmallFragment extends Fragment {
     private void setupInitialView() {
 
         //TODO : get real value of mIsRight
-        mIsRight = false;
+        mIsRight = true;
         if(mIsRight){
             adjustRight();
         } else {
