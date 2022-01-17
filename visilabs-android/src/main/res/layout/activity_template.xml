@@ -70,11 +70,10 @@
                     android:paddingRight="10dp"
                     android:paddingBottom="5dp" />
 
-                <LinearLayout
+                <FrameLayout
                     android:id="@+id/ll_coupon_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:visibility="gone">
 
                     <TextView
@@ -88,11 +87,17 @@
                         android:paddingTop="5dp"
                         android:paddingRight="10dp"
                         android:paddingBottom="5dp"
-                        android:text="@string/coupon_code"
-                        app:drawableEndCompat="@drawable/content_copy_24"
-                        app:drawableRightCompat="@drawable/content_copy_24" />
+                        android:text="@string/coupon_code" />
 
-                </LinearLayout>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/content_copy_24"
+                        android:layout_gravity="center|end"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginEnd="8dp" />
+
+                </FrameLayout>
 
 
 
