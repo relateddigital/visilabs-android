@@ -12,8 +12,7 @@ import com.visilabs.Visilabs;
 import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.CountdownTimerFragment;
-import com.visilabs.inApp.HalfScreenFragment;
-import com.visilabs.inApp.SocialProofFragment;
+import com.visilabs.inApp.notification.NotificationSmallFragment;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.shakeToWin.ShakeToWinActivity;
 import com.visilabs.util.VisilabsConstant;
@@ -251,6 +250,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendInAppRequest("halfscreen");
+            }
+        });
+
+        binding.inApp23.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NotificationSmallFragment notificationSmallFragment = NotificationSmallFragment.newInstance(0, null);
+
+                notificationSmallFragment.setRetainInstance(true);
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.add(android.R.id.content, notificationSmallFragment);
+                transaction.commit();
+
+                //TODO : When BE is ready
+                sendInAppRequest("notification");
             }
         });
 
