@@ -204,10 +204,12 @@ public final class AppUtils {
         String copyButtonFontFamily = extendedProps.getCopyButtonFontFamily();
         String promoCodesSoldOutMessageFontFamily = extendedProps.getPromocodesSoldOutMessageFontFamily();
 
+        htmlStr = writeHtmlToFile(context);
+
         if(displayNameFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getDisplayNameCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getDisplayNameCustomFontFamilyAndroid(), fontExtension);
+                writeFontToFile(context, extendedProps.getDisplayNameCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
@@ -215,7 +217,7 @@ public final class AppUtils {
         if(titleFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getTitleCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getTitleCustomFontFamilyAndroid(), fontExtension);
+                writeFontToFile(context, extendedProps.getTitleCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
@@ -223,7 +225,7 @@ public final class AppUtils {
         if(textFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getTextCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getTextCustomFontFamilyAndroid(), fontExtension);
+                writeFontToFile(context, extendedProps.getTextCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
@@ -231,7 +233,7 @@ public final class AppUtils {
         if(buttonFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getButtonCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getButtonCustomFontFamilyAndroid(), fontExtension);
+                writeFontToFile(context, extendedProps.getButtonCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
@@ -239,7 +241,7 @@ public final class AppUtils {
         if(promoCodeTitleFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getPromocodeTitleCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getPromocodeTitleCustomFontFamilyAndroid(), fontExtension);
+                writeFontToFile(context, extendedProps.getPromocodeTitleCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
@@ -247,7 +249,7 @@ public final class AppUtils {
         if(copyButtonFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getCopyButtonCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getCopyButtonCustomFontFamilyAndroid(), fontExtension);
+                writeFontToFile(context, extendedProps.getCopyButtonCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
@@ -255,7 +257,7 @@ public final class AppUtils {
         if(promoCodesSoldOutMessageFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getPromocodesSoldOutMessageCustomFontFamilyAndroid());
             if(!fontExtension.isEmpty()) {
-                htmlStr = writeToFile(context, extendedProps.getPromocodesSoldOutMessageCustomFontFamilyAndroid(), fontExtension);
+                writeFontToFile(context, extendedProps.getPromocodesSoldOutMessageCustomFontFamilyAndroid(), fontExtension);
                 spinToWinModel.fontFiles.add(fontExtension);
             }
         }
@@ -283,9 +285,8 @@ public final class AppUtils {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private static String writeToFile(Context context, String fontName, String fontNameWithExtension) {
+    private static String writeHtmlToFile(Context context) {
         String spinToWinFileName = "spintowin";
-        String baseUrlPath = "file://" + context.getFilesDir().getAbsolutePath() + "/";
         String htmlString = "";
 
         File spintowinRelatedDigitalCacheDir = context.getFilesDir();
@@ -294,11 +295,9 @@ public final class AppUtils {
         try {
             File htmlFile = new File(spintowinRelatedDigitalCacheDir + "/" + spinToWinFileName + ".html");
             File jsFile = new File(spintowinRelatedDigitalCacheDir + "/" + spinToWinFileName + ".js");
-            File fontFile = new File(spintowinRelatedDigitalCacheDir + "/" + fontNameWithExtension);
 
             htmlFile.createNewFile();
             jsFile.createNewFile();
-            fontFile.createNewFile();
 
             is = context.getAssets().open(spinToWinFileName + ".html");
 
@@ -315,16 +314,6 @@ public final class AppUtils {
             is.close();
 
             fos = new FileOutputStream(jsFile);
-            fos.write(bytes);
-            fos.close();
-
-
-            int fontId = context.getResources().getIdentifier(fontName, "font", context.getPackageName());
-            is = context.getResources().openRawResource(fontId);
-            bytes = getBytesFromInputStream(is);
-            is.close();
-
-            fos = new FileOutputStream(fontFile);
             fos.write(bytes);
             fos.close();
 
@@ -353,6 +342,49 @@ public final class AppUtils {
         }
 
         return htmlString;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private static void writeFontToFile(Context context, String fontName, String fontNameWithExtension) {
+        File spintowinRelatedDigitalCacheDir = context.getFilesDir();
+        InputStream is = null;
+        FileOutputStream fos = null;
+        try {
+            File fontFile = new File(spintowinRelatedDigitalCacheDir + "/" + fontNameWithExtension);
+
+            fontFile.createNewFile();
+
+            int fontId = context.getResources().getIdentifier(fontName, "font", context.getPackageName());
+            is = context.getResources().openRawResource(fontId);
+            byte[] bytes = getBytesFromInputStream(is);
+            is.close();
+
+            fos = new FileOutputStream(fontFile);
+            fos.write(bytes);
+            fos.close();
+
+        } catch (Exception e) {
+            Log.e("SpinToWin", "Could not create spintowin cache files properly!");
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception e) {
+                    Log.e("SpinToWin", "Could not close spintowin is stream properly!");
+                    e.printStackTrace();
+                }
+            }
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (Exception e) {
+                    Log.e("SpinToWin", "Could not close spintowin fos stream properly!");
+                    e.printStackTrace();
+                }
+            }
+
+        }
     }
 
     private static byte[] getBytesFromInputStream(InputStream is) throws IOException {
