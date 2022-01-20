@@ -1,6 +1,3 @@
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioCtx = new AudioContext();
-
 (function (window, document) {
 	'use strict';
 	if (typeof window.CustomEvent !== 'function') {
@@ -3043,10 +3040,10 @@ SpinToWin.prototype.convertConfigJson = function () {
 	this.config.closeButtonColor = extendedProps.close_button_color;
 	this.config.backgroundColor = extendedProps.background_color;
 
-	this.config.promocodes_soldout_message_text_color = extendedProps.promocodes_soldout_message_text_color;
-	this.config.promocodes_soldout_message_font_family = extendedProps.promocodes_soldout_message_font_family;
-	this.config.promocodes_soldout_message_text_size = extendedProps.promocodes_soldout_message_text_size;
-	this.config.promocodes_soldout_message_background_color = extendedProps.promocodes_soldout_message_background_color;
+	this.config.promocodesSoldoutMessageTextColor = extendedProps.promocodes_soldout_message_text_color;
+	this.config.promocodesSoldoutMessageFontFamily = extendedProps.promocodes_soldout_message_font_family;
+	this.config.promocodesSoldoutMessageTextSize = extendedProps.promocodes_soldout_message_text_size;
+	this.config.promocodesSoldoutMessageBackgroundColor = extendedProps.promocodes_soldout_message_background_color;
 
 	this.config.displaynameCustomFontFamilyAndroid = extendedProps.displayname_custom_font_family_android;
 	this.config.titleCustomFontFamilyAndroid = extendedProps.title_custom_font_family_android;
@@ -3058,29 +3055,55 @@ SpinToWin.prototype.convertConfigJson = function () {
 
 };
 SpinToWin.prototype.addFonts = function () {
-	if(this.config.fontFiles === undefined) {
+	if (this.config.fontFiles === undefined) {
 		return
 	}
+	var addedFontFiles = [];
 	for (var fontFileIndex in this.config.fontFiles) {
-	    var fontFile = this.config.fontFiles[fontFileIndex];
-	    var fontFamily = fontFile.split(".")[0];
+		var fontFile = this.config.fontFiles[fontFileIndex];
+		if (addedFontFiles.includes(fontFile)) {
+			continue;
+		}
+		var fontFamily = fontFile.split(".")[0];
 		var newStyle = document.createElement('style');
-        var cssContent = "@font-face{font-family:"+fontFamily+";src:url('"+fontFile+"');}";
-        newStyle.appendChild(document.createTextNode(cssContent));
-        document.head.appendChild(newStyle);
+		var cssContent = "@font-face{font-family:" + fontFamily + ";src:url('" + fontFile + "');}";
+		newStyle.appendChild(document.createTextNode(cssContent));
+		document.head.appendChild(newStyle);
+		addedFontFiles.push(fontFile);
 	}
 };
 
 SpinToWin.prototype.setFonts = function () {
-	if (window.Android || window.BrowserTest) {
-		if (typeof this.config.displaynameFontFamily === "string" && this.config.displaynameFontFamily.toLowerCase() === "custom") {
-			this.wheelContainer.style.fontFamily = this.config.displaynameCustomFontFamilyAndroid;
-		}
-	} else if (window.webkit && window.webkit.messageHandlers) {
-		if (typeof this.config.displaynameFontFamily === "string" && this.config.displaynameFontFamily.toLowerCase() === "custom") {
-			this.wheelContainer.style.fontFamily = this.config.displaynameCustomFontFamilyIOS;
-		}
+	var isIos = window.webkit && window.webkit.messageHandlers;
+
+	if (typeof this.config.displaynameFontFamily === "string" && this.config.displaynameFontFamily.toLowerCase() === "custom") {
+		this.wheelContainer.style.fontFamily = isIos ? this.config.displaynameCustomFontFamilyIos : this.config.displaynameCustomFontFamilyAndroid;
 	}
+	if (typeof this.config.titleFontFamily === "string" && this.config.titleFontFamily.toLowerCase() === "custom") {
+		this.titleElement.style.fontFamily = isIos ? this.config.titleCustomFontFamilyIos : this.config.titleCustomFontFamilyAndroid;
+	}
+	if (typeof this.config.textFontFamily === "string" && this.config.textFontFamily.toLowerCase() === "custom") {
+		this.messageElement.style.fontFamily = isIos ? this.config.textCustomFontFamilyIos : this.config.textCustomFontFamilyAndroid;
+		this.consentText.style.fontFamily = isIos ? this.config.textCustomFontFamilyIos : this.config.textCustomFontFamilyAndroid;
+		this.emailPermitText.style.fontFamily = isIos ? this.config.textCustomFontFamilyIos : this.config.textCustomFontFamilyAndroid;
+		this.invalidEmailMessageLi.style.fontFamily = isIos ? this.config.textCustomFontFamilyIos : this.config.textCustomFontFamilyAndroid;
+		this.checkConsentMessageLi.style.fontFamily = isIos ? this.config.textCustomFontFamilyIos : this.config.textCustomFontFamilyAndroid;
+		this.emailInput.style.fontFamily = isIos ? this.config.textCustomFontFamilyIos : this.config.textCustomFontFamilyAndroid;
+	}
+	if (typeof this.config.buttonFontFamily === "string" && this.config.buttonFontFamily.toLowerCase() === "custom") {
+		this.submitButton.style.fontFamily = isIos ? this.config.buttonCustomFontFamilyIos : this.config.buttonCustomFontFamilyAndroid;
+	}
+	if (typeof this.config.promocodeTitleFontFamily === "string" && this.config.promocodeTitleFontFamily.toLowerCase() === "custom") {
+		this.promocodeTitleElement.style.fontFamily = isIos ? this.config.promocodeTitleCustomFontFamilyIos : this.config.promocodeTitleCustomFontFamilyAndroid;
+	}
+	if (typeof this.config.copybuttonFontFamily === "string" && this.config.copybuttonFontFamily.toLowerCase() === "custom") {
+		this.copyButton.style.fontFamily = isIos ? this.config.copybuttonCustomFontFamilyIos : this.config.copybuttonCustomFontFamilyAndroid;
+		this.couponCode.style.fontFamily = isIos ? this.config.copybuttonCustomFontFamilyIos : this.config.copybuttonCustomFontFamilyAndroid;
+	}
+	if (typeof this.config.promocodesSoldoutMessageFontFamily === "string" && this.config.promocodesSoldoutMessageFontFamily.toLowerCase() === "custom") {
+		this.promocodesSoldoutMessageElement.style.fontFamily = isIos ? this.config.promocodesSoldoutMessageCustomFontFamilyIos : this.config.promocodesSoldoutMessageCustomFontFamilyAndroid;
+	}
+
 };
 
 SpinToWin.prototype.getPromotionCode = function () {
@@ -3148,60 +3171,62 @@ SpinToWin.prototype.convertStringsToNumber = function () {
 	this.config.consentTextSize = isNaN(parseInt(this.config.consentTextSize)) ? 5 : parseInt(this.config.consentTextSize);
 	this.config.copybuttonTextSize = isNaN(parseInt(this.config.copybuttonTextSize)) ? 20 : parseInt(this.config.copybuttonTextSize);
 	this.config.promocodeTitleTextSize = isNaN(parseInt(this.config.promocodeTitleTextSize)) ? 20 : parseInt(this.config.promocodeTitleTextSize);
-	this.config.promocodes_soldout_message_text_size = isNaN(parseInt(this.config.promocodes_soldout_message_text_size)) ? 20 : parseInt(this.config.promocodes_soldout_message_text_size);
+	this.config.promocodesSoldoutMessageTextSize = isNaN(parseInt(this.config.promocodesSoldoutMessageTextSize)) ? 20 : parseInt(this.config.promocodesSoldoutMessageTextSize);
 };
 SpinToWin.prototype.setContent = function () {
 	this.container.style.backgroundColor = this.config.backgroundColor;
 	this.titleElement.innerHTML = this.config.title.replace(/\\n/g, "<br/>");
 	this.titleElement.style.color = this.config.titleTextColor;
 	this.titleElement.style.fontFamily = this.config.titleFontFamily;
-	this.titleElement.style.fontSize = this.config.titleTextSize + 20 + "px";
+	this.titleElement.style.fontSize = (this.config.titleTextSize + 20) + "px";
 	this.messageElement.innerHTML = this.config.message.replace(/\\n/g, "<br/>");
 	this.messageElement.style.color = this.config.textColor;
 	this.messageElement.style.fontFamily = this.config.textFontFamily;
-	this.messageElement.style.fontSize = this.config.textSize + 10 + "px";
+	this.messageElement.style.fontSize = (this.config.textSize + 10) + "px";
+	this.emailInput.style.fontFamily = this.config.textFontFamily;
+	this.emailInput.style.fontSize = (this.config.textSize + 10) + "px";
 	this.submitButton.innerHTML = this.config.buttonLabel;
 	this.submitButton.style.color = this.config.buttonTextColor;
 	this.submitButton.style.backgroundColor = this.config.buttonColor;
 	this.submitButton.style.fontFamily = this.config.buttonFontFamily;
-	this.submitButton.style.fontSize = this.config.buttonTextSize + 20 + "px";
+	this.submitButton.style.fontSize = (this.config.buttonTextSize + 20) + "px";
 	this.emailInput.placeholder = this.config.placeholder;
 	this.consentText.innerHTML = this.prepareCheckboxHtmls(this.config.consentText, this.config.consentTextUrl);
-	this.consentText.style.fontSize = this.config.consentTextSize + 10 + "px";
+	this.consentText.style.fontSize = (this.config.consentTextSize + 10) + "px";
 	this.consentText.style.fontFamily = this.config.textFontFamily;
 	this.emailPermitText.innerHTML = this.prepareCheckboxHtmls(this.config.emailPermitText, this.config.emailpermitTextUrl);
-	this.emailPermitText.style.fontSize = this.config.consentTextSize + 10 + "px";
+	this.emailPermitText.style.fontSize = (this.config.consentTextSize + 10) + "px";
 	this.emailPermitText.style.fontFamily = this.config.textFontFamily;
 	this.copyButton.innerHTML = this.config.copyButtonLabel;
 	this.copyButton.style.color = this.config.copybuttonTextColor;
 	this.copyButton.style.backgroundColor = this.config.copybuttonColor;
 	this.copyButton.style.fontFamily = this.config.copybuttonFontFamily;
-	this.copyButton.style.fontSize = this.config.copybuttonTextSize + 20 + "px";
+	this.copyButton.style.fontSize = (this.config.copybuttonTextSize + 20) + "px";
 	this.invalidEmailMessageLi.innerHTML = this.config.invalidEmailMessage;
-	this.invalidEmailMessageLi.style.fontSize = this.config.consentTextSize + 10 + "px";
+	this.invalidEmailMessageLi.style.fontSize = (this.config.consentTextSize + 10) + "px";
 	this.invalidEmailMessageLi.style.fontFamily = this.config.textFontFamily;
 	this.checkConsentMessageLi.innerHTML = this.config.checkConsentMessage;
-	this.checkConsentMessageLi.style.fontSize = this.config.consentTextSize + 10 + "px";
+	this.checkConsentMessageLi.style.fontSize = (this.config.consentTextSize + 10) + "px";
 	this.checkConsentMessageLi.style.fontFamily = this.config.textFontFamily;
 	this.couponCode.style.color = this.config.promocodeTextColor;
 	this.couponCode.style.backgroundColor = this.config.promocodeBackgroundColor;
 	this.couponCode.style.fontFamily = this.config.copybuttonFontFamily;
-	this.couponCode.style.fontSize = this.config.copybuttonTextSize + 20 + "px";
+	this.couponCode.style.fontSize = (this.config.copybuttonTextSize + 20) + "px";
 	this.successMessageElement.innerHTML = this.config.successMessage.replace(/\\n/g, "<br/>");
 	this.successMessageElement.style.color = "green";
 	this.promocodeTitleElement.innerHTML = this.config.promocodeTitle.replace(/\\n/g, "<br/>");
 	this.promocodeTitleElement.style.color = this.config.promocodeTitleTextColor;
 	this.promocodeTitleElement.style.fontFamily = this.config.promocodeTitleFontFamily;
-	this.promocodeTitleElement.style.fontSize = this.config.promocodeTitleTextSize + 20 + "px";
+	this.promocodeTitleElement.style.fontSize = (this.config.promocodeTitleTextSize + 20) + "px";
 
 	if (this.config.promocodesSoldoutMessage !== undefined && this.config.promocodesSoldoutMessage.length > 0) {
 		this.promocodesSoldoutMessageElement.innerHTML = this.config.promocodesSoldoutMessage.replace(/\\n/g, "<br/>");
 	}
 
-	this.promocodesSoldoutMessageElement.style.color = this.config.promocodes_soldout_message_text_color;
-	this.promocodesSoldoutMessageElement.style.fontFamily = this.config.promocodes_soldout_message_font_family;
-	this.promocodesSoldoutMessageElement.style.fontSize = this.config.promocodes_soldout_message_text_size + 20 + "px";
-	this.promocodesSoldoutMessageElement.style.backgroundColor = this.config.promocodes_soldout_message_background_color;
+	this.promocodesSoldoutMessageElement.style.color = this.config.promocodesSoldoutMessageTextColor;
+	this.promocodesSoldoutMessageElement.style.fontFamily = this.config.promocodesSoldoutMessageFontFamily;
+	this.promocodesSoldoutMessageElement.style.fontSize = (this.config.promocodesSoldoutMessageTextSize + 20) + "px";
+	this.promocodesSoldoutMessageElement.style.backgroundColor = this.config.promocodesSoldoutMessageBackgroundColor;
 
 	this.container.addEventListener("click", function (event) {
 		if (event.target.tagName != "INPUT") {
@@ -3491,8 +3516,6 @@ var Sound = (function () {
 		snd.setAttribute("autoplay", true);
 		snd.setAttribute("preload", "auto");
 		df.appendChild(snd); // keep in fragment until finished playing
-		//snd.addEventListener('ended', function () {df.removeChild(snd);});
-		//snd.play();
 		return snd;
 	}
 }());
@@ -3504,14 +3527,7 @@ SpinToWin.prototype.playTick = function () {
 	if (!snd && window.spinToWin.easyWheelInitialized) {
 		snd = Sound("data:audio/wav;base64,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+//+/wAA///+/wAAAwAEAAAA/P/8////AgADAAIAAgABAAEA///9//z//f8AAAMABAADAAEAAAD//////v/+////AQACAAIAAAD/////AAABAAAAAAAAAAEAAQAAAP7//v///wEAAgABAAEAAAAAAP//////////AQACAAEAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAP//AAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=");
 	}
-	//snd.setAttribute("playsinline", true);
-	//snd.setAttribute("autoplay", true);
-	//snd.setAttribute("preload", "auto");
-	//snd.currentTime = 0;
 	if (snd) {
 		snd.play();
 	}
 };
-
-
-//var snd = Sound("data:audio/wav;base64," + base64string);
