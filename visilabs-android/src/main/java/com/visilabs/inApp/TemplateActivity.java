@@ -934,11 +934,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private void setupCarouselItem(int position) {
         if (mCarouselItems.get(position).getBackgroundImage() != null &&
                 !mCarouselItems.get(position).getBackgroundImage().isEmpty()) {
-            if (AppUtils.isAnImage(mCarouselItems.get(position).getBackgroundImage())) {
-                Picasso.get().
-                        load(mCarouselItems.get(position).getBackgroundImage())
-                        .into(bindingCarousel.background);
-            }
+            Picasso.get().
+                    load(mCarouselItems.get(position).getBackgroundImage())
+                    .into(bindingCarousel.background);
         } else {
             bindingCarousel.background.setVisibility(View.GONE);
             if (mCarouselItems.get(position).getBackgroundColor() != null &&
