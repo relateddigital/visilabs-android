@@ -80,7 +80,7 @@ public enum InAppActionType {
         @NonNull
         @Override
         public String toString() {
-            return "carousel"; //TODO: Check this string when the real data comes.
+            return "carousel";
         }
     },
 

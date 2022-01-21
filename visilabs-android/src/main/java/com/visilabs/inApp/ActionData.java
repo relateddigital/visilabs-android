@@ -8,8 +8,11 @@ import android.os.Parcelable;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.google.gson.annotations.SerializedName;
+import com.visilabs.inApp.carousel.CarouselItem;
 import com.visilabs.util.AppUtils;
 import com.visilabs.util.SizeUtil;
+
+import java.util.List;
 
 public class ActionData implements Parcelable {
     @SerializedName("alert_type")
@@ -92,6 +95,8 @@ public class ActionData implements Parcelable {
     private final String mCustomFontFamilyIos;
     @SerializedName("custom_font_family_android")
     private final String mCustomFontFamilyAndroid;
+    @SerializedName("carousel_items")
+    private List<CarouselItem> carouselItems = null;
 
     protected ActionData(Parcel in) {
         mAlertType = in.readString();
@@ -134,6 +139,7 @@ public class ActionData implements Parcelable {
         mCloseEventTrigger = in.readString();
         mCustomFontFamilyIos = in.readString();
         mCustomFontFamilyAndroid = in.readString();
+        carouselItems = in.readParcelable(CarouselItem.class.getClassLoader());
     }
 
     public static final Creator<ActionData> CREATOR = new Creator<ActionData>() {
@@ -195,6 +201,7 @@ public class ActionData implements Parcelable {
         dest.writeString(mCloseEventTrigger);
         dest.writeString(mCustomFontFamilyIos);
         dest.writeString(mCustomFontFamilyAndroid);
+        dest.writeParcelable((Parcelable) carouselItems, 0);
     }
 
     public String getAlertType() {
@@ -298,6 +305,10 @@ public class ActionData implements Parcelable {
         }
 
         return Typeface.DEFAULT;
+    }
+
+    public List<CarouselItem> getCarouselItems() {
+        return carouselItems;
     }
 
     public void setFontFamily(String fontFamily) {
