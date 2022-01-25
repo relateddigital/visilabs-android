@@ -36,4 +36,12 @@
     <dimen name="ct_coupon_copy_to_button_margin">8dp</dimen>
     <dimen name="ct_main_container_bottom_padding">8dp</dimen>
     <dimen name="ct_coupon_code_margin_right">32dp</dimen>
+
+    <dimen name="in_app_notification_big_width">150dp</dimen>
+    <dimen name="in_app_notification_big_height">200dp</dimen>
+    <dimen name="in_app_notification_small_width">48dp</dimen>
+    <dimen name="in_app_notification_small_height">184dp</dimen>
+    <dimen name="in_app_notification_small_circle_width">48dp</dimen>
+    <dimen name="in_app_notification_small_circle_height">140dp</dimen>
+    <dimen name="in_app_notification_small_radius">70dp</dimen>
 </resources>

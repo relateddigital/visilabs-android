@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="@dimen/in_app_notification_big_width"
+        android:layout_height="@dimen/in_app_notification_big_height"
+        android:id="@+id/big_container_rb"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="32dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/big_image_rb"
+            android:scaleType="fitCenter"
+            android:layout_margin="4dp"/>
+    </LinearLayout>
+    
+    <FrameLayout
+        android:layout_width="@dimen/in_app_notification_small_width"
+        android:layout_height="@dimen/in_app_notification_small_height"
+        android:id="@+id/small_square_container_rb"
+        android:layout_toLeftOf="@+id/big_container_rb"
+        android:layout_toStartOf="@+id/big_container_rb"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp">
+
+        <com.visilabs.inappnotification.VerticalTextView
+            android:id="@+id/small_square_text_rb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:maxLength="16"
+            android:padding="8dp"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/small_square_image_rb"
+            android:padding="4dp"
+            android:scaleType="fitCenter"/>
+
+        <TextView
+            android:id="@+id/arrow_square_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notification_right_arrow"
+            android:textSize="24sp"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal|top"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="@dimen/in_app_notification_small_radius"
+        android:layout_height="@dimen/in_app_notification_small_circle_height"
+        android:id="@+id/small_circle_container_rb"
+        android:layout_toLeftOf="@+id/big_container_rb"
+        android:layout_toStartOf="@+id/big_container_rb"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="62dp">
+
+        <com.visilabs.inappnotification.VerticalTextView
+            android:id="@+id/small_circle_text_rb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:maxLength="12"
+            android:padding="8dp"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/small_circle_image_rb"
+            android:layout_marginBottom="28dp"
+            android:layout_marginTop="28dp"
+            android:padding="8dp"
+            android:scaleType="fitCenter"/>
+
+        <TextView
+            android:id="@+id/arrow_circle_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notification_right_arrow"
+            android:textSize="24sp"
+            android:gravity="center_horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginStart="10dp" />
+    </FrameLayout>
+</RelativeLayout>

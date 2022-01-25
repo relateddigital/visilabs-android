@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <size
+        android:width="@dimen/in_app_notification_small_circle_width"
+        android:height="@dimen/in_app_notification_small_radius"/>
+    <corners
+        android:bottomLeftRadius="@dimen/in_app_notification_small_radius"
+        android:topLeftRadius="@dimen/in_app_notification_small_radius"/>
+</shape>

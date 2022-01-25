@@ -12,7 +12,7 @@ import com.visilabs.Visilabs;
 import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.CountdownTimerFragment;
-import com.visilabs.inApp.notification.NotificationSmallFragment;
+import com.visilabs.inappnotification.InAppNotificationFragment;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.shakeToWin.ShakeToWinActivity;
 import com.visilabs.util.VisilabsConstant;
@@ -255,16 +255,16 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp23.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NotificationSmallFragment notificationSmallFragment = NotificationSmallFragment.newInstance(0, null);
+                InAppNotificationFragment inAppNotificationFragment = InAppNotificationFragment.newInstance(null);
 
-                notificationSmallFragment.setRetainInstance(true);
+                inAppNotificationFragment.setRetainInstance(true);
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.add(android.R.id.content, notificationSmallFragment);
+                transaction.add(android.R.id.content, inAppNotificationFragment);
                 transaction.commit();
 
                 //TODO : When BE is ready
-                //sendInAppRequest("notification");
+                //sendInAppRequest("in_app_notification");
             }
         });
 

@@ -1,4 +1,4 @@
-package com.visilabs.inApp.notification;
+package com.visilabs.inappnotification;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -8,7 +8,9 @@ import android.view.Gravity;
 
 public class VerticalTextView extends androidx.appcompat.widget.AppCompatTextView
 {
-    final boolean topDown;
+    boolean topDown;
+    boolean isRight;
+    boolean isCircle;
 
     public VerticalTextView( Context context,
                              AttributeSet attrs )
@@ -60,8 +62,23 @@ public class VerticalTextView extends androidx.appcompat.widget.AppCompatTextVie
             canvas.rotate( -90 );
         }
 
-        canvas.translate( getCompoundPaddingLeft(),
-                getExtendedPaddingTop() );
+        if(isCircle) {
+            if(topDown) {
+                canvas.translate( getCompoundPaddingLeft(),
+                        getExtendedPaddingTop() + 28);
+            } else {
+                canvas.translate( getCompoundPaddingLeft(),
+                        getExtendedPaddingTop() + 80);
+            }
+        } else {
+            if(topDown) {
+                canvas.translate( getCompoundPaddingLeft(),
+                        getExtendedPaddingTop() + 20);
+            } else {
+                canvas.translate( getCompoundPaddingLeft(),
+                        getExtendedPaddingTop() + 20);
+            }
+        }
 
         getLayout().draw( canvas );
         canvas.restore();
