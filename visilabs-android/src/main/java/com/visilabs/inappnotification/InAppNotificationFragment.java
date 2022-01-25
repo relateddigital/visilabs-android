@@ -9,6 +9,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.MultiTransformation;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners;
 import com.squareup.picasso.Picasso;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.FragmentInAppNotificationLbBinding;
@@ -53,6 +57,8 @@ public class InAppNotificationFragment extends Fragment {
     private boolean isExpanded = false;
     private boolean isSmallImage = false;
     private Shape shape = Shape.SOFT_EDGE;
+    private boolean isArrow = false;
+    private boolean isBackgroundImage = false;
 
     public InAppNotificationFragment() {
         // Required empty public constructor
@@ -85,12 +91,14 @@ public class InAppNotificationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view;
 
-        //TODO : get the real data here
+        //TODO : get from the real data here
         isRight = true;
         isTopToBottom = true;
         positionOnScreen = PositionOnScreen.BOTTOM;
-        isSmallImage = true;
-        shape = Shape.CIRCLE;
+        isSmallImage = false;
+        shape = Shape.SOFT_EDGE;
+        isArrow = true;
+        isBackgroundImage = true;
 
         if(isRight) {
             switch (positionOnScreen) {
@@ -165,7 +173,7 @@ public class InAppNotificationFragment extends Fragment {
     }
 
     private void adjustRb() {
-        //TODO : real data here
+        //TODO : from real data here
         bindingRb.smallSquareContainerRb.setVisibility(View.VISIBLE);
         bindingRb.smallCircleContainerRb.setVisibility(View.VISIBLE);
         bindingRb.arrowSquareRb.setVisibility(View.VISIBLE);
@@ -174,40 +182,71 @@ public class InAppNotificationFragment extends Fragment {
         bindingRb.smallCircleTextRb.setVisibility(View.VISIBLE);
         bindingRb.smallSquareImageRb.setVisibility(View.VISIBLE);
         bindingRb.smallCircleImageRb.setVisibility(View.VISIBLE);
+        bindingRb.smallCircleBackgroundImageRb.setVisibility(View.VISIBLE);
+        bindingRb.smallSquareBackgroundImageRb.setVisibility(View.VISIBLE);
         bindingRb.bigContainerRb.setVisibility(View.GONE);
 
         switch (shape) {
             case SHARP_EDGE:
-                bindingRb.smallSquareContainerRb.setBackgroundColor(getResources().getColor(R.color.blue));
+                if(isBackgroundImage) {
+                    Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                            .into(bindingRb.smallSquareBackgroundImageRb);
+                } else {
+                    bindingRb.smallSquareContainerRb.setBackgroundColor(getResources().getColor(R.color.blue));
+                    bindingRb.smallSquareBackgroundImageRb.setVisibility(View.GONE);
+                }
                 bindingRb.smallCircleContainerRb.setVisibility(View.GONE);
                 break;
             case SOFT_EDGE:
-                bindingRb.smallSquareContainerRb.setBackgroundResource(R.drawable.rounded_corners_left);
-                bindingRb.smallSquareTextRb.setBackgroundResource(R.drawable.rounded_corners_left);
-                bindingRb.smallSquareImageRb.setBackgroundResource(R.drawable.rounded_corners_left);
-                GradientDrawable gd = (GradientDrawable) bindingRb.smallSquareContainerRb.getBackground();
-                gd.setColor(getResources().getColor(R.color.blue));
-                GradientDrawable gdText = (GradientDrawable) bindingRb.smallSquareTextRb.getBackground();
-                gdText.setColor(getResources().getColor(R.color.blue));
-                GradientDrawable gdImage = (GradientDrawable) bindingRb.smallSquareImageRb.getBackground();
-                gdImage.setColor(getResources().getColor(R.color.blue));
+                if(isBackgroundImage) {
+                    Glide.with(getActivity())
+                            .asBitmap()
+                            .transform(new MultiTransformation(new CenterCrop(),
+                                    new GranularRoundedCorners(40f, 0f, 0f, 40f)))
+                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                            .into(bindingRb.smallSquareBackgroundImageRb);
+                } else {
+                    bindingRb.smallSquareContainerRb.setBackgroundResource(R.drawable.rounded_corners_left);
+                    bindingRb.smallSquareTextRb.setBackgroundResource(R.drawable.rounded_corners_left);
+                    bindingRb.smallSquareImageRb.setBackgroundResource(R.drawable.rounded_corners_left);
+                    GradientDrawable gd = (GradientDrawable) bindingRb.smallSquareContainerRb.getBackground();
+                    gd.setColor(getResources().getColor(R.color.blue));
+                    GradientDrawable gdText = (GradientDrawable) bindingRb.smallSquareTextRb.getBackground();
+                    gdText.setColor(getResources().getColor(R.color.blue));
+                    GradientDrawable gdImage = (GradientDrawable) bindingRb.smallSquareImageRb.getBackground();
+                    gdImage.setColor(getResources().getColor(R.color.blue));
+                    bindingRb.smallSquareBackgroundImageRb.setVisibility(View.GONE);
+                }
                 bindingRb.smallCircleContainerRb.setVisibility(View.GONE);
                 break;
             case CIRCLE:
-                bindingRb.smallCircleContainerRb.setBackgroundResource(R.drawable.left_half_circle);
-                bindingRb.smallCircleTextRb.setBackgroundResource(R.drawable.left_half_circle);
-                bindingRb.smallCircleImageRb.setBackgroundResource(R.drawable.left_half_circle);
-                GradientDrawable gdCircle = (GradientDrawable) bindingRb.smallCircleContainerRb.getBackground();
-                gdCircle.setColor(getResources().getColor(R.color.blue));
-                GradientDrawable gdCircleText = (GradientDrawable) bindingRb.smallCircleTextRb.getBackground();
-                gdCircleText.setColor(getResources().getColor(R.color.blue));
-                GradientDrawable gdCircleImage = (GradientDrawable) bindingRb.smallCircleImageRb.getBackground();
-                gdCircleImage.setColor(getResources().getColor(R.color.blue));
+                if(isBackgroundImage) {
+                    Glide.with(getActivity())
+                            .asBitmap()
+                            .transform(new MultiTransformation(new CenterCrop(),
+                                    new GranularRoundedCorners(500f, 0f, 0f, 500f)))
+                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                            .into(bindingRb.smallCircleBackgroundImageRb);
+                } else {
+                    bindingRb.smallCircleContainerRb.setBackgroundResource(R.drawable.left_half_circle);
+                    bindingRb.smallCircleTextRb.setBackgroundResource(R.drawable.left_half_circle);
+                    bindingRb.smallCircleImageRb.setBackgroundResource(R.drawable.left_half_circle);
+                    GradientDrawable gdCircle = (GradientDrawable) bindingRb.smallCircleContainerRb.getBackground();
+                    gdCircle.setColor(getResources().getColor(R.color.blue));
+                    GradientDrawable gdCircleText = (GradientDrawable) bindingRb.smallCircleTextRb.getBackground();
+                    gdCircleText.setColor(getResources().getColor(R.color.blue));
+                    GradientDrawable gdCircleImage = (GradientDrawable) bindingRb.smallCircleImageRb.getBackground();
+                    gdCircleImage.setColor(getResources().getColor(R.color.blue));
+                    bindingRb.smallCircleBackgroundImageRb.setVisibility(View.GONE);
+                }
                 bindingRb.smallSquareContainerRb.setVisibility(View.GONE);
                 break;
         }
 
         if(shape == Shape.CIRCLE) {
+            if(!isArrow) {
+                bindingRb.arrowCircleRb.setVisibility(View.GONE);
+            }
             if(isExpanded) {
                 bindingRb.arrowCircleRb.setText(getString(R.string.notification_left_arrow));
             } else {
@@ -220,7 +259,7 @@ public class InAppNotificationFragment extends Fragment {
                         .into(bindingRb.smallCircleImageRb);
                 bindingRb.smallCircleTextRb.setVisibility(View.GONE);
             } else {
-                bindingRb.smallCircleTextRb.setText("Discount");
+                bindingRb.smallCircleTextRb.setText("DiscountDiscount");
                 bindingRb.smallCircleTextRb.setTextColor(getResources().getColor(R.color.white));
                 bindingRb.smallCircleTextRb.setTypeface(Typeface.MONOSPACE);
                 bindingRb.smallCircleImageRb.setVisibility(View.GONE);
@@ -243,6 +282,9 @@ public class InAppNotificationFragment extends Fragment {
                 }
             });
         } else {
+            if(!isArrow) {
+                bindingRb.arrowSquareRb.setVisibility(View.GONE);
+            }
             if(isExpanded) {
                 bindingRb.arrowSquareRb.setText(getString(R.string.notification_left_arrow));
             } else {
@@ -255,7 +297,7 @@ public class InAppNotificationFragment extends Fragment {
                         .into(bindingRb.smallSquareImageRb);
                 bindingRb.smallSquareTextRb.setVisibility(View.GONE);
             } else {
-                bindingRb.smallSquareTextRb.setText("Discount");
+                bindingRb.smallSquareTextRb.setText("DiscountDiscountDisc");
                 bindingRb.smallSquareTextRb.setTextColor(getResources().getColor(R.color.white));
                 bindingRb.smallSquareTextRb.setTypeface(Typeface.MONOSPACE);
                 bindingRb.smallSquareImageRb.setVisibility(View.GONE);
@@ -279,7 +321,14 @@ public class InAppNotificationFragment extends Fragment {
             });
         }
 
-        bindingRb.bigContainerRb.setBackgroundColor(getResources().getColor(R.color.blue));
+        if(isBackgroundImage) {
+            Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                    .into(bindingRb.bigBackgroundImageRb);
+        } else {
+            bindingRb.bigContainerRb.setBackgroundColor(getResources().getColor(R.color.blue));
+            bindingRb.bigBackgroundImageRb.setVisibility(View.GONE);
+        }
+
         Picasso.get().load("https://upload.wikimedia.org//wikipedia/en/a/a9/MarioNSMBUDeluxe.png")
                 .into(bindingRb.bigImageRb);
 

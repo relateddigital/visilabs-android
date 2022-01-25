@@ -4,15 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="@dimen/in_app_notification_big_width"
         android:layout_height="@dimen/in_app_notification_big_height"
         android:id="@+id/big_container_rb"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="32dp"
-        android:orientation="vertical">
+        android:layout_marginBottom="32dp" >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/big_background_image_rb"
+            android:src="@drawable/left_half_circle"
+            android:scaleType="centerCrop"/>
 
         <ImageView
             android:layout_width="match_parent"
@@ -20,7 +26,7 @@
             android:id="@+id/big_image_rb"
             android:scaleType="fitCenter"
             android:layout_margin="4dp"/>
-    </LinearLayout>
+    </FrameLayout>
     
     <FrameLayout
         android:layout_width="@dimen/in_app_notification_small_width"
@@ -32,13 +38,19 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="40dp">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/small_square_background_image_rb"
+            android:scaleType="centerCrop"/>
+
         <com.visilabs.inappnotification.VerticalTextView
             android:id="@+id/small_square_text_rb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_gravity="center"
-            android:maxLength="16"
+            android:maxLength="@integer/in_app_notification_small_max_character"
             android:padding="8dp"
             android:textSize="14sp" />
 
@@ -69,13 +81,19 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="62dp">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/small_circle_background_image_rb"
+            android:scaleType="centerCrop"/>
+
         <com.visilabs.inappnotification.VerticalTextView
             android:id="@+id/small_circle_text_rb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_gravity="center"
-            android:maxLength="12"
+            android:maxLength="@integer/in_app_notification_small_max_character"
             android:padding="8dp"
             android:textSize="12sp" />
 
