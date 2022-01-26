@@ -1,6 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <FrameLayout
+        android:layout_width="@dimen/in_app_notification_big_width"
+        android:layout_height="@dimen/in_app_notification_big_height"
+        android:id="@+id/big_container_rm"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/big_background_image_rm"
+            android:scaleType="centerCrop"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/big_image_rm"
+            android:scaleType="fitCenter"
+            android:layout_margin="4dp"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="@dimen/in_app_notification_small_width"
+        android:layout_height="@dimen/in_app_notification_small_height"
+        android:id="@+id/small_square_container_rm"
+        android:layout_toLeftOf="@+id/big_container_rm"
+        android:layout_toStartOf="@+id/big_container_rm"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/small_square_background_image_rm"
+            android:scaleType="centerCrop"/>
+
+        <com.visilabs.inappnotification.VerticalTextView
+            android:id="@+id/small_square_text_rm"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:maxLength="@integer/in_app_notification_small_max_character"
+            android:padding="8dp"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/small_square_image_rm"
+            android:padding="4dp"
+            android:scaleType="fitCenter"/>
+
+        <TextView
+            android:id="@+id/arrow_square_rm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal|top"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="@dimen/in_app_notification_small_radius"
+        android:layout_height="@dimen/in_app_notification_small_circle_height"
+        android:id="@+id/small_circle_container_rm"
+        android:layout_toLeftOf="@+id/big_container_rm"
+        android:layout_toStartOf="@+id/big_container_rm"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/small_circle_background_image_rm"
+            android:scaleType="centerCrop"/>
+
+        <com.visilabs.inappnotification.VerticalTextView
+            android:id="@+id/small_circle_text_rm"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:maxLength="@integer/in_app_notification_small_max_character"
+            android:padding="8dp"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/small_circle_image_rm"
+            android:layout_marginBottom="28dp"
+            android:layout_marginTop="28dp"
+            android:padding="8dp"
+            android:scaleType="fitCenter"/>
+
+        <TextView
+            android:id="@+id/arrow_circle_rm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:gravity="center_horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginStart="10dp" />
+    </FrameLayout>
+</RelativeLayout>

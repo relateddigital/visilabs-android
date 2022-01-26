@@ -64,11 +64,21 @@ public class VerticalTextView extends androidx.appcompat.widget.AppCompatTextVie
 
         if(isCircle) {
             if(topDown) {
-                canvas.translate( getCompoundPaddingLeft(),
-                        getExtendedPaddingTop() + 28);
+                if(isRight) {
+                    canvas.translate(getCompoundPaddingLeft(),
+                            getExtendedPaddingTop() + 28);
+                } else {
+                    canvas.translate(getCompoundPaddingLeft(),
+                            getExtendedPaddingTop() + 80);
+                }
             } else {
-                canvas.translate( getCompoundPaddingLeft(),
-                        getExtendedPaddingTop() + 80);
+                if(isRight) {
+                    canvas.translate(getCompoundPaddingLeft(),
+                            getExtendedPaddingTop() + 80);
+                } else {
+                    canvas.translate(getCompoundPaddingLeft(),
+                            getExtendedPaddingTop() + 28);
+                }
             }
         } else {
             if(topDown) {

@@ -1,6 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <FrameLayout
+        android:layout_width="@dimen/in_app_notification_big_width"
+        android:layout_height="@dimen/in_app_notification_big_height"
+        android:id="@+id/big_container_lt"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="32dp" >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/big_background_image_lt"
+            android:scaleType="centerCrop"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/big_image_lt"
+            android:scaleType="fitCenter"
+            android:layout_margin="4dp"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="@dimen/in_app_notification_small_width"
+        android:layout_height="@dimen/in_app_notification_small_height"
+        android:id="@+id/small_square_container_lt"
+        android:layout_toRightOf="@+id/big_container_lt"
+        android:layout_toEndOf="@+id/big_container_lt"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="40dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/small_square_background_image_lt"
+            android:scaleType="centerCrop"/>
+
+        <com.visilabs.inappnotification.VerticalTextView
+            android:id="@+id/small_square_text_lt"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:maxLength="@integer/in_app_notification_small_max_character"
+            android:padding="8dp"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/small_square_image_lt"
+            android:padding="4dp"
+            android:scaleType="fitCenter"/>
+
+        <TextView
+            android:id="@+id/arrow_square_lt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal|top"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="@dimen/in_app_notification_small_radius"
+        android:layout_height="@dimen/in_app_notification_small_circle_height"
+        android:id="@+id/small_circle_container_lt"
+        android:layout_toRightOf="@+id/big_container_lt"
+        android:layout_toEndOf="@+id/big_container_lt"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="62dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/small_circle_background_image_lt"
+            android:scaleType="centerCrop"/>
+
+        <com.visilabs.inappnotification.VerticalTextView
+            android:id="@+id/small_circle_text_lt"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:maxLength="@integer/in_app_notification_small_max_character"
+            android:padding="8dp"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/small_circle_image_lt"
+            android:layout_marginBottom="28dp"
+            android:layout_marginTop="28dp"
+            android:padding="8dp"
+            android:scaleType="fitCenter"/>
+
+        <TextView
+            android:id="@+id/arrow_circle_lt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:gravity="center_horizontal"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginEnd="10dp" />
+    </FrameLayout>
+</RelativeLayout>
