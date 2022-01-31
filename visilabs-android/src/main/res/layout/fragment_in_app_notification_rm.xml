@@ -55,8 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/small_square_image_rm"
-            android:padding="4dp"
-            android:scaleType="fitCenter"/>
+            android:scaleType="centerCrop"/>
 
         <TextView
             android:id="@+id/arrow_square_rm"
@@ -96,10 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/small_circle_image_rm"
-            android:layout_marginBottom="28dp"
-            android:layout_marginTop="28dp"
-            android:padding="8dp"
-            android:scaleType="fitCenter"/>
+            android:scaleType="centerCrop"/>
 
         <TextView
             android:id="@+id/arrow_circle_rm"

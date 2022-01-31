@@ -181,8 +181,10 @@ public class InAppNotificationFragment extends Fragment {
         switch (shape) {
             case SHARP_EDGE:
                 if(isBackgroundImage) {
-                    Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingRt.smallSquareBackgroundImageRt);
+                    if(!isSmallImage) {
+                        Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingRt.smallSquareBackgroundImageRt);
+                    }
                 } else {
                     bindingRt.smallSquareContainerRt.setBackgroundColor(getResources().getColor(R.color.blue));
                     bindingRt.smallSquareBackgroundImageRt.setVisibility(View.GONE);
@@ -191,12 +193,14 @@ public class InAppNotificationFragment extends Fragment {
                 break;
             case SOFT_EDGE:
                 if(isBackgroundImage) {
-                    Glide.with(getActivity())
-                            .asBitmap()
-                            .transform(new MultiTransformation(new CenterCrop(),
-                                    new GranularRoundedCorners(40f, 0f, 0f, 40f)))
-                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingRt.smallSquareBackgroundImageRt);
+                    if(!isSmallImage) {
+                        Glide.with(getActivity())
+                                .asBitmap()
+                                .transform(new MultiTransformation(new CenterCrop(),
+                                        new GranularRoundedCorners(40f, 0f, 0f, 40f)))
+                                .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingRt.smallSquareBackgroundImageRt);
+                    }
                 } else {
                     bindingRt.smallSquareContainerRt.setBackgroundResource(R.drawable.rounded_corners_left);
                     bindingRt.smallSquareTextRt.setBackgroundResource(R.drawable.rounded_corners_left);
@@ -213,12 +217,14 @@ public class InAppNotificationFragment extends Fragment {
                 break;
             case CIRCLE:
                 if(isBackgroundImage) {
-                    Glide.with(getActivity())
-                            .asBitmap()
-                            .transform(new MultiTransformation(new CenterCrop(),
-                                    new GranularRoundedCorners(500f, 0f, 0f, 500f)))
-                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingRt.smallCircleBackgroundImageRt);
+                    if(!isSmallImage) {
+                        Glide.with(getActivity())
+                                .asBitmap()
+                                .transform(new MultiTransformation(new CenterCrop(),
+                                        new GranularRoundedCorners(500f, 0f, 0f, 500f)))
+                                .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingRt.smallCircleBackgroundImageRt);
+                    }
                 } else {
                     bindingRt.smallCircleContainerRt.setBackgroundResource(R.drawable.left_half_circle);
                     bindingRt.smallCircleTextRt.setBackgroundResource(R.drawable.left_half_circle);
@@ -247,7 +253,11 @@ public class InAppNotificationFragment extends Fragment {
             bindingRt.arrowCircleRt.setTextColor(getResources().getColor(R.color.white));
 
             if(isSmallImage) {
-                Picasso.get().load("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png")
+                Glide.with(getActivity())
+                        .asBitmap()
+                        .transform(new MultiTransformation(new CenterCrop(),
+                                new GranularRoundedCorners(500f, 0f, 0f, 500f)))
+                        .load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
                         .into(bindingRt.smallCircleImageRt);
                 bindingRt.smallCircleTextRt.setVisibility(View.GONE);
             } else {
@@ -283,8 +293,17 @@ public class InAppNotificationFragment extends Fragment {
             bindingRt.arrowSquareRt.setTextColor(getResources().getColor(R.color.white));
 
             if(isSmallImage) {
-                Picasso.get().load("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png")
-                        .into(bindingRt.smallSquareImageRt);
+                if(shape == Shape.SOFT_EDGE) {
+                    Glide.with(getActivity())
+                            .asBitmap()
+                            .transform(new MultiTransformation(new CenterCrop(),
+                                    new GranularRoundedCorners(40f, 0f, 0f, 40f)))
+                            .load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
+                            .into(bindingRt.smallSquareImageRt);
+                } else {
+                    Picasso.get().load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
+                            .into(bindingRt.smallSquareImageRt);
+                }
                 bindingRt.smallSquareTextRt.setVisibility(View.GONE);
             } else {
                 bindingRt.smallSquareTextRt.setText("Discount");
@@ -348,8 +367,10 @@ public class InAppNotificationFragment extends Fragment {
         switch (shape) {
             case SHARP_EDGE:
                 if(isBackgroundImage) {
-                    Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingRm.smallSquareBackgroundImageRm);
+                    if(!isSmallImage) {
+                        Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingRm.smallSquareBackgroundImageRm);
+                    }
                 } else {
                     bindingRm.smallSquareContainerRm.setBackgroundColor(getResources().getColor(R.color.blue));
                     bindingRm.smallSquareBackgroundImageRm.setVisibility(View.GONE);
@@ -358,12 +379,14 @@ public class InAppNotificationFragment extends Fragment {
                 break;
             case SOFT_EDGE:
                 if(isBackgroundImage) {
-                    Glide.with(getActivity())
-                            .asBitmap()
-                            .transform(new MultiTransformation(new CenterCrop(),
-                                    new GranularRoundedCorners(40f, 0f, 0f, 40f)))
-                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingRm.smallSquareBackgroundImageRm);
+                    if(!isSmallImage) {
+                        Glide.with(getActivity())
+                                .asBitmap()
+                                .transform(new MultiTransformation(new CenterCrop(),
+                                        new GranularRoundedCorners(40f, 0f, 0f, 40f)))
+                                .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingRm.smallSquareBackgroundImageRm);
+                    }
                 } else {
                     bindingRm.smallSquareContainerRm.setBackgroundResource(R.drawable.rounded_corners_left);
                     bindingRm.smallSquareTextRm.setBackgroundResource(R.drawable.rounded_corners_left);
@@ -380,12 +403,14 @@ public class InAppNotificationFragment extends Fragment {
                 break;
             case CIRCLE:
                 if(isBackgroundImage) {
-                    Glide.with(getActivity())
-                            .asBitmap()
-                            .transform(new MultiTransformation(new CenterCrop(),
-                                    new GranularRoundedCorners(500f, 0f, 0f, 500f)))
-                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingRm.smallCircleBackgroundImageRm);
+                    if(!isSmallImage) {
+                        Glide.with(getActivity())
+                                .asBitmap()
+                                .transform(new MultiTransformation(new CenterCrop(),
+                                        new GranularRoundedCorners(500f, 0f, 0f, 500f)))
+                                .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingRm.smallCircleBackgroundImageRm);
+                    }
                 } else {
                     bindingRm.smallCircleContainerRm.setBackgroundResource(R.drawable.left_half_circle);
                     bindingRm.smallCircleTextRm.setBackgroundResource(R.drawable.left_half_circle);
@@ -414,7 +439,11 @@ public class InAppNotificationFragment extends Fragment {
             bindingRm.arrowCircleRm.setTextColor(getResources().getColor(R.color.white));
 
             if(isSmallImage) {
-                Picasso.get().load("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png")
+                Glide.with(getActivity())
+                        .asBitmap()
+                        .transform(new MultiTransformation(new CenterCrop(),
+                                new GranularRoundedCorners(500f, 0f, 0f, 500f)))
+                        .load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
                         .into(bindingRm.smallCircleImageRm);
                 bindingRm.smallCircleTextRm.setVisibility(View.GONE);
             } else {
@@ -450,8 +479,17 @@ public class InAppNotificationFragment extends Fragment {
             bindingRm.arrowSquareRm.setTextColor(getResources().getColor(R.color.white));
 
             if(isSmallImage) {
-                Picasso.get().load("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png")
-                        .into(bindingRm.smallSquareImageRm);
+                if(shape == Shape.SOFT_EDGE) {
+                    Glide.with(getActivity())
+                            .asBitmap()
+                            .transform(new MultiTransformation(new CenterCrop(),
+                                    new GranularRoundedCorners(40f, 0f, 0f, 40f)))
+                            .load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
+                            .into(bindingRm.smallSquareImageRm);
+                } else {
+                    Picasso.get().load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
+                            .into(bindingRm.smallSquareImageRm);
+                }
                 bindingRm.smallSquareTextRm.setVisibility(View.GONE);
             } else {
                 bindingRm.smallSquareTextRm.setText("Discount");
@@ -515,8 +553,10 @@ public class InAppNotificationFragment extends Fragment {
         switch (shape) {
             case SHARP_EDGE:
                 if(isBackgroundImage) {
-                    Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingRb.smallSquareBackgroundImageRb);
+                    if(!isSmallImage) {
+                        Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingRb.smallSquareBackgroundImageRb);
+                    }
                 } else {
                     bindingRb.smallSquareContainerRb.setBackgroundColor(getResources().getColor(R.color.blue));
                     bindingRb.smallSquareBackgroundImageRb.setVisibility(View.GONE);
@@ -525,12 +565,14 @@ public class InAppNotificationFragment extends Fragment {
                 break;
             case SOFT_EDGE:
                 if(isBackgroundImage) {
-                    Glide.with(getActivity())
-                            .asBitmap()
-                            .transform(new MultiTransformation(new CenterCrop(),
-                                    new GranularRoundedCorners(40f, 0f, 0f, 40f)))
-                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingRb.smallSquareBackgroundImageRb);
+                    if(!isSmallImage) {
+                        Glide.with(getActivity())
+                                .asBitmap()
+                                .transform(new MultiTransformation(new CenterCrop(),
+                                        new GranularRoundedCorners(40f, 0f, 0f, 40f)))
+                                .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingRb.smallSquareBackgroundImageRb);
+                    }
                 } else {
                     bindingRb.smallSquareContainerRb.setBackgroundResource(R.drawable.rounded_corners_left);
                     bindingRb.smallSquareTextRb.setBackgroundResource(R.drawable.rounded_corners_left);
@@ -547,12 +589,14 @@ public class InAppNotificationFragment extends Fragment {
                 break;
             case CIRCLE:
                 if(isBackgroundImage) {
-                    Glide.with(getActivity())
-                            .asBitmap()
-                            .transform(new MultiTransformation(new CenterCrop(),
-                                    new GranularRoundedCorners(500f, 0f, 0f, 500f)))
-                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingRb.smallCircleBackgroundImageRb);
+                    if(!isSmallImage) {
+                        Glide.with(getActivity())
+                                .asBitmap()
+                                .transform(new MultiTransformation(new CenterCrop(),
+                                        new GranularRoundedCorners(500f, 0f, 0f, 500f)))
+                                .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingRb.smallCircleBackgroundImageRb);
+                    }
                 } else {
                     bindingRb.smallCircleContainerRb.setBackgroundResource(R.drawable.left_half_circle);
                     bindingRb.smallCircleTextRb.setBackgroundResource(R.drawable.left_half_circle);
@@ -581,7 +625,11 @@ public class InAppNotificationFragment extends Fragment {
             bindingRb.arrowCircleRb.setTextColor(getResources().getColor(R.color.white));
 
             if(isSmallImage) {
-                Picasso.get().load("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png")
+                Glide.with(getActivity())
+                        .asBitmap()
+                        .transform(new MultiTransformation(new CenterCrop(),
+                                new GranularRoundedCorners(500f, 0f, 0f, 500f)))
+                        .load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
                         .into(bindingRb.smallCircleImageRb);
                 bindingRb.smallCircleTextRb.setVisibility(View.GONE);
             } else {
@@ -617,8 +665,17 @@ public class InAppNotificationFragment extends Fragment {
             bindingRb.arrowSquareRb.setTextColor(getResources().getColor(R.color.white));
 
             if(isSmallImage) {
-                Picasso.get().load("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png")
-                        .into(bindingRb.smallSquareImageRb);
+                if(shape == Shape.SOFT_EDGE) {
+                    Glide.with(getActivity())
+                            .asBitmap()
+                            .transform(new MultiTransformation(new CenterCrop(),
+                                    new GranularRoundedCorners(40f, 0f, 0f, 40f)))
+                            .load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
+                            .into(bindingRb.smallSquareImageRb);
+                } else {
+                    Picasso.get().load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
+                            .into(bindingRb.smallSquareImageRb);
+                }
                 bindingRb.smallSquareTextRb.setVisibility(View.GONE);
             } else {
                 bindingRb.smallSquareTextRb.setText("Discount");
@@ -682,8 +739,10 @@ public class InAppNotificationFragment extends Fragment {
         switch (shape) {
             case SHARP_EDGE:
                 if(isBackgroundImage) {
-                    Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingLt.smallSquareBackgroundImageLt);
+                    if(!isSmallImage) {
+                        Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingLt.smallSquareBackgroundImageLt);
+                    }
                 } else {
                     bindingLt.smallSquareContainerLt.setBackgroundColor(getResources().getColor(R.color.blue));
                     bindingLt.smallSquareBackgroundImageLt.setVisibility(View.GONE);
@@ -692,12 +751,14 @@ public class InAppNotificationFragment extends Fragment {
                 break;
             case SOFT_EDGE:
                 if(isBackgroundImage) {
-                    Glide.with(getActivity())
-                            .asBitmap()
-                            .transform(new MultiTransformation(new CenterCrop(),
-                                    new GranularRoundedCorners(0f, 40f, 40f, 0f)))
-                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingLt.smallSquareBackgroundImageLt);
+                    if(!isSmallImage) {
+                        Glide.with(getActivity())
+                                .asBitmap()
+                                .transform(new MultiTransformation(new CenterCrop(),
+                                        new GranularRoundedCorners(0f, 40f, 40f, 0f)))
+                                .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingLt.smallSquareBackgroundImageLt);
+                    }
                 } else {
                     bindingLt.smallSquareContainerLt.setBackgroundResource(R.drawable.rounded_corners_right);
                     bindingLt.smallSquareTextLt.setBackgroundResource(R.drawable.rounded_corners_right);
@@ -714,12 +775,14 @@ public class InAppNotificationFragment extends Fragment {
                 break;
             case CIRCLE:
                 if(isBackgroundImage) {
-                    Glide.with(getActivity())
-                            .asBitmap()
-                            .transform(new MultiTransformation(new CenterCrop(),
-                                    new GranularRoundedCorners(0f, 500f, 500f, 0f)))
-                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingLt.smallCircleBackgroundImageLt);
+                    if(!isSmallImage) {
+                        Glide.with(getActivity())
+                                .asBitmap()
+                                .transform(new MultiTransformation(new CenterCrop(),
+                                        new GranularRoundedCorners(0f, 500f, 500f, 0f)))
+                                .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingLt.smallCircleBackgroundImageLt);
+                    }
                 } else {
                     bindingLt.smallCircleContainerLt.setBackgroundResource(R.drawable.right_half_circle);
                     bindingLt.smallCircleTextLt.setBackgroundResource(R.drawable.right_half_circle);
@@ -748,7 +811,11 @@ public class InAppNotificationFragment extends Fragment {
             bindingLt.arrowCircleLt.setTextColor(getResources().getColor(R.color.white));
 
             if(isSmallImage) {
-                Picasso.get().load("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png")
+                Glide.with(getActivity())
+                        .asBitmap()
+                        .transform(new MultiTransformation(new CenterCrop(),
+                                new GranularRoundedCorners(0f, 500f, 500f, 0f)))
+                        .load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
                         .into(bindingLt.smallCircleImageLt);
                 bindingLt.smallCircleTextLt.setVisibility(View.GONE);
             } else {
@@ -784,8 +851,17 @@ public class InAppNotificationFragment extends Fragment {
             bindingLt.arrowSquareLt.setTextColor(getResources().getColor(R.color.white));
 
             if(isSmallImage) {
-                Picasso.get().load("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png")
-                        .into(bindingLt.smallSquareImageLt);
+                if(shape == Shape.SOFT_EDGE) {
+                    Glide.with(getActivity())
+                            .asBitmap()
+                            .transform(new MultiTransformation(new CenterCrop(),
+                                    new GranularRoundedCorners(0f, 40f, 40f, 0f)))
+                            .load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
+                            .into(bindingLt.smallSquareImageLt);
+                } else {
+                    Picasso.get().load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
+                            .into(bindingLt.smallSquareImageLt);
+                }
                 bindingLt.smallSquareTextLt.setVisibility(View.GONE);
             } else {
                 bindingLt.smallSquareTextLt.setText("Discount");
@@ -849,8 +925,10 @@ public class InAppNotificationFragment extends Fragment {
         switch (shape) {
             case SHARP_EDGE:
                 if(isBackgroundImage) {
-                    Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingLm.smallSquareBackgroundImageLm);
+                    if(!isSmallImage) {
+                        Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingLm.smallSquareBackgroundImageLm);
+                    }
                 } else {
                     bindingLm.smallSquareContainerLm.setBackgroundColor(getResources().getColor(R.color.blue));
                     bindingLm.smallSquareBackgroundImageLm.setVisibility(View.GONE);
@@ -859,12 +937,14 @@ public class InAppNotificationFragment extends Fragment {
                 break;
             case SOFT_EDGE:
                 if(isBackgroundImage) {
-                    Glide.with(getActivity())
-                            .asBitmap()
-                            .transform(new MultiTransformation(new CenterCrop(),
-                                    new GranularRoundedCorners(0f, 40f, 40f, 0f)))
-                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingLm.smallSquareBackgroundImageLm);
+                    if(!isSmallImage) {
+                        Glide.with(getActivity())
+                                .asBitmap()
+                                .transform(new MultiTransformation(new CenterCrop(),
+                                        new GranularRoundedCorners(0f, 40f, 40f, 0f)))
+                                .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingLm.smallSquareBackgroundImageLm);
+                    }
                 } else {
                     bindingLm.smallSquareContainerLm.setBackgroundResource(R.drawable.rounded_corners_right);
                     bindingLm.smallSquareTextLm.setBackgroundResource(R.drawable.rounded_corners_right);
@@ -881,12 +961,14 @@ public class InAppNotificationFragment extends Fragment {
                 break;
             case CIRCLE:
                 if(isBackgroundImage) {
-                    Glide.with(getActivity())
-                            .asBitmap()
-                            .transform(new MultiTransformation(new CenterCrop(),
-                                    new GranularRoundedCorners(0f, 500f, 500f, 0f)))
-                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingLm.smallCircleBackgroundImageLm);
+                    if(!isSmallImage) {
+                        Glide.with(getActivity())
+                                .asBitmap()
+                                .transform(new MultiTransformation(new CenterCrop(),
+                                        new GranularRoundedCorners(0f, 500f, 500f, 0f)))
+                                .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingLm.smallCircleBackgroundImageLm);
+                    }
                 } else {
                     bindingLm.smallCircleContainerLm.setBackgroundResource(R.drawable.right_half_circle);
                     bindingLm.smallCircleTextLm.setBackgroundResource(R.drawable.right_half_circle);
@@ -915,7 +997,11 @@ public class InAppNotificationFragment extends Fragment {
             bindingLm.arrowCircleLm.setTextColor(getResources().getColor(R.color.white));
 
             if(isSmallImage) {
-                Picasso.get().load("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png")
+                Glide.with(getActivity())
+                        .asBitmap()
+                        .transform(new MultiTransformation(new CenterCrop(),
+                                new GranularRoundedCorners(0f, 500f, 500f, 0f)))
+                        .load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
                         .into(bindingLm.smallCircleImageLm);
                 bindingLm.smallCircleTextLm.setVisibility(View.GONE);
             } else {
@@ -951,8 +1037,17 @@ public class InAppNotificationFragment extends Fragment {
             bindingLm.arrowSquareLm.setTextColor(getResources().getColor(R.color.white));
 
             if(isSmallImage) {
-                Picasso.get().load("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png")
-                        .into(bindingLm.smallSquareImageLm);
+                if(shape == Shape.SOFT_EDGE) {
+                    Glide.with(getActivity())
+                            .asBitmap()
+                            .transform(new MultiTransformation(new CenterCrop(),
+                                    new GranularRoundedCorners(0f, 40f, 40f, 0f)))
+                            .load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
+                            .into(bindingLm.smallSquareImageLm);
+                } else {
+                    Picasso.get().load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
+                            .into(bindingLm.smallSquareImageLm);
+                }
                 bindingLm.smallSquareTextLm.setVisibility(View.GONE);
             } else {
                 bindingLm.smallSquareTextLm.setText("Discount");
@@ -1016,8 +1111,10 @@ public class InAppNotificationFragment extends Fragment {
         switch (shape) {
             case SHARP_EDGE:
                 if(isBackgroundImage) {
-                    Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingLb.smallSquareBackgroundImageLb);
+                    if(!isSmallImage) {
+                        Picasso.get().load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingLb.smallSquareBackgroundImageLb);
+                    }
                 } else {
                     bindingLb.smallSquareContainerLb.setBackgroundColor(getResources().getColor(R.color.blue));
                     bindingLb.smallSquareBackgroundImageLb.setVisibility(View.GONE);
@@ -1026,12 +1123,14 @@ public class InAppNotificationFragment extends Fragment {
                 break;
             case SOFT_EDGE:
                 if(isBackgroundImage) {
-                    Glide.with(getActivity())
-                            .asBitmap()
-                            .transform(new MultiTransformation(new CenterCrop(),
-                                    new GranularRoundedCorners(0f, 40f, 40f, 0f)))
-                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingLb.smallSquareBackgroundImageLb);
+                    if(!isSmallImage) {
+                        Glide.with(getActivity())
+                                .asBitmap()
+                                .transform(new MultiTransformation(new CenterCrop(),
+                                        new GranularRoundedCorners(0f, 40f, 40f, 0f)))
+                                .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingLb.smallSquareBackgroundImageLb);
+                    }
                 } else {
                     bindingLb.smallSquareContainerLb.setBackgroundResource(R.drawable.rounded_corners_right);
                     bindingLb.smallSquareTextLb.setBackgroundResource(R.drawable.rounded_corners_right);
@@ -1048,12 +1147,14 @@ public class InAppNotificationFragment extends Fragment {
                 break;
             case CIRCLE:
                 if(isBackgroundImage) {
-                    Glide.with(getActivity())
-                            .asBitmap()
-                            .transform(new MultiTransformation(new CenterCrop(),
-                                    new GranularRoundedCorners(0f, 500f, 500f, 0f)))
-                            .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
-                            .into(bindingLb.smallCircleBackgroundImageLb);
+                    if(!isSmallImage) {
+                        Glide.with(getActivity())
+                                .asBitmap()
+                                .transform(new MultiTransformation(new CenterCrop(),
+                                        new GranularRoundedCorners(0f, 500f, 500f, 0f)))
+                                .load("https://digitalsynopsis.com/wp-content/uploads/2019/11/color-schemes-palettes-feature-image.jpg")
+                                .into(bindingLb.smallCircleBackgroundImageLb);
+                    }
                 } else {
                     bindingLb.smallCircleContainerLb.setBackgroundResource(R.drawable.right_half_circle);
                     bindingLb.smallCircleTextLb.setBackgroundResource(R.drawable.right_half_circle);
@@ -1082,7 +1183,11 @@ public class InAppNotificationFragment extends Fragment {
             bindingLb.arrowCircleLb.setTextColor(getResources().getColor(R.color.white));
 
             if(isSmallImage) {
-                Picasso.get().load("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png")
+                Glide.with(getActivity())
+                        .asBitmap()
+                        .transform(new MultiTransformation(new CenterCrop(),
+                                new GranularRoundedCorners(0f, 500f, 500f, 0f)))
+                        .load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
                         .into(bindingLb.smallCircleImageLb);
                 bindingLb.smallCircleTextLb.setVisibility(View.GONE);
             } else {
@@ -1118,8 +1223,17 @@ public class InAppNotificationFragment extends Fragment {
             bindingLb.arrowSquareLb.setTextColor(getResources().getColor(R.color.white));
 
             if(isSmallImage) {
-                Picasso.get().load("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png")
-                        .into(bindingLb.smallSquareImageLb);
+                if(shape == Shape.SOFT_EDGE) {
+                    Glide.with(getActivity())
+                            .asBitmap()
+                            .transform(new MultiTransformation(new CenterCrop(),
+                                    new GranularRoundedCorners(0f, 40f, 40f, 0f)))
+                            .load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
+                            .into(bindingLb.smallSquareImageLb);
+                } else {
+                    Picasso.get().load("https://www.kimbuldu.com/resimler/Dogus-Grubunu-Kim-Kurdu.jpg")
+                            .into(bindingLb.smallSquareImageLb);
+                }
                 bindingLb.smallSquareTextLb.setVisibility(View.GONE);
             } else {
                 bindingLb.smallSquareTextLb.setText("Discount");
