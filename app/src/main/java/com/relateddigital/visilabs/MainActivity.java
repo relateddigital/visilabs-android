@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp16.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendInAppRequest("carousel");
+                sendInAppRequest("inappcarousel");
             }
         });
 

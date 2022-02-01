@@ -80,8 +80,8 @@ public enum InAppActionType {
         @NonNull
         @Override
         public String toString() {
-            return "carousel";
-        } // TODO : Change this when BE ready
+            return "inappcarousel";
+        }
     },
 
     NPS_AND_SECOND_POP_UP {
