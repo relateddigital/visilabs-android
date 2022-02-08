@@ -184,7 +184,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         }
         mTvCover.setText(mStories.getTitle());
 
-        if(mExtendedProps != null && mExtendedProps.getStoryz_label_color() != null) {
+        if(mExtendedProps != null && mExtendedProps.getStoryz_label_color() != null && !mExtendedProps.getStoryz_label_color().isEmpty()) {
             mTvCover.setTextColor(Color.parseColor(mExtendedProps.getStoryz_label_color()));
         }
 

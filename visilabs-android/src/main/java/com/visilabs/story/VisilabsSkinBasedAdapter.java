@@ -85,7 +85,7 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
             e.printStackTrace();
         }
 
-        if(extendedProps != null && extendedProps.getStoryz_label_color() != null) {
+        if(extendedProps != null && extendedProps.getStoryz_label_color() != null && !extendedProps.getStoryz_label_color().isEmpty()) {
             storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps.getStoryz_label_color()));
         }
 
