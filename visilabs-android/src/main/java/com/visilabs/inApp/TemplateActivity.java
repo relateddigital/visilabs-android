@@ -402,13 +402,30 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                         Visilabs.CallAPI().setInAppButtonInterface(null);
                         buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
                     } else {
-                        if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
-                            try {
-                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
-                                startActivity(viewIntent);
+                        if(mInAppMessage.getActionData().getMsgType() == InAppActionType.IMAGE_TEXT_BUTTON) {
+                            //TODO: Check if it should be directed to browser or settings page here
+                            if(true) {
+                                if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
+                                    try {
+                                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
+                                        startActivity(viewIntent);
 
-                            } catch (final ActivityNotFoundException e) {
-                                Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                                    } catch (final ActivityNotFoundException e) {
+                                        Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                                    }
+                                }
+                            } else {
+                                AppUtils.goToNotificationSettings(getApplicationContext());
+                            }
+                        } else {
+                            if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
+                                try {
+                                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
+                                    startActivity(viewIntent);
+
+                                } catch (final ActivityNotFoundException e) {
+                                    Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                                }
                             }
                         }
                     }
