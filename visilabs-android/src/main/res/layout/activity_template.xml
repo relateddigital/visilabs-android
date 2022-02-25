@@ -44,7 +44,6 @@
                 android:id="@+id/ll_text_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:orientation="vertical"
                 android:visibility="visible">
 
@@ -52,7 +51,8 @@
                     android:id="@+id/tv_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
                     android:ellipsize="end"
                     android:gravity="center"
                     android:textColor="#fff"
@@ -66,9 +66,9 @@
                     android:ellipsize="end"
                     android:gravity="center"
                     android:paddingLeft="10dp"
-                    android:paddingTop="5dp"
+                    android:paddingTop="10dp"
                     android:paddingRight="10dp"
-                    android:paddingBottom="5dp" />
+                    android:paddingBottom="10dp" />
 
                 <FrameLayout
                     android:id="@+id/ll_coupon_container"

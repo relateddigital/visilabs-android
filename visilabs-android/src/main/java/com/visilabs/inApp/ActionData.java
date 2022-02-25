@@ -97,6 +97,10 @@ public class ActionData implements Parcelable {
     private final String mCustomFontFamilyAndroid;
     @SerializedName("carousel_items")
     private List<CarouselItem> carouselItems = null;
+    @SerializedName("msg_title_backgroundcolor")
+    private final String mMsgTitleBackgroundColor;
+    @SerializedName("msg_body_backgroundcolor")
+    private final String mMsgBodyBackgroundColor;
     @SerializedName("button_function")
     private final String mButtonFunction;
 
@@ -142,6 +146,8 @@ public class ActionData implements Parcelable {
         mCustomFontFamilyIos = in.readString();
         mCustomFontFamilyAndroid = in.readString();
         carouselItems = in.readParcelable(CarouselItem.class.getClassLoader());
+        mMsgTitleBackgroundColor = in.readString();
+        mMsgBodyBackgroundColor = in.readString();
         mButtonFunction = in.readString();
     }
 
@@ -205,6 +211,8 @@ public class ActionData implements Parcelable {
         dest.writeString(mCustomFontFamilyIos);
         dest.writeString(mCustomFontFamilyAndroid);
         dest.writeParcelable((Parcelable) carouselItems, 0);
+        dest.writeString(mMsgTitleBackgroundColor);
+        dest.writeString(mMsgBodyBackgroundColor);
         dest.writeString(mButtonFunction);
     }
 
@@ -502,6 +510,14 @@ public class ActionData implements Parcelable {
 
     public String getCustomFontFamilyAndroid() {
         return mCustomFontFamilyAndroid;
+    }
+
+    public String getMsgTitleBackgroundColor() {
+        return mMsgTitleBackgroundColor;
+    }
+
+    public String getMsgBodyBackgroundColor() {
+        return mMsgBodyBackgroundColor;
     }
 
     public String getButtonFunction() {

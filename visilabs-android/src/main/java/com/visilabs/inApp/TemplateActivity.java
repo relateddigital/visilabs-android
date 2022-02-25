@@ -325,86 +325,122 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void setTitle() {
 
-        binding.tvTitle.setVisibility(View.VISIBLE);
-        binding.tvTitle.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
-        binding.tvTitle.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n","\n"));
-        if(mInAppMessage.getActionData().getMsgTitleColor() != null && !mInAppMessage.getActionData().getMsgTitleColor().equals("")) {
-            try {
-                binding.tvTitle.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
-            } catch (Exception e) {
-                Log.w(LOG_TAG, "Could not parse the data given for message title color\nSetting the default value.");
-                e.printStackTrace();
+        if(mInAppMessage.getActionData().getMsgTitle().equals("") ||
+                mInAppMessage.getActionData().getMsgTitle() == null) {
+            binding.tvTitle.setVisibility(View.GONE);
+        } else {
+            if(!mInAppMessage.getActionData().getMsgTitleBackgroundColor().equals("") &&
+                    mInAppMessage.getActionData().getMsgTitleBackgroundColor() != null) {
+                binding.tvTitle.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleBackgroundColor()));
+            }
+            binding.tvTitle.setVisibility(View.VISIBLE);
+            binding.tvTitle.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
+            binding.tvTitle.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
+            if (mInAppMessage.getActionData().getMsgTitleColor() != null && !mInAppMessage.getActionData().getMsgTitleColor().equals("")) {
+                try {
+                    binding.tvTitle.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+                } catch (Exception e) {
+                    Log.w(LOG_TAG, "Could not parse the data given for message title color\nSetting the default value.");
+                    e.printStackTrace();
+                    binding.tvTitle.setTextColor(getResources().getColor(R.color.blue));
+                }
+            } else {
                 binding.tvTitle.setTextColor(getResources().getColor(R.color.blue));
             }
-        } else {
-            binding.tvTitle.setTextColor(getResources().getColor(R.color.blue));
-        }
-        try {
-            binding.tvTitle.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgBodyTextSize()) + 12);
-        } catch (Exception e) {
-            Log.w(LOG_TAG, "Could not parse the data given for message body text size\nSetting the default value.");
-            e.printStackTrace();
-            binding.tvTitle.setTextSize(16);
+            try {
+                binding.tvTitle.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgBodyTextSize()) + 12);
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse the data given for message body text size\nSetting the default value.");
+                e.printStackTrace();
+                binding.tvTitle.setTextSize(16);
+            }
         }
     }
 
     private void setBody() {
-        binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n", "\n"));
-        binding.tvBody.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
-        binding.tvBody.setVisibility(View.VISIBLE);
-        if(mInAppMessage.getActionData().getMsgBodyColor() != null && !mInAppMessage.getActionData().getMsgBodyColor().equals("")) {
-            try {
-                binding.tvBody.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyColor()));
-            } catch (Exception e) {
-                Log.w(LOG_TAG, "Could not parse the data given for message body color\nSetting the default value.");
-                e.printStackTrace();
+
+        if (mInAppMessage.getActionData().getMsgBody().equals("") ||
+                mInAppMessage.getActionData().getMsgBody() == null) {
+            binding.tvBody.setVisibility(View.GONE);
+        } else {
+            if(!mInAppMessage.getActionData().getMsgBodyBackgroundColor().equals("") &&
+                    mInAppMessage.getActionData().getMsgBodyBackgroundColor() != null) {
+                binding.tvBody.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyBackgroundColor()));
             }
-        }
-        try {
-            binding.tvBody.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgBodyTextSize()) + 8);
-        } catch (Exception e) {
-            Log.w(LOG_TAG, "Could not parse the data given for message body text size\nSetting the default value.");
-            e.printStackTrace();
-            binding.tvBody.setTextSize(12);
+            binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n", "\n"));
+            binding.tvBody.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
+            binding.tvBody.setVisibility(View.VISIBLE);
+            if (mInAppMessage.getActionData().getMsgBodyColor() != null && !mInAppMessage.getActionData().getMsgBodyColor().equals("")) {
+                try {
+                    binding.tvBody.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyColor()));
+                } catch (Exception e) {
+                    Log.w(LOG_TAG, "Could not parse the data given for message body color\nSetting the default value.");
+                    e.printStackTrace();
+                }
+            }
+            try {
+                binding.tvBody.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgBodyTextSize()) + 8);
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse the data given for message body text size\nSetting the default value.");
+                e.printStackTrace();
+                binding.tvBody.setTextSize(12);
+            }
         }
     }
 
     private void setButton() {
 
-        binding.btnTemplate.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
-        binding.btnTemplate.setVisibility(View.VISIBLE);
-        binding.btnTemplate.setText(mInAppMessage.getActionData().getBtnText());
-        if(mInAppMessage.getActionData().getButtonTextColor() != null && !mInAppMessage.getActionData().getButtonTextColor().equals("")) {
-            try {
-                binding.btnTemplate.setTextColor(Color.parseColor(mInAppMessage.getActionData().getButtonTextColor()));
-            } catch (Exception e) {
-                Log.w(LOG_TAG, "Could not parse the data given for button text color\nSetting the default value.");
-                e.printStackTrace();
+        if(mInAppMessage.getActionData().getBtnText().equals("") ||
+                mInAppMessage.getActionData().getBtnText() == null) {
+            binding.btnTemplate.setVisibility(View.GONE);
+        } else {
+            binding.btnTemplate.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
+            binding.btnTemplate.setVisibility(View.VISIBLE);
+            binding.btnTemplate.setText(mInAppMessage.getActionData().getBtnText());
+            if (mInAppMessage.getActionData().getButtonTextColor() != null && !mInAppMessage.getActionData().getButtonTextColor().equals("")) {
+                try {
+                    binding.btnTemplate.setTextColor(Color.parseColor(mInAppMessage.getActionData().getButtonTextColor()));
+                } catch (Exception e) {
+                    Log.w(LOG_TAG, "Could not parse the data given for button text color\nSetting the default value.");
+                    e.printStackTrace();
+                    binding.btnTemplate.setTextColor(getResources().getColor(R.color.black));
+                }
+            } else {
                 binding.btnTemplate.setTextColor(getResources().getColor(R.color.black));
             }
-        } else {
-            binding.btnTemplate.setTextColor(getResources().getColor(R.color.black));
-        }
-        if(mInAppMessage.getActionData().getButtonColor() != null && !mInAppMessage.getActionData().getButtonColor().equals("")) {
-            try {
-                binding.btnTemplate.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getButtonColor()));
-            } catch (Exception e) {
-                Log.w(LOG_TAG, "Could not parse the data given for button color\nSetting the default value.");
-                e.printStackTrace();
+            if (mInAppMessage.getActionData().getButtonColor() != null && !mInAppMessage.getActionData().getButtonColor().equals("")) {
+                try {
+                    binding.btnTemplate.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getButtonColor()));
+                } catch (Exception e) {
+                    Log.w(LOG_TAG, "Could not parse the data given for button color\nSetting the default value.");
+                    e.printStackTrace();
+                }
             }
-        }
 
-        binding.btnTemplate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(npsType == NpsType.NONE) {
-                    Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
-                    if (buttonCallback != null) {
-                        Visilabs.CallAPI().setInAppButtonInterface(null);
-                        buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
-                    } else {
-                        if(mInAppMessage.getActionData().getMsgType() == InAppActionType.IMAGE_TEXT_BUTTON) {
-                            if(mInAppMessage.getActionData().getButtonFunction().equals(VisilabsConstant.BUTTON_LINK)) {
+            binding.btnTemplate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (npsType == NpsType.NONE) {
+                        Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+                        if (buttonCallback != null) {
+                            Visilabs.CallAPI().setInAppButtonInterface(null);
+                            buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
+                        } else {
+                            if (mInAppMessage.getActionData().getMsgType() == InAppActionType.IMAGE_TEXT_BUTTON) {
+                                if (mInAppMessage.getActionData().getButtonFunction().equals(VisilabsConstant.BUTTON_LINK)) {
+                                    if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
+                                        try {
+                                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
+                                            startActivity(viewIntent);
+
+                                        } catch (final ActivityNotFoundException e) {
+                                            Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                                        }
+                                    }
+                                } else {
+                                    AppUtils.goToNotificationSettings(getApplicationContext());
+                                }
+                            } else {
                                 if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
                                     try {
                                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
@@ -414,46 +450,34 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                                         Log.i("Visilabs", "User doesn't have an activity for notification URI");
                                     }
                                 }
-                            } else {
-                                AppUtils.goToNotificationSettings(getApplicationContext());
-                            }
-                        } else {
-                            if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
-                                try {
-                                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
-                                    startActivity(viewIntent);
-
-                                } catch (final ActivityNotFoundException e) {
-                                    Log.i("Visilabs", "User doesn't have an activity for notification URI");
-                                }
-                            }
-                        }
-                    }
-                    VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
-                    finish();
-                } else {
-                    if(isRatingEntered()) {
-                        Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
-                        if (buttonCallback != null) {
-                            Visilabs.CallAPI().setInAppButtonInterface(null);
-                            buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
-                        } else {
-                            if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
-                                try {
-                                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
-                                    startActivity(viewIntent);
-
-                                } catch (final ActivityNotFoundException e) {
-                                    Log.i("Visilabs", "User doesn't have an activity for notification URI");
-                                }
                             }
                         }
                         VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                         finish();
+                    } else {
+                        if (isRatingEntered()) {
+                            Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+                            if (buttonCallback != null) {
+                                Visilabs.CallAPI().setInAppButtonInterface(null);
+                                buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
+                            } else {
+                                if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
+                                    try {
+                                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
+                                        startActivity(viewIntent);
+
+                                    } catch (final ActivityNotFoundException e) {
+                                        Log.i("Visilabs", "User doesn't have an activity for notification URI");
+                                    }
+                                }
+                            }
+                            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                            finish();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     private boolean isRatingEntered() {
