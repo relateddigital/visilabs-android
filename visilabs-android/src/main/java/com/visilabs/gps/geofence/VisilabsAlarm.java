@@ -48,7 +48,7 @@ public class VisilabsAlarm extends BroadcastReceiver {
         PendingIntent pi;
 
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
-            pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_IMMUTABLE);
+            pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_MUTABLE);
         } else {
             pi = PendingIntent.getBroadcast(context, 0, i, 0);
         }

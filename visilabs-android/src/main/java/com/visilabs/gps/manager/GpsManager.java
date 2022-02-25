@@ -340,7 +340,7 @@ public class GpsManager {
         Intent intent = new Intent(mApplication, GeofenceBroadcastReceiver.class);
 
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
-            mGeofencePendingIntent = PendingIntent.getBroadcast(mApplication, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            mGeofencePendingIntent = PendingIntent.getBroadcast(mApplication, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
         } else {
             mGeofencePendingIntent = PendingIntent.getBroadcast(mApplication, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         }
