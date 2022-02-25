@@ -97,6 +97,8 @@ public class ActionData implements Parcelable {
     private final String mCustomFontFamilyAndroid;
     @SerializedName("carousel_items")
     private List<CarouselItem> carouselItems = null;
+    @SerializedName("button_function")
+    private final String mButtonFunction;
 
     protected ActionData(Parcel in) {
         mAlertType = in.readString();
@@ -140,6 +142,7 @@ public class ActionData implements Parcelable {
         mCustomFontFamilyIos = in.readString();
         mCustomFontFamilyAndroid = in.readString();
         carouselItems = in.readParcelable(CarouselItem.class.getClassLoader());
+        mButtonFunction = in.readString();
     }
 
     public static final Creator<ActionData> CREATOR = new Creator<ActionData>() {
@@ -202,6 +205,7 @@ public class ActionData implements Parcelable {
         dest.writeString(mCustomFontFamilyIos);
         dest.writeString(mCustomFontFamilyAndroid);
         dest.writeParcelable((Parcelable) carouselItems, 0);
+        dest.writeString(mButtonFunction);
     }
 
     public String getAlertType() {
@@ -498,5 +502,9 @@ public class ActionData implements Parcelable {
 
     public String getCustomFontFamilyAndroid() {
         return mCustomFontFamilyAndroid;
+    }
+
+    public String getButtonFunction() {
+        return mButtonFunction;
     }
 }

@@ -33,6 +33,7 @@ import com.visilabs.inApp.carousel.CarouselItem;
 import com.visilabs.inApp.carousel.OnSwipeTouchListener;
 import com.visilabs.util.AppUtils;
 import com.visilabs.util.StringUtils;
+import com.visilabs.util.VisilabsConstant;
 import com.visilabs.view.BaseRating;
 import com.visilabs.view.SmileRating;
 
@@ -403,8 +404,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                         buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
                     } else {
                         if(mInAppMessage.getActionData().getMsgType() == InAppActionType.IMAGE_TEXT_BUTTON) {
-                            //TODO: Check if it should be directed to browser or settings page here
-                            if(true) {
+                            if(mInAppMessage.getActionData().getButtonFunction().equals(VisilabsConstant.BUTTON_LINK)) {
                                 if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
                                     try {
                                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));

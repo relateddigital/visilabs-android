@@ -191,6 +191,8 @@ public class VisilabsConstant {
     public static final String LOC_PERMISSION_NONE_REQUEST_VAL = "none";
 
     public static final String NOTIFICATION_PERMISSION_REQUEST_KEY = "OM.pushnotifystatus";
+    public static final String BUTTON_LINK = "link";
+    public static final String BUTTON_REDIRECT = "redirect";
 
     public static boolean checkNotificationActivityAvailable(Context context) {
         if (Build.VERSION.SDK_INT < UI_FEATURES_MIN_API) {
