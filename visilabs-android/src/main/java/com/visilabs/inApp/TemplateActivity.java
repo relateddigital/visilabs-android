@@ -329,8 +329,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 mInAppMessage.getActionData().getMsgTitle() == null) {
             binding.tvTitle.setVisibility(View.GONE);
         } else {
-            if(!mInAppMessage.getActionData().getMsgTitleBackgroundColor().equals("") &&
-                    mInAppMessage.getActionData().getMsgTitleBackgroundColor() != null) {
+            if(mInAppMessage.getActionData().getMsgTitleBackgroundColor() != null &&
+                    !mInAppMessage.getActionData().getMsgTitleBackgroundColor().equals("")) {
                 binding.tvTitle.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleBackgroundColor()));
             }
             binding.tvTitle.setVisibility(View.VISIBLE);
@@ -363,8 +363,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 mInAppMessage.getActionData().getMsgBody() == null) {
             binding.tvBody.setVisibility(View.GONE);
         } else {
-            if(!mInAppMessage.getActionData().getMsgBodyBackgroundColor().equals("") &&
-                    mInAppMessage.getActionData().getMsgBodyBackgroundColor() != null) {
+            if(mInAppMessage.getActionData().getMsgBodyBackgroundColor() != null &&
+                    !mInAppMessage.getActionData().getMsgBodyBackgroundColor().equals("")) {
                 binding.tvBody.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyBackgroundColor()));
             }
             binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n", "\n"));
