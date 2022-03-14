@@ -95,6 +95,14 @@ public class ExtendedProps implements Serializable {
     private String promocodes_soldout_message_text_size;
     @SerializedName("promocodes_soldout_message_background_color")
     private String promocodes_soldout_message_background_color;
+    @SerializedName("promocode_banner_text")
+    private String promocode_banner_text;
+    @SerializedName("promocode_banner_text_color")
+    private String promocode_banner_text_color;
+    @SerializedName("promocode_banner_background_color")
+    private String promocode_banner_background_color;
+    @SerializedName("promocode_banner_button_label")
+    private String promocode_banner_button_label;
 
     public void setDisplayNameTextColor(String displayNameTextColor) {
         displayname_text_color = displayNameTextColor;
@@ -462,6 +470,38 @@ public class ExtendedProps implements Serializable {
 
     public String getPromocodesSoldOutMessageBackgroundColor() {
         return promocodes_soldout_message_background_color;
+    }
+
+    public void setPromocodeBannerText(String promocodeBannerText) {
+        promocode_banner_text = promocodeBannerText;
+    }
+
+    public String getPromocodeBannerText() {
+        return promocode_banner_text;
+    }
+
+    public void setPromocodeBannerTextColor(String promocodeBannerTextColor) {
+        promocode_banner_text_color = promocodeBannerTextColor;
+    }
+
+    public String getPromocodeBannerTextColor() {
+        return promocode_banner_text_color;
+    }
+
+    public void setPromocodeBannerBackgroundColor(String promocodeBannerBackgroundColor) {
+        promocode_banner_background_color = promocodeBannerBackgroundColor;
+    }
+
+    public String getPromocodeBannerBackgroundColor() {
+        return promocode_banner_background_color;
+    }
+
+    public void setPromocodeBannerButtonLabel(String promocodeBannerButtonLabel) {
+        promocode_banner_button_label = promocodeBannerButtonLabel;
+    }
+
+    public String getPromocodeBannerButtonLabel() {
+        return promocode_banner_button_label;
     }
 }
 

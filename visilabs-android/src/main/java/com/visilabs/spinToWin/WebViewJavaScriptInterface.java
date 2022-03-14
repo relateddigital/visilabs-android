@@ -28,6 +28,7 @@ public class WebViewJavaScriptInterface {
     WebViewDialogFragment mWebViewDialogFragment;
     private SpinToWinCompleteInterface mListener;
     private SpinToWinCopyToClipboardInterface mCopyToClipboardInterface;
+    private SpinToWinShowCodeInterface mSpinToWinShowCodeInterface;
     private String mResponse;
     private SpinToWinModel spinToWinModel;
     private String subEmail = "";
@@ -173,6 +174,7 @@ public class WebViewJavaScriptInterface {
                     Runnable myRunnable = new Runnable() {
                         @Override
                         public void run() {
+                            mSpinToWinShowCodeInterface.onCodeShown(finalSelectedCode);
                             sendPromotionCodeInfo(finalSelectedCode, finalSelectedSliceText);
                             mWebViewDialogFragment.getWebView().evaluateJavascript(
                                     "window.chooseSlice(" + finalSelectedIndex + ",'" + finalSelectedCode + "');",
@@ -213,6 +215,7 @@ public class WebViewJavaScriptInterface {
                 Runnable myRunnable = new Runnable() {
                     @Override
                     public void run() {
+                        mSpinToWinShowCodeInterface.onCodeShown(promotionCode);
                         sendPromotionCodeInfo(promotionCode, sliceText);
                         mWebViewDialogFragment.getWebView().evaluateJavascript(
                                 "window.chooseSlice(" + idx + ",'" + promotionCode + "');",
@@ -253,6 +256,7 @@ public class WebViewJavaScriptInterface {
                         Runnable myRunnable = new Runnable() {
                             @Override
                             public void run() {
+                                mSpinToWinShowCodeInterface.onCodeShown(finalSelectedCode);
                                 sendPromotionCodeInfo(finalSelectedCode, finalSelectedSliceText);
                                 mWebViewDialogFragment.getWebView().evaluateJavascript(
                                         "window.chooseSlice(" + finalSelectedIndex + ",'" + finalSelectedCode + "');",
@@ -292,9 +296,11 @@ public class WebViewJavaScriptInterface {
     }
 
     public void setSpinToWinListeners(SpinToWinCompleteInterface listener,
-                                      SpinToWinCopyToClipboardInterface copyToClipboardInterface) {
+                                      SpinToWinCopyToClipboardInterface copyToClipboardInterface,
+                                      SpinToWinShowCodeInterface spinToWinShowCodeInterface) {
         mListener = listener;
         mCopyToClipboardInterface = copyToClipboardInterface;
+        mSpinToWinShowCodeInterface = spinToWinShowCodeInterface;
     }
 
     private void sendPromotionCodeInfo(final String promotionCode, final String sliceText) {

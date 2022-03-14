@@ -1,5 +1,7 @@
 package com.visilabs.spinToWin;
 
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -8,22 +10,25 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
-
 import com.google.gson.Gson;
 import com.visilabs.android.R;
+import com.visilabs.spinToWin.model.ExtendedProps;
 import com.visilabs.spinToWin.model.SpinToWinModel;
+import com.visilabs.util.ActivityUtils;
 import com.visilabs.util.AppUtils;
 
 import java.util.ArrayList;
 
-public class SpinToWinActivity extends FragmentActivity implements SpinToWinCompleteInterface, SpinToWinCopyToClipboardInterface {
+public class SpinToWinActivity extends FragmentActivity implements SpinToWinCompleteInterface,
+        SpinToWinCopyToClipboardInterface, SpinToWinShowCodeInterface {
     private static final String LOG_TAG = "SpinToWin";
 
     private String jsonStr = "";
+    private SpinToWinModel response;
+    private String spinToWinPromotionCode = "";
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -34,7 +39,7 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
         } else {
             Intent intent = getIntent();
             if (intent != null && intent.hasExtra("spin-to-win-data")) {
-                final SpinToWinModel response = (SpinToWinModel) intent.getSerializableExtra("spin-to-win-data");
+                response = (SpinToWinModel) intent.getSerializableExtra("spin-to-win-data");
                 if (response != null) {
                     jsonStr = new Gson().toJson(response);
                 } else {
@@ -54,7 +59,7 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
                 finish();
             } else {
                 WebViewDialogFragment webViewDialogFragment = WebViewDialogFragment.newInstance(res.get(0), res.get(1), res.get(2));
-                webViewDialogFragment.setSpinToWinListeners(this, this);
+                webViewDialogFragment.setSpinToWinListeners(this, this, this);
                 webViewDialogFragment.display(getSupportFragmentManager());
             }
         } else {
@@ -70,6 +75,34 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(spinToWinPromotionCode != null && !spinToWinPromotionCode.isEmpty()) {
+            try {
+                ExtendedProps extendedProps = new Gson().fromJson(new java.net.URI(response.getActiondata().
+                        getExtendedProps()).getPath(), ExtendedProps.class);
+
+                if(extendedProps.getPromocodeBannerButtonLabel() != null &&
+                        !extendedProps.getPromocodeBannerButtonLabel().isEmpty()) {
+                    if(ActivityUtils.getParentActivity() != null) {
+                        SpinToWinCodeBannerFragment spinToWinCodeBannerFragment =
+                                SpinToWinCodeBannerFragment.newInstance(extendedProps, spinToWinPromotionCode);
+
+                        spinToWinCodeBannerFragment.setRetainInstance(true);
+
+                        FragmentTransaction transaction = ActivityUtils.getParentActivity().getFragmentManager().beginTransaction();
+                        transaction.add(android.R.id.content, spinToWinCodeBannerFragment);
+                        transaction.commit();
+                        ActivityUtils.setParentActivity(null);
+                    }
+                }
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "SpinToWinCodeBanner : " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
     public void onCompleted() {
         finish();
     }
@@ -81,5 +114,10 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
         clipboard.setPrimaryClip(clip);
         Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
         finish();
+    }
+
+    @Override
+    public void onCodeShown(String code) {
+        spinToWinPromotionCode = code;
     }
 }

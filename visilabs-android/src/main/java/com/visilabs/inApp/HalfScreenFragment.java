@@ -53,7 +53,7 @@ public class HalfScreenFragment extends Fragment {
      *
      * @param stateId Parameter 1.
      * @param inAppState Parameter 2.
-     * @return A new instance of fragment SocialProofFragment.
+     * @return A new instance of fragment HalfScreenFragment.
      */
     public static HalfScreenFragment newInstance(int stateId, InAppNotificationState inAppState) {
         HalfScreenFragment fragment = new HalfScreenFragment();

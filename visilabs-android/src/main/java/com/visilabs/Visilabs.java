@@ -47,6 +47,7 @@ import com.visilabs.scratchToWin.ScratchToWinActivity;
 import com.visilabs.scratchToWin.model.ScratchToWinModel;
 import com.visilabs.spinToWin.SpinToWinActivity;
 import com.visilabs.spinToWin.model.SpinToWinModel;
+import com.visilabs.util.ActivityUtils;
 import com.visilabs.util.AppUtils;
 import com.visilabs.util.NetworkManager;
 import com.visilabs.util.PersistentTargetManager;
@@ -742,6 +743,7 @@ public class Visilabs {
                             Log.e(LOG_TAG, "SpinToWin feature is not supported for API levels smaller than 19!"
                                     + " Currently, " + Build.VERSION.SDK_INT + ".");
                         } else {
+                            ActivityUtils.setParentActivity(parent);
                             Intent intent = new Intent(parent, SpinToWinActivity.class);
                             SpinToWinModel spinToWinModel = (SpinToWinModel) response.getSpinToWinList().get(0);
                             intent.putExtra("spin-to-win-data", spinToWinModel);

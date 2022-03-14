@@ -31,6 +31,7 @@ public class WebViewDialogFragment extends DialogFragment {
     private boolean mIsRotation = false;
     private SpinToWinCompleteInterface mListener;
     private SpinToWinCopyToClipboardInterface mCopyToClipboardInterface;
+    private SpinToWinShowCodeInterface mSpinToWinShowCodeInterface;
 
     public WebViewDialogFragment (){}
 
@@ -70,7 +71,7 @@ public class WebViewDialogFragment extends DialogFragment {
             this.htmlString = getArguments().getString("htmlString");
             mResponse = getArguments().getString("response");
             mJavaScriptInterface = new WebViewJavaScriptInterface(this, mResponse);
-            mJavaScriptInterface.setSpinToWinListeners(mListener, mCopyToClipboardInterface);
+            mJavaScriptInterface.setSpinToWinListeners(mListener, mCopyToClipboardInterface, mSpinToWinShowCodeInterface);
         }
     }
 
@@ -132,8 +133,11 @@ public class WebViewDialogFragment extends DialogFragment {
         return webView;
     }
 
-    public void setSpinToWinListeners(SpinToWinCompleteInterface listener, SpinToWinCopyToClipboardInterface copyToClipboardInterface){
+    public void setSpinToWinListeners(SpinToWinCompleteInterface listener,
+                                      SpinToWinCopyToClipboardInterface copyToClipboardInterface,
+                                      SpinToWinShowCodeInterface spinToWinShowCodeInterface){
         mListener = listener;
         mCopyToClipboardInterface = copyToClipboardInterface;
+        mSpinToWinShowCodeInterface = spinToWinShowCodeInterface;
     }
 }
