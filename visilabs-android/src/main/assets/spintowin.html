@@ -202,8 +202,6 @@
             margin: 0 auto;
         }
 
-
-
         .easyWheel .rotate {
             transform: rotate(100deg);
         }
@@ -230,7 +228,6 @@
         }
 
         input,
-        textarea,
         select {
             border: 1px solid #000;
             max-width: 100%;
@@ -246,7 +243,6 @@
         }
 
         input,
-        textarea,
         select {
             background-color: inherit;
             color: inherit;
@@ -266,7 +262,6 @@
 
         body,
         input,
-        textarea,
         button,
         select {
             font-size: 14.45px;
@@ -391,12 +386,7 @@
             will-change: opacity;
         }
 
-        .wheelio_holder .wlo_content .wlo_title {
-            font-size: 26px;
-        }
-
-        .wheelio_holder .wlo_content .wlo_title,
-        .wlo_title p {
+        .wheelio_holder .wlo_content #form-title {
             font-size: 30px;
             line-height: 1.3em;
             font-weight: 700;
@@ -404,9 +394,7 @@
             margin-bottom: 20px;
         }
 
-        .wlo_enter_email p,
-        .wlo_thank_you,
-        .wlo_thank_you p {
+        .wlo_enter_email p {
             line-height: 1.3em !important;
             margin: 0 0 10px;
         }
@@ -414,30 +402,10 @@
         .wheelio_holder .wlo_content .wlo_close,
         .wheelio_holder .wlo_content .wlo_text {
             font-size: 14px;
-        }
-
-        .wheelio_holder .wlo_content .wlo_close,
-        .wheelio_holder .wlo_content .wlo_subtext,
-        .wheelio_holder .wlo_content .wlo_text {
-            font-size: 14px;
             color: inherit;
             text-shadow: none;
         }
 
-        .wheelio_holder .wlo_toast {
-            pointer-events: none;
-            position: absolute;
-            padding: 0;
-            background-color: #ffa3bf;
-            z-index: 999999;
-            color: #111;
-            font-size: 15px;
-            line-height: 38px;
-            border-radius: 3px;
-            -webkit-box-shadow: 3px 5px 15px 0 rgba(0, 0, 0, .3);
-            -moz-box-shadow: 3px 5px 15px 0 rgba(0, 0, 0, .3);
-            box-shadow: 3px 5px 15px 0 rgba(0, 0, 0, .3);
-        }
 
         #wl_custom_fields_holder {
             z-index: 1001;
@@ -473,6 +441,7 @@
         }
 
         #wl_custom_fields_holder.wlo_invert_input .wlo_input {
+            margin-top: 15px;
             background-color: #fff !important;
         }
 
@@ -484,8 +453,7 @@
             transform: translate(-10000px, 0);
         }
 
-        .wheelio_holder .wlo_content input[type=checkbox]+label,
-        .wheelio_holder .wlo_content textarea.wlo_textarea {
+        .wheelio_holder .wlo_content input[type=checkbox]+label {
             font-size: 16px;
         }
 
@@ -577,9 +545,6 @@
 
         .wlo_gdpr_text a {
             text-decoration: underline;
-        }
-
-        .wlo_gdpr_text a {
             color: unset;
         }
 
@@ -611,7 +576,8 @@
             height: 20px;
         }
 
-        #wheel-container {
+        #wheel-container-half,
+        #wheel-container-full {
             float: unset;
             width: 207px;
             height: 414px;
@@ -641,6 +607,48 @@
             z-index: 1001;
             display: none;
         }
+
+        #form-title,
+        #form-message,
+        #success-message,
+        #promocode-title {
+            text-align: center !important;
+        }
+
+        .form-submit-btn {
+            transition: .2s filter ease-in-out !important;
+        }
+
+        #warning>ul {
+            margin: 2px !important;
+            padding-inline-start: 20px !important;
+        }
+
+        .form-submit-btn:hover {
+            filter: brightness(110%) !important;
+            transition: .2s filter ease-in-out !important;
+        }
+
+        .form-submit-btn.disabled {
+            filter: grayscale(100%) !important;
+            transition: .2s filter ease-in-out !important;
+        }
+
+        .copy-btn.disabled {
+            filter: grayscale(0%) !important;
+        }
+
+        #warning {
+            display: none;
+            position: absolute;
+            z-index: 3;
+            background: #fcf6c1;
+            font-size: 12px;
+            border: 1px solid #ccc;
+            top: 105%;
+            width: 100%;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 
@@ -651,12 +659,12 @@
                 <div class="wlo_form wlo_gpuac wlo_font_color">
                     <div class="wlo_enter_email wlo_gpuac">
                         <img src="" id="spin-to-win-box-close" />
-                        <div class="wlo_title">
-                            <p id="form-title">Title</p>
-                        </div>
-                        <div class="wlo_text">
-                            <p id="form-message">Message</p>
-                        </div>
+
+
+                        <p id="form-title">Title</p>
+                        <p id="form-message">Message</p>
+
+  
                         <div id="wl_custom_fields_holder" class="wlo_invert_input">
                             <input class="wlo_email_input wlo_input" id="vl-form-input" name="vl-form-input"
                                 type="email" placeholder="Email" data-field-name="email" maxlength="99">
@@ -672,7 +680,7 @@
                                     name="vl-form-checkbox-emailpermit">
                                 <label class="wlo_gdpr_text vl-form-checkbox-emailpermit"
                                     for="vl-form-checkbox-emailpermit">
-                                    <p id="vl-permitform-email-text">Email Permit </p>
+                                    <p id="vl-permitform-email-text">Email Permit</p>
                                 </label>
                             </div>
                         </div>
@@ -686,7 +694,7 @@
                             style="background-color: #eeeeee; color: #000000;">Coupon Code</div>
                         <div class="wlo_btn wlo_try_luck_btn form-submit-btn" id="form-submit-btn"
                             style="background-color: #000000; color: #FFFFFF;">Submit</div>
-                        <div class="wlo_btn wlo_try_luck_btn form-submit-btn" id="form-copy-btn"
+                        <div class="wlo_btn wlo_try_luck_btn form-submit-btn copy-btn" id="form-copy-btn"
                             style="background-color: #000000; color: #FFFFFF;">Copy</div>
                         <div id="vl-warning" class="vl-validationMessage" style="display: block; color:red;">
                             <ul style="padding-inline-start: 0px; list-style-type: none;">
@@ -695,10 +703,15 @@
                                 <li id="check-consent-message" style="display: block;">Please check consent.</li>
                             </ul>
                         </div>
+
+                        <div id="wheel-container-full"></div>
+
                     </div>
                 </div>
             </div>
-            <div id="wheel-container"></div>
+
+            <div id="wheel-container-half"></div>
+
 
             <div id="promocodes_soldout_message" class="vertical_center ribbon">Kampanya sona erdi.</div>
 
@@ -741,6 +754,68 @@
                 }
             };
 
+            const extendedProps = {
+                "displayname_text_color": "#ffffff",
+                "displayname_font_family": "default",
+                "displayname_custom_font_family_ios": "",
+                "displayname_custom_font_family_android": "",
+                "displayname_text_size": "6",
+                "title_position": "bottom",
+                "title_text_color": "#422de8",
+                "title_font_family": "Monospace",
+                "title_custom_font_family_ios": "sydneysignature",
+                "title_custom_font_family_android": "sydneysignature",
+                "title_text_size": "5",
+                "text_position": "bottom",
+                "text_color": "#422de8",
+                "text_font_family": "default",
+                "text_custom_font_family_ios": "",
+                "text_custom_font_family_android": "",
+                "text_size": "5",
+                "button_position": "bottom",
+                "button_color": "#ffa3bf",
+                "button_text_color": "#ffffff",
+                "button_font_family": "custom",
+                "button_custom_font_family_ios": "android101",
+                "button_custom_font_family_android": "android101",
+                "button_text_size": "3",
+                "promocode_title_text_color": "#3047bf",
+                "promocode_title_font_family": "custom",
+                "promocode_title_custom_font_family_ios": "android101",
+                "promocode_title_custom_font_family_android": "android101",
+                "promocode_title_text_size": "3",
+                "promocode_background_color": "#3047bf",
+                "promocode_text_color": "#ffffff",
+                "copybutton_position": "bottom",
+                "copybutton_color": "#3047bf",
+                "copybutton_text_color": "#ffffff",
+                "copybutton_font_family": "custom",
+                "copybutton_custom_font_family_ios": "android101",
+                "copybutton_custom_font_family_android": "sydneysignature",
+                "copybutton_text_size": "3",
+                "emailpermit_text_size": "2",
+                "emailpermit_text_url": "",
+                "consent_text_size": "2",
+                "consent_text_url": "https://www.relateddigital.com/",
+                "close_button_color": "white",
+                "background_color": "#48a4af",
+                "promocodes_soldout_message_text_color": "#a51a4f",
+                "promocodes_soldout_message_font_family": "custom",
+                "promocodes_soldout_message_custom_font_family_ios": "sydneysignature",
+                "promocodes_soldout_message_custom_font_family_android": "sydneysignature",
+                "promocodes_soldout_message_text_size": "4",
+                "promocodes_soldout_message_background_color": "#8b9b18",
+                "promocode_banner_text": "Kazandığınız Kupon Kodu:",
+                "promocode_banner_text_color": "#ffffff",
+                "promocode_banner_background_color": "#e31717",
+                "promocode_banner_button_label": "KOPYALA"
+            };
+
+            let extendedPropsString = JSON.stringify(extendedProps);
+            console.log(extendedPropsString);
+            extendedPropsString = encodeURI(extendedPropsString);
+            console.log(extendedPropsString);
+
             config = {
                 "fontFiles": ["sydneysignature.ttf"],
                 "actid": 100,
@@ -780,7 +855,7 @@
                             "displayName": "statik",
                             "color": "#14a032",
                             "code": "12345",
-                            "type": "promotion",
+                            "type": "staticcode",
                             "is_available": false
                         }
                     ],
@@ -805,7 +880,7 @@
                     "slice_count": "8",
                     "sendemail": false,
                     "courseofaction": "GetExistingPromoCode",
-                    "ExtendedProps": "%7B%22displayname_text_color%22%3A%22%23ffffff%22%2C%22displayname_font_family%22%3A%22custom%22%2C%22displayname_custom_font_family_ios%22%3A%22sydneysignature%22%2C%22displayname_custom_font_family_android%22%3A%22android101%22%2C%22displayname_text_size%22%3A%226%22%2C%22title_text_color%22%3A%22%23422de8%22%2C%22title_font_family%22%3A%22custom%22%2C%22title_custom_font_family_ios%22%3A%22ios%22%2C%22title_custom_font_family_android%22%3A%22sydneysignature%22%2C%22title_text_size%22%3A%225%22%2C%22text_color%22%3A%22%23422de8%22%2C%22text_font_family%22%3A%22custom%22%2C%22text_custom_font_family_ios%22%3A%22ios%22%2C%22text_custom_font_family_android%22%3A%22sydney_signature%22%2C%22text_size%22%3A%224%22%2C%22button_color%22%3A%22%23ffa3bf%22%2C%22button_text_color%22%3A%22%23ffffff%22%2C%22button_font_family%22%3A%22custom%22%2C%22button_custom_font_family_ios%22%3A%22ios%22%2C%22button_custom_font_family_android%22%3A%22sydney_signature%22%2C%22button_text_size%22%3A%223%22%2C%22promocode_title_text_color%22%3A%22%233047bf%22%2C%22promocode_title_font_family%22%3A%22custom%22%2C%22promocode_title_custom_font_family_ios%22%3A%22SydneySignature%22%2C%22promocode_title_custom_font_family_android%22%3A%22sydney_signature%22%2C%22promocode_title_text_size%22%3A%223%22%2C%22promocode_background_color%22%3A%22%233047bf%22%2C%22promocode_text_color%22%3A%22%23ffffff%22%2C%22copybutton_color%22%3A%22%233047bf%22%2C%22copybutton_text_color%22%3A%22%23ffffff%22%2C%22copybutton_font_family%22%3A%22custom%22%2C%22copybutton_custom_font_family_ios%22%3A%22sidneySignature%22%2C%22copybutton_custom_font_family_android%22%3A%22sydney_signature%22%2C%22copybutton_text_size%22%3A%223%22%2C%22emailpermit_text_size%22%3A%222%22%2C%22emailpermit_text_url%22%3A%22%22%2C%22consent_text_size%22%3A%222%22%2C%22consent_text_url%22%3A%22https%3A%2F%2Fwww.relateddigital.com%2F%22%2C%22close_button_color%22%3A%22black%22%2C%22background_color%22%3A%22%2348a4af%22%2C%22promocodes_soldout_message_text_color%22%3A%22%23a51a4f%22%2C%22promocodes_soldout_message_font_family%22%3A%22custom%22%2C%22promocodes_soldout_message_custom_font_family_ios%22%3A%22sidneySignature%22%2C%22promocodes_soldout_message_custom_font_family_android%22%3A%22sydney_signature%22%2C%22promocodes_soldout_message_text_size%22%3A%224%22%2C%22promocodes_soldout_message_background_color%22%3A%22%238b9b18%22%7D",
+                    "ExtendedProps": extendedPropsString,
                     "report": {
                         "impression": "",
                         "click": "OM.zn=acttype-27&OM.zpc=act-100"
@@ -818,7 +893,7 @@
                     "promocodes_soldout_message": "The campaign is ended."
                 }
             };
-            initSpinToWin(config);
+            initSpinToWin(config); // half_spin, full_spin
         }
     </script>
 </body>

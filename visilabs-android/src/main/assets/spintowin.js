@@ -2810,7 +2810,16 @@ function SpinToWin(config) {
 		this.convertConfigJson()
 	}
 	this.container = document.getElementById("container");
-	this.wheelContainer = document.getElementById("wheel-container");
+	if (this.config.taTemplate == "full_spin") {
+		this.wheelContainerId = "wheel-container-full";
+		document.getElementById("wheel-container-half").remove();
+	} else {
+		this.wheelContainerId = "wheel-container-half";
+		document.getElementById("wheel-container-full").remove();
+	}
+
+
+	this.wheelContainer = document.getElementById(this.wheelContainerId);
 	this.closeButton = document.getElementById("spin-to-win-box-close");
 	this.titleElement = document.getElementById("form-title");
 	this.messageElement = document.getElementById("form-message");
@@ -2843,7 +2852,7 @@ function SpinToWin(config) {
 	this.config.statusBarHeight = window.screen.height - window.innerHeight;
 	this.config.windowHeightWidthRatio = window.innerHeight / window.innerWidth;
 	if (this.config.taTemplate == "full_spin") {
-		this.config.wheelContainerMarginLeft = this.config.windowHeightWidthRatio > 1.6 ? window.innerWidth / 6 : window.innerWidth / 5;
+		this.config.wheelContainerMarginLeft = this.config.windowHeightWidthRatio > 1.6 ? (window.innerWidth / 6) : (window.innerWidth / 5);
 		this.config.r = parseFloat(window.innerWidth / 2) - this.config.wheelContainerMarginLeft;
 		this.config.wheelContainerWidth = this.config.windowWidth - this.config.wheelContainerMarginLeft * 2
 	} else {
@@ -2867,11 +2876,20 @@ function SpinToWin(config) {
 	window.spinToWin = this;
 	this.createItems();
 	this.createEasyWheel();
+
+	if(this.config.taTemplate == "full_spin") {
+		this.config.wheelContainerMarginLeft = this.config.wheelContainerMarginLeft - window.innerWidth * 0.06;
+		this.wheelContainer.style.marginLeft = this.config.wheelContainerMarginLeft + "px";
+	}
+
 	this.handleVisibility()
 	var rotates = 4;
 	this.config.totalSliceCount = this.config.items.length * rotates;
 	this.config.mailFormSubmitCompleted = false;
 	this.checkAvailability();
+
+	
+
 };
 
 SpinToWin.prototype.checkAvailability = function () {
@@ -2931,7 +2949,7 @@ SpinToWin.prototype.createItems = function () {
 	}
 };
 SpinToWin.prototype.createEasyWheel = function () {
-	$("#wheel-container").easyWheel({
+	$("#" + this.wheelContainerId).easyWheel({
 		items: window.spinToWin.config.items,
 		duration: 1,
 		rotates: 4,
@@ -3053,6 +3071,17 @@ SpinToWin.prototype.convertConfigJson = function () {
 	this.config.copybuttonCustomFontFamilyAndroid = extendedProps.copybutton_custom_font_family_android;
 	this.config.promocodesSoldoutMessageCustomFontFamilyAndroid = extendedProps.promocodes_soldout_message_custom_font_family_android;
 
+	//position
+	this.config.titlePosition = extendedProps.title_position;
+	this.config.textPosition = extendedProps.text_position;
+	this.config.buttonPosition = extendedProps.button_position;
+	this.config.copybuttonPosition = extendedProps.copybutton_position;
+
+	//promocodeBanner
+	this.config.promocodeBannerText = extendedProps.promocode_banner_text;
+	this.config.promocodeBannerTextColor = extendedProps.promocode_banner_text_color;
+	this.config.promocodeBannerBackgroundColor = extendedProps.promocode_banner_background_color;
+	this.config.promocodeBannerButtonLabel = extendedProps.promocode_banner_button_label;
 };
 SpinToWin.prototype.addFonts = function () {
 	if (this.config.fontFiles === undefined) {
@@ -3228,6 +3257,57 @@ SpinToWin.prototype.setContent = function () {
 	this.promocodesSoldoutMessageElement.style.fontSize = (this.config.promocodesSoldoutMessageTextSize + 20) + "px";
 	this.promocodesSoldoutMessageElement.style.backgroundColor = this.config.promocodesSoldoutMessageBackgroundColor;
 
+
+	if(this.config.titlePosition == "bottom"){
+		this.titleElement.remove();
+		this.wheelContainer.parentNode.insertBefore(this.titleElement, this.wheelContainer.nextSibling);
+		this.titleElement.style.marginTop = window.innerWidth * 0.88  + "px";
+		if(this.config.textPosition == "bottom"){
+			this.messageElement.remove();
+			this.titleElement.parentNode.insertBefore(this.messageElement, this.titleElement.nextSibling);
+			if(this.config.buttonPosition == "bottom"){
+				this.submitButton.remove();
+				this.messageElement.parentNode.insertBefore(this.submitButton, this.messageElement.nextSibling);
+			}
+			if(this.config.copybuttonPosition == "bottom"){
+				this.copyButton.remove();
+				this.messageElement.parentNode.insertBefore(this.copyButton, this.messageElement.nextSibling);
+			}
+		} else {
+			this.submitButton.remove();
+			this.titleElement.parentNode.insertBefore(this.submitButton, this.titleElement.nextSibling);
+			if(this.config.copybuttonPosition == "bottom"){
+				this.copyButton.remove();
+				this.titleElement.parentNode.insertBefore(this.copyButton, this.titleElement.nextSibling);
+			}
+		}
+	} else if(this.config.textPosition == "bottom") {
+		this.messageElement.remove();
+		this.wheelContainer.parentNode.insertBefore(this.messageElement, this.wheelContainer.nextSibling);
+		this.messageElement.style.marginTop = window.innerWidth * 0.88  + "px";
+		if(this.config.buttonPosition == "bottom"){
+			this.submitButton.remove();
+			this.messageElement.parentNode.insertBefore(this.submitButton, this.messageElement.nextSibling);
+		}
+		if(this.config.copybuttonPosition == "bottom"){
+			this.copyButton.remove();
+			this.messageElement.parentNode.insertBefore(this.copyButton, this.messageElement.nextSibling);
+		}
+	} else if(this.config.buttonPosition == "bottom"){
+		this.submitButton.remove();
+		this.wheelContainer.parentNode.insertBefore(this.submitButton, this.wheelContainer.nextSibling);
+		this.submitButton.style.marginTop = window.innerWidth * 0.88  + "px";
+		if(this.config.copybuttonPosition == "bottom"){
+			this.copyButton.remove();
+			this.submitButton.parentNode.insertBefore(this.copyButton, this.submitButton.nextSibling);
+			this.copyButton.style.marginTop = window.innerWidth * 0.88  + "px";
+		}
+	} else if(this.config.copybuttonPosition == "bottom"){
+		this.copyButton.remove();
+		this.wheelContainer.parentNode.insertBefore(this.copyButton, this.wheelContainer.nextSibling);
+		this.copyButton.style.marginTop = window.innerWidth * 0.88  + "px";
+	}
+
 	this.container.addEventListener("click", function (event) {
 		if (event.target.tagName != "INPUT") {
 			document.activeElement.blur()
@@ -3248,7 +3328,7 @@ SpinToWin.prototype.setContent = function () {
 		this.submitButton.addEventListener("click", this.submit);
 	}
 	this.closeButton.addEventListener("click", evt => this.close());
-	this.copyButton.addEventListener("click", evt => this.copyToClipboard())
+	this.copyButton.addEventListener("click", evt => this.copyToClipboard());
 };
 
 SpinToWin.prototype.validateForm = function () {
@@ -3341,13 +3421,20 @@ SpinToWin.prototype.handleVisibility = function () {
 	}
 };
 SpinToWin.prototype.getWheelContainerMarginTop = function () {
+	var marginTop = 10;
 	if (window.innerHeight < 750) {
-		return "10px"
+		marginTop = 10;
 	} else if (window.innerHeight < 1000) {
-		return "30px"
+		marginTop = 30;
 	} else {
-		return "50px"
+		marginTop = 50;
 	}
+
+	if(this.config.taTemplate == "full_spin") {
+		marginTop = marginTop + 15;
+	}
+
+	return marginTop + "px";
 };
 SpinToWin.prototype.styleHandler = function () {
 	this.wheelContainer.style.position = "absolute";
@@ -3366,14 +3453,18 @@ SpinToWin.prototype.styleHandler = function () {
 			this.wheelContainer.style.bottom = -this.config.r + this.config.statusBarHeight + "px"
 		}
 	}
+
 	var styleEl = document.createElement("style"),
-		styleString = "#wheel-container{float:left;width:" + config.r + "px;height:" + 2 * this.config.r + "px}" + "#form-title, #form-message, #success-message, #promocode-title{text-align:center;}" + "#warning{display:none; position: absolute; z-index: 3; background: #fcf6c1; font-size: 12px; border: 1px solid #ccc; top: 105%;width: 100%; box-sizing: border-box;}" + "#warning>ul{margin: 2px;padding-inline-start: 20px;}" + ".form-submit-btn{transition:.2s filter ease-in-out;}" + ".form-submit-btn:hover{filter: brightness(110%);transition:.2s filter ease-in-out;}" + ".form-submit-btn.disabled{filter: grayscale(100%);transition:.2s filter ease-in-out;}" + "@media only screen and (max-width:2500px){" + "#wheel-container{float:unset;width:100%;text-align:center;position:relative}" + "}";
-	styleEl.id = "vl-styles";
-	if (!document.getElementById("vl-styles")) {
+		styleString = "#" + this.wheelContainerId + "{float:left;width:" + config.r
+			+ "px;height:" + (2 * this.config.r) + "px}@media only screen and (max-width:2500px){"
+			+ "#" + this.wheelContainerId + "{float:unset;width:100%;text-align:center;position:relative}" + "}";
+
+	styleEl.id = "rd-styles";
+	if (!document.getElementById("rd-styles")) {
 		styleEl.innerHTML = styleString;
 		document.head.appendChild(styleEl);
 	} else {
-		document.getElementById("vl-styles").innerHTML = styleString;
+		document.getElementById("rd-styles").innerHTML = styleString;
 	}
 };
 SpinToWin.prototype.submit = function () {
