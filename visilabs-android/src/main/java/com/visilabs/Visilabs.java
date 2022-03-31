@@ -48,6 +48,7 @@ import com.visilabs.spinToWin.model.SpinToWinModel;
 import com.visilabs.util.ActivityUtils;
 import com.visilabs.util.AppUtils;
 import com.visilabs.util.NetworkManager;
+import com.visilabs.util.PermissionActivity;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.Prefs;
 import com.visilabs.util.StringUtils;
@@ -2098,6 +2099,11 @@ public class Visilabs {
 
     public void setInAppButtonInterface(InAppButtonInterface inAppButtonInterface) {
         mInAppButtonInterface = inAppButtonInterface;
+    }
+
+    public void requestLocationPermission(Activity activity){
+        Intent intent = new Intent(activity, PermissionActivity.class);
+        activity.startActivity(intent);
     }
 
     public void sendLocationPermission() {
