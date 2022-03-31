@@ -66,11 +66,14 @@ public class MainApplication extends MultiDexApplication {
 
         //Check if the location permission is granted
         //If not, warn the user that it is needed to start gps.
+        boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean accessCoarseLocationPermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         if(bundle!=null) {
             if (bundle.getBoolean("VisilabsGeofenceEnabled", false)
                     && !StringUtils.isNullOrWhiteSpace(bundle.getString("VisilabsGeofenceURL", ""))) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
+                if (!(accessFineLocationPermission || accessCoarseLocationPermission)) {
                     Toast.makeText(this, "Location permission is needed to start geofence!", Toast.LENGTH_LONG).show();
                 }
             }

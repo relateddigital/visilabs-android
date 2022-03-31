@@ -1899,8 +1899,11 @@ public class Visilabs {
     }
 
     public void startGpsManager() {
-        int per = ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (per != PackageManager.PERMISSION_GRANTED) {
+        boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(mContext,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean accessCoarseLocationPermission = ContextCompat.checkSelfPermission(mContext,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        if (!(accessFineLocationPermission || accessCoarseLocationPermission)) {
             if(geofencePermissionTimer!=null) {
                 geofencePermissionTimer.cancel();
             }

@@ -314,9 +314,12 @@ public class GpsManager {
             geofences.add(newGf);
         }
 
-        boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(mApplication, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(mApplication,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean accessCoarseLocationPermission = ContextCompat.checkSelfPermission(mApplication,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-        if (accessFineLocationPermission) {
+        if (accessFineLocationPermission || accessCoarseLocationPermission) {
             mGeofencingClient.addGeofences(getAddGeofencingRequest(geofences), getGeofencePendingIntent())
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
