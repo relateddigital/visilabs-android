@@ -2,9 +2,11 @@ package com.visilabs.gps.manager;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -32,6 +34,7 @@ import com.visilabs.gps.geofence.GeofenceBroadcastReceiver;
 import com.visilabs.gps.geofence.VisilabsAlarm;
 import com.visilabs.gps.model.VisilabsGeofenceGetListResponse;
 import com.visilabs.gps.util.GeoFencesUtils;
+import com.visilabs.util.VisilabsConstant;
 import com.visilabs.util.VisilabsLog;
 
 import java.util.ArrayList;
@@ -139,8 +142,17 @@ public class GpsManager {
 
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
 
-        Calendar fifteenMinutesBefore = Calendar.getInstance(); // current date/time
-        fifteenMinutesBefore.add(Calendar.MINUTE, -15);
+        SharedPreferences prefs = mApplication.getSharedPreferences(VisilabsConstant.GEOFENCE_INTERVAL_NAME, Activity.MODE_PRIVATE);
+        int interval = prefs.getInt(VisilabsConstant.GEOFENCE_INTERVAL_KEY, -1);
+
+        if(interval == -1) {
+            interval = 15;
+        }
+
+        interval = interval * -1;
+
+        Calendar minutesBefore = Calendar.getInstance(); // current date/time
+        minutesBefore.add(Calendar.MINUTE, interval);
 
         if (mLastKnownLocation == null && location == null)
             return;
@@ -160,7 +172,7 @@ public class GpsManager {
                 }
             }
         }
-        if (!mFirstServerCheck || mLastServerCheck.before(fifteenMinutesBefore)) {
+        if (!mFirstServerCheck || mLastServerCheck.before(minutesBefore)) {
             setupGeofences();
             mLastServerCheck = Calendar.getInstance();
             mFirstServerCheck = true;

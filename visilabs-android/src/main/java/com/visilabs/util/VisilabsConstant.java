@@ -194,6 +194,9 @@ public class VisilabsConstant {
     public static final String BUTTON_LINK = "link";
     public static final String BUTTON_REDIRECT = "redirect";
 
+    public static final String GEOFENCE_INTERVAL_NAME = "geofence_interval_name";
+    public static final String GEOFENCE_INTERVAL_KEY = "geofence_interval_key";
+
     public static boolean checkNotificationActivityAvailable(Context context) {
         if (Build.VERSION.SDK_INT < UI_FEATURES_MIN_API) {
             return false;

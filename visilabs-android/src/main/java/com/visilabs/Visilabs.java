@@ -8,6 +8,7 @@ import android.app.ActivityManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -298,8 +299,9 @@ public class Visilabs {
     }
 
     public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
-                                                  String dataSource, String realTimeURL, String channel, Context context
-            , String targetURL, String actionURL, int requestTimeoutSeconds, String geofenceURL, boolean geofenceEnabled) {
+                                                  String dataSource, String realTimeURL, String channel,
+                                                  Context context, String targetURL, String actionURL,
+                                                  int requestTimeoutSeconds, String geofenceURL, boolean geofenceEnabled) {
         if (visilabs == null) {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
@@ -307,7 +309,6 @@ public class Visilabs {
             if (geofenceEnabled && !StringUtils.isNullOrWhiteSpace(geofenceURL)) {
                 Visilabs.CallAPI().startGpsManager();
             }
-
         }
         return visilabs;
     }
@@ -1926,7 +1927,6 @@ public class Visilabs {
         return mContext;
     }
 
-
     public String getGeofenceURL() {
         return mGeofenceURL;
     }
@@ -2095,6 +2095,13 @@ public class Visilabs {
             res = false;
         }
         return res;
+    }
+
+    public void setGeofencingIntervalInMinute(int interval) {
+        SharedPreferences prefs = mContext.getSharedPreferences(VisilabsConstant.GEOFENCE_INTERVAL_NAME, Activity.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(VisilabsConstant.GEOFENCE_INTERVAL_KEY, interval);
+        editor.apply();
     }
 
     public void setInAppButtonInterface(InAppButtonInterface inAppButtonInterface) {
