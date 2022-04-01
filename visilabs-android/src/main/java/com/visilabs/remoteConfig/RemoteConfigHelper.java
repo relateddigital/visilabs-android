@@ -32,7 +32,7 @@ public class RemoteConfigHelper {
                     Log.i(LOG_TAG, "Successful Request : " + response.raw().request().url().toString());
                     List<String> profileIds = response.body();
                     boolean isMatch = false;
-                    if(!profileIds.isEmpty()) {
+                    if(profileIds != null && !profileIds.isEmpty()) {
                         for(int i = 0 ; i < profileIds.size() ; i++) {
                             if(Visilabs.CallAPI().getSiteID().equals(profileIds.get(i))) {
                                 isMatch = true;
