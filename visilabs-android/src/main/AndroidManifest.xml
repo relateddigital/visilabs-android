@@ -40,6 +40,9 @@
         <activity android:name="com.visilabs.story.StoryActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:noHistory="true"/>
+        <activity android:name="com.visilabs.util.PermissionActivity"
+            android:theme="@style/Theme.Transparent"
+            android:noHistory="true"/>
     </application>
 
 </manifest>

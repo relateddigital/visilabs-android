@@ -1,5 +1,6 @@
 package com.relateddigital.visilabs;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "MainActivity";
 
     private ActivityMainBinding binding;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+
+        activity = this;
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-test");
@@ -256,6 +260,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendInAppRequest("drawer");
+            }
+        });
+
+        binding.inApp24.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Visilabs.CallAPI().requestLocationPermission(activity);
             }
         });
 

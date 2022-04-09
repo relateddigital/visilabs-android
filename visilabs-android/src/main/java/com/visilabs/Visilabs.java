@@ -8,6 +8,7 @@ import android.app.ActivityManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -49,6 +50,7 @@ import com.visilabs.spinToWin.model.SpinToWinModel;
 import com.visilabs.util.ActivityUtils;
 import com.visilabs.util.AppUtils;
 import com.visilabs.util.NetworkManager;
+import com.visilabs.util.PermissionActivity;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.Prefs;
 import com.visilabs.util.StringUtils;
@@ -298,8 +300,9 @@ public class Visilabs {
     }
 
     public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
-                                                  String dataSource, String realTimeURL, String channel, Context context
-            , String targetURL, String actionURL, int requestTimeoutSeconds, String geofenceURL, boolean geofenceEnabled) {
+                                                  String dataSource, String realTimeURL, String channel,
+                                                  Context context, String targetURL, String actionURL,
+                                                  int requestTimeoutSeconds, String geofenceURL, boolean geofenceEnabled) {
         if (visilabs == null) {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
@@ -307,7 +310,6 @@ public class Visilabs {
             if (geofenceEnabled && !StringUtils.isNullOrWhiteSpace(geofenceURL)) {
                 Visilabs.CallAPI().startGpsManager();
             }
-
         }
         return visilabs;
     }
@@ -1908,8 +1910,11 @@ public class Visilabs {
     }
 
     public void startGpsManager() {
-        int per = ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (per != PackageManager.PERMISSION_GRANTED) {
+        boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(mContext,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean accessCoarseLocationPermission = ContextCompat.checkSelfPermission(mContext,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        if (!(accessFineLocationPermission || accessCoarseLocationPermission)) {
             if(geofencePermissionTimer!=null) {
                 geofencePermissionTimer.cancel();
             }
@@ -1930,7 +1935,6 @@ public class Visilabs {
     public Context getContext() {
         return mContext;
     }
-
 
     public String getGeofenceURL() {
         return mGeofenceURL;
@@ -2102,8 +2106,20 @@ public class Visilabs {
         return res;
     }
 
+    public void setGeofencingIntervalInMinute(int interval) {
+        SharedPreferences prefs = mContext.getSharedPreferences(VisilabsConstant.GEOFENCE_INTERVAL_NAME, Activity.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(VisilabsConstant.GEOFENCE_INTERVAL_KEY, interval);
+        editor.apply();
+    }
+
     public void setInAppButtonInterface(InAppButtonInterface inAppButtonInterface) {
         mInAppButtonInterface = inAppButtonInterface;
+    }
+
+    public void requestLocationPermission(Activity activity){
+        Intent intent = new Intent(activity, PermissionActivity.class);
+        activity.startActivity(intent);
     }
 
     public void sendLocationPermission() {
