@@ -3,6 +3,7 @@ package com.visilabs.model;
 import com.google.gson.annotations.SerializedName;
 import com.visilabs.favs.FavoriteAttributeAction;
 import com.visilabs.inApp.ProductStatNotifierModel;
+import com.visilabs.inappnotification.DrawerModel;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.scratchToWin.model.ScratchToWinModel;
 import com.visilabs.spinToWin.model.SpinToWinModel;
@@ -24,6 +25,8 @@ public class VisilabsActionsResponse implements Serializable {
     private List<ProductStatNotifierModel> mProductStatNotifier = null;
     @SerializedName("Story")
     private List<Story> mStory = null;
+    @SerializedName("Drawer")
+    private List<DrawerModel> mDrawer = null;
     @SerializedName("VERSION")
     private Integer mVersion;
     @SerializedName("capping")
@@ -75,6 +78,14 @@ public class VisilabsActionsResponse implements Serializable {
 
     public void setStory(List<Story> story) {
         mStory = story;
+    }
+
+    public List<DrawerModel> getDrawer() {
+        return mDrawer;
+    }
+
+    public void setDrawer(List<DrawerModel> drawer) {
+        mDrawer = drawer;
     }
 
     public Integer getVersion() {

@@ -255,16 +255,7 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp23.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InAppNotificationFragment inAppNotificationFragment = InAppNotificationFragment.newInstance(null);
-
-                inAppNotificationFragment.setRetainInstance(true);
-
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.add(android.R.id.content, inAppNotificationFragment);
-                transaction.commit();
-
-                //TODO : When BE is ready
-                //sendInAppRequest("in_app_notification");
+                sendInAppRequest("drawer");
             }
         });
 

@@ -27,7 +27,6 @@ import com.visilabs.api.VisilabsApiMethods;
 import com.visilabs.api.VisilabsInAppMessageCallback;
 import com.visilabs.api.VisilabsTargetFilter;
 import com.visilabs.api.VisilabsTargetRequest;
-import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.exceptions.VisilabsNotReadyException;
 import com.visilabs.gps.factory.GpsFactory;
 import com.visilabs.gps.manager.GpsManager;
@@ -36,7 +35,7 @@ import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.SocialProofFragment;
 import com.visilabs.inApp.VisilabsActionRequest;
-import com.visilabs.inApp.VisilabsInAppFragment;
+import com.visilabs.inappnotification.InAppNotificationFragment;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.Report;
 import com.visilabs.model.LocationPermission;
@@ -71,6 +70,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+
+import kotlin.text.Regex;
 import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -199,7 +200,14 @@ public class Visilabs {
         mOrganizationID = VisilabsEncoder.encode(organizationID);
         mSiteID = VisilabsEncoder.encode(siteID);
         mChannel = (channel != null) ? channel : "ANDROID";
-        mUserAgent = System.getProperty("http.agent");
+
+        mUserAgent =  System.getProperty("http.agent");
+        if(mUserAgent != null) {
+            Regex regex = new Regex("[^A-Za-z0-9]");
+            mUserAgent = regex.replace(mUserAgent, "");
+        } else {
+            mUserAgent = "";
+        }
 
         initVisilabsParameters();
 
@@ -720,7 +728,7 @@ public class Visilabs {
             return;
         }
         try {
-            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier");
+            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier~drawer");
             visilabsActionRequest.setPageName(pageName);
             visilabsActionRequest.setProperties(properties);
             visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback(parent));
@@ -764,6 +772,14 @@ public class Visilabs {
 
                         FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
                         transaction.add(android.R.id.content, socialProofFragment);
+                        transaction.commit();
+                    } else if (!response.getDrawer().isEmpty()) {
+                        InAppNotificationFragment inAppNotificationFragment = InAppNotificationFragment.newInstance(response.getDrawer().get(0));
+
+                        inAppNotificationFragment.setRetainInstance(true);
+
+                        FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
+                        transaction.add(android.R.id.content, inAppNotificationFragment);
                         transaction.commit();
                     } else {
                         Log.e(LOG_TAG, "Response is null : " + url);
