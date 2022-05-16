@@ -110,7 +110,7 @@ public class HalfScreenFragment extends Fragment {
     private void adjustTop() {
         if(mInAppMessage.getActionData().getMsgTitle() != null && !mInAppMessage.getActionData().getMsgTitle().isEmpty()) {
             binding.halfScreenContainerTop.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
-            binding.topTitleView.setText(mInAppMessage.getActionData().getMsgTitle());
+            binding.topTitleView.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
             binding.topTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
             binding.topTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 14);
             binding.topTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
@@ -157,7 +157,7 @@ public class HalfScreenFragment extends Fragment {
     private void adjustBottom() {
         if(mInAppMessage.getActionData().getMsgTitle() != null && !mInAppMessage.getActionData().getMsgTitle().isEmpty()) {
             binding.halfScreenContainerBot.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
-            binding.botTitleView.setText(mInAppMessage.getActionData().getMsgTitle());
+            binding.botTitleView.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
             binding.botTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
             binding.botTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 14);
             binding.botTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));

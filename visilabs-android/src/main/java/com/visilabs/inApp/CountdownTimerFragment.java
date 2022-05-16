@@ -131,9 +131,9 @@ public class CountdownTimerFragment extends Fragment {
         //TODO remove the code below when the actual data gets ready
         binding.countdownTimerContainerTop.setBackgroundColor(getResources().getColor(R.color.blue));
         binding.titleTop.setTextColor(getResources().getColor(R.color.white));
-        binding.titleTop.setText("Sana Özel Fırsatı Kaçırma!");
+        binding.titleTop.setText("Sana Özel Fırsatı Kaçırma!".replace("\\n", "\n"));
         binding.bodyTextTop.setTextColor(getResources().getColor(R.color.white));
-        binding.bodyTextTop.setText("Bugün sana özel indirim kodu için geri sayım başladı.");
+        binding.bodyTextTop.setText("Bugün sana özel indirim kodu için geri sayım başladı.".replace("\\n", "\n"));
         binding.buttonTop.setBackgroundColor(getResources().getColor(R.color.white));
         binding.buttonTop.setText("Alışverişe Başla");
         binding.buttonTop.setTextColor(getResources().getColor(R.color.black));
@@ -149,9 +149,9 @@ public class CountdownTimerFragment extends Fragment {
         //TODO remove the code below when the actual data gets ready
         binding.countdownTimerContainerBot.setBackgroundColor(getResources().getColor(R.color.blue));
         binding.titleBot.setTextColor(getResources().getColor(R.color.white));
-        binding.titleBot.setText("Sana Özel Fırsatı Kaçırma!");
+        binding.titleBot.setText("Sana Özel Fırsatı Kaçırma!".replace("\\n", "\n"));
         binding.bodyTextBot.setTextColor(getResources().getColor(R.color.white));
-        binding.bodyTextBot.setText("Bugün sana özel indirim kodu için geri sayım başladı.");
+        binding.bodyTextBot.setText("Bugün sana özel indirim kodu için geri sayım başladı.".replace("\\n", "\n"));
         binding.buttonBot.setBackgroundColor(getResources().getColor(R.color.white));
         binding.buttonBot.setText("Alışverişe Başla");
         binding.buttonBot.setTextColor(getResources().getColor(R.color.black));

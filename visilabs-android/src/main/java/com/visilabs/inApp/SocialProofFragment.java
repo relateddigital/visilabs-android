@@ -131,7 +131,7 @@ public class SocialProofFragment extends Fragment {
             }
             binding.textViewTop.setText(spannableString);
         } else {
-            binding.textViewTop.setText(text);
+            binding.textViewTop.setText(text.replace("\\n", "\n"));
         }
     }
 
@@ -152,7 +152,7 @@ public class SocialProofFragment extends Fragment {
             }
             binding.textViewBot.setText(spannableString);
         } else {
-            binding.textViewBot.setText(text);
+            binding.textViewBot.setText(text.replace("\\n", "\n"));
         }
     }
 

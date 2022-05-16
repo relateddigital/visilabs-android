@@ -97,7 +97,7 @@ public class SpinToWinCodeBannerFragment extends Fragment {
             binding.container.setBackgroundColor(getResources().getColor(R.color.black));
         }
 
-        binding.bannerText.setText(mExtendedProps.getPromocodeBannerText());
+        binding.bannerText.setText(mExtendedProps.getPromocodeBannerText().replace("\\n", "\n"));
         binding.bannerLabel.setText(mExtendedProps.getPromocodeBannerButtonLabel());
         binding.bannerCode.setText(bannerCode);
 

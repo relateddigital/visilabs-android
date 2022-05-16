@@ -1003,7 +1003,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         if (mCarouselItems.get(position).getTitle() != null &&
                 !mCarouselItems.get(position).getTitle().isEmpty()) {
-            bindingCarousel.carouselTitle.setText(mCarouselItems.get(position).getTitle());
+            bindingCarousel.carouselTitle.setText(mCarouselItems.get(position).getTitle().replace("\\n", "\n"));
             bindingCarousel.carouselTitle.setTextColor(Color.parseColor(mCarouselItems.get(position).getTitleColor()));
             bindingCarousel.carouselTitle.setTextSize(
                     Float.parseFloat(mCarouselItems.get(position).getTitleTextsize()) + 12);
@@ -1014,7 +1014,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         if (mCarouselItems.get(position).getBody() != null &&
                 !mCarouselItems.get(position).getBody().isEmpty()) {
-            bindingCarousel.carouselBodyText.setText(mCarouselItems.get(position).getBody());
+            bindingCarousel.carouselBodyText.setText(mCarouselItems.get(position).getBody().replace("\\n", "\n"));
             bindingCarousel.carouselBodyText.setTextColor(Color.parseColor(mCarouselItems.get(position).getBodyColor()));
             bindingCarousel.carouselBodyText.setTextSize(
                     Float.parseFloat(mCarouselItems.get(position).getBodyTextsize()) + 8);
