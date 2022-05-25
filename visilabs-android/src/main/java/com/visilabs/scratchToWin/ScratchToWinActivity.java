@@ -6,8 +6,10 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
@@ -47,6 +49,11 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         binding = ActivityScratchToWinBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+
+        if (android.os.Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
         this.setFinishOnTouchOutside(true);
 
         getScratchToWinMessage();
