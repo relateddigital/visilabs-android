@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
     <script type="text/javascript" src="spintowin.js"></script>
     <style type="text/css">
+
         .easyWheel {
             position: relative;
             max-width: 100%;
@@ -66,47 +67,6 @@
         .easyWheel .eWheel>.eWheel-txt-wrap,
         .easyWheel .eWheel>.eWheel-bg-layer {
             transform: rotate(-90deg);
-        }
-
-        .easyWheel .eWheel .eWheel-child .eWheel-inside {
-            display: table;
-            transform: rotate(0) skew(-45deg);
-            width: 50%;
-            height: 50%;
-            transform-origin: 0 0;
-            text-align: right;
-            box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            -webkit-box-sizing: border-box;
-            overflow: hidden;
-        }
-
-        .easyWheel .eWheel .eWheel-child .eWheel-inside>div {
-            display: table-cell;
-            vertical-align: middle;
-            width: 100%;
-            height: 100%;
-            transform: rotate(25deg);
-            transform-origin: 115% 25%;
-            padding-right: 40px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .easyWheel .eWheel>.eWheel-bg-layer>div {
-            overflow: hidden;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            -webkit-transform-origin: 0 0;
-            -moz-transform-origin: 0 0;
-            -ms-transform-origin: 0 0;
-            -o-transform-origin: 0 0;
-            transform-origin: 0 0;
-            border: 1px solid transparent;
-            background-color: #404040;
         }
 
         .easyWheel .eWheel>.eWheel-bg-layer>div:nth-child(odd) {
@@ -305,7 +265,6 @@
 
         .wheelio_holder .wlo_panel {
             margin: 0;
-            position: fixed;
             overflow: hidden;
             z-index: 10;
             top: 0;
@@ -775,12 +734,12 @@
                 "button_position": "bottom",
                 "button_color": "#ffa3bf",
                 "button_text_color": "#ffffff",
-                "button_font_family": "custom",
+                "button_font_family": "",//custom
                 "button_custom_font_family_ios": "android101",
                 "button_custom_font_family_android": "android101",
                 "button_text_size": "3",
                 "promocode_title_text_color": "#3047bf",
-                "promocode_title_font_family": "custom",
+                "promocode_title_font_family": "", //custom
                 "promocode_title_custom_font_family_ios": "android101",
                 "promocode_title_custom_font_family_android": "android101",
                 "promocode_title_text_size": "3",
@@ -789,7 +748,7 @@
                 "copybutton_position": "bottom",
                 "copybutton_color": "#3047bf",
                 "copybutton_text_color": "#ffffff",
-                "copybutton_font_family": "custom",
+                "copybutton_font_family": "",//custom
                 "copybutton_custom_font_family_ios": "android101",
                 "copybutton_custom_font_family_android": "sydneysignature",
                 "copybutton_text_size": "3",
@@ -800,7 +759,7 @@
                 "close_button_color": "white",
                 "background_color": "#48a4af",
                 "promocodes_soldout_message_text_color": "#a51a4f",
-                "promocodes_soldout_message_font_family": "custom",
+                "promocodes_soldout_message_font_family": "", //custom
                 "promocodes_soldout_message_custom_font_family_ios": "sydneysignature",
                 "promocodes_soldout_message_custom_font_family_android": "sydneysignature",
                 "promocodes_soldout_message_text_size": "4",
@@ -812,11 +771,12 @@
             };
 
             let extendedPropsString = JSON.stringify(extendedProps);
-            console.log(extendedPropsString);
+            //console.log(extendedPropsString);
             extendedPropsString = encodeURI(extendedPropsString);
-            console.log(extendedPropsString);
+            //console.log(extendedPropsString);
 
             config = {
+                //"fontFiles": ["sydneysignature.ttf"],
                 "fontFiles": ["sydneysignature.ttf"],
                 "actid": 100,
                 "title": "Spin-To-Win-Finger-Test",
@@ -861,7 +821,8 @@
                     ],
                     "mail_subscription": false,
                     "spin_to_win_content": {
-                        "title": "Başlık",
+                        //"title": "Başlık\\nBaşlık\\nBaşlık\\nBaşlık\\nBaşlık\\nBaşlık\\nBaşlık\\n",
+                        "title": "başlık",
                         "message": "İçerik Metni",
                         "placeholder": "E- posta adresi",
                         "button_label": "Çevirme Butonu",
@@ -887,7 +848,7 @@
                     },
                     "img": "https://imgvisilabsnet.azureedge.net/spin_to_win/uploaded_images/test/112_885_100_20210729114850071.jpg",
                     "taTemplate": "full_spin",
-                    "promocode_title": "Kod Kazanma Başlık Metni \\n yeni satır kazandı",
+                    "promocode_title": "Kod \\nKazanma \\nBaşlık Metni \\n yeni satır \\n kazandı\\n kazandı\\n kazandı",
                     "copybutton_label": "Kopyala Butonu",
                     "wheel_spin_action": "button",
                     "promocodes_soldout_message": "The campaign is ended."
