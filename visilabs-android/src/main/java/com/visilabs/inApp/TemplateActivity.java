@@ -21,6 +21,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
@@ -73,6 +75,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private InAppButtonInterface buttonCallback = null;
     private Boolean isNpsSecondPopupButtonClicked = false;
     private Boolean isNpsSecondPopupActivated = false;
+    private ExoPlayer player = null;
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -110,7 +114,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 view = binding.getRoot();
             }
 
-            cacheImages();
+            cacheResources();
 
             setContentView(view);
 
@@ -179,6 +183,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 && mInAppMessage.getActionData().getImg() != null &&
                 !mInAppMessage.getActionData().getImg().isEmpty()) {
             binding.ivTemplate.setVisibility(View.VISIBLE);
+            binding.videoView.setVisibility(View.GONE);
             if (AppUtils.isAnImage(mInAppMessage.getActionData().getImg())) {
                 Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivTemplate);
             } else {
@@ -188,6 +193,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         } else {
             binding.ivTemplate.setVisibility(View.GONE);
+            binding.videoView.setVisibility(View.VISIBLE);
+            startPlayer();
         }
 
         binding.smileRating.setOnSmileySelectionListener(this);
@@ -864,6 +871,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        releasePlayer();
         if(mInAppMessage != null) {
             if (mIsRotation) {
                 mIsRotation = false;
@@ -932,7 +940,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         return mCarouselPosition == 0;
     }
 
-    private void cacheImages() {
+    private void cacheResources() {
         if (mIsCarousel) {
             for(int i = 0 ; i < mCarouselItems.size() ; i++) {
                 if(mCarouselItems.get(i).getImage() != null && !mCarouselItems.get(i).getImage().isEmpty()) {
@@ -970,7 +978,33 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 }
             }
         }
+
+        if(false) { // TODO : if !video.isNullOrEmpty():
+            initializePlayer();
+        }
     }
+
+    private void initializePlayer() {
+        if (!mIsCarousel) {
+            player = new ExoPlayer.Builder(this).build();
+            binding.videoView.setPlayer(player);
+            MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"); // TODO : real url here
+            player.setMediaItem(mediaItem);
+            player.prepare();
+        }
+    }
+
+    private void startPlayer() {
+        player.setPlayWhenReady(true);
+    }
+
+    private void releasePlayer() {
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+
 
     private void setupCarouselItem(int position) {
         if (mCarouselItems.get(position).getBackgroundImage() != null &&
