@@ -17,6 +17,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
@@ -37,6 +39,8 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
     private int mIntentId = -1;
     private ActivityInAppFullBinding binding;
     private boolean mIsRotation = false;
+    private ExoPlayer player = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +117,8 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
         }
         if(!mInApp.getActionData().getImg().equals("")) {
             binding.fivInAppImage.setVisibility(View.VISIBLE);
+            binding.fullVideoView.setVisibility(View.GONE);
+
             if (AppUtils.isAnImage(mInApp.getActionData().getImg())) {
                 Picasso.get().load(mInApp.getActionData().getImg()).into(binding.fivInAppImage);
             } else {
@@ -122,6 +128,15 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
             }
         } else {
             binding.fivInAppImage.setVisibility(View.GONE);
+            if(false) { // TODO : if !video.isNullOrEmpty():
+                binding.fullVideoView.setVisibility(View.VISIBLE);
+                initializePlayer();
+                startPlayer();
+            } else {
+                binding.fullVideoView.setVisibility(View.GONE);
+                releasePlayer();
+            }
+
         }
     }
 
@@ -219,6 +234,27 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
         );
     }
 
+    private void initializePlayer() {
+        player = new ExoPlayer.Builder(this).build();
+        binding.fullVideoView.setPlayer(player);
+        MediaItem mediaItem = MediaItem.fromUri(
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"); //TODO : real url here
+        player.setMediaItem(mediaItem);
+        player.prepare();
+    }
+
+    private void startPlayer() {
+        player.setPlayWhenReady(true);
+    }
+
+    private void releasePlayer() {
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+
+
     @Override
     public void onBackPressed() {
         if (isShowingInApp()) {
@@ -230,6 +266,7 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        releasePlayer();
         if(mIsRotation) {
             mIsRotation = false;
         } else {

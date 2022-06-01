@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/carousel_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -26,6 +28,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true" />
+
+            <com.google.android.exoplayer2.ui.PlayerView
+                android:id="@+id/carousel_video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                app:use_controller="false"
+                app:resize_mode="fixed_width"/>
+
 
             <TextView
                 android:id="@+id/carousel_title"

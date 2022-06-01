@@ -16,6 +16,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
@@ -42,6 +44,8 @@ public class HalfScreenFragment extends Fragment {
     private InAppMessage mInAppMessage;
     private boolean mIsTop;
     private FragmentHalfScreenBinding binding;
+    private ExoPlayer player = null;
+
 
     public HalfScreenFragment() {
         // Required empty public constructor
@@ -108,24 +112,7 @@ public class HalfScreenFragment extends Fragment {
     }
 
     private void adjustTop() {
-        if(mInAppMessage.getActionData().getMsgTitle() != null && !mInAppMessage.getActionData().getMsgTitle().isEmpty()) {
-            binding.halfScreenContainerTop.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
-            binding.topTitleView.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
-            binding.topTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
-            binding.topTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 14);
-            binding.topTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
-        } else {
-            binding.topTitleView.setVisibility(View.GONE);
-        }
-        if (AppUtils.isAnImage(mInAppMessage.getActionData().getImg())) {
-            Picasso.get().
-                    load(mInAppMessage.getActionData().getImg())
-                    .into(binding.topImageView);
-        } else {
-            Glide.with(getActivity())
-                    .load(mInAppMessage.getActionData().getImg())
-                    .into(binding.topImageView);
-        }
+        binding.halfScreenContainerBot.setVisibility(View.GONE);
         binding.halfScreenContainerTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,28 +138,46 @@ public class HalfScreenFragment extends Fragment {
             }
         });
 
-        binding.halfScreenContainerBot.setVisibility(View.GONE);
+        if(mInAppMessage.getActionData().getMsgTitle() != null && !mInAppMessage.getActionData().getMsgTitle().isEmpty()) {
+            binding.halfScreenContainerTop.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+            binding.topTitleView.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
+            binding.topTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+            binding.topTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 14);
+            binding.topTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
+        } else {
+            binding.topTitleView.setVisibility(View.GONE);
+        }
+
+        if(mInAppMessage.getActionData().getImg() != null &&
+                !mInAppMessage.getActionData().getImg().equals("") &&
+                !mInAppMessage.getActionData().getImg().isEmpty()) {
+            binding.topImageView.setVisibility(View.VISIBLE);
+            binding.topVideoView.setVisibility(View.GONE);
+            if (AppUtils.isAnImage(mInAppMessage.getActionData().getImg())) {
+                Picasso.get().
+                        load(mInAppMessage.getActionData().getImg())
+                        .into(binding.topImageView);
+            } else {
+                Glide.with(getActivity())
+                        .load(mInAppMessage.getActionData().getImg())
+                        .into(binding.topImageView);
+            }
+        } else {
+            binding.topImageView.setVisibility(View.GONE);
+            if(false) { // TODO : if !video.isNullOrEmpty():
+                binding.topVideoView.setVisibility(View.VISIBLE);
+                initializePlayer();
+                startPlayer();
+            } else {
+                binding.topVideoView.setVisibility(View.GONE);
+                releasePlayer();
+            }
+        }
     }
 
     private void adjustBottom() {
-        if(mInAppMessage.getActionData().getMsgTitle() != null && !mInAppMessage.getActionData().getMsgTitle().isEmpty()) {
-            binding.halfScreenContainerBot.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
-            binding.botTitleView.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
-            binding.botTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
-            binding.botTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 14);
-            binding.botTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
-        } else {
-            binding.botTitleView.setVisibility(View.GONE);
-        }
-        if (AppUtils.isAnImage(mInAppMessage.getActionData().getImg())) {
-            Picasso.get().
-                    load(mInAppMessage.getActionData().getImg())
-                    .into(binding.botImageView);
-        } else {
-            Glide.with(getActivity())
-                    .load(mInAppMessage.getActionData().getImg())
-                    .into(binding.botImageView);
-        }
+        binding.halfScreenContainerTop.setVisibility(View.GONE);
+
         binding.halfScreenContainerBot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -198,7 +203,41 @@ public class HalfScreenFragment extends Fragment {
             }
         });
 
-        binding.halfScreenContainerTop.setVisibility(View.GONE);
+        if(mInAppMessage.getActionData().getMsgTitle() != null && !mInAppMessage.getActionData().getMsgTitle().isEmpty()) {
+            binding.halfScreenContainerBot.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+            binding.botTitleView.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
+            binding.botTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+            binding.botTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 14);
+            binding.botTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
+        } else {
+            binding.botTitleView.setVisibility(View.GONE);
+        }
+
+        if(mInAppMessage.getActionData().getImg() != null &&
+                !mInAppMessage.getActionData().getImg().equals("") &&
+                !mInAppMessage.getActionData().getImg().isEmpty()) {
+            binding.botImageView.setVisibility(View.VISIBLE);
+            binding.botVideoView.setVisibility(View.GONE);
+            if (AppUtils.isAnImage(mInAppMessage.getActionData().getImg())) {
+                Picasso.get().
+                        load(mInAppMessage.getActionData().getImg())
+                        .into(binding.botImageView);
+            } else {
+                Glide.with(getActivity())
+                        .load(mInAppMessage.getActionData().getImg())
+                        .into(binding.botImageView);
+            }
+        } else {
+            binding.botImageView.setVisibility(View.GONE);
+            if(false) { // TODO : if !video.isNullOrEmpty():
+                binding.botVideoView.setVisibility(View.VISIBLE);
+                initializePlayer();
+                startPlayer();
+            } else {
+                binding.botVideoView.setVisibility(View.GONE);
+                releasePlayer();
+            }
+        }
     }
 
     private void setupCloseButton() {
@@ -236,6 +275,7 @@ public class HalfScreenFragment extends Fragment {
     private void endFragment() {
         if(getActivity() != null) {
             VisilabsUpdateDisplayState.releaseDisplayState(mStateId);
+            releasePlayer();
             getActivity().getFragmentManager().beginTransaction().remove(HalfScreenFragment.this).commit();
         }
     }
@@ -260,9 +300,35 @@ public class HalfScreenFragment extends Fragment {
         }
     }
 
+    private void initializePlayer() {
+        player = new ExoPlayer.Builder(getActivity()).build();
+        if (mIsTop) {
+            binding.topVideoView.setPlayer(player);
+        } else {
+            binding.botVideoView.setPlayer(player);
+        }
+        MediaItem mediaItem = MediaItem.fromUri(
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"); //TODO : real url here
+        player.setMediaItem(mediaItem);
+        player.prepare();
+    }
+
+    private void startPlayer() {
+        player.setPlayWhenReady(true);
+    }
+
+    private void releasePlayer() {
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         showStatusBar();
+        releasePlayer();
     }
 }

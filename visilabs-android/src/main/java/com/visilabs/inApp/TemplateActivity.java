@@ -126,6 +126,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     bindingCarousel.carouselContainer.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
                         public void onSwipeRight() {
                             if (!isFirstCarousel()) {
+                                releasePlayer();
                                 mCarouselPosition--;
                                 setupViewCarousel();
                             }
@@ -133,6 +134,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
                         public void onSwipeLeft() {
                             if (!isLastCarousel()) {
+                                releasePlayer();
                                 mCarouselPosition++;
                                 setupViewCarousel();
                             }
@@ -193,8 +195,13 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         } else {
             binding.ivTemplate.setVisibility(View.GONE);
-            binding.videoView.setVisibility(View.VISIBLE);
-            startPlayer();
+            if(false) { // TODO : if !video.isNullOrEmpty():
+                binding.videoView.setVisibility(View.VISIBLE);
+                startPlayer();
+            } else {
+                binding.videoView.setVisibility(View.GONE);
+                releasePlayer();
+            }
         }
 
         binding.smileRating.setOnSmileySelectionListener(this);
@@ -537,6 +544,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.btnTemplate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                releasePlayer();
                 if(binding.ratingBar.getRating()!=0) {
                     if (secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
                         if (isRatingAboveThreshold()) {
@@ -575,6 +583,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             case IMAGE_TEXT_BUTTON: {
                 bindingSecondPopUp.commentBox.setVisibility(View.GONE);
                 bindingSecondPopUp.imageView2.setVisibility(View.GONE);
+                bindingSecondPopUp.secondVideoView2.setVisibility(View.GONE);
                 if(mInAppMessage.getActionData().getPromotionCode()!=null &&
                         !mInAppMessage.getActionData().getPromotionCode().isEmpty()) {
                     bindingSecondPopUp.couponContainer.setBackgroundColor(Color.parseColor(
@@ -603,6 +612,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 bindingSecondPopUp.couponContainer.setVisibility(View.GONE);
                 if(mInAppMessage.getActionData().getSecondPopupImg2()!=null &&
                         !mInAppMessage.getActionData().getSecondPopupImg2().isEmpty()){
+                    bindingSecondPopUp.imageView2.setVisibility(View.VISIBLE);
+                    bindingSecondPopUp.secondVideoView2.setVisibility(View.GONE);
                     if (AppUtils.isAnImage(mInAppMessage.getActionData().getSecondPopupImg2())) {
                         Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg2())
                                 .into(bindingSecondPopUp.imageView2);
@@ -611,11 +622,27 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                                 .load(mInAppMessage.getActionData().getSecondPopupImg2())
                                 .into(bindingSecondPopUp.imageView2);
                     }
+                } else {
+                    bindingSecondPopUp.imageView2.setVisibility(View.GONE);
+                    if(false) { // TODO : if !video.isNullOrEmpty():
+                        bindingSecondPopUp.secondVideoView2.setVisibility(View.VISIBLE);
+                        player = new ExoPlayer.Builder(this).build();
+                        bindingSecondPopUp.secondVideoView2.setPlayer(player);
+                        MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"); // TODO : real url here
+                        player.setMediaItem(mediaItem);
+                        player.prepare();
+                        startPlayer();
+                    } else {
+                        bindingSecondPopUp.secondVideoView2.setVisibility(View.GONE);
+                        releasePlayer();
+                    }
+
                 }
                 break;
             }
             case FEEDBACK_FORM: {
                 bindingSecondPopUp.imageView2.setVisibility(View.GONE);
+                bindingSecondPopUp.secondVideoView2.setVisibility(View.GONE);
                 bindingSecondPopUp.couponContainer.setVisibility(View.GONE);
                 break;
             }
@@ -641,6 +668,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         }
         if(mInAppMessage.getActionData().getSecondPopupImg1()!=null &&
         !mInAppMessage.getActionData().getSecondPopupImg1().isEmpty()){
+            bindingSecondPopUp.imageView.setVisibility(View.VISIBLE);
+            bindingSecondPopUp.secondVideoView.setVisibility(View.GONE);
             if (AppUtils.isAnImage(mInAppMessage.getActionData().getSecondPopupImg1())) {
                 Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg1())
                         .into(bindingSecondPopUp.imageView);
@@ -649,6 +678,21 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                         .load(mInAppMessage.getActionData().getSecondPopupImg1())
                         .into(bindingSecondPopUp.imageView);
             }
+        } else {
+            bindingSecondPopUp.imageView.setVisibility(View.GONE);
+            if(false) { // TODO : if !video.isNullOrEmpty():
+                bindingSecondPopUp.secondVideoView.setVisibility(View.VISIBLE);
+                player = new ExoPlayer.Builder(this).build();
+                bindingSecondPopUp.secondVideoView.setPlayer(player);
+                MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"); // TODO : real url here
+                player.setMediaItem(mediaItem);
+                player.prepare();
+                startPlayer();
+            } else {
+                bindingSecondPopUp.secondVideoView.setVisibility(View.GONE);
+                releasePlayer();
+            }
+
         }
         bindingSecondPopUp.titleView.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
         bindingSecondPopUp.titleView.setText(mInAppMessage.getActionData().getSecondPopupMsgTitle().replace("\\n","\n"));
@@ -1021,7 +1065,10 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                         mCarouselItems.get(position).getBackgroundColor()));
             }
         }
+
         if(mCarouselItems.get(position).getImage() != null && !mCarouselItems.get(position).getImage().isEmpty()) {
+            bindingCarousel.carouselImage.setVisibility(View.VISIBLE);
+            bindingCarousel.carouselVideo.setVisibility(View.GONE);
             if (AppUtils.isAnImage(mCarouselItems.get(position).getImage())) {
                 Picasso.get().
                         load(mCarouselItems.get(position).getImage())
@@ -1033,6 +1080,18 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         } else {
             bindingCarousel.carouselImage.setVisibility(View.GONE);
+            if (false) { // TODO : if !video.isNullOrEmpty():
+                bindingCarousel.carouselVideo.setVisibility(View.VISIBLE);
+                player = new ExoPlayer.Builder(this).build();
+                bindingCarousel.carouselVideo.setPlayer(player);
+                MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"); // TODO : real url here
+                player.setMediaItem(mediaItem);
+                player.prepare();
+                startPlayer();
+            } else {
+                bindingCarousel.carouselVideo.setVisibility(View.GONE);
+                releasePlayer();
+            }
         }
 
         if (mCarouselItems.get(position).getTitle() != null &&
