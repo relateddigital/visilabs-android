@@ -103,6 +103,12 @@ public class ActionData implements Parcelable {
     private final String mMsgBodyBackgroundColor;
     @SerializedName("button_function")
     private final String mButtonFunction;
+    @SerializedName("videourl")
+    private final String mVideoUrl;
+    @SerializedName("secondPopup_videourl1")
+    private final String mSecondPopupVideoUrl1;
+    @SerializedName("secondPopup_videourl2")
+    private final String mSecondPopupVideoUrl2;
 
     protected ActionData(Parcel in) {
         mAlertType = in.readString();
@@ -149,6 +155,9 @@ public class ActionData implements Parcelable {
         mMsgTitleBackgroundColor = in.readString();
         mMsgBodyBackgroundColor = in.readString();
         mButtonFunction = in.readString();
+        mVideoUrl = in.readString();
+        mSecondPopupVideoUrl1 = in.readString();
+        mSecondPopupVideoUrl2 = in.readString();
     }
 
     public static final Creator<ActionData> CREATOR = new Creator<ActionData>() {
@@ -214,6 +223,9 @@ public class ActionData implements Parcelable {
         dest.writeString(mMsgTitleBackgroundColor);
         dest.writeString(mMsgBodyBackgroundColor);
         dest.writeString(mButtonFunction);
+        dest.writeString(mVideoUrl);
+        dest.writeString(mSecondPopupVideoUrl1);
+        dest.writeString(mSecondPopupVideoUrl2);
     }
 
     public String getAlertType() {
@@ -522,5 +534,17 @@ public class ActionData implements Parcelable {
 
     public String getButtonFunction() {
         return mButtonFunction;
+    }
+
+    public String getVideoUrl() {
+        return mVideoUrl;
+    }
+
+    public String getSecondPopupVideoUrl1() {
+        return mSecondPopupVideoUrl1;
+    }
+
+    public String getSecondPopupVideoUrl2() {
+        return mSecondPopupVideoUrl2;
     }
 }

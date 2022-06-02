@@ -71,6 +71,8 @@ public class CarouselItem implements Parcelable {
     private String iosLnk;
     @SerializedName("android_lnk")
     private String androidLnk;
+    @SerializedName("videourl")
+    private String videoUrl;
 
     protected CarouselItem(Parcel in) {
         image = in.readString();
@@ -102,6 +104,7 @@ public class CarouselItem implements Parcelable {
         backgroundColor = in.readString();
         iosLnk = in.readString();
         androidLnk = in.readString();
+        videoUrl = in.readString();
     }
 
     public static final Creator<CarouselItem> CREATOR = new Creator<CarouselItem>() {
@@ -405,6 +408,14 @@ public class CarouselItem implements Parcelable {
         this.androidLnk = androidLnk;
     }
 
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -441,5 +452,6 @@ public class CarouselItem implements Parcelable {
         dest.writeString(backgroundColor);
         dest.writeString(iosLnk);
         dest.writeString(androidLnk);
+        dest.writeString(videoUrl);
     }
 }

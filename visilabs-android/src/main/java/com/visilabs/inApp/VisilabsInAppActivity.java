@@ -115,7 +115,7 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
         if (mInApp.getActionData().getBtnText() != null && mInApp.getActionData().getBtnText().length() > 0) {
             binding.btnInApp.setText(mInApp.getActionData().getBtnText());
         }
-        if(!mInApp.getActionData().getImg().equals("")) {
+        if(mInApp.getActionData().getImg() != null && !mInApp.getActionData().getImg().equals("")) {
             binding.fivInAppImage.setVisibility(View.VISIBLE);
             binding.fullVideoView.setVisibility(View.GONE);
 
@@ -128,7 +128,7 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
             }
         } else {
             binding.fivInAppImage.setVisibility(View.GONE);
-            if(false) { // TODO : if !video.isNullOrEmpty():
+            if(mInApp.getActionData().getVideoUrl() != null && !mInApp.getActionData().getVideoUrl().equals("")) {
                 binding.fullVideoView.setVisibility(View.VISIBLE);
                 initializePlayer();
                 startPlayer();
@@ -237,8 +237,7 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
     private void initializePlayer() {
         player = new ExoPlayer.Builder(this).build();
         binding.fullVideoView.setPlayer(player);
-        MediaItem mediaItem = MediaItem.fromUri(
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"); //TODO : real url here
+        MediaItem mediaItem = MediaItem.fromUri(mInApp.getActionData().getVideoUrl());
         player.setMediaItem(mediaItem);
         player.prepare();
     }

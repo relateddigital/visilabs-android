@@ -76,6 +76,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private Boolean isNpsSecondPopupButtonClicked = false;
     private Boolean isNpsSecondPopupActivated = false;
     private ExoPlayer player = null;
+    private ExoPlayer player2 = null;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -181,8 +182,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setUpView() {
-        if (!mInAppMessage.getActionData().getImg().equals("")
-                && mInAppMessage.getActionData().getImg() != null &&
+        if (mInAppMessage.getActionData().getImg() != null &&
+                !mInAppMessage.getActionData().getImg().equals("") &&
                 !mInAppMessage.getActionData().getImg().isEmpty()) {
             binding.ivTemplate.setVisibility(View.VISIBLE);
             binding.videoView.setVisibility(View.GONE);
@@ -195,7 +196,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         } else {
             binding.ivTemplate.setVisibility(View.GONE);
-            if(false) { // TODO : if !video.isNullOrEmpty():
+            if(mInAppMessage.getActionData().getVideoUrl() != null && !mInAppMessage.getActionData().getVideoUrl().equals("")) {
                 binding.videoView.setVisibility(View.VISIBLE);
                 startPlayer();
             } else {
@@ -624,14 +625,15 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     }
                 } else {
                     bindingSecondPopUp.imageView2.setVisibility(View.GONE);
-                    if(false) { // TODO : if !video.isNullOrEmpty():
+                    if(mInAppMessage.getActionData().getSecondPopupVideoUrl2()!=null &&
+                            !mInAppMessage.getActionData().getSecondPopupVideoUrl2().isEmpty()) {
                         bindingSecondPopUp.secondVideoView2.setVisibility(View.VISIBLE);
-                        player = new ExoPlayer.Builder(this).build();
-                        bindingSecondPopUp.secondVideoView2.setPlayer(player);
-                        MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"); // TODO : real url here
-                        player.setMediaItem(mediaItem);
-                        player.prepare();
-                        startPlayer();
+                        player2 = new ExoPlayer.Builder(this).build();
+                        bindingSecondPopUp.secondVideoView2.setPlayer(player2);
+                        MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getSecondPopupVideoUrl2());
+                        player2.setMediaItem(mediaItem);
+                        player2.prepare();
+                        player2.setPlayWhenReady(true);
                     } else {
                         bindingSecondPopUp.secondVideoView2.setVisibility(View.GONE);
                         releasePlayer();
@@ -680,11 +682,12 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         } else {
             bindingSecondPopUp.imageView.setVisibility(View.GONE);
-            if(false) { // TODO : if !video.isNullOrEmpty():
+            if(mInAppMessage.getActionData().getSecondPopupVideoUrl1()!=null &&
+                    !mInAppMessage.getActionData().getSecondPopupVideoUrl1().isEmpty()) {
                 bindingSecondPopUp.secondVideoView.setVisibility(View.VISIBLE);
                 player = new ExoPlayer.Builder(this).build();
                 bindingSecondPopUp.secondVideoView.setPlayer(player);
-                MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"); // TODO : real url here
+                MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getSecondPopupVideoUrl1());
                 player.setMediaItem(mediaItem);
                 player.prepare();
                 startPlayer();
@@ -1023,7 +1026,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         }
 
-        if(false) { // TODO : if !video.isNullOrEmpty():
+        if(mInAppMessage.getActionData().getVideoUrl() != null && !mInAppMessage.getActionData().getVideoUrl().equals("")) {
             initializePlayer();
         }
     }
@@ -1032,7 +1035,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         if (!mIsCarousel) {
             player = new ExoPlayer.Builder(this).build();
             binding.videoView.setPlayer(player);
-            MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"); // TODO : real url here
+            MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getVideoUrl());
             player.setMediaItem(mediaItem);
             player.prepare();
         }
@@ -1046,6 +1049,10 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         if (player != null) {
             player.release();
             player = null;
+        }
+        if (player2 != null) {
+            player2.release();
+            player2 = null;
         }
     }
 
@@ -1080,11 +1087,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         } else {
             bindingCarousel.carouselImage.setVisibility(View.GONE);
-            if (false) { // TODO : if !video.isNullOrEmpty():
+            if (mCarouselItems.get(position).getVideoUrl() != null && !mCarouselItems.get(position).getVideoUrl().isEmpty()) {
                 bindingCarousel.carouselVideo.setVisibility(View.VISIBLE);
                 player = new ExoPlayer.Builder(this).build();
                 bindingCarousel.carouselVideo.setPlayer(player);
-                MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"); // TODO : real url here
+                MediaItem mediaItem = MediaItem.fromUri(mCarouselItems.get(position).getVideoUrl());
                 player.setMediaItem(mediaItem);
                 player.prepare();
                 startPlayer();
