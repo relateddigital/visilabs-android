@@ -39,6 +39,233 @@
             android:layout_weight="1" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/count_down_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/count_down_top_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:gravity="center" />
+
+        <RelativeLayout
+            android:id="@+id/countdown_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/rounded_corners_full"
+            android:gravity="center"
+            android:padding="24dp">
+
+            <TextView
+                android:id="@+id/week_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corners_full"
+                android:paddingEnd="4dp"
+                android:paddingStart="4dp"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/divider1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@id/week_num"
+                android:layout_toRightOf="@id/week_num"
+                android:textColor="@color/black"
+                android:text="@string/colon"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/day_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@+id/divider1"
+                android:layout_toRightOf="@+id/divider1"
+                android:background="@drawable/rounded_corners_full"
+                android:paddingEnd="4dp"
+                android:paddingStart="4dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/divider2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@id/day_num"
+                android:layout_toRightOf="@id/day_num"
+                android:textColor="@color/black"
+                android:text="@string/colon"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/hour_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@+id/divider2"
+                android:layout_toRightOf="@+id/divider2"
+                android:background="@drawable/rounded_corners_full"
+                android:paddingEnd="4dp"
+                android:paddingStart="4dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/divider3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@id/hour_num"
+                android:layout_toRightOf="@id/hour_num"
+                android:textColor="@color/black"
+                android:text="@string/colon"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/minute_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@+id/divider3"
+                android:layout_toRightOf="@+id/divider3"
+                android:background="@drawable/rounded_corners_full"
+                android:paddingEnd="4dp"
+                android:paddingStart="4dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/divider4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@id/minute_num"
+                android:layout_toRightOf="@id/minute_num"
+                android:textColor="@color/black"
+                android:text="@string/colon"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/sec_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ct_timer_num_divider_margin"
+                android:layout_marginLeft="@dimen/ct_timer_num_divider_margin"
+                android:layout_toEndOf="@+id/divider4"
+                android:layout_toRightOf="@+id/divider4"
+                android:background="@drawable/rounded_corners_full"
+                android:paddingEnd="4dp"
+                android:paddingStart="4dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/ct_timer_num_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/week_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num"
+                android:layout_alignStart="@+id/week_num"
+                android:layout_alignLeft="@+id/week_num"
+                android:textColor="@color/black"
+                android:text="@string/week_name"
+                android:textSize="@dimen/ct_timer_name_size"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/day_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num"
+                android:layout_alignStart="@+id/day_num"
+                android:layout_alignLeft="@+id/day_num"
+                android:layout_toEndOf="@+id/week_str"
+                android:layout_toRightOf="@+id/week_str"
+                android:textColor="@color/black"
+                android:text="@string/day_name"
+                android:textSize="@dimen/ct_timer_name_size"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/hour_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num"
+                android:layout_alignStart="@+id/hour_num"
+                android:layout_alignLeft="@+id/hour_num"
+                android:layout_toEndOf="@+id/day_str"
+                android:layout_toRightOf="@+id/day_str"
+                android:textColor="@color/black"
+                android:text="@string/hour_name"
+                android:textSize="@dimen/ct_timer_name_size"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/minute_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num"
+                android:layout_alignStart="@+id/minute_num"
+                android:layout_alignLeft="@+id/minute_num"
+                android:layout_toEndOf="@+id/hour_str"
+                android:layout_toRightOf="@+id/hour_str"
+                android:textColor="@color/black"
+                android:text="@string/minute_name"
+                android:textSize="@dimen/ct_timer_name_size"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/sec_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/day_num"
+                android:layout_alignStart="@+id/sec_num"
+                android:layout_alignLeft="@+id/sec_num"
+                android:layout_toEndOf="@+id/minute_str"
+                android:layout_toRightOf="@+id/minute_str"
+                android:textColor="@color/black"
+                android:text="@string/second_name"
+                android:textSize="@dimen/ct_timer_name_size"
+                android:textStyle="bold"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/count_down_bot_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:gravity="center" />
+    </LinearLayout>
+
     <View
         android:id="@+id/exit"
         android:layout_width="match_parent"
