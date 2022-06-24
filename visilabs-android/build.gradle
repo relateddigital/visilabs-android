@@ -19,11 +19,11 @@ project.afterEvaluate {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 4
         versionName "6.0.0"
         buildConfigField 'String', 'VERSION_NAME', "\"6.0.0\""
