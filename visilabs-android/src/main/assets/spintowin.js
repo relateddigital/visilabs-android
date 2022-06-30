@@ -1370,12 +1370,16 @@ SpinToWin.prototype.styleHandler = function () {
 			this.wheelContainer.style.marginTop = this.getWheelContainerMarginTop();
 		} else {
 			this.wheelContainer.style.bottom = -this.config.r + "px"
+			this.submitButton.style.marginBottom = (this.config.r + 50) + "px"
+			this.copyButton.style.marginBottom = (this.config.r + 50) + "px"
 		}
 	} else {
 		if (this.config.taTemplate == "full_spin") {
 			this.wheelContainer.style.marginTop = this.getWheelContainerMarginTop();
 		} else {
 			this.wheelContainer.style.bottom = -this.config.r + this.config.statusBarHeight + "px"
+			this.submitButton.style.marginBottom = (this.config.r + this.config.statusBarHeight + 50) + "px"
+			this.copyButton.style.marginBottom = (this.config.r + this.config.statusBarHeight + 50) + "px"
 		}
 	}
 
