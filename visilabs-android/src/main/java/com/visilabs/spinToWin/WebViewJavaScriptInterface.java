@@ -32,6 +32,7 @@ public class WebViewJavaScriptInterface {
     private String mResponse;
     private SpinToWinModel spinToWinModel;
     private String subEmail = "";
+    private String selectedSliceLink = "https://www.relateddigital.com/";
 
     WebViewJavaScriptInterface(WebViewDialogFragment webViewDialogFragment, String response) {
         this.mWebViewDialogFragment = webViewDialogFragment;
@@ -57,7 +58,7 @@ public class WebViewJavaScriptInterface {
     @JavascriptInterface
     public void copyToClipboard(String couponCode) {
         this.mWebViewDialogFragment.dismiss();
-        mCopyToClipboardInterface.copyToClipboard(couponCode);
+        mCopyToClipboardInterface.copyToClipboard(couponCode, selectedSliceLink);
     }
 
     /**

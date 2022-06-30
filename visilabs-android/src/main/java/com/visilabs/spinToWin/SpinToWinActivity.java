@@ -1,11 +1,11 @@
 package com.visilabs.spinToWin;
 
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +29,7 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
     private String jsonStr = "";
     private SpinToWinModel response;
     private String spinToWinPromotionCode = "";
+    private String sliceLink = "";
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -100,6 +101,17 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
                 Log.e(LOG_TAG, "SpinToWinCodeBanner : " + e.getMessage());
             }
         }
+
+        if (!sliceLink.isEmpty()) {
+            Uri uri;
+            try {
+                uri = Uri.parse(sliceLink);
+                Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(viewIntent);
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Can't parse notification URI, will not take any action", e);
+            }
+        }
     }
 
     @Override
@@ -108,11 +120,16 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
     }
 
     @Override
-    public void copyToClipboard(String couponCode) {
+    public void copyToClipboard(String couponCode, String link) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Coupon Code", couponCode);
         clipboard.setPrimaryClip(clip);
         Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+
+        if(link != null && !link.isEmpty()) {
+            sliceLink = link;
+        }
+
         finish();
     }
 
