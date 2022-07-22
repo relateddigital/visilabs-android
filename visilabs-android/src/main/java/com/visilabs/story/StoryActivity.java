@@ -483,6 +483,11 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         int timeDifInSec = AppUtils.calculateTimeDifferenceInSec(mStories.getItems().get(mStoryItemPosition)
                 .getCountdown().getEndDateTime());
 
+        if(timeDifInSec == 0) {
+            mCountDownContainer.setVisibility(View.GONE);
+            Log.e(LOG_TAG, "Something went wrong when calculating the time difference!!");
+        }
+
         switch(mStories.getItems().get(mStoryItemPosition).getCountdown().getDisplayType()) {
             case "dhms": {
                 mWeekNum.setVisibility(View.GONE);
