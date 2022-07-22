@@ -39,6 +39,13 @@
             android:layout_weight="1" />
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/countdown_end_gif"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop" />
+
     <LinearLayout
         android:id="@+id/count_down_container"
         android:layout_width="match_parent"

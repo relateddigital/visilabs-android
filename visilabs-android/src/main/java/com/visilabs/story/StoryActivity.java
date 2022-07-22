@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
@@ -63,6 +64,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     View mReverse, mSkip;
     ImageView mIvClose, mIvCover;
     TextView mTvCover;
+    private ImageView mCountdownEndGifView;
     GestureDetector mGestureDetector;
     int mStoryPosition;
     View.OnTouchListener mOnTouchListener;
@@ -197,6 +199,9 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         mHourStr = findViewById(R.id.hour_str);
         mMinuteStr = findViewById(R.id.minute_str);
         mSecStr = findViewById(R.id.sec_str);
+        mCountdownEndGifView = findViewById(R.id.countdown_end_gif);
+
+        mCountdownEndGifView.setVisibility(View.GONE);
 
         String title = mStories.getTitle();
 
@@ -268,6 +273,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
 
     @Override
     public void onNext() {
+        mCountdownEndGifView.setVisibility(View.GONE);
         Visilabs.CallAPI().impressionStory(mActionData.getReport().getImpression());
 
         if(mStories.getItems().size() > mStoryItemPosition + 1) {
@@ -277,6 +283,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
 
     @Override
     public void onPrev() {
+        mCountdownEndGifView.setVisibility(View.GONE);
         Visilabs.CallAPI().impressionStory(mActionData.getReport().getImpression());
 
         if ((mStoryItemPosition - 1) < 0) {
@@ -298,6 +305,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
 
     @Override
     public void onComplete() {
+        mCountdownEndGifView.setVisibility(View.GONE);
         mStoryPosition++;
 
         if (mStoryPosition < mActionData.getStories().size()) {
@@ -309,6 +317,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     }
 
     private void startStoryGroup(int itemPosition) {
+        mCountdownEndGifView.setVisibility(View.GONE);
         Intent intent = new Intent(getApplicationContext(), StoryActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
@@ -486,6 +495,17 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         if(timeDifInSec == 0) {
             mCountDownContainer.setVisibility(View.GONE);
             Log.e(LOG_TAG, "Something went wrong when calculating the time difference!!");
+            return;
+        } else if(timeDifInSec < 0) {
+            mWeekNumber = 0;
+            mDayNumber = 0;
+            mHourNumber = 0;
+            mMinuteNumber = 0;
+            mSecondNumber = 0;
+
+            if(true) { // TODO : real control here
+                startCountdownEndAnimation();
+            }
         }
 
         switch(mStories.getItems().get(mStoryItemPosition).getCountdown().getDisplayType()) {
@@ -505,13 +525,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 mDivider3.setVisibility(View.VISIBLE);
                 mDivider4.setVisibility(View.VISIBLE);
 
-                if(timeDifInSec <= 0) {
-                    mDayNumber = 0;
-                    mHourNumber = 0;
-                    mMinuteNumber = 0;
-                    mSecondNumber = 0;
-                    startCountdownEndAnimation();
-                } else {
+                if(timeDifInSec > 0) {
                     mDayNumber = (short) (timeDifInSec / (60*60*24));
                     timeDifInSec = timeDifInSec - mDayNumber*60*60*24;
                     mHourNumber = (short) (timeDifInSec / (60*60));
@@ -538,12 +552,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 mDivider3.setVisibility(View.VISIBLE);
                 mDivider4.setVisibility(View.GONE);
 
-                if(timeDifInSec <= 0) {
-                    mDayNumber = 0;
-                    mHourNumber = 0;
-                    mMinuteNumber = 0;
-                    startCountdownEndAnimation();
-                } else {
+                if(timeDifInSec > 0) {
                     mDayNumber = (short) (timeDifInSec / (60*60*24));
                     timeDifInSec = timeDifInSec - mDayNumber*60*60*24;
                     mHourNumber = (short) (timeDifInSec / (60*60));
@@ -568,10 +577,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 mDivider3.setVisibility(View.GONE);
                 mDivider4.setVisibility(View.GONE);
 
-                if(timeDifInSec <= 0) {
-                    mDayNumber = 0;
-                    startCountdownEndAnimation();
-                } else {
+                if(timeDifInSec > 0) {
                     mDayNumber = (short) (timeDifInSec / (60*60*24));
                 }
                 break;
@@ -592,14 +598,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 mDivider3.setVisibility(View.VISIBLE);
                 mDivider4.setVisibility(View.VISIBLE);
 
-                if(timeDifInSec <= 0) {
-                    mWeekNumber = 0;
-                    mDayNumber = 0;
-                    mHourNumber = 0;
-                    mMinuteNumber = 0;
-                    mSecondNumber = 0;
-                    startCountdownEndAnimation();
-                } else {
+                if(timeDifInSec > 0) {
                     mWeekNumber = (short) (timeDifInSec / (60*60*24*7));
                     timeDifInSec = timeDifInSec - mWeekNumber*60*60*24*7;
                     mDayNumber = (short) (timeDifInSec / (60*60*24));
@@ -732,10 +731,21 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
             mTimerCountDown.cancel();
         }
 
-        startCountdownEndAnimation();
+        if(true) { // TODO : real control here
+            startCountdownEndAnimation();
+        }
     }
 
     private void startCountdownEndAnimation() {
-        // TODO : animation here
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mCountdownEndGifView.setVisibility(View.VISIBLE);
+                mCountdownEndGifView.setAlpha(0.5f);
+                Glide.with(getApplicationContext())
+                        .load("https://c.tenor.com/Rdz9M0h2BoQAAAAC/confetti.gif") // TODO : real url here
+                        .into(mCountdownEndGifView);
+            }
+        });
     }
 }
