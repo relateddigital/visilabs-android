@@ -21,6 +21,8 @@ public class Items implements Serializable {
 
     private String fileType;
 
+    private Countdown countdown;
+
     public String getFileSrc() {
         return fileSrc;
     }
@@ -84,6 +86,10 @@ public class Items implements Serializable {
     public void setFileType(String fileType) {
         this.fileType = fileType;
     }
+
+    public Countdown getCountdown() {return countdown;}
+
+    public void setCountdown(Countdown countdown) {this.countdown = countdown;}
 
     @Override
     public String toString() {

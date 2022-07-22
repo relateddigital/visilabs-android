@@ -349,68 +349,79 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 Picasso.get().load(item.getFileSrc()).into(mIvStory);
             }
 
-            // TODO : real control here:
-            isCountDownTimer = false;
+            isCountDownTimer = mStories.getItems().get(mStoryItemPosition).getCountdown() != null;
+
             if(isCountDownTimer) {
                 mCountDownContainer.setVisibility(View.VISIBLE);
                 mCountDownTimer.setBackgroundResource(R.drawable.rounded_corners_full);
                 GradientDrawable gd = (GradientDrawable) mCountDownTimer.getBackground();
                 gd.setColor(getResources().getColor(R.color.white));
-                // TODO : real control here
-                if(true) { // TODO : text top
+
+                if(mStories.getItems().get(mStoryItemPosition).getCountdown().getPagePosition().equals("top")) {
                     mCountDownTopText.setVisibility(View.VISIBLE);
                     mCountDownBotText.setVisibility(View.GONE);
 
-                    // TODO : real data here
-                    mCountDownTopText.setText(("SAAT 16:00'DA PAYLAŞILACAK HİKAYEDEKİ İNDİRİM KODUNU BUL" +
-                            ", ONU KULLANABİLECEK 25 ŞANSLI KİŞİDEN BİRİ OL!").replace("\\n", "\n"));
-                    mCountDownTopText.setTextColor(Color.parseColor("#FFFFFF"));
-                    mCountDownTopText.setTextSize(Float.parseFloat("9") + 16);
+                    mCountDownTopText.setText((mStories.getItems().get(mStoryItemPosition).
+                            getCountdown().getMessageText()).replace("\\n", "\n"));
+                    mCountDownTopText.setTextColor(Color.parseColor(mStories.getItems()
+                            .get(mStoryItemPosition).getCountdown().getMessageTextColor()));
+                    mCountDownTopText.setTextSize(Float.parseFloat(mStories.getItems().
+                            get(mStoryItemPosition).getCountdown().getMessageTextSize()) + 16);
                     mCountDownTopText.setTypeface(Typeface.DEFAULT);
                 } else {
                     mCountDownBotText.setVisibility(View.VISIBLE);
                     mCountDownTopText.setVisibility(View.GONE);
 
-                    // TODO : real data here
-                    mCountDownBotText.setText(("SAAT 16:00'DA PAYLAŞILACAK HİKAYEDEKİ İNDİRİM KODUNU BUL" +
-                            ", ONU KULLANABİLECEK 25 ŞANSLI KİŞİDEN BİRİ OL!").replace("\\n", "\n"));
-                    mCountDownBotText.setTextColor(Color.parseColor("#FFFFFF"));
-                    mCountDownBotText.setTextSize(Float.parseFloat("9") + 16);
+                    mCountDownBotText.setText((mStories.getItems().get(mStoryItemPosition).
+                            getCountdown().getMessageText()).replace("\\n", "\n"));
+                    mCountDownBotText.setTextColor(Color.parseColor(mStories.getItems()
+                            .get(mStoryItemPosition).getCountdown().getMessageTextColor()));
+                    mCountDownBotText.setTextSize(Float.parseFloat(mStories.getItems().
+                            get(mStoryItemPosition).getCountdown().getMessageTextSize()) + 16);
                     mCountDownBotText.setTypeface(Typeface.DEFAULT);
                 }
 
                 setTimerValues();
-                //TODO check the format here and set the visibilities of the views accordingly
-                //TODO: convert bigger part like week to smaller parts like day if necessary according to the format
-                mWeekNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
-                GradientDrawable gdWeek = (GradientDrawable) mWeekNum.getBackground();
-                gdWeek.setColor(Color.parseColor("#E5E4E2"));
-                mWeekNum.setText(String.valueOf(mWeekNumber));
-                mWeekNum.setTextColor(getResources().getColor(R.color.black));
 
-                mDayNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
-                GradientDrawable gdDay = (GradientDrawable) mDayNum.getBackground();
-                gdDay.setColor(Color.parseColor("#E5E4E2"));
-                mDayNum.setText(String.valueOf(mDayNumber));
-                mDayNum.setTextColor(getResources().getColor(R.color.black));
+                if (mWeekNum.getVisibility() != View.GONE) {
+                    mWeekNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
+                    GradientDrawable gdWeek = (GradientDrawable) mWeekNum.getBackground();
+                    gdWeek.setColor(Color.parseColor("#E5E4E2"));
+                    mWeekNum.setText(String.valueOf(mWeekNumber));
+                    mWeekNum.setTextColor(getResources().getColor(R.color.black));
+                }
 
-                mHourNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
-                GradientDrawable gdHour = (GradientDrawable) mHourNum.getBackground();
-                gdHour.setColor(Color.parseColor("#E5E4E2"));
-                mHourNum.setText(String.valueOf(mHourNumber));
-                mHourNum.setTextColor(getResources().getColor(R.color.black));
+                if (mDayNum.getVisibility() != View.GONE) {
+                    mDayNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
+                    GradientDrawable gdDay = (GradientDrawable) mDayNum.getBackground();
+                    gdDay.setColor(Color.parseColor("#E5E4E2"));
+                    mDayNum.setText(String.valueOf(mDayNumber));
+                    mDayNum.setTextColor(getResources().getColor(R.color.black));
+                }
 
-                mMinuteNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
-                GradientDrawable gdMinute = (GradientDrawable) mMinuteNum.getBackground();
-                gdMinute.setColor(Color.parseColor("#E5E4E2"));
-                mMinuteNum.setText(String.valueOf(mMinuteNumber));
-                mMinuteNum.setTextColor(getResources().getColor(R.color.black));
+                if (mHourNum.getVisibility() != View.GONE) {
+                    mHourNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
+                    GradientDrawable gdHour = (GradientDrawable) mHourNum.getBackground();
+                    gdHour.setColor(Color.parseColor("#E5E4E2"));
+                    mHourNum.setText(String.valueOf(mHourNumber));
+                    mHourNum.setTextColor(getResources().getColor(R.color.black));
+                }
 
-                mSecNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
-                GradientDrawable gdSec = (GradientDrawable) mSecNum.getBackground();
-                gdSec.setColor(Color.parseColor("#E5E4E2"));
-                mSecNum.setText(String.valueOf(mSecondNumber));
-                mSecNum.setTextColor(getResources().getColor(R.color.black));
+                if (mMinuteNum.getVisibility() != View.GONE) {
+                    mMinuteNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
+                    GradientDrawable gdMinute = (GradientDrawable) mMinuteNum.getBackground();
+                    gdMinute.setColor(Color.parseColor("#E5E4E2"));
+                    mMinuteNum.setText(String.valueOf(mMinuteNumber));
+                    mMinuteNum.setTextColor(getResources().getColor(R.color.black));
+                }
+
+                if (mSecNum.getVisibility() != View.GONE) {
+                    mSecNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
+                    GradientDrawable gdSec = (GradientDrawable) mSecNum.getBackground();
+                    gdSec.setColor(Color.parseColor("#E5E4E2"));
+                    mSecNum.setText(String.valueOf(mSecondNumber));
+                    mSecNum.setTextColor(getResources().getColor(R.color.black));
+                }
 
                 startTimer();
             } else {
@@ -469,12 +480,134 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     }
 
     private void setTimerValues() {
-        //TODO: When real data came, adjust here accordingly
-        mWeekNumber = 3;
-        mDayNumber = 5;
-        mHourNumber = 17;
-        mMinuteNumber = 0;
-        mSecondNumber = 6;
+        int timeDifInSec = AppUtils.calculateTimeDifferenceInSec(mStories.getItems().get(mStoryItemPosition)
+                .getCountdown().getEndDateTime());
+
+        switch(mStories.getItems().get(mStoryItemPosition).getCountdown().getDisplayType()) {
+            case "dhms": {
+                mWeekNum.setVisibility(View.GONE);
+                mDayNum.setVisibility(View.VISIBLE);
+                mHourNum.setVisibility(View.VISIBLE);
+                mMinuteNum.setVisibility(View.VISIBLE);
+                mSecNum.setVisibility(View.VISIBLE);
+                mWeekStr.setVisibility(View.GONE);
+                mDayStr.setVisibility(View.VISIBLE);
+                mHourStr.setVisibility(View.VISIBLE);
+                mMinuteStr.setVisibility(View.VISIBLE);
+                mSecStr.setVisibility(View.VISIBLE);
+                mDivider1.setVisibility(View.GONE);
+                mDivider2.setVisibility(View.VISIBLE);
+                mDivider3.setVisibility(View.VISIBLE);
+                mDivider4.setVisibility(View.VISIBLE);
+
+                if(timeDifInSec <= 0) {
+                    mDayNumber = 0;
+                    mHourNumber = 0;
+                    mMinuteNumber = 0;
+                    mSecondNumber = 0;
+                    startCountdownEndAnimation();
+                } else {
+                    mDayNumber = (short) (timeDifInSec / (60*60*24));
+                    timeDifInSec = timeDifInSec - mDayNumber*60*60*24;
+                    mHourNumber = (short) (timeDifInSec / (60*60));
+                    timeDifInSec = timeDifInSec - mHourNumber*60*60;
+                    mMinuteNumber = (short) (timeDifInSec / (60));
+                    timeDifInSec = timeDifInSec - mMinuteNumber*60;
+                    mSecondNumber = (short) timeDifInSec;
+                }
+                break;
+            }
+            case "dhm": {
+                mWeekNum.setVisibility(View.GONE);
+                mDayNum.setVisibility(View.VISIBLE);
+                mHourNum.setVisibility(View.VISIBLE);
+                mMinuteNum.setVisibility(View.VISIBLE);
+                mSecNum.setVisibility(View.GONE);
+                mWeekStr.setVisibility(View.GONE);
+                mDayStr.setVisibility(View.VISIBLE);
+                mHourStr.setVisibility(View.VISIBLE);
+                mMinuteStr.setVisibility(View.VISIBLE);
+                mSecStr.setVisibility(View.GONE);
+                mDivider1.setVisibility(View.GONE);
+                mDivider2.setVisibility(View.VISIBLE);
+                mDivider3.setVisibility(View.VISIBLE);
+                mDivider4.setVisibility(View.GONE);
+
+                if(timeDifInSec <= 0) {
+                    mDayNumber = 0;
+                    mHourNumber = 0;
+                    mMinuteNumber = 0;
+                    startCountdownEndAnimation();
+                } else {
+                    mDayNumber = (short) (timeDifInSec / (60*60*24));
+                    timeDifInSec = timeDifInSec - mDayNumber*60*60*24;
+                    mHourNumber = (short) (timeDifInSec / (60*60));
+                    timeDifInSec = timeDifInSec - mHourNumber*60*60;
+                    mMinuteNumber = (short) (timeDifInSec / (60));
+                }
+                break;
+            }
+            case "d": {
+                mWeekNum.setVisibility(View.GONE);
+                mDayNum.setVisibility(View.VISIBLE);
+                mHourNum.setVisibility(View.GONE);
+                mMinuteNum.setVisibility(View.GONE);
+                mSecNum.setVisibility(View.GONE);
+                mWeekStr.setVisibility(View.GONE);
+                mDayStr.setVisibility(View.VISIBLE);
+                mHourStr.setVisibility(View.GONE);
+                mMinuteStr.setVisibility(View.GONE);
+                mSecStr.setVisibility(View.GONE);
+                mDivider1.setVisibility(View.GONE);
+                mDivider2.setVisibility(View.GONE);
+                mDivider3.setVisibility(View.GONE);
+                mDivider4.setVisibility(View.GONE);
+
+                if(timeDifInSec <= 0) {
+                    mDayNumber = 0;
+                    startCountdownEndAnimation();
+                } else {
+                    mDayNumber = (short) (timeDifInSec / (60*60*24));
+                }
+                break;
+            }
+            default: {
+                mWeekNum.setVisibility(View.VISIBLE);
+                mDayNum.setVisibility(View.VISIBLE);
+                mHourNum.setVisibility(View.VISIBLE);
+                mMinuteNum.setVisibility(View.VISIBLE);
+                mSecNum.setVisibility(View.VISIBLE);
+                mWeekStr.setVisibility(View.VISIBLE);
+                mDayStr.setVisibility(View.VISIBLE);
+                mHourStr.setVisibility(View.VISIBLE);
+                mMinuteStr.setVisibility(View.VISIBLE);
+                mSecStr.setVisibility(View.VISIBLE);
+                mDivider1.setVisibility(View.VISIBLE);
+                mDivider2.setVisibility(View.VISIBLE);
+                mDivider3.setVisibility(View.VISIBLE);
+                mDivider4.setVisibility(View.VISIBLE);
+
+                if(timeDifInSec <= 0) {
+                    mWeekNumber = 0;
+                    mDayNumber = 0;
+                    mHourNumber = 0;
+                    mMinuteNumber = 0;
+                    mSecondNumber = 0;
+                    startCountdownEndAnimation();
+                } else {
+                    mWeekNumber = (short) (timeDifInSec / (60*60*24*7));
+                    timeDifInSec = timeDifInSec - mWeekNumber*60*60*24*7;
+                    mDayNumber = (short) (timeDifInSec / (60*60*24));
+                    timeDifInSec = timeDifInSec - mDayNumber*60*60*24;
+                    mHourNumber = (short) (timeDifInSec / (60*60));
+                    timeDifInSec = timeDifInSec - mHourNumber*60*60;
+                    mMinuteNumber = (short) (timeDifInSec / (60));
+                    timeDifInSec = timeDifInSec - mMinuteNumber*60;
+                    mSecondNumber = (short) timeDifInSec;
+                }
+                break;
+            }
+        }
     }
 
     private void startTimer() {
@@ -523,31 +656,63 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     }
 
     private void calculateTimeFields() {
-        //TODO: Adjust the logic here for each format. For example, if there is no week field
-        //in the format do not set day to max 6 below.
-        if(mSecondNumber > 0) {
-            mSecondNumber--;
-        } else {
-            mSecondNumber = 59;
-            if(mMinuteNumber > 0){
-                mMinuteNumber--;
-            } else {
-                mMinuteNumber = 59;
-                if(mHourNumber > 0) {
-                    mHourNumber--;
+        switch (mStories.getItems().get(mStoryItemPosition).getCountdown().getDisplayType()) {
+
+            case "dhms":
+
+            case "dhm":
+
+            case "d": {
+                if(mSecondNumber > 0) {
+                    mSecondNumber--;
                 } else {
-                    mHourNumber = 23;
-                    if(mDayNumber > 0) {
-                        mDayNumber--;
+                    mSecondNumber = 59;
+                    if(mMinuteNumber > 0){
+                        mMinuteNumber--;
                     } else {
-                        mDayNumber = 6;
-                        if(mWeekNumber > 0) {
-                            mWeekNumber--;
+                        mMinuteNumber = 59;
+                        if(mHourNumber > 0) {
+                            mHourNumber--;
                         } else {
-                            expireTime();
+                            mHourNumber = 23;
+                            if(mDayNumber > 0) {
+                                mDayNumber--;
+                            } else {
+                                expireTime();
+                            }
                         }
                     }
                 }
+                break;
+            }
+
+            default: {
+                if(mSecondNumber > 0) {
+                    mSecondNumber--;
+                } else {
+                    mSecondNumber = 59;
+                    if(mMinuteNumber > 0){
+                        mMinuteNumber--;
+                    } else {
+                        mMinuteNumber = 59;
+                        if(mHourNumber > 0) {
+                            mHourNumber--;
+                        } else {
+                            mHourNumber = 23;
+                            if(mDayNumber > 0) {
+                                mDayNumber--;
+                            } else {
+                                mDayNumber = 6;
+                                if(mWeekNumber > 0) {
+                                    mWeekNumber--;
+                                } else {
+                                    expireTime();
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
             }
         }
     }
@@ -561,16 +726,11 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         if(mTimerCountDown!=null){
             mTimerCountDown.cancel();
         }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), getString(R.string.time_is_over), Toast.LENGTH_LONG).show();
-            }
-        });
 
-        // TODO : real control here
-        if(true) { // if it should be removed when it expires
-            mCountDownContainer.setVisibility(View.GONE);
-        }
+        startCountdownEndAnimation();
+    }
+
+    private void startCountdownEndAnimation() {
+        // TODO : animation here
     }
 }

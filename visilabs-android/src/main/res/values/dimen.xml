@@ -24,7 +24,7 @@
     <dimen name="ct_close_button_height">20dp</dimen>
     <dimen name="ct_close_button_margin">6dp</dimen>
     <dimen name="ct_timer_num_size">30sp</dimen>
-    <dimen name="ct_timer_num_divider_margin">10dp</dimen>
+    <dimen name="ct_timer_num_divider_margin">8dp</dimen>
     <dimen name="ct_timer_body_text_timer_margin">4dp</dimen>
     <dimen name="ct_timer_name_size">12sp</dimen>
     <dimen name="ct_timer_button_margin">8dp</dimen>

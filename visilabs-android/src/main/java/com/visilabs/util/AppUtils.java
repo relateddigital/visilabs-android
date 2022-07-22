@@ -29,7 +29,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -289,6 +291,17 @@ public final class AppUtils {
             context.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static int calculateTimeDifferenceInSec(String endDate) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date dt = sdf.parse(endDate);
+            long epoch = dt.getTime();
+            return (int) ((epoch - System.currentTimeMillis()) / 1000);
+        } catch (Exception e) {
+            return 0;
         }
     }
 
