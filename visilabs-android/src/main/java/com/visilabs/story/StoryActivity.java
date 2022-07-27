@@ -503,7 +503,9 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
             mMinuteNumber = 0;
             mSecondNumber = 0;
 
-            if(true) { // TODO : real control here
+            if(mStories.getItems().get(mStoryItemPosition).getCountdown()
+                    .getEndAnimationImageUrl() != null && !mStories.getItems()
+                    .get(mStoryItemPosition).getCountdown().getEndAnimationImageUrl().isEmpty()) {
                 startCountdownEndAnimation();
             }
         }
@@ -731,7 +733,9 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
             mTimerCountDown.cancel();
         }
 
-        if(true) { // TODO : real control here
+        if(mStories.getItems().get(mStoryItemPosition).getCountdown()
+                .getEndAnimationImageUrl() != null && !mStories.getItems()
+                .get(mStoryItemPosition).getCountdown().getEndAnimationImageUrl().isEmpty()) {
             startCountdownEndAnimation();
         }
     }
@@ -743,7 +747,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 mCountdownEndGifView.setVisibility(View.VISIBLE);
                 mCountdownEndGifView.setAlpha(0.5f);
                 Glide.with(getApplicationContext())
-                        .load("https://c.tenor.com/Rdz9M0h2BoQAAAAC/confetti.gif") // TODO : real url here
+                        .load(mStories.getItems().get(mStoryItemPosition).getCountdown().getEndAnimationImageUrl())
                         .into(mCountdownEndGifView);
             }
         });

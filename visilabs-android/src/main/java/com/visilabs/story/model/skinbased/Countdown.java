@@ -16,7 +16,7 @@ public class Countdown implements Serializable {
 
     private String endDateTime;
 
-    private String endAction; //TODO : endAction gidecek yerine bitince cıkacak gif url si gelecek
+    private String endAnimationImageUrl;
 
     public void setPagePosition(String pagePosition) {this.pagePosition = pagePosition;}
 
@@ -42,8 +42,8 @@ public class Countdown implements Serializable {
 
     public String getEndDateTime() {return endDateTime;}
 
-    public void setEndAction(String endAction) {this.endAction = endAction;}
+    public void setEndAnimationImageUrl(String endAnimationImageUrl) {this.endAnimationImageUrl = endAnimationImageUrl;}
 
-    public String getEndAction() {return endAction;}
+    public String getEndAnimationImageUrl() {return endAnimationImageUrl;}
 
 }
