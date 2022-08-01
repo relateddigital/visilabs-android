@@ -745,7 +745,6 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
             @Override
             public void run() {
                 mCountdownEndGifView.setVisibility(View.VISIBLE);
-                mCountdownEndGifView.setAlpha(0.5f);
                 Glide.with(getApplicationContext())
                         .load(mStories.getItems().get(mStoryItemPosition).getCountdown().getEndAnimationImageUrl())
                         .into(mCountdownEndGifView);
