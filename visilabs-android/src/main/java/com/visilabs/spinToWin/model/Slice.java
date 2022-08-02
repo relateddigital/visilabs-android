@@ -16,6 +16,10 @@ public class Slice implements Serializable {
     private String type;
     @SerializedName("is_available")
     private boolean isAvailable;
+    @SerializedName("ios_lnk")
+    private String iosLink;
+    @SerializedName("android_lnk")
+    private String androidLink;
 
     public String getDisplayName() {
         return displayName;
@@ -55,6 +59,22 @@ public class Slice implements Serializable {
 
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
+    }
+
+    public String getIosLink() {
+        return iosLink;
+    }
+
+    public void setIosLink(String iosLink) {
+        this.iosLink = iosLink;
+    }
+
+    public String getAndroidLink() {
+        return androidLink;
+    }
+
+    public void setAndroidLink(String androidLink) {
+        this.androidLink = androidLink;
     }
 
 }

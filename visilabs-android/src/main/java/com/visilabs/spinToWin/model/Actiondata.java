@@ -47,6 +47,8 @@ public class Actiondata implements Serializable {
     private String wheelSpinAction;
     @SerializedName("promocodes_soldout_message")
     private String promoCodesSoldOutMessage;
+    @SerializedName("copybutton_function")
+    private String copyButtonFunction;
 
     public List<Slice> getSlices() {
         return slices;
@@ -206,6 +208,14 @@ public class Actiondata implements Serializable {
 
     public void setPromoCodesSoldOutMessage(String promoCodesSoldOutMessage) {
         this.promoCodesSoldOutMessage = promoCodesSoldOutMessage;
+    }
+
+    public String getCopyButtonFunction() {
+        return copyButtonFunction;
+    }
+
+    public void setCopyButtonFunction(String copyButtonFunction) {
+        this.copyButtonFunction = copyButtonFunction;
     }
 
 }

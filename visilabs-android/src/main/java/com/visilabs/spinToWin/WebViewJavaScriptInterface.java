@@ -32,7 +32,7 @@ public class WebViewJavaScriptInterface {
     private String mResponse;
     private SpinToWinModel spinToWinModel;
     private String subEmail = "";
-    private String selectedSliceLink = "https://www.relateddigital.com/";
+    int selectedIndex = -1;
 
     WebViewJavaScriptInterface(WebViewDialogFragment webViewDialogFragment, String response) {
         this.mWebViewDialogFragment = webViewDialogFragment;
@@ -58,7 +58,14 @@ public class WebViewJavaScriptInterface {
     @JavascriptInterface
     public void copyToClipboard(String couponCode) {
         this.mWebViewDialogFragment.dismiss();
-        mCopyToClipboardInterface.copyToClipboard(couponCode, selectedSliceLink);
+
+        if (spinToWinModel.getActiondata().getCopyButtonFunction().equals("copy_redirect") &&
+                spinToWinModel.getActiondata().getSlices().get(selectedIndex).getAndroidLink() != null &&
+                !spinToWinModel.getActiondata().getSlices().get(selectedIndex).getAndroidLink().equals("")) {
+            mCopyToClipboardInterface.copyToClipboard(couponCode, spinToWinModel.getActiondata().getSlices().get(selectedIndex).getAndroidLink());
+        } else {
+            mCopyToClipboardInterface.copyToClipboard(couponCode, null);
+        }
     }
 
     /**
@@ -113,7 +120,6 @@ public class WebViewJavaScriptInterface {
         List<String> promotionCodes = new ArrayList<String>();
         List<String> sliceTexts = new ArrayList<String>();
         List<Integer> promotionIndexes = new ArrayList<Integer>();
-        int selectedIndex = -1;
 
         promoAuth = spinToWinModel.getActiondata().getPromoAuth();
         actId = spinToWinModel.getActid();
