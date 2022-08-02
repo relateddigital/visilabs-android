@@ -101,6 +101,16 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
                 Log.e(LOG_TAG, "SpinToWinCodeBanner : " + e.getMessage());
             }
         }
+        if (!sliceLink.isEmpty()) {
+            Uri uri;
+            try {
+                uri = Uri.parse(sliceLink);
+                Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(viewIntent);
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Can't parse notification URI, will not take any action", e);
+            }
+        }
     }
 
     @Override
