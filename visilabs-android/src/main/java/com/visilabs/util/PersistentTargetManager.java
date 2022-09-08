@@ -72,13 +72,18 @@ public class PersistentTargetManager {
                         //String decodedPreviousParameterValue = VisilabsEncoder.decode(previousParameterValue);
                         //String[] decodedPreviousParameterValueParts = decodedPreviousParameterValue.split("~");
                         String[] previousParameterValueParts = previousParameterValue.split("~");
+                        int paramCounter = 1;
                         for (int i = 0; i < previousParameterValueParts.length ; i++){
-                            if(i == 9){
+                            if(paramCounter == 10){
                                 break;
                             }
                             String decodedPreviousParameterValuePart =previousParameterValueParts[i];
                             if(decodedPreviousParameterValuePart.split("\\|").length == 2){
+                                if(decodedPreviousParameterValuePart.split("\\|")[0].equals(parameterValue)) {
+                                    continue;
+                                }
                                 parameterValueToStore.append("~").append(decodedPreviousParameterValuePart);
+                                paramCounter++;
                             }
                         }
                     }
