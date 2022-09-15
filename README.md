@@ -5,7 +5,7 @@
 
 # Latest Version 
 
-***August 9, 2022*** - [Visilabs v6.0.3](https://github.com/relateddigital/visilabs-android/releases)
+***September 15, 2022*** - [Visilabs v6.0.3](https://github.com/relateddigital/visilabs-android/releases)
 
 # Latest Version [![Build Status](https://travis-ci.com/relateddigital/visilabs-android.svg?branch=master)](https://travis-ci.com/relateddigital/visilabs-android)
 
