@@ -1112,21 +1112,27 @@ SpinToWin.prototype.convertStringsToNumber = function () {
 	this.config.promocodesSoldoutMessageTextSize = isNaN(parseInt(this.config.promocodesSoldoutMessageTextSize)) ? 20 : parseInt(this.config.promocodesSoldoutMessageTextSize);
 };
 
+SpinToWin.prototype.ARGBtoRGBA = function(colorString) {
+    if (!colorString || colorString.length < 8) return colorString;
+    if(colorString.substr(0,1) !=='#') return colorString.replace(/(..)(......)/, '$2$1');
+    return colorString.replace(/#(..)(......)/, '#$2$1');
+};
+
 SpinToWin.prototype.setContent = function () {
-	this.container.style.backgroundColor = this.config.backgroundColor;
+	this.container.style.backgroundColor = this.ARGBtoRGBA(this.config.backgroundColor);
 	this.titleElement.innerHTML = this.config.title.replace(/\\n/g, "<br/>");
-	this.titleElement.style.color = this.config.titleTextColor;
+	this.titleElement.style.color = this.ARGBtoRGBA(this.config.titleTextColor);
 	this.titleElement.style.fontFamily = this.config.titleFontFamily;
 	this.titleElement.style.fontSize = (this.config.titleTextSize + 20) + "px";
 	this.messageElement.innerHTML = this.config.message.replace(/\\n/g, "<br/>");
-	this.messageElement.style.color = this.config.textColor;
+	this.messageElement.style.color = this.ARGBtoRGBA(this.config.textColor);
 	this.messageElement.style.fontFamily = this.config.textFontFamily;
 	this.messageElement.style.fontSize = (this.config.textSize + 10) + "px";
 	this.emailInput.style.fontFamily = this.config.textFontFamily;
 	this.emailInput.style.fontSize = (this.config.textSize + 10) + "px";
 	this.submitButton.innerHTML = this.config.buttonLabel;
-	this.submitButton.style.color = this.config.buttonTextColor;
-	this.submitButton.style.backgroundColor = this.config.buttonColor;
+	this.submitButton.style.color = this.ARGBtoRGBA(this.config.buttonTextColor);
+	this.submitButton.style.backgroundColor = this.ARGBtoRGBA(this.config.buttonColor);
 	this.submitButton.style.fontFamily = this.config.buttonFontFamily;
 	this.submitButton.style.fontSize = (this.config.buttonTextSize + 20) + "px";
 	this.emailInput.placeholder = this.config.placeholder;
@@ -1137,8 +1143,8 @@ SpinToWin.prototype.setContent = function () {
 	this.emailPermitText.style.fontSize = (this.config.consentTextSize + 10) + "px";
 	this.emailPermitText.style.fontFamily = this.config.textFontFamily;
 	this.copyButton.innerHTML = this.config.copyButtonLabel;
-	this.copyButton.style.color = this.config.copybuttonTextColor;
-	this.copyButton.style.backgroundColor = this.config.copybuttonColor;
+	this.copyButton.style.color = this.ARGBtoRGBA(this.config.copybuttonTextColor);
+	this.copyButton.style.backgroundColor = this.ARGBtoRGBA(this.config.copybuttonColor);
 	this.copyButton.style.fontFamily = this.config.copybuttonFontFamily;
 	this.copyButton.style.fontSize = (this.config.copybuttonTextSize + 20) + "px";
 	this.invalidEmailMessageLi.innerHTML = this.config.invalidEmailMessage;
@@ -1147,14 +1153,14 @@ SpinToWin.prototype.setContent = function () {
 	this.checkConsentMessageLi.innerHTML = this.config.checkConsentMessage;
 	this.checkConsentMessageLi.style.fontSize = (this.config.consentTextSize + 10) + "px";
 	this.checkConsentMessageLi.style.fontFamily = this.config.textFontFamily;
-	this.couponCode.style.color = this.config.promocodeTextColor;
-	this.couponCode.style.backgroundColor = this.config.promocodeBackgroundColor;
+	this.couponCode.style.color = this.ARGBtoRGBA(this.config.promocodeTextColor);
+	this.couponCode.style.backgroundColor = this.ARGBtoRGBA(this.config.promocodeBackgroundColor);
 	this.couponCode.style.fontFamily = this.config.copybuttonFontFamily;
 	this.couponCode.style.fontSize = (this.config.copybuttonTextSize + 20) + "px";
 	this.successMessageElement.innerHTML = this.config.successMessage.replace(/\\n/g, "<br/>");
 	this.successMessageElement.style.color = "green";
 	this.promocodeTitleElement.innerHTML = this.config.promocodeTitle.replace(/\\n/g, "<br/>");
-	this.promocodeTitleElement.style.color = this.config.promocodeTitleTextColor;
+	this.promocodeTitleElement.style.color = this.ARGBtoRGBA(this.config.promocodeTitleTextColor);
 	this.promocodeTitleElement.style.fontFamily = this.config.promocodeTitleFontFamily;
 	this.promocodeTitleElement.style.fontSize = (this.config.promocodeTitleTextSize + 20) + "px";
 
@@ -1162,10 +1168,10 @@ SpinToWin.prototype.setContent = function () {
 		this.promocodesSoldoutMessageElement.innerHTML = this.config.promocodesSoldoutMessage.replace(/\\n/g, "<br/>");
 	}
 
-	this.promocodesSoldoutMessageElement.style.color = this.config.promocodesSoldoutMessageTextColor;
+	this.promocodesSoldoutMessageElement.style.color = this.ARGBtoRGBA(this.config.promocodesSoldoutMessageTextColor);
 	this.promocodesSoldoutMessageElement.style.fontFamily = this.config.promocodesSoldoutMessageFontFamily;
 	this.promocodesSoldoutMessageElement.style.fontSize = (this.config.promocodesSoldoutMessageTextSize + 20) + "px";
-	this.promocodesSoldoutMessageElement.style.backgroundColor = this.config.promocodesSoldoutMessageBackgroundColor;
+	this.promocodesSoldoutMessageElement.style.backgroundColor = this.ARGBtoRGBA(this.config.promocodesSoldoutMessageBackgroundColor);
 
 	if (this.config.taTemplate == "full_spin") {
 		this.handlePositions();
