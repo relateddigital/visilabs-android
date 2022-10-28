@@ -908,16 +908,19 @@ SpinToWin.prototype.createEasyWheel = function () {
 	window.easyWheel.items[0].win = true;
 	window.easyWheel.start()
 };
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 SpinToWin.prototype.convertConfigJson = function () {
 	//actiondata
 
 	this.config.promocodesSoldoutMessage = this.config.actiondata.promocodes_soldout_message;
 	this.config.mailSubscription = this.config.actiondata.mail_subscription;
 	this.config.sliceCount = this.config.actiondata.slice_count;
-	this.config.slices = this.config.actiondata.slices.map(slice => ({
-		...slice
-		, isAvailable: slice.isAvailable === undefined ? slice.is_available : slice.isAvailable
-	}));
+	this.config.slices = this.config.actiondata.slices.map(function (slice) {
+        return _extends({}, slice, { isAvailable: slice.isAvailable === undefined ? slice.is_available : slice.isAvailable
+        });
+    });
 
 	this.config.img = this.config.actiondata.img;
 	this.config.taTemplate = this.config.actiondata.taTemplate;
