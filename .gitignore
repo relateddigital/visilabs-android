@@ -17,3 +17,4 @@
 /.idea/compiler.xml
 /app/google-services.json
 /app/agconnect-services.json
+/scripts/publish-root.gradle
