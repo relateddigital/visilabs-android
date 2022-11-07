@@ -13,9 +13,7 @@ import com.visilabs.Visilabs;
 import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.CountdownTimerFragment;
-import com.visilabs.inappnotification.InAppNotificationFragment;
 import com.visilabs.inApp.VisilabsActionRequest;
-import com.visilabs.shakeToWin.ShakeToWinActivity;
 import com.visilabs.util.VisilabsConstant;
 import java.util.HashMap;
 
@@ -213,57 +211,47 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp17.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ShakeToWinActivity.class);
-                startActivity(intent);
-                //TODO when backend side gets ready, use below
-                //sendInAppRequest("shaketowin");
+                Visilabs.CallAPI().sendTheListOfAppsInstalled();
+                Toast.makeText(getApplicationContext(), "The list of apps installed is sent", Toast.LENGTH_LONG).show();
             }
         });
 
         binding.inApp18.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Visilabs.CallAPI().sendTheListOfAppsInstalled();
-                Toast.makeText(getApplicationContext(), "The list of apps installed is sent", Toast.LENGTH_LONG).show();
+                sendInAppRequest("nps-image-text-button");
             }
         });
 
         binding.inApp19.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendInAppRequest("nps-image-text-button");
+                sendInAppRequest("nps-image-text-button-image");
             }
         });
 
         binding.inApp20.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendInAppRequest("nps-image-text-button-image");
+                sendInAppRequest("nps-feedback");
             }
         });
 
         binding.inApp21.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendInAppRequest("nps-feedback");
+                sendInAppRequest("halfscreen");
             }
         });
 
         binding.inApp22.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendInAppRequest("halfscreen");
-            }
-        });
-
-        binding.inApp23.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 sendInAppRequest("drawer");
             }
         });
 
-        binding.inApp24.setOnClickListener(new View.OnClickListener() {
+        binding.inApp23.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Visilabs.CallAPI().requestLocationPermission(activity);

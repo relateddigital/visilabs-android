@@ -280,14 +280,14 @@
                 android:layout_width="0.0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1.0"
-                android:text="@string/shake_to_win" />
+                android:text="@string/app_tracker" />
 
             <Button
                 android:id="@+id/inApp18"
                 android:layout_width="0.0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1.0"
-                android:text="@string/app_tracker" />
+                android:text="@string/nps_1" />
 
         </LinearLayout>
 
@@ -306,21 +306,21 @@
                 android:layout_width="0.0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1.0"
-                android:text="@string/nps_1" />
+                android:text="@string/nps_2" />
 
             <Button
                 android:id="@+id/inApp20"
                 android:layout_width="0.0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1.0"
-                android:text="@string/nps_2" />
+                android:text="@string/nps_3" />
 
             <Button
                 android:id="@+id/inApp21"
                 android:layout_width="0.0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1.0"
-                android:text="@string/nps_3" />
+                android:text="@string/half_screen" />
 
         </LinearLayout>
 
@@ -339,17 +339,10 @@
                 android:layout_width="0.0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1.0"
-                android:text="@string/half_screen" />
-
-            <Button
-                android:id="@+id/inApp23"
-                android:layout_width="0.0dip"
-                android:layout_height="match_parent"
-                android:layout_weight="1.0"
                 android:text="@string/notification" />
 
             <Button
-                android:id="@+id/inApp24"
+                android:id="@+id/inApp23"
                 android:layout_width="0.0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1.0"

@@ -13,11 +13,6 @@
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
             android:noHistory="true"/>
         <activity
-            android:name="com.visilabs.shakeToWin.ShakeToWinActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:noHistory="true"/>
-        <activity
             android:name="com.visilabs.spinToWin.SpinToWinActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
