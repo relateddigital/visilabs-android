@@ -14,13 +14,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
 import com.google.gson.Gson;
+import com.visilabs.Visilabs;
 import com.visilabs.android.R;
+import com.visilabs.api.JSApiClient;
+import com.visilabs.api.VisilabsApiMethods;
 import com.visilabs.spinToWin.model.ExtendedProps;
 import com.visilabs.spinToWin.model.SpinToWinModel;
 import com.visilabs.util.ActivityUtils;
 import com.visilabs.util.AppUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SpinToWinActivity extends FragmentActivity implements SpinToWinCompleteInterface,
         SpinToWinCopyToClipboardInterface, SpinToWinShowCodeInterface {
@@ -30,43 +39,85 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
     private SpinToWinModel response;
     private String spinToWinPromotionCode = "";
     private String sliceLink = "";
+    private FragmentActivity activity = null;
+    private SpinToWinCompleteInterface completeInterface = null;
+    private SpinToWinCopyToClipboardInterface copyToClipboardInterface = null;
+    private SpinToWinShowCodeInterface showCodeInterface = null;
+    private String spinToWinJsStr = "";
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            jsonStr = savedInstanceState.getString("spin-to-win-json-str", "");
-        } else {
-            Intent intent = getIntent();
-            if (intent != null && intent.hasExtra("spin-to-win-data")) {
-                response = (SpinToWinModel) intent.getSerializableExtra("spin-to-win-data");
-                if (response != null) {
-                    jsonStr = new Gson().toJson(response);
+        activity = this;
+        completeInterface = this;
+        copyToClipboardInterface = this;
+        showCodeInterface = this;
+
+        VisilabsApiMethods jsApi = JSApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds()).create(VisilabsApiMethods.class);
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("User-Agent", Visilabs.getUserAgent());
+        Call<ResponseBody> call = jsApi.getSpinToWinJsFile(headers);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> responseJs) {
+                if (responseJs.isSuccessful()) {
+                    Log.i(LOG_TAG, "Getting spintowin.js is successful!");
+                    try {
+                        spinToWinJsStr = responseJs.body().string();
+                        if (spinToWinJsStr.isEmpty()) {
+                            Log.e(LOG_TAG, "Getting spintowin.js failed!");
+                            finish();
+                        } else {
+                            if (savedInstanceState != null) {
+                                jsonStr = savedInstanceState.getString("spin-to-win-json-str", "");
+                            } else {
+                                Intent intent = getIntent();
+                                if (intent != null && intent.hasExtra("spin-to-win-data")) {
+                                    response = (SpinToWinModel) intent.getSerializableExtra("spin-to-win-data");
+                                    if (response != null) {
+                                        jsonStr = new Gson().toJson(response);
+                                    } else {
+                                        Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");
+                                        finish();
+                                    }
+                                } else {
+                                    Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");
+                                    finish();
+                                }
+                            }
+
+                            if (jsonStr != null && !jsonStr.equals("")) {
+                                ArrayList<String> res = AppUtils.createSpinToWinCustomFontFiles(activity, jsonStr, spinToWinJsStr);
+                                if(res == null) {
+                                    Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");
+                                    finish();
+                                } else {
+                                    WebViewDialogFragment webViewDialogFragment = WebViewDialogFragment.newInstance(res.get(0), res.get(1), res.get(2));
+                                    webViewDialogFragment.setSpinToWinListeners(completeInterface, copyToClipboardInterface, showCodeInterface);
+                                    webViewDialogFragment.display(getSupportFragmentManager());
+                                }
+                            } else {
+                                Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");
+                                finish();
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG, "Getting spintowin.js failed! - " + e.getMessage());
+                        finish();
+                    }
                 } else {
-                    Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");
+                    Log.e(LOG_TAG, "Getting spintowin.js failed!");
                     finish();
                 }
-            } else {
-                Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");
-                finish();
             }
-        }
 
-        if (jsonStr != null && !jsonStr.equals("")) {
-            ArrayList<String> res = AppUtils.createSpinToWinCustomFontFiles(this, jsonStr);
-            if(res == null) {
-                Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");
-                finish();
-            } else {
-                WebViewDialogFragment webViewDialogFragment = WebViewDialogFragment.newInstance(res.get(0), res.get(1), res.get(2));
-                webViewDialogFragment.setSpinToWinListeners(this, this, this);
-                webViewDialogFragment.display(getSupportFragmentManager());
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e(LOG_TAG, "Getting spintowin.js failed! - " + t.getMessage());
+                    finish();
             }
-        } else {
-            Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");
-            finish();
-        }
+        });
     }
 
     @Override

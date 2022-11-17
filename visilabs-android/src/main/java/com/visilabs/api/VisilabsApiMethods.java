@@ -103,6 +103,12 @@ public interface VisilabsApiMethods {
             @QueryMap Map<String, String> queryParameters
     );
 
+    //Methods for js files -- mbls domain
+    @GET("/spintowin.js")
+    Call<ResponseBody> getSpinToWinJsFile(
+            @HeaderMap Map<String, String> headers
+    );
+
     //Methods for remote config
     @GET("rc.json")
     Call<List<String>> getRemoteConfig(

@@ -182,7 +182,7 @@ public final class AppUtils {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static ArrayList<String> createSpinToWinCustomFontFiles(Context context, String jsonStr) {
+    public static ArrayList<String> createSpinToWinCustomFontFiles(Context context, String jsonStr, String spinToWinJsStr) {
         ArrayList<String> result = null;
         SpinToWinModel spinToWinModel = null;
         ExtendedProps extendedProps = null;
@@ -209,7 +209,7 @@ public final class AppUtils {
         String copyButtonFontFamily = extendedProps.getCopyButtonFontFamily();
         String promoCodesSoldOutMessageFontFamily = extendedProps.getPromocodesSoldOutMessageFontFamily();
 
-        htmlStr = writeHtmlToFile(context);
+        htmlStr = writeHtmlToFile(context, spinToWinJsStr);
 
         if(displayNameFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getDisplayNameCustomFontFamilyAndroid());
@@ -318,7 +318,7 @@ public final class AppUtils {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private static String writeHtmlToFile(Context context) {
+    private static String writeHtmlToFile(Context context, String jsStr) {
         String spinToWinFileName = "spintowin";
         String htmlString = "";
 
@@ -342,9 +342,7 @@ public final class AppUtils {
             fos.write(bytes);
             fos.close();
 
-            is = context.getAssets().open(spinToWinFileName + ".js");
-            bytes = getBytesFromInputStream(is);
-            is.close();
+            bytes = jsStr.getBytes(StandardCharsets.UTF_8);
 
             fos = new FileOutputStream(jsFile);
             fos.write(bytes);
