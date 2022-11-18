@@ -32,8 +32,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 32
         versionCode 4
-        versionName "6.0.5"
-        buildConfigField 'String', 'VERSION_NAME', "\"6.0.5\""
+        versionName "6.0.6"
+        buildConfigField 'String', 'VERSION_NAME', "\"6.0.6\""
     }
     buildTypes {
         release {
