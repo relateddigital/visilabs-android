@@ -15,6 +15,8 @@ import com.visilabs.util.SizeUtil;
 import java.util.List;
 
 public class ActionData implements Parcelable {
+    @SerializedName("display_type")
+    private String mDisplayType;
     @SerializedName("alert_type")
     private String mAlertType;
     @SerializedName("android_lnk")
@@ -158,6 +160,7 @@ public class ActionData implements Parcelable {
         mVideoUrl = in.readString();
         mSecondPopupVideoUrl1 = in.readString();
         mSecondPopupVideoUrl2 = in.readString();
+        mDisplayType = in.readString();
     }
 
     public static final Creator<ActionData> CREATOR = new Creator<ActionData>() {
@@ -440,7 +443,13 @@ public class ActionData implements Parcelable {
         mMsgType = msgType;
     }
 
-    public String getPromoCodeBackgroundColor() {
+    public String getDisplayType()  {
+        return mDisplayType;
+
+    }
+
+
+        public String getPromoCodeBackgroundColor() {
         return mPromoCodeBackgroundColor;
     }
 
