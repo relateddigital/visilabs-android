@@ -53,6 +53,12 @@ public interface VisilabsApiMethods {
             @QueryMap Map<String, String> queryParameters
     );
 
+    @GET("actjson")
+    Call<ResponseBody> getNpsWithNumbersResponse(
+            @HeaderMap Map<String, String> headers,
+            @QueryMap Map<String, String> queryParameters
+    );
+
     //Methods to get Story, MailSubsForm, FAvs-type reponses
 
     @GET("mobile")
@@ -72,7 +78,7 @@ public interface VisilabsApiMethods {
             @HeaderMap Map<String, String> headers,
             @QueryMap Map<String, String> queryParameters
     );
-
+    
     //Methods to get target responses
 
     @GET("json")

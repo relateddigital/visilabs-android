@@ -53,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        binding.inlineNps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, InlineNpsWithNumbersActivity.class);
+                startActivity(intent);
+            }
+        });
+
         binding.customEvent1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

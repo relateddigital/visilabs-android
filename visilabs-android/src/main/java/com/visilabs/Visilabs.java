@@ -1019,6 +1019,23 @@ public class Visilabs {
         return request;
     }
 
+    public VisilabsActionRequest requestNpsAction(HashMap<String,
+            String> properties) throws Exception {
+
+        VisilabsActionRequest request = new VisilabsActionRequest(mContext);
+        request.setApiVer("Android");
+        request.setPath(null);
+        request.setHeaders(null);
+        request.setRequestArgs(null);
+        request.setTimeOutInSeconds(mRequestTimeoutSeconds);
+        request.setVisitorData(mVisitorData);
+        request.setVisitData(mVisitData);
+        request.setProperties(properties);
+
+        return request;
+    }
+
+
     public VisilabsActionRequest requestAction(String actionType) throws Exception {
 
         VisilabsActionRequest request = new VisilabsActionRequest(mContext);

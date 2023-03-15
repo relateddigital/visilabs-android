@@ -153,12 +153,8 @@ public class InAppMessageManager {
                         case IMAGE_TEXT_BUTTON:
 
                         case NPS_WITH_NUMBERS:
-                            if (inAppMessage.getActionData().getDisplayType().equals("inline")){
 
-                                openInAppActivity(parent,getStateId(parent,inAppMessage),inAppMessage.getActionData().getMsgType().toString());
 
-                                break;
-                            }
                         case IMAGE_BUTTON:
 
                         case CAROUSEL:
@@ -265,14 +261,6 @@ public class InAppMessageManager {
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, inAppData);
             parent.startActivity(intent);
-        }
-        else {
-            Intent intent = new Intent(parent.getApplicationContext(), InlineInAppActivity.class);
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, inAppData);
-        parent.startActivity(intent);
         }
     }
 
