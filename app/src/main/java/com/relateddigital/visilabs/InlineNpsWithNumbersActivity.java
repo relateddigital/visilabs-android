@@ -45,7 +45,7 @@ public class InlineNpsWithNumbersActivity extends AppCompatActivity {
         HashMap<String, String> properties = new HashMap<>();
         properties.put("OM.inapptype", "nps_with_numbers");
 
-        binding.xxx.setNpsWithNumberAction(getApplicationContext(), properties, npsItemClickListener, InlineNpsWithNumbersActivity.this);
+        binding.inlineNps.setNpsWithNumberAction(getApplicationContext(), properties, npsItemClickListener, InlineNpsWithNumbersActivity.this);
 
 
     }

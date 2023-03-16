@@ -8,7 +8,7 @@
 
 
     <com.visilabs.inApp.inlineNpsWithNumber.InlineNpsWithNumbersView
-        android:id="@+id/xxx"
+        android:id="@+id/inlineNps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"

@@ -110,14 +110,13 @@ public class InlineNpsWithNumbersView extends LinearLayout {
                     if (mInAppMessage.getActionData().getDisplayType().equals("inline")) {
                         LinearLayout llback = findViewById(R.id.ll_back);
                         llback.setVisibility(View.VISIBLE);
-                        setImage(mInAppMessage.getActionData().getImg());
 
+                        setImage(mInAppMessage.getActionData().getImg());
                         setTitle(mInAppMessage.getActionData().getMsgTitle(), mInAppMessage.getActionData().getBackground(), mInAppMessage.getActionData().getFontFamily(mContext), mInAppMessage.getActionData().getMsgTitleColor(), mInAppMessage.getActionData().getMsgTitleTextSize());
                         setBody(mInAppMessage.getActionData().getMsgBody(), mInAppMessage.getActionData().getBackground(), mInAppMessage.getActionData().getFontFamily(mContext), mInAppMessage.getActionData().getMsgBodyColor(), mInAppMessage.getActionData().getMsgBodyTextSize());
                         setButton(mInAppMessage.getActionData().getBtnText(), mInAppMessage.getActionData().getButtonColor(), mInAppMessage.getActionData().getFontFamily(mContext), mInAppMessage.getActionData().getButtonTextColor(), mInAppMessage.getActionData().getMsgType(), mInAppMessage.getActId(), mInAppMessage);
                         setTemplate(mInAppMessage.getActionData().getBackground());
                         showNpsWithNumbers(mInAppMessage.getActionData().getNumberColors());
-                        getRateReport(mInAppMessage.getActionData().getMsgType(), mInAppMessage.getActId());
                     }
 
                 } catch (Exception ex) {

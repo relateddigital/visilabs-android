@@ -78,7 +78,7 @@ public interface VisilabsApiMethods {
             @HeaderMap Map<String, String> headers,
             @QueryMap Map<String, String> queryParameters
     );
-    
+
     //Methods to get target responses
 
     @GET("json")
