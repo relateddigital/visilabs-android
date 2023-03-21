@@ -275,6 +275,9 @@ public class InlineNpsWithNumbersView extends LinearLayout {
                         } else {
                             if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
                                 try {
+                                    if(mNpsItemClickListener != null && mInAppMessage.getActionData().getAndroidLnk() != null) {
+                                        mNpsItemClickListener.npsItemClicked(mInAppMessage.getActionData().getAndroidLnk());
+                                    }
                                     Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
                                     getContext().startActivity(viewIntent);
 
