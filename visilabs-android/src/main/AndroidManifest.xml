@@ -9,6 +9,9 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true">
         <activity
+            android:name="com.relateddigital.visilabs.InlineNpsWithNumbersActivity"
+            android:exported="false" />
+        <activity
             android:name="com.visilabs.scratchToWin.ScratchToWinActivity"
             android:noHistory="true"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />

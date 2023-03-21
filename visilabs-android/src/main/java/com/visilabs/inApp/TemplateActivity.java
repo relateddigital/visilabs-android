@@ -67,7 +67,6 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     private ActivityTemplateBinding binding;
     private NpsSecondPopUpBinding bindingSecondPopUp;
     private ActivityTemplateCarouselBinding bindingCarousel;
-    private InlineNpsWithNumbersView mdenemee;
     private boolean mIsCarousel = false;
     private List<CarouselItem> mCarouselItems;
     private int mCarouselPosition = -1;
@@ -899,7 +898,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private boolean isShowingNpsInApp() {
         boolean isshow = true;
-        if (mInAppMessage.getActionData().getDisplayType().equals("inline")) {
+
+        if (mInAppMessage.getActionData().getDisplayType()!= null && !mInAppMessage.getActionData().getDisplayType().isEmpty() && mInAppMessage.getActionData().getDisplayType().equals("inline")) {
             isshow = false;
         }
         return isshow;

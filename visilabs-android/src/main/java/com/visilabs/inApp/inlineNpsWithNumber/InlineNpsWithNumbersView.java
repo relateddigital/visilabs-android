@@ -153,8 +153,9 @@ public class InlineNpsWithNumbersView extends LinearLayout {
     public void setTemplate(String backgroundColor) {
         LinearLayout llBack = findViewById(R.id.ll_back);
 
-        if (backgroundColor != null && backgroundColor.equals("")) {
+        if (backgroundColor != null && !backgroundColor.equals("")) {
             try {
+                llBack.setVisibility(View.VISIBLE);
                 llBack.setBackgroundColor(Color.parseColor(backgroundColor));
             } catch (Exception e) {
                 Log.w(LOG_TAG, "Could not parse the data given for background color\nSetting the default value.");
