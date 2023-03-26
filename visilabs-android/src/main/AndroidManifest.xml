@@ -9,33 +9,38 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true">
         <activity
+            android:name="com.relateddigital.visilabs.InlineNpsWithNumbersActivity"
+            android:exported="false" />
+        <activity
             android:name="com.visilabs.scratchToWin.ScratchToWinActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
-            android:noHistory="true"/>
+            android:noHistory="true"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
             android:name="com.visilabs.spinToWin.SpinToWinActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:noHistory="true"/>
+            android:noHistory="true"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.visilabs.inApp.VisilabsInAppActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
-            android:noHistory="true"/>
+            android:noHistory="true"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
             android:name="com.visilabs.inApp.TemplateActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
-            android:noHistory="true"/>
+            android:noHistory="true"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
             android:name="com.visilabs.mailSub.MailSubscriptionFormActivity"
+            android:noHistory="true"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
-            android:windowSoftInputMode="adjustResize"
-            android:noHistory="true"/>
-        <activity android:name="com.visilabs.story.StoryActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:noHistory="true"/>
-        <activity android:name="com.visilabs.util.PermissionActivity"
-            android:theme="@style/Theme.Transparent"
-            android:noHistory="true"/>
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="com.visilabs.story.StoryActivity"
+            android:noHistory="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name="com.visilabs.util.PermissionActivity"
+            android:noHistory="true"
+            android:theme="@style/Theme.Transparent" />
     </application>
 
 </manifest>

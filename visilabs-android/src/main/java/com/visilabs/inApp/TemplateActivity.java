@@ -33,6 +33,7 @@ import com.visilabs.android.databinding.NpsSecondPopUpBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.inApp.carousel.CarouselItem;
 import com.visilabs.inApp.carousel.OnSwipeTouchListener;
+import com.visilabs.inApp.inlineNpsWithNumber.InlineNpsWithNumbersView;
 import com.visilabs.util.AppUtils;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
@@ -91,11 +92,13 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         }
 
         mInAppMessage = getInAppMessage();
-        if(mInAppMessage == null) {
+
+        if (mInAppMessage == null) {
             Log.e(LOG_TAG, "InAppMessage is null! Could not get display state!");
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             finish();
         } else {
+
 
             buttonCallback = Visilabs.CallAPI().getInAppButtonInterface();
 
@@ -118,37 +121,40 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             cacheResources();
 
             setContentView(view);
+            if (isShowingNpsInApp()) {
+                if (isShowingInApp()) {
+                    if (mIsCarousel) {
+                        if (mCarouselPosition == -1) {
+                            mCarouselPosition = 0;
+                        }
+                        bindingCarousel.carouselContainer.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+                            public void onSwipeRight() {
+                                if (!isFirstCarousel()) {
+                                    releasePlayer();
+                                    mCarouselPosition--;
+                                    setupViewCarousel();
+                                }
+                            }
 
-            if (isShowingInApp()) {
-                if (mIsCarousel) {
-                    if (mCarouselPosition == -1) {
-                        mCarouselPosition = 0;
+                            public void onSwipeLeft() {
+                                if (!isLastCarousel()) {
+                                    releasePlayer();
+                                    mCarouselPosition++;
+                                    setupViewCarousel();
+                                }
+                            }
+                        });
+                        setupInitialViewCarousel();
+                    } else {
+                        setUpView();
                     }
-                    bindingCarousel.carouselContainer.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
-                        public void onSwipeRight() {
-                            if (!isFirstCarousel()) {
-                                releasePlayer();
-                                mCarouselPosition--;
-                                setupViewCarousel();
-                            }
-                        }
-
-                        public void onSwipeLeft() {
-                            if (!isLastCarousel()) {
-                                releasePlayer();
-                                mCarouselPosition++;
-                                setupViewCarousel();
-                            }
-                        }
-                    });
-                    setupInitialViewCarousel();
-                } else {
-                    setUpView();
                 }
             } else {
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                 finish();
             }
+
+
         }
     }
 
@@ -173,7 +179,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         } else {
             inAppNotificationState =
                     (InAppNotificationState) mUpdateDisplayState.getDisplayState();
-            if(inAppNotificationState != null) {
+            if (inAppNotificationState != null) {
                 return inAppNotificationState.getInAppMessage();
             } else {
                 return null;
@@ -182,6 +188,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setUpView() {
+
         if (mInAppMessage.getActionData().getImg() != null &&
                 !mInAppMessage.getActionData().getImg().equals("") &&
                 !mInAppMessage.getActionData().getImg().isEmpty()) {
@@ -196,7 +203,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         } else {
             binding.ivTemplate.setVisibility(View.GONE);
-            if(mInAppMessage.getActionData().getVideoUrl() != null && !mInAppMessage.getActionData().getVideoUrl().equals("")) {
+            if (mInAppMessage.getActionData().getVideoUrl() != null && !mInAppMessage.getActionData().getVideoUrl().equals("")) {
                 binding.videoView.setVisibility(View.VISIBLE);
                 startPlayer();
             } else {
@@ -211,11 +218,13 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         setCloseButton();
 
         setTemplate();
+
     }
 
     private void setTemplate() {
 
-        if(mInAppMessage.getActionData().getBackground() != null && !mInAppMessage.getActionData().getBackground().equals("")) {
+
+        if (mInAppMessage.getActionData().getBackground() != null && !mInAppMessage.getActionData().getBackground().equals("")) {
             try {
                 binding.llBack.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
             } catch (Exception e) {
@@ -296,6 +305,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
 
             case NPS_WITH_NUMBERS:
+
+
                 npsType = NpsType.NPS_WITH_NUMBERS;
                 binding.smileRating.setVisibility(View.GONE);
                 setBody();
@@ -316,6 +327,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
 
         }
+
+
     }
 
     private void setNpsSecondPopUpCloseButton() {
@@ -340,11 +353,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void setTitle() {
 
-        if(mInAppMessage.getActionData().getMsgTitle().equals("") ||
+        if (mInAppMessage.getActionData().getMsgTitle().equals("") ||
                 mInAppMessage.getActionData().getMsgTitle() == null) {
             binding.tvTitle.setVisibility(View.GONE);
         } else {
-            if(mInAppMessage.getActionData().getMsgTitleBackgroundColor() != null &&
+            if (mInAppMessage.getActionData().getMsgTitleBackgroundColor() != null &&
                     !mInAppMessage.getActionData().getMsgTitleBackgroundColor().equals("")) {
                 binding.tvTitle.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleBackgroundColor()));
             }
@@ -378,7 +391,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 mInAppMessage.getActionData().getMsgBody() == null) {
             binding.tvBody.setVisibility(View.GONE);
         } else {
-            if(mInAppMessage.getActionData().getMsgBodyBackgroundColor() != null &&
+            if (mInAppMessage.getActionData().getMsgBodyBackgroundColor() != null &&
                     !mInAppMessage.getActionData().getMsgBodyBackgroundColor().equals("")) {
                 binding.tvBody.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyBackgroundColor()));
             }
@@ -405,7 +418,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void setButton() {
 
-        if(mInAppMessage.getActionData().getBtnText().equals("") ||
+        if (mInAppMessage.getActionData().getBtnText().equals("") ||
                 mInAppMessage.getActionData().getBtnText() == null) {
             binding.btnTemplate.setVisibility(View.GONE);
         } else {
@@ -499,7 +512,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         boolean result = false;
         switch (npsType) {
             case NPS: {
-                if(binding.ratingBar.getRating()!=0) {
+                if (binding.ratingBar.getRating() != 0) {
                     result = true;
                 }
                 break;
@@ -509,7 +522,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
             }
             case NPS_WITH_NUMBERS: {
-                if(binding.npsWithNumbersView.getSelectedRate()!=0) {
+                if (binding.npsWithNumbersView.getSelectedRate() != 0) {
                     result = true;
                 }
                 break;
@@ -522,7 +535,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.btnTemplate.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
         binding.btnTemplate.setVisibility(View.VISIBLE);
         binding.btnTemplate.setText(mInAppMessage.getActionData().getBtnText());
-        if(mInAppMessage.getActionData().getButtonTextColor() != null && !mInAppMessage.getActionData().getButtonTextColor().equals("")) {
+        if (mInAppMessage.getActionData().getButtonTextColor() != null && !mInAppMessage.getActionData().getButtonTextColor().equals("")) {
             try {
                 binding.btnTemplate.setTextColor(Color.parseColor(mInAppMessage.getActionData().getButtonTextColor()));
             } catch (Exception e) {
@@ -533,7 +546,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         } else {
             binding.btnTemplate.setTextColor(getResources().getColor(R.color.black));
         }
-        if(mInAppMessage.getActionData().getButtonColor() != null && !mInAppMessage.getActionData().getButtonColor().equals("")) {
+        if (mInAppMessage.getActionData().getButtonColor() != null && !mInAppMessage.getActionData().getButtonColor().equals("")) {
             try {
                 binding.btnTemplate.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getButtonColor()));
             } catch (Exception e) {
@@ -546,7 +559,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             @Override
             public void onClick(View v) {
                 releasePlayer();
-                if(binding.ratingBar.getRating()!=0) {
+                if (binding.ratingBar.getRating() != 0) {
                     if (secondPopUpType == NpsSecondPopUpType.FEEDBACK_FORM) {
                         if (isRatingAboveThreshold()) {
                             Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
@@ -568,11 +581,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         return rating >= (Float.parseFloat(mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint()));
     }
 
-    private void setupSecondPopUp () {
+    private void setupSecondPopUp() {
         isNpsSecondPopupActivated = true;
         bindingSecondPopUp = NpsSecondPopUpBinding.inflate(getLayoutInflater());
         setContentView(bindingSecondPopUp.getRoot());
-        if(mInAppMessage.getActionData().getBackground() != null && !mInAppMessage.getActionData().getBackground().equals("")) {
+        if (mInAppMessage.getActionData().getBackground() != null && !mInAppMessage.getActionData().getBackground().equals("")) {
             try {
                 bindingSecondPopUp.container.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
             } catch (Exception e) {
@@ -585,7 +598,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 bindingSecondPopUp.commentBox.setVisibility(View.GONE);
                 bindingSecondPopUp.imageView2.setVisibility(View.GONE);
                 bindingSecondPopUp.secondVideoView2.setVisibility(View.GONE);
-                if(mInAppMessage.getActionData().getPromotionCode()!=null &&
+                if (mInAppMessage.getActionData().getPromotionCode() != null &&
                         !mInAppMessage.getActionData().getPromotionCode().isEmpty()) {
                     bindingSecondPopUp.couponContainer.setBackgroundColor(Color.parseColor(
                             mInAppMessage.getActionData().getPromoCodeBackgroundColor()
@@ -611,8 +624,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             case IMAGE_TEXT_BUTTON_IMAGE: {
                 bindingSecondPopUp.commentBox.setVisibility(View.GONE);
                 bindingSecondPopUp.couponContainer.setVisibility(View.GONE);
-                if(mInAppMessage.getActionData().getSecondPopupImg2()!=null &&
-                        !mInAppMessage.getActionData().getSecondPopupImg2().isEmpty()){
+                if (mInAppMessage.getActionData().getSecondPopupImg2() != null &&
+                        !mInAppMessage.getActionData().getSecondPopupImg2().isEmpty()) {
                     bindingSecondPopUp.imageView2.setVisibility(View.VISIBLE);
                     bindingSecondPopUp.secondVideoView2.setVisibility(View.GONE);
                     if (AppUtils.isAnImage(mInAppMessage.getActionData().getSecondPopupImg2())) {
@@ -625,7 +638,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     }
                 } else {
                     bindingSecondPopUp.imageView2.setVisibility(View.GONE);
-                    if(mInAppMessage.getActionData().getSecondPopupVideoUrl2()!=null &&
+                    if (mInAppMessage.getActionData().getSecondPopupVideoUrl2() != null &&
                             !mInAppMessage.getActionData().getSecondPopupVideoUrl2().isEmpty()) {
                         bindingSecondPopUp.secondVideoView2.setVisibility(View.VISIBLE);
                         player2 = new ExoPlayer.Builder(this).build();
@@ -654,7 +667,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
             }
         }
-        if(mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
+        if (mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
             bindingSecondPopUp.closeButton.setVisibility(View.GONE);
             this.setFinishOnTouchOutside(true);
         } else {
@@ -668,8 +681,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 }
             });
         }
-        if(mInAppMessage.getActionData().getSecondPopupImg1()!=null &&
-        !mInAppMessage.getActionData().getSecondPopupImg1().isEmpty()){
+        if (mInAppMessage.getActionData().getSecondPopupImg1() != null &&
+                !mInAppMessage.getActionData().getSecondPopupImg1().isEmpty()) {
             bindingSecondPopUp.imageView.setVisibility(View.VISIBLE);
             bindingSecondPopUp.secondVideoView.setVisibility(View.GONE);
             if (AppUtils.isAnImage(mInAppMessage.getActionData().getSecondPopupImg1())) {
@@ -682,7 +695,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         } else {
             bindingSecondPopUp.imageView.setVisibility(View.GONE);
-            if(mInAppMessage.getActionData().getSecondPopupVideoUrl1()!=null &&
+            if (mInAppMessage.getActionData().getSecondPopupVideoUrl1() != null &&
                     !mInAppMessage.getActionData().getSecondPopupVideoUrl1().isEmpty()) {
                 bindingSecondPopUp.secondVideoView.setVisibility(View.VISIBLE);
                 player = new ExoPlayer.Builder(this).build();
@@ -698,10 +711,10 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         }
         bindingSecondPopUp.titleView.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
-        bindingSecondPopUp.titleView.setText(mInAppMessage.getActionData().getSecondPopupMsgTitle().replace("\\n","\n"));
+        bindingSecondPopUp.titleView.setText(mInAppMessage.getActionData().getSecondPopupMsgTitle().replace("\\n", "\n"));
         bindingSecondPopUp.titleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
         bindingSecondPopUp.bodyTextView.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
-        bindingSecondPopUp.bodyTextView.setText(mInAppMessage.getActionData().getSecondPopupMsgBody().replace("\\n","\n"));
+        bindingSecondPopUp.bodyTextView.setText(mInAppMessage.getActionData().getSecondPopupMsgBody().replace("\\n", "\n"));
         bindingSecondPopUp.bodyTextView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyColor()));
         bindingSecondPopUp.bodyTextView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getSecondPopupMsgBodyTextSize()) + 8);
         bindingSecondPopUp.button.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
@@ -717,7 +730,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     Visilabs.CallAPI().setInAppButtonInterface(null);
                     buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
                 } else {
-                    if(mInAppMessage.getActionData().getAndroidLnk()!=null &&
+                    if (mInAppMessage.getActionData().getAndroidLnk() != null &&
                             !mInAppMessage.getActionData().getAndroidLnk().isEmpty()) {
                         try {
                             Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
@@ -803,7 +816,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     public void setCloseButton() {
 
-        if(mInAppMessage.getActionData().getCloseEventTrigger() != null) {
+        if (mInAppMessage.getActionData().getCloseEventTrigger() != null) {
             if (mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
                 binding.ibClose.setVisibility(View.GONE);
                 this.setFinishOnTouchOutside(true);
@@ -871,12 +884,25 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private boolean isShowingInApp() {
+
         if (mUpdateDisplayState == null) {
             return false;
         }
+
         return InAppNotificationState.TYPE.equals(
                 mUpdateDisplayState.getDisplayState().getType()
         );
+
+
+    }
+
+    private boolean isShowingNpsInApp() {
+        boolean isshow = true;
+
+        if (mInAppMessage.getActionData().getDisplayType()!= null && !mInAppMessage.getActionData().getDisplayType().isEmpty() && mInAppMessage.getActionData().getDisplayType().equals("inline")) {
+            isshow = false;
+        }
+        return isshow;
     }
 
     @Override
@@ -919,7 +945,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     protected void onDestroy() {
         super.onDestroy();
         releasePlayer();
-        if(mInAppMessage != null) {
+        if (mInAppMessage != null) {
             if (mIsRotation) {
                 mIsRotation = false;
             } else {
@@ -934,7 +960,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setupInitialViewCarousel() {
-        if(mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
+        if (mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
             bindingCarousel.carouselCloseButton.setVisibility(View.GONE);
             this.setFinishOnTouchOutside(true);
         } else {
@@ -989,14 +1015,14 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void cacheResources() {
         if (mIsCarousel) {
-            for(int i = 0 ; i < mCarouselItems.size() ; i++) {
-                if(mCarouselItems.get(i).getImage() != null && !mCarouselItems.get(i).getImage().isEmpty()) {
+            for (int i = 0; i < mCarouselItems.size(); i++) {
+                if (mCarouselItems.get(i).getImage() != null && !mCarouselItems.get(i).getImage().isEmpty()) {
                     if (AppUtils.isAnImage(mCarouselItems.get(i).getImage())) {
                         Picasso.get().
                                 load(mCarouselItems.get(i).getImage()).fetch();
                     }
                 }
-                if(mCarouselItems.get(i).getBackgroundImage() != null && !mCarouselItems.get(i).getBackgroundImage().isEmpty()) {
+                if (mCarouselItems.get(i).getBackgroundImage() != null && !mCarouselItems.get(i).getBackgroundImage().isEmpty()) {
                     if (AppUtils.isAnImage(mCarouselItems.get(i).getBackgroundImage())) {
                         Picasso.get().
                                 load(mCarouselItems.get(i).getBackgroundImage()).fetch();
@@ -1004,29 +1030,29 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 }
             }
         } else {
-            if(mInAppMessage.getActionData().getImg()!=null &&
+            if (mInAppMessage.getActionData().getImg() != null &&
                     !mInAppMessage.getActionData().getImg().isEmpty()) {
-                if(AppUtils.isAnImage(mInAppMessage.getActionData().getImg())) {
+                if (AppUtils.isAnImage(mInAppMessage.getActionData().getImg())) {
                     Picasso.get().load(mInAppMessage.getActionData().getImg()).fetch();
                 }
             }
-            if(mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS_AND_SECOND_POP_UP) {
-                if(mInAppMessage.getActionData().getSecondPopupImg1()!=null &&
-                        !mInAppMessage.getActionData().getSecondPopupImg1().isEmpty()){
-                    if(AppUtils.isAnImage(mInAppMessage.getActionData().getSecondPopupImg1())) {
+            if (mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS_AND_SECOND_POP_UP) {
+                if (mInAppMessage.getActionData().getSecondPopupImg1() != null &&
+                        !mInAppMessage.getActionData().getSecondPopupImg1().isEmpty()) {
+                    if (AppUtils.isAnImage(mInAppMessage.getActionData().getSecondPopupImg1())) {
                         Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg1()).fetch();
                     }
                 }
-                if(mInAppMessage.getActionData().getSecondPopupImg2()!=null &&
-                        !mInAppMessage.getActionData().getSecondPopupImg2().isEmpty()){
-                    if(AppUtils.isAnImage(mInAppMessage.getActionData().getSecondPopupImg2())) {
+                if (mInAppMessage.getActionData().getSecondPopupImg2() != null &&
+                        !mInAppMessage.getActionData().getSecondPopupImg2().isEmpty()) {
+                    if (AppUtils.isAnImage(mInAppMessage.getActionData().getSecondPopupImg2())) {
                         Picasso.get().load(mInAppMessage.getActionData().getSecondPopupImg2()).fetch();
                     }
                 }
             }
         }
 
-        if(mInAppMessage.getActionData().getVideoUrl() != null && !mInAppMessage.getActionData().getVideoUrl().equals("")) {
+        if (mInAppMessage.getActionData().getVideoUrl() != null && !mInAppMessage.getActionData().getVideoUrl().equals("")) {
             initializePlayer();
         }
     }
@@ -1073,7 +1099,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         }
 
-        if(mCarouselItems.get(position).getImage() != null && !mCarouselItems.get(position).getImage().isEmpty()) {
+        if (mCarouselItems.get(position).getImage() != null && !mCarouselItems.get(position).getImage().isEmpty()) {
             bindingCarousel.carouselImage.setVisibility(View.VISIBLE);
             bindingCarousel.carouselVideo.setVisibility(View.GONE);
             if (AppUtils.isAnImage(mCarouselItems.get(position).getImage())) {

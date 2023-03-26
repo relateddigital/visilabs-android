@@ -27,13 +27,13 @@
 
     <!-- Countdown Timer strings -->
     <string name="colon" translatable="false">:</string>
-    <string name="week_name" >Week</string>
-    <string name="day_name" >Day</string>
-    <string name="hour_name" >Hour</string>
-    <string name="minute_name" >Minute</string>
-    <string name="second_name" >Second</string>
-    <string name="time_is_over" >Time has expired!</string>
-    <string name="feedback_toast" >Thanks for your feedback!</string>
+    <string name="week_name">Week</string>
+    <string name="day_name">Day</string>
+    <string name="hour_name">Hour</string>
+    <string name="minute_name">Minute</string>
+    <string name="second_name">Second</string>
+    <string name="time_is_over">Time has expired!</string>
+    <string name="feedback_toast">Thanks for your feedback!</string>
 
     <string name="notification_right_arrow" translatable="false">\u003C</string>
     <string name="notification_left_arrow" translatable="false">\u003E</string>
