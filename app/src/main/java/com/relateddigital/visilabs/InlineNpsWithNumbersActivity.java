@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.visilabs.android.databinding.ActivityDenemeBinding;
+import com.visilabs.android.databinding.ActivityInlineNpsWithNumbersBinding;
 import com.visilabs.inApp.inlineNpsWithNumber.NpsItemClickListener;
 
 import java.util.HashMap;
@@ -17,13 +17,13 @@ import java.util.HashMap;
 public class InlineNpsWithNumbersActivity extends AppCompatActivity {
     private static final String LOG_TAG = "NpsActivity";
 
-    private ActivityDenemeBinding binding;
+    private ActivityInlineNpsWithNumbersBinding binding;
     private NpsItemClickListener npsItemClickListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityDenemeBinding.inflate(getLayoutInflater());
+        binding = ActivityInlineNpsWithNumbersBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
 
