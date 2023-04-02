@@ -53,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        binding.btnAppBanner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BannerCarouselDemoActivity.class);
+                startActivity(intent);
+            }
+        });
+
         binding.inlineNps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

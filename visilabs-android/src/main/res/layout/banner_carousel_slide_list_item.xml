@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/banner_slide_image_item"
+        android:scaleType="centerCrop"
+        android:background="@drawable/rounded_corners_full"/>
+
+    <TextView
+        android:id="@+id/banner_number_indicator_item"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:background="@drawable/banner_number_circle"
+        android:textColor="#fff" />
+
+</FrameLayout>

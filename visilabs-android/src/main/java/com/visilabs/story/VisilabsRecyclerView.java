@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.gson.Gson;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
@@ -37,7 +39,7 @@ public class VisilabsRecyclerView extends RecyclerView {
     }
 
     public void setStoryAction(Context context, StoryItemClickListener storyItemClickListener) {
-        if(Visilabs.CallAPI().isBlocked()) {
+        if (Visilabs.CallAPI().isBlocked()) {
             Log.w(TAG, "Too much server load, ignoring the request!");
             return;
         }
@@ -54,7 +56,7 @@ public class VisilabsRecyclerView extends RecyclerView {
 
     public void setStoryActionWithRequestCallback(Context context, StoryItemClickListener storyItemClickListener,
                                                   StoryRequestListener storyRequestListener) {
-        if(Visilabs.CallAPI().isBlocked()) {
+        if (Visilabs.CallAPI().isBlocked()) {
             Log.w(TAG, "Too much server load, ignoring the request!");
             return;
         }
@@ -70,7 +72,7 @@ public class VisilabsRecyclerView extends RecyclerView {
     }
 
     public void setStoryActionSync(Context context, Activity activity, StoryItemClickListener storyItemClickListener) {
-        if(Visilabs.CallAPI().isBlocked()) {
+        if (Visilabs.CallAPI().isBlocked()) {
             Log.w(TAG, "Too much server load, ignoring the request!");
             return;
         }
@@ -86,7 +88,7 @@ public class VisilabsRecyclerView extends RecyclerView {
     }
 
     public void setStoryActionId(Context context, String actionId, StoryItemClickListener storyItemClickListener) {
-        if(Visilabs.CallAPI().isBlocked()) {
+        if (Visilabs.CallAPI().isBlocked()) {
             Log.w(TAG, "Too much server load, ignoring the request!");
             return;
         }
@@ -104,7 +106,7 @@ public class VisilabsRecyclerView extends RecyclerView {
     public void setStoryActionIdWithRequestCallback(Context context, String actionId,
                                                     StoryItemClickListener storyItemClickListener,
                                                     StoryRequestListener storyRequestListener) {
-        if(Visilabs.CallAPI().isBlocked()) {
+        if (Visilabs.CallAPI().isBlocked()) {
             Log.w(TAG, "Too much server load, ignoring the request!");
             return;
         }
@@ -120,7 +122,7 @@ public class VisilabsRecyclerView extends RecyclerView {
     }
 
     public void setStoryActionIdSync(Context context, Activity activity, String actionId, StoryItemClickListener storyItemClickListener) {
-        if(Visilabs.CallAPI().isBlocked()) {
+        if (Visilabs.CallAPI().isBlocked()) {
             Log.w(TAG, "Too much server load, ignoring the request!");
             return;
         }
@@ -141,14 +143,14 @@ public class VisilabsRecyclerView extends RecyclerView {
         return new VisilabsCallback() {
             @Override
             public void success(VisilabsResponse response) {
-                if(storyRequestListener!=null) {
+                if (storyRequestListener != null) {
                     storyRequestListener.onRequestResult(true);
                 }
                 try {
                     VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse =
                             new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
 
-                    if(visilabsStoryLookingBannerResponse.getStory().isEmpty()){
+                    if (visilabsStoryLookingBannerResponse.getStory().isEmpty()) {
                         Log.i(TAG, "There is no story to show.");
                         return;
                     }
@@ -189,7 +191,7 @@ public class VisilabsRecyclerView extends RecyclerView {
 
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getMessage(), ex);
-                    if(storyRequestListener!=null) {
+                    if (storyRequestListener != null) {
                         storyRequestListener.onRequestResult(false);
                     }
                 }
@@ -198,7 +200,7 @@ public class VisilabsRecyclerView extends RecyclerView {
             @Override
             public void fail(VisilabsResponse response) {
                 Log.e(TAG, response.getRawResponse());
-                if(storyRequestListener!=null) {
+                if (storyRequestListener != null) {
                     storyRequestListener.onRequestResult(false);
                 }
             }
@@ -213,7 +215,7 @@ public class VisilabsRecyclerView extends RecyclerView {
                     final VisilabsStoryLookingBannerResponse visilabsStoryLookingBannerResponse =
                             new Gson().fromJson(response.getRawResponse(), VisilabsStoryLookingBannerResponse.class);
 
-                    if(visilabsStoryLookingBannerResponse.getStory().isEmpty()){
+                    if (visilabsStoryLookingBannerResponse.getStory().isEmpty()) {
                         Log.i(TAG, "There is no story to show.");
                         return;
                     }
