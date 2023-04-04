@@ -22,8 +22,10 @@ import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.inApp.appBannerModel.AppBanner;
+import com.visilabs.mailSub.Report;
 
 import java.util.Objects;
 
@@ -88,7 +90,13 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
                 }
             }
 
-            bannerHolder.swipeImageView.setOnClickListener(v -> mBannerItemClickListener.bannerItemClicked(mAppBanner.getActionData().getAppBanners().get(position).getAndroidLink()));
+            bannerHolder.swipeImageView.setOnClickListener(v -> {
+                mBannerItemClickListener.bannerItemClicked(mAppBanner.getActionData().getAppBanners().get(position).getAndroidLink());
+
+                    Report report = new Report();
+            report.impression = mAppBanner.getActionData().getReport().getImpression();
+            report.click = mAppBanner.getActionData().getReport().getClick();
+            Visilabs.CallAPI().trackActionClick(report); });
         } else {
             Glide.with(mContext)
                     .asBitmap()
@@ -99,7 +107,13 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
             String numStr = (position + 1) + "/" + getItemCount();
             bannerHolder.numberIndicator.setText(numStr);
 
-            bannerHolder.slideImageView.setOnClickListener(v -> mBannerItemClickListener.bannerItemClicked(mAppBanner.getActionData().getAppBanners().get(position).getAndroidLink()));
+            bannerHolder.slideImageView.setOnClickListener(v -> {
+                mBannerItemClickListener.bannerItemClicked(mAppBanner.getActionData().getAppBanners().get(position).getAndroidLink());
+                Report report = new Report();
+                report.impression = mAppBanner.getActionData().getReport().getImpression();
+                report.click = mAppBanner.getActionData().getReport().getClick();
+                Visilabs.CallAPI().trackActionClick(report);
+            });
         }
     }
 
