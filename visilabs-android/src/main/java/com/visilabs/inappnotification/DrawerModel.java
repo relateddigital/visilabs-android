@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 public class DrawerModel implements Serializable {
     @SerializedName("actid")
-    private Integer actId;
+    private String actId;
     @SerializedName("title")
     private String title;
     @SerializedName("actiontype")
@@ -14,11 +14,11 @@ public class DrawerModel implements Serializable {
     @SerializedName("actiondata")
     private Actiondata actionData;
 
-    public Integer getActId() {
+    public String getActId() {
         return actId;
     }
 
-    public void setActId(Integer actId) {
+    public void setActId(String actId) {
         this.actId = actId;
     }
 

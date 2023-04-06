@@ -16,7 +16,7 @@ public class Actiondata implements Serializable {
     @SerializedName("content_maximized_image")
     private String contentMaximizedImage;
     @SerializedName("waiting_time")
-    private Integer waitingTime;
+    private String waitingTime;
     @SerializedName("ios_lnk")
     private String iosLnk;
     @SerializedName("android_lnk")
@@ -66,11 +66,11 @@ public class Actiondata implements Serializable {
         this.contentMaximizedImage = contentMaximizedImage;
     }
 
-    public Integer getWaitingTime() {
+    public String getWaitingTime() {
         return waitingTime;
     }
 
-    public void setWaitingTime(Integer waitingTime) {
+    public void setWaitingTime(String waitingTime) {
         this.waitingTime = waitingTime;
     }
 
