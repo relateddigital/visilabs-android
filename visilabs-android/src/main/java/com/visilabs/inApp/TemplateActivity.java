@@ -898,11 +898,15 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private boolean isShowingNpsInApp() {
         boolean isshow = true;
-
-        if (mInAppMessage.getActionData().getDisplayType()!= null && !mInAppMessage.getActionData().getDisplayType().isEmpty() && mInAppMessage.getActionData().getDisplayType().equals("inline")) {
-            isshow = false;
+        Log.e("DENEME ",mInAppMessage.getActionData().getMsgType().toString());
+        if(mInAppMessage.getActionData().getMsgType().toString().equals("nps_with_numbers")) {
+            if (mInAppMessage.getActionData().getDisplayType().equals("inline")) {
+                isshow = false;
+            } else if (mInAppMessage.getActionData().getDisplayType().equals("popup") && mInAppMessage.getActionData().getDisplayType() == null && mInAppMessage.getActionData().getDisplayType().isEmpty()) {
+                isshow = true;
+            }
         }
-        return isshow;
+            return isshow;
     }
 
     @Override
