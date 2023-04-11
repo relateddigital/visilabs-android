@@ -179,6 +179,82 @@ public class VisilabsActionRequest extends VisilabsRemote {
         }
     }
 
+
+    public void executeBannerAsyncAction(final VisilabsCallback pCallback) throws Exception {
+        if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
+            Log.e("Visilabs", "Visilabs SDK requires min API level 21!");
+            return;
+        }
+
+        if(Visilabs.CallAPI().isBlocked()) {
+            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
+            return;
+        }
+
+        HashMap<String, String> headers = new HashMap<>();
+        HashMap<String, String> queryParameters = new HashMap<>();
+
+        //Put headers
+        fillHeaderMap(headers);
+
+        //Put query parameters
+        fillActionQueryMap(queryParameters);
+
+        try {
+            Call<ResponseBody> call = mVisilabsSApiInterface.getGeneralActionRequestJsonResponse(headers, queryParameters);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if(response.isSuccessful()) {
+                        String rawJsonResponse = "";
+                        try {
+                            rawJsonResponse = response.body().string();
+
+                            if (!rawJsonResponse.equals("")) {
+                                JSONObject mainObject = new JSONObject(rawJsonResponse);
+                                JSONArray appBannerArray = mainObject.optJSONArray("AppBanner");
+                                if(appBannerArray != null && appBannerArray.length() > 0) {
+                                    Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
+                                    VisilabsResponse visilabsResponse = new VisilabsResponse(new JSONObject(rawJsonResponse), null, null, null, null);
+                                    pCallback.success(visilabsResponse);
+                                } else {
+                                    Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
+                                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "empty string", null, "empty string");
+                                    pCallback.fail(visilabsResponse);
+                                }
+                            } else {
+                                Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
+                                VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "empty string", null, "empty string");
+                                pCallback.fail(visilabsResponse);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
+                            VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, rawJsonResponse, null, rawJsonResponse);
+                            pCallback.fail(visilabsResponse);
+                        }
+                    } else {
+                        Log.e(LOG_TAG, "Fail Request : " + response.code());
+                        VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "Fail Request : "+response.code(), null, "Fail Request : "+response.code());
+                        pCallback.fail(visilabsResponse);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e(LOG_TAG, "Fail Request " + t.getMessage());
+                    VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, t.getMessage(), t, t.getMessage());
+                    pCallback.fail(visilabsResponse);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Could not parse the response!");
+            VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "Response is not in the correct format!!", null, "Response is not in the correct format!!");
+            pCallback.fail(visilabsResponse);
+        }
+    }
+
     @Override
     public void executeAsyncAction(final VisilabsCallback pCallback) throws Exception {
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
