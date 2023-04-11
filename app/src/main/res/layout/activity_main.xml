@@ -57,6 +57,16 @@
                 android:background="@color/colorButton"
                 android:text="@string/go_to_story_page"
                 android:textColor="@color/colorLight" />
+
+            <Button
+                android:id="@+id/btn_app_banner"
+                android:layout_width="0.0dip"
+                android:layout_height="fill_parent"
+                android:layout_margin="2.0dp"
+                android:layout_weight="1.0"
+                android:background="@color/colorButton"
+                android:text="@string/go_to_app_banner"
+                android:textColor="@color/colorLight" />
         </LinearLayout>
 
         <LinearLayout
