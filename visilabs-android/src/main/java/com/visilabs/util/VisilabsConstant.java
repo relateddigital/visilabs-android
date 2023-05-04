@@ -86,6 +86,7 @@ public class VisilabsConstant {
     public static final String PVIV_REQUEST_KEY = "OM.pviv";
     public static final String TVC_REQUEST_KEY = "OM.tvc";
     public static final String LVT_REQUEST_KEY = "OM.lvt";
+    public static final String APP_BANNER_PARAMETER_KEY= "OM.OSB";
 
     public static final String FILTER_KEY = "OM.w.f";
     public static final String APIVER_KEY = "OM.apiver";

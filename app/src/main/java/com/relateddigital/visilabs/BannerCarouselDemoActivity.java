@@ -61,7 +61,7 @@ public class BannerCarouselDemoActivity extends AppCompatActivity {
         };
 
         HashMap<String, String> properties = new HashMap<>();
-        properties.put("OM.inapptype", "AppBanner");
+        properties.put("OM.inapptype", "banner_carousel");
 
         binding.bannerListView.requestBannerCarouselAction(
                 getApplicationContext(),

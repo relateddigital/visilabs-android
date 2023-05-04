@@ -26,7 +26,9 @@ import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.inApp.appBannerModel.AppBanner;
 import com.visilabs.mailSub.Report;
+import com.visilabs.util.VisilabsConstant;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 
@@ -41,6 +43,7 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
     private int mPosition = 0;
     private boolean isScrolling = false;
     private AppBanner mAppBanner;
+    String clickedUrl = "" ;
 
     public BannerCarouselAdapter(Context context, BannerItemClickListener bannerItemClickListener) {
         mContext = context;
@@ -91,9 +94,14 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
             }
 
             bannerHolder.swipeImageView.setOnClickListener(v -> {
-                mBannerItemClickListener.bannerItemClicked(mAppBanner.getActionData().getAppBanners().get(position).getAndroidLink());
+                clickedUrl =mAppBanner.getActionData().getAppBanners().get(position).getAndroidLink();
+                mBannerItemClickListener.bannerItemClicked(clickedUrl);
 
                     Report report = new Report();
+                HashMap<String, String> parameters = new HashMap<String, String>();
+                parameters.put(VisilabsConstant.APP_BANNER_PARAMETER_KEY,clickedUrl);
+
+                Visilabs.CallAPI().customEvent("BannerClick", parameters);
             report.impression = mAppBanner.getActionData().getReport().getImpression();
             report.click = mAppBanner.getActionData().getReport().getClick();
             Visilabs.CallAPI().trackActionClick(report); });
@@ -108,10 +116,16 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
             bannerHolder.numberIndicator.setText(numStr);
 
             bannerHolder.slideImageView.setOnClickListener(v -> {
-                mBannerItemClickListener.bannerItemClicked(mAppBanner.getActionData().getAppBanners().get(position).getAndroidLink());
+                clickedUrl =mAppBanner.getActionData().getAppBanners().get(position).getAndroidLink();
+                mBannerItemClickListener.bannerItemClicked(clickedUrl);
                 Report report = new Report();
                 report.impression = mAppBanner.getActionData().getReport().getImpression();
                 report.click = mAppBanner.getActionData().getReport().getClick();
+                HashMap<String, String> parameters = new HashMap<String, String>();
+                parameters.put(VisilabsConstant.APP_BANNER_PARAMETER_KEY,clickedUrl);
+
+
+                Visilabs.CallAPI().customEvent("BannerClick", parameters);
                 Visilabs.CallAPI().trackActionClick(report);
             });
         }
