@@ -198,6 +198,7 @@ public class VisilabsConstant {
     public static final String GEOFENCE_INTERVAL_NAME = "geofence_interval_name";
     public static final String GEOFENCE_INTERVAL_KEY = "geofence_interval_key";
 
+    public static String ACTION_ENDPOINT = "https://s.visilabs.net/";
     public static boolean checkNotificationActivityAvailable(Context context) {
         if (Build.VERSION.SDK_INT < UI_FEATURES_MIN_API) {
             return false;

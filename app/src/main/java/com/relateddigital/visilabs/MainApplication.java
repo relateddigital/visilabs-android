@@ -13,6 +13,7 @@ import androidx.multidex.MultiDexApplication;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.Constants;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
@@ -28,6 +29,10 @@ public class MainApplication extends MultiDexApplication {
 
     private String appAlias;
     private EuroMobileManager euroMobileManager;
+    private Boolean isTest;
+    private String organizationId;
+    private String profileId;
+    private String dataSource;
 
     @Override
     public void onCreate() {
@@ -35,6 +40,12 @@ public class MainApplication extends MultiDexApplication {
 
         ApplicationInfo appInfo = null;
         Bundle bundle = null;
+
+        isTest = false;
+        organizationId = "676D325830564761676D453D";
+        profileId = "356467332F6533766975593D";
+        dataSource = "visistore";
+
 
         try{
             appInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
@@ -45,14 +56,20 @@ public class MainApplication extends MultiDexApplication {
         if(appInfo!=null){
             bundle = appInfo.metaData;
         }
+        if(isTest){
+            organizationId = "394A48556A2F76466136733D";
+            profileId = "75763259366A3345686E303D";
+            dataSource = "mrhp";
+            VisilabsConstant.ACTION_ENDPOINT = "http://tests.visilabs.net/";
+        }
 
         if(bundle!=null){
             appAlias = bundle.getString("AppAlias", "");
             Visilabs.CreateAPI(
-                    bundle.getString("VisilabsOrganizationID", ""),
-                    bundle.getString("VisilabsSiteID", ""),
+                    organizationId,
+                    profileId,
                     bundle.getString("VisilabsSegmentURL", ""),
-                    bundle.getString("VisilabsDataSource", ""),
+                    dataSource,
                     bundle.getString("VisilabsRealTimeURL", ""),
                     bundle.getString("VisilabsChannel", ""),
                     getApplicationContext(),
