@@ -43,6 +43,8 @@ public class Actiondata implements Serializable {
     private String promocodeTitle;
     @SerializedName("copybutton_label")
     private String copybuttonLabel;
+    @SerializedName("redirectbutton_label")
+    private String redirectbuttonLabel;
     @SerializedName("wheel_spin_action")
     private String wheelSpinAction;
     @SerializedName("promocodes_soldout_message")
@@ -192,6 +194,14 @@ public class Actiondata implements Serializable {
 
     public void setCopybuttonLabel(String copybuttonLabel) {
         this.copybuttonLabel = copybuttonLabel;
+    }
+
+    public String getRedirectbuttonLabel() {
+        return redirectbuttonLabel;
+    }
+
+    public void setRedirectbuttonLabel(String redirectbuttonLabel) {
+        this.redirectbuttonLabel = redirectbuttonLabel;
     }
 
     public String getWheelSpinAction() {

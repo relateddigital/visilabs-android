@@ -103,6 +103,36 @@ public class ExtendedProps implements Serializable {
     private String promocode_banner_background_color;
     @SerializedName("promocode_banner_button_label")
     private String promocode_banner_button_label;
+    @SerializedName("displayname_text_align")
+    private String displayname_text_align;
+    @SerializedName("redirectbutton_color")
+    private String redirectbutton_color;
+    @SerializedName("redirectbutton_text_color")
+    private String redirectbutton_text_color;
+
+    public void setDisplayNameTextAlign(String displayNameTextAlign) {
+        displayname_text_align = displayNameTextAlign;
+    }
+
+    public String getDisplayNameTextAlign() {
+        return displayname_text_align;
+    }
+
+    public void setRedirectButtonColor(String redirectButtonColor) {
+        redirectbutton_color = redirectButtonColor;
+    }
+
+    public String getRedirectButtonColor() {
+        return redirectbutton_color;
+    }
+
+    public void setRedirectButtonTextColor(String redirectButtonTextColor) {
+        redirectbutton_text_color = redirectButtonTextColor;
+    }
+
+    public String getRedirectButtonTextColor() {
+        return redirectbutton_text_color;
+    }
 
     public void setDisplayNameTextColor(String displayNameTextColor) {
         displayname_text_color = displayNameTextColor;
