@@ -110,7 +110,7 @@ public interface VisilabsApiMethods {
     );
 
     //Methods for js files -- mbls domain
-    @GET("/spintowin.js")
+    @GET("/spin_to_win.js")
     Call<ResponseBody> getSpinToWinJsFile(
             @HeaderMap Map<String, String> headers
     );

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <title>SpinToWin Game</title>
+</head>
+
+<body>
+<script src="spin_to_win.js"></script>
+<script type="text/javascript">
+        var config = {};
+        var spinToWin = {};
+        window.initSpinToWin = function (responseConfig) {
+            config = responseConfig;
+            spinToWin = new SpinToWin(config);
+        };
+        window.chooseSlice = function (sliceIndex, promotionCode) {
+            window.spinToWin.spin(sliceIndex, promotionCode);
+        };
+        if (window.Android) {
+            config = JSON.parse(Android.getResponse());
+            initSpinToWin(config);
+        } else if (window.webkit && window.webkit.messageHandlers.eventHandler) {
+            window.webkit.messageHandlers.eventHandler.postMessage({
+                method: "initSpinToWin"
+            });
+            window.console.log = function (message) {
+                var stringMessage = message;
+                if (typeof message !== "string") {
+                    stringMessage = JSON.stringify(message);
+                }
+                window.webkit.messageHandlers.eventHandler.postMessage({
+                    method: "console.log",
+                    message: stringMessage
+                });
+            };
+        } else {
+            window.BrowserTest = {
+                getPromotionCode: function () {
+                    window.chooseSlice(2, 'asd');
+                },
+                sendReport: function () {
+
+                }
+            };
+
+            const extendedProps = {
+                "displayname_text_align": "vertical", // "horizontal", "vertical",
+                "redirectbutton_color": "",
+                "redirectbutton_text_color": "",
+
+
+                "displayname_text_color": "#ffffff",
+                "displayname_font_family": "default",
+                "displayname_custom_font_family_ios": "android101",
+                "displayname_custom_font_family_android": "android101",
+                "displayname_text_size": "6",
+                "title_position": "bottom",
+                "title_text_color": "#ffffff",
+                "title_font_family": "default",
+                "title_custom_font_family_ios": "",
+                "title_custom_font_family_android": "",
+                "title_text_size": "3",
+                "text_position": "bottom",
+                "text_color": "#ffe9e9",
+                "text_font_family": "default",
+                "text_custom_font_family_ios": "",
+                "text_custom_font_family_android": "",
+                "text_size": "2",
+                "button_position": "top",
+                "button_color": "#ffa3bf",
+                "button_text_color": "#ffffff",
+                "button_font_family": "custom",
+                "button_custom_font_family_ios": "ios",
+                "button_custom_font_family_android": "android101",
+                "button_text_size": "2",
+                "promocode_title_text_color": "#bf3070",
+                "promocode_title_font_family": "custom",
+                "promocode_title_custom_font_family_ios": "ios",
+                "promocode_title_custom_font_family_android": "sydneysignature",
+                "promocode_title_text_size": "1",
+                "promocode_background_color": "#3047bf",
+                "promocode_text_color": "#ffffff",
+                "copybutton_position": "bottom",
+                "copybutton_color": "#3047bf",
+                "copybutton_text_color": "#ffffff",
+                "copybutton_font_family": "custom",
+                "copybutton_custom_font_family_ios": "The Nautigal",
+                "copybutton_custom_font_family_android": "thenautigal_regular",
+                "copybutton_text_size": "1",
+                "emailpermit_text_size": "2",
+                "emailpermit_text_url": "https://github.com/",
+                "consent_text_size": "2",
+                "consent_text_url": "https://app.visilabs.net/",
+                "close_button_color": "black",
+                "background_color": "#48a4af",
+                "promocodes_soldout_message_text_color": "#2f1515",
+                "promocodes_soldout_message_font_family": "custom",
+                "promocodes_soldout_message_custom_font_family_ios": "ios",
+                "promocodes_soldout_message_custom_font_family_android": "sydneysignature",
+                "promocodes_soldout_message_text_size": "1",
+                "promocodes_soldout_message_background_color": "#ffffff",
+                "promocode_banner_text": "title1\\\\ntitle2",
+                "promocode_banner_text_color": "#ffffff",
+                "promocode_banner_background_color": "#d6c1c1",
+                "promocode_banner_button_label": "Kopyala"
+            };
+
+
+
+
+            let extendedPropsString = JSON.stringify(extendedProps);
+            //console.log(extendedPropsString);
+            extendedPropsString = encodeURI(extendedPropsString);
+            //console.log(extendedPropsString);
+
+            config = {
+                "actid": 562,
+                "title": "Spin-To-Win-New-UI-Test actionID=562",
+                "actiontype": "SpinToWin",
+                "actiondata": {
+                    "slices": [
+                        {
+                            "displayName": "statik1",
+                            "color": "#55403a",
+                            "code": "123456",
+                            "type": "staticcode",
+                            "ios_lnk": "https://www.relateddigital.com/en/",
+                            "android_lnk": "https://www.relateddigital.com/en/",
+                            "infotext": "statik1 info text",
+                            "is_available": false
+                        },
+                        {
+                            "displayName": "pass1",
+                            "color": "#f2eccc",
+                            "code": "",
+                            "type": "pass",
+                            "ios_lnk": "https://www.google.com",
+                            "android_lnk": "https://www.google.com",
+                            "infotext": "pass1 info text",
+                            "is_available": false
+                        },
+                        {
+                            "displayName": "test6",
+                            "color": "#f58485",
+                            "code": "dgdg",
+                            "type": "staticcode",
+                            "ios_lnk": "https://www.facebook.com",
+                            "android_lnk": "https://www.facebook.com",
+                            "infotext": "test6 info text test6 info text test6 info text",
+                            "is_available": false
+                        },
+                        {
+                            "displayName": "statik2",
+                            "color": "#9dcec2",
+                            "code": "STATIC",
+                            "type": "staticcode",
+                            "ios_lnk": "https://www.twitter.com",
+                            "android_lnk": "https://www.twitter.com",
+                            "infotext": "statik2 info text",
+                            "is_available": false
+                        },
+                        {
+                            "displayName": "pass4",
+                            "color": "#f600d5",
+                            "code": "",
+                            "type": "pass",
+                            "ios_lnk": "https://www.instagram.com",
+                            "android_lnk": "https://www.instagram.com",
+                            "infotext": "pass4 info text",
+                            "is_available": false
+                        }
+                    ],
+                    "mail_subscription": true,
+                    "spin_to_win_content": {
+                        "title": "15:00-24:00 Arası \\n Geçerli Fırsatı Kaçırma",
+                        "message": "Kazanılan kupon kodları, FLO Mobil uygulamasında sadece FLO satıcılı ürünlerde geçerlidir. Kupon kodları, mevcut indirimlere ve kampanyalara ek fayda sağlar. İndirim stoklarla sınırlıdır. Her müşteri yalnızca 1 katılım hakkına sahiptir. Kazanılan kupon kodları gün sonuna kadar kullanılabilir. FLO, kampanya koşullarında değişiklik yapma hakkını saklı tutar. Kuponunu hemen kopyala ya da ekran görüntüsünü al, alışverişin keyfini çıkar.",
+                        "placeholder": "E- posta adresi",
+                        "button_label": "Çevirme Butonu",
+                        "consent_text": " <LINK> Kullanım koşulları</LINK>",
+                        "invalid_email_message": "Geçersiz e-posta adresi",
+                        "success_message": "Mail form dolduruldu",
+                        "emailpermit_text": " E-posta <LINK>izin</LINK> metni",
+                        "check_consent_message": "İzin metnini oynaylayın"
+                    },
+                    "font_size": 0,
+                    "circle_R": 0,
+                    "auth": "9EE6757C1303044D1BAFDFF004DCCA17ADE0FE83F96C09446135D3D86346FF0E",
+                    "type": "spin_to_win_email",
+                    "waiting_time": 0,
+                    "promoAuth": "B511CB2FBEBE0DF1D1BF42311E4667C0224794542AFB8E50A93C4949A10845EF",
+                    "slice_count": "3",
+                    "sendemail": false,
+                    "courseofaction": "GetPromoCode",
+                    "ExtendedProps": extendedPropsString,
+                    "report": {
+                        "impression": "",
+                        "click": "OM.zn=acttype-27&OM.zpc=act-562"
+                    },
+                    "img": "https://imgvisilabsnet.azureedge.net/spin_to_win/uploaded_images/163_1100_562_20210426155626806.png",
+                    "taTemplate": "half_spin",
+                    "promocode_title": "Kod Kazanma Başlık Metni\\n Lütfen Kodu Kopyalayınız.",
+                    "copybutton_label": "Kopyala",
+                    "wheel_spin_action": "button",
+                    "promocodes_soldout_message": "The campaign is ended.",
+                    "copybutton_function": "copy_redirect",
+                    "redirectbutton_label": "TODO:"
+                },
+                "panelv2": false
+            };
+            initSpinToWin(config); // half_spin, full_spin
+        }
+    </script>
+
+</body>
+
+</html>

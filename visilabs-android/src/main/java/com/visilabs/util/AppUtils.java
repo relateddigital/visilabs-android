@@ -319,7 +319,7 @@ public final class AppUtils {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private static String writeHtmlToFile(Context context, String jsStr) {
-        String spinToWinFileName = "spintowin";
+        String spinToWinFileName = "spin_to_win";
         String htmlString = "";
 
         File spintowinRelatedDigitalCacheDir = context.getFilesDir();
