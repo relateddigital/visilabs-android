@@ -20,6 +20,16 @@ public class Slice implements Serializable {
     private String iosLink;
     @SerializedName("android_lnk")
     private String androidLink;
+    @SerializedName("infotext")
+    private String infotext;
+
+    public String getInfoText() {
+        return infotext;
+    }
+
+    public void setInfoText(String infotext) {
+        this.infotext = infotext;
+    }
 
     public String getDisplayName() {
         return displayName;

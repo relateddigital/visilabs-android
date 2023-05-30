@@ -42,6 +42,7 @@ public class MainApplication extends MultiDexApplication {
         Bundle bundle = null;
 
         isTest = false;
+
         organizationId = "676D325830564761676D453D";
         profileId = "356467332F6533766975593D";
         dataSource = "visistore";
