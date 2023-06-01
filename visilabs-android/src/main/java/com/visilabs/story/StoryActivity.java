@@ -232,6 +232,10 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
             mTvCover.setTextColor(Color.parseColor(mExtendedProps.getStoryz_label_color()));
         }
 
+        if(mExtendedProps != null && mExtendedProps.getStoryz_label_color() != null && !mExtendedProps.getStoryz_label_color().isEmpty()) {
+            mIvClose.setBackgroundResource(getCloseIcon());
+        }
+
         mTvCover.setTypeface(AppUtils.getFontFamily(this,
                 mExtendedProps != null ? mExtendedProps.getFont_family() : null,
                 mExtendedProps != null ? mExtendedProps.getCustom_font_family_android() : null));
@@ -750,5 +754,16 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                         .into(mCountdownEndGifView);
             }
         });
+    }
+    private int getCloseIcon() {
+
+            if (mExtendedProps.getStoryz_label_color().equals("#ffffff")){
+                return R.drawable.ic_close_white_24dp;
+            }
+            else if (mExtendedProps.getStoryz_label_color().equals("#000000")) {
+                return R.drawable.ic_close_black_24dp;
+            }
+            else
+            return R.drawable.ic_close_black_24dp;
     }
 }
