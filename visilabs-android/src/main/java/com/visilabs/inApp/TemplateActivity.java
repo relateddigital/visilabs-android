@@ -578,7 +578,12 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private boolean isRatingAboveThreshold() {
         float rating = binding.ratingBar.getRating();
-        return rating >= (Float.parseFloat(mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint()));
+        if(!mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint().isEmpty() && !mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint().equals("")&& !mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint().equals("undefined")  ) {
+            return rating >= (Float.parseFloat(mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint()));
+        }
+        else {
+            return true;
+        }
     }
 
     private void setupSecondPopUp() {
