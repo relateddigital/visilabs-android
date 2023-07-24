@@ -87,6 +87,7 @@ public class Visilabs {
     private static String mActionURL;
     private static String mUserAgent;
     private String mSdkVersion;
+    private String mSdkType;
     private String mAppVersion;
     private List<HashMap<String, String>> mSendQueue;
 
@@ -220,6 +221,7 @@ public class Visilabs {
         mActionURL = actionURL;
 
         mSdkVersion = VisilabsConstant.SDK_VERSION;
+        mSdkType = VisilabsConstant.SDK_TYPE;
         mAppVersion = AppUtils.appVersion(context);
 
         mExVisitorID = Prefs.getFromPrefs(mContext, VisilabsConstant.EXVISITORID_PREF,
@@ -493,6 +495,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -561,6 +564,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -620,6 +624,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -679,6 +684,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -818,6 +824,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -878,6 +885,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.AUTH_KEY, auth);
         queryMap.put(VisilabsConstant.SUBS_EMAIL_KEY, email);
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -1160,6 +1168,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -1235,6 +1244,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -1358,6 +1368,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -1500,6 +1511,7 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
+        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -1849,6 +1861,10 @@ public class Visilabs {
 
     public String getSdkVersion() {
         return mSdkVersion;
+    }
+
+    public String getSdkType() {
+        return mSdkType;
     }
 
     public String getAppVersion() {

@@ -13,6 +13,7 @@ import java.util.List;
 
 public class VisilabsConstant {
     public static final String SDK_VERSION = BuildConfig.VERSION_NAME;
+    public static final String SDK_TYPE = BuildConfig.SDK_TYPE;
 
     public static final String LAST_EVENT_TIME_KEY = "last_event_time";
     public static final String PVIV_KEY = "pviv";
@@ -81,6 +82,7 @@ public class VisilabsConstant {
     public static final String TOKENID_KEY = "OM.sys.TokenID";
     public static final String APPID_KEY = "OM.sys.AppID";
     public static final String SDK_VERSION_KEY = "sdk_version";
+    public static final String SDK_TYPE_KEY = "sdk_type";
     public static final String APP_VERSION_KEY = "OM.appVersion";
     public static final String NRV_REQUEST_KEY = "OM.nrv";
     public static final String PVIV_REQUEST_KEY = "OM.pviv";
