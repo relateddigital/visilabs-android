@@ -44,6 +44,11 @@ public class VisilabsConstant {
     public static final String OM_3_KEY = "OM.3rd";
     public static final String COOKIEID_PREF = "VisilabsCookieIDPreferences";
     public static final String EXVISITORID_PREF = "VisilabsExVisitorIDPreferences";
+    public static final String UTM_CAMPAIGN_PREF = "VisilabsUtmCampaignPreferences";
+    public static final String UTM_MEDIUM_PREF = "VisilabsUtmMediumPreferences";
+    public static final String UTM_SOURCE_PREF = "VisilabsUtmSourcePreferences";
+    public static final String UTM_CONTENT_PREF = "VisilabsUtmContentPreferences";
+    public static final String UTM_TERM_PREF = "VisilabsUtmTermPreferences";
     public static final String LAST_EVENT_TIME_PREF = "VisilabsLastEventTimePreferences";
     public static final String PVIV_PREF = "VisilabsPvivPreferences";
     public static final String TVC_PREF = "VisilabsTvcPreferences";
@@ -61,6 +66,11 @@ public class VisilabsConstant {
 
     public static final String COOKIEID_PREF_KEY = "cookieID";
     public static final String EXVISITORID_PREF_KEY = "exVisitorID";
+    public static final String UTM_CAMPAIGN_PREF_KEY = "utmCampaign";
+    public static final String UTM_MEDIUM_PREF_KEY = "utmMedium";
+    public static final String UTM_SOURCE_PREF_KEY = "utmSource";
+    public static final String UTM_CONTENT_PREF_KEY = "utmContent";
+    public static final String UTM_TERM_PREF_KEY = "utmTerm";
     public static final String TOKENID_PREF_KEY = "sysTokenID";
     public static final String APPID_PREF_KEY = "sysAppID";
     public static final String SHOWN_STORIES_PREF_KEY = "shownStories";
@@ -76,9 +86,13 @@ public class VisilabsConstant {
 
     public static final String COOKIEID_KEY = "OM.cookieID";
     public static final String EXVISITORID_KEY = "OM.exVisitorID";
+    public static final String UTM_CAMPAIGN_KEY = "utm_campaign";
+    public static final String UTM_MEDIUM_KEY = "utm_medium";
+    public static final String UTM_SOURCE_KEY = "utm_source";
+    public static final String UTM_CONTENT_KEY = "utm_content";
+    public static final String UTM_TERM_KEY = "utm_term";
     public static final String ZONE_ID_KEY = "OM.zid";
     public static final String BODY_KEY = "OM.body";
-
     public static final String TOKENID_KEY = "OM.sys.TokenID";
     public static final String APPID_KEY = "OM.sys.AppID";
     public static final String SDK_VERSION_KEY = "sdk_version";

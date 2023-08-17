@@ -281,6 +281,26 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, Visilabs.CallAPI().getExVisitorID());
         }
 
+        if (Visilabs.CallAPI().getUtmCampaign() != null && !Visilabs.CallAPI().getUtmCampaign().equals("")) {
+            queryMap.put(VisilabsConstant.UTM_CAMPAIGN_KEY, Visilabs.CallAPI().getUtmCampaign());
+        }
+
+        if (Visilabs.CallAPI().getUtmMedium() != null && !Visilabs.CallAPI().getUtmMedium().equals("")) {
+            queryMap.put(VisilabsConstant.UTM_MEDIUM_KEY, Visilabs.CallAPI().getUtmMedium());
+        }
+
+        if (Visilabs.CallAPI().getUtmSource() != null && !Visilabs.CallAPI().getUtmSource().equals("")) {
+            queryMap.put(VisilabsConstant.UTM_SOURCE_KEY, Visilabs.CallAPI().getUtmSource());
+        }
+
+        if (Visilabs.CallAPI().getUtmContent() != null && !Visilabs.CallAPI().getUtmContent().equals("")) {
+            queryMap.put(VisilabsConstant.UTM_CONTENT_KEY, Visilabs.CallAPI().getUtmContent());
+        }
+
+        if (Visilabs.CallAPI().getUtmTerm() != null && !Visilabs.CallAPI().getUtmTerm().equals("")) {
+            queryMap.put(VisilabsConstant.UTM_TERM_KEY, Visilabs.CallAPI().getUtmTerm());
+        }
+
         if(Visilabs.CallAPI().getSysTokenID() != null && !Visilabs.CallAPI().getSysTokenID().equals("")){
             queryMap.put(VisilabsConstant.TOKENID_KEY, Visilabs.CallAPI().getSysTokenID());
         }

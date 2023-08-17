@@ -102,6 +102,16 @@ public class Visilabs {
     private String mCookieID;
     private String mChannel;
     private Context mContext;
+
+    private String mUtmCampaign;
+
+    private String mUtmMedium;
+
+    private String mUtmSource;
+
+    private String mUtmContent;
+
+    private String mUtmTerm;
     private int mRequestTimeoutSeconds = 30;
     private String mRESTURL;
     private String mEncryptedDataSource;
@@ -226,6 +236,17 @@ public class Visilabs {
 
         mExVisitorID = Prefs.getFromPrefs(mContext, VisilabsConstant.EXVISITORID_PREF,
                 VisilabsConstant.EXVISITORID_PREF_KEY, null);
+        mUtmCampaign = Prefs.getFromPrefs(mContext, VisilabsConstant.UTM_CAMPAIGN_PREF,
+                VisilabsConstant.UTM_CAMPAIGN_PREF_KEY, null);
+        mUtmMedium = Prefs.getFromPrefs(mContext, VisilabsConstant.UTM_MEDIUM_PREF,
+                VisilabsConstant.UTM_MEDIUM_PREF_KEY, null);
+        mUtmSource = Prefs.getFromPrefs(mContext, VisilabsConstant.UTM_SOURCE_PREF,
+                VisilabsConstant.UTM_SOURCE_PREF_KEY, null);
+        mUtmContent = Prefs.getFromPrefs(mContext, VisilabsConstant.UTM_CONTENT_PREF,
+                VisilabsConstant.UTM_CONTENT_PREF_KEY, null);
+        mUtmTerm = Prefs.getFromPrefs(mContext, VisilabsConstant.UTM_TERM_PREF,
+                VisilabsConstant.UTM_TERM_PREF_KEY, null);
+
         mCookieID = Prefs.getFromPrefs(mContext, VisilabsConstant.COOKIEID_PREF,
                 VisilabsConstant.COOKIEID_PREF_KEY, null);
 
@@ -1293,9 +1314,14 @@ public class Visilabs {
     public void logout() {
         setExVisitorID(null);
         setCookieID(null);
+        setUtmCampaign(null);
+        setUtmMedium(null);
+        setUtmSource(null);
+        setUtmTerm(null);
+        setUtmContent(null);
     }
 
-    public void sendCampaignParameters(HashMap<String, String> properties) {
+    public void sendCampaignParameters(HashMap<String, String> properties, Activity parent) {
         if(isBlocked()) {
             Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
@@ -1306,7 +1332,7 @@ public class Visilabs {
             return;
         }
 
-        sendEvent(properties);
+        customEvent("/OM_evt.gif", properties, parent);
     }
 
     private void sendEvent(HashMap<String, String> properties){
@@ -1328,6 +1354,45 @@ public class Visilabs {
                 if (!mExVisitorID.equals("")) {
                     properties.remove(VisilabsConstant.EXVISITORID_KEY);
                 }
+            }
+            if (properties.containsKey(VisilabsConstant.UTM_CAMPAIGN_KEY)) {
+                if (properties.get(VisilabsConstant.UTM_CAMPAIGN_KEY) != null) {
+                    mUtmCampaign = properties.get(VisilabsConstant.UTM_CAMPAIGN_KEY);
+                    setUtmCampaign(properties.get(VisilabsConstant.UTM_CAMPAIGN_KEY));
+                }
+                properties.remove(VisilabsConstant.UTM_CAMPAIGN_KEY);
+            }
+
+            if (properties.containsKey(VisilabsConstant.UTM_MEDIUM_KEY)) {
+                if (properties.get(VisilabsConstant.UTM_MEDIUM_KEY) != null) {
+                    mUtmMedium = properties.get(VisilabsConstant.UTM_MEDIUM_KEY);
+                    setUtmMedium(properties.get(VisilabsConstant.UTM_MEDIUM_KEY));
+                }
+                properties.remove(VisilabsConstant.UTM_MEDIUM_KEY);
+            }
+
+            if (properties.containsKey(VisilabsConstant.UTM_SOURCE_KEY)) {
+                if (properties.get(VisilabsConstant.UTM_SOURCE_KEY) != null) {
+                    mUtmSource = properties.get(VisilabsConstant.UTM_SOURCE_KEY);
+                    setUtmSource(properties.get(VisilabsConstant.UTM_SOURCE_KEY));
+                }
+                properties.remove(VisilabsConstant.UTM_SOURCE_KEY);
+            }
+
+            if (properties.containsKey(VisilabsConstant.UTM_TERM_KEY)) {
+                if (properties.get(VisilabsConstant.UTM_TERM_KEY) != null) {
+                    mUtmTerm = properties.get(VisilabsConstant.UTM_TERM_KEY);
+                    setUtmTerm(properties.get(VisilabsConstant.UTM_TERM_KEY));
+                }
+                properties.remove(VisilabsConstant.UTM_TERM_KEY);
+            }
+
+            if (properties.containsKey(VisilabsConstant.UTM_CONTENT_KEY)) {
+                if (properties.get(VisilabsConstant.UTM_CONTENT_KEY) != null) {
+                    mUtmContent = properties.get(VisilabsConstant.UTM_CONTENT_KEY);
+                    setUtmContent(properties.get(VisilabsConstant.UTM_CONTENT_KEY));
+                }
+                properties.remove(VisilabsConstant.UTM_CONTENT_KEY);
             }
             if (properties.containsKey(VisilabsConstant.CHANNEL_KEY)) {
                 if (properties.get(VisilabsConstant.CHANNEL_KEY) != null) {
@@ -1365,6 +1430,16 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.SITEID_KEY, mSiteID);
         queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
+        if (mUtmCampaign != null && mUtmCampaign.length() > 0)
+            queryMap.put(VisilabsConstant.UTM_CAMPAIGN_KEY, mUtmCampaign);
+        if (mUtmMedium != null && mUtmMedium.length() > 0)
+            queryMap.put(VisilabsConstant.UTM_MEDIUM_KEY, mUtmMedium);
+        if (mUtmSource != null && mUtmSource.length() > 0)
+            queryMap.put(VisilabsConstant.UTM_SOURCE_KEY, mUtmSource);
+        if (mUtmTerm != null && mUtmTerm.length() > 0)
+            queryMap.put(VisilabsConstant.UTM_TERM_KEY, mUtmTerm);
+        if (mUtmContent != null && mUtmContent.length() > 0)
+            queryMap.put(VisilabsConstant.UTM_CONTENT_KEY, mUtmContent);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
@@ -1493,6 +1568,46 @@ public class Visilabs {
                 properties.remove(VisilabsConstant.APPID_KEY);
             }
 
+            if (properties.containsKey(VisilabsConstant.UTM_CAMPAIGN_KEY)) {
+                if (properties.get(VisilabsConstant.UTM_CAMPAIGN_KEY) != null) {
+                    mUtmCampaign = properties.get(VisilabsConstant.UTM_CAMPAIGN_KEY);
+                    setUtmCampaign(properties.get(VisilabsConstant.UTM_CAMPAIGN_KEY));
+                }
+                properties.remove(VisilabsConstant.UTM_CAMPAIGN_KEY);
+            }
+
+            if (properties.containsKey(VisilabsConstant.UTM_MEDIUM_KEY)) {
+                if (properties.get(VisilabsConstant.UTM_MEDIUM_KEY) != null) {
+                    mUtmMedium = properties.get(VisilabsConstant.UTM_MEDIUM_KEY);
+                    setUtmMedium(properties.get(VisilabsConstant.UTM_MEDIUM_KEY));
+                }
+                properties.remove(VisilabsConstant.UTM_MEDIUM_KEY);
+            }
+
+            if (properties.containsKey(VisilabsConstant.UTM_SOURCE_KEY)) {
+                if (properties.get(VisilabsConstant.UTM_SOURCE_KEY) != null) {
+                    mUtmSource = properties.get(VisilabsConstant.UTM_SOURCE_KEY);
+                    setUtmSource(properties.get(VisilabsConstant.UTM_SOURCE_KEY));
+                }
+                properties.remove(VisilabsConstant.UTM_SOURCE_KEY);
+            }
+
+            if (properties.containsKey(VisilabsConstant.UTM_TERM_KEY)) {
+                if (properties.get(VisilabsConstant.UTM_TERM_KEY) != null) {
+                    mUtmTerm = properties.get(VisilabsConstant.UTM_TERM_KEY);
+                    setUtmTerm(properties.get(VisilabsConstant.UTM_TERM_KEY));
+                }
+                properties.remove(VisilabsConstant.UTM_TERM_KEY);
+            }
+
+            if (properties.containsKey(VisilabsConstant.UTM_CONTENT_KEY)) {
+                if (properties.get(VisilabsConstant.UTM_CONTENT_KEY) != null) {
+                    mUtmContent = properties.get(VisilabsConstant.UTM_CONTENT_KEY);
+                    setUtmContent(properties.get(VisilabsConstant.UTM_CONTENT_KEY));
+                }
+                properties.remove(VisilabsConstant.UTM_CONTENT_KEY);
+            }
+
             try {
                 PersistentTargetManager.with(context).saveParameters(properties);
             } catch (Exception e) {
@@ -1508,6 +1623,16 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
         queryMap.put(VisilabsConstant.URI_KEY, pageName);
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
+        if (mUtmCampaign != null && mUtmCampaign.length() > 0)
+            queryMap.put(VisilabsConstant.UTM_CAMPAIGN_KEY, mUtmCampaign);
+        if (mUtmMedium != null && mUtmMedium.length() > 0)
+            queryMap.put(VisilabsConstant.UTM_MEDIUM_KEY, mUtmMedium);
+        if (mUtmSource != null && mUtmSource.length() > 0)
+            queryMap.put(VisilabsConstant.UTM_SOURCE_KEY, mUtmSource);
+        if (mUtmTerm != null && mUtmTerm.length() > 0)
+            queryMap.put(VisilabsConstant.UTM_TERM_KEY, mUtmTerm);
+        if (mUtmContent != null && mUtmContent.length() > 0)
+            queryMap.put(VisilabsConstant.UTM_CONTENT_KEY, mUtmContent);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
@@ -1755,6 +1880,51 @@ public class Visilabs {
         }
     }
 
+    synchronized private void setUtmCampaign(String utmCampaign) {
+        mUtmCampaign = utmCampaign;
+        String previousUtmCampaign = Prefs.getFromPrefs(mContext, VisilabsConstant.UTM_CAMPAIGN_PREF,
+                VisilabsConstant.UTM_CAMPAIGN_PREF_KEY, null);
+        if (previousUtmCampaign == null || !previousUtmCampaign.equals(utmCampaign)) {
+            Prefs.saveToPrefs(mContext, VisilabsConstant.UTM_CAMPAIGN_PREF, VisilabsConstant.UTM_CAMPAIGN_PREF_KEY, mUtmCampaign);
+        }
+    }
+
+    synchronized private void setUtmMedium(String utmMedium) {
+        mUtmMedium = utmMedium;
+        String previousUtmMedium = Prefs.getFromPrefs(mContext, VisilabsConstant.UTM_MEDIUM_PREF,
+                VisilabsConstant.UTM_MEDIUM_PREF_KEY, null);
+        if (previousUtmMedium == null || !previousUtmMedium.equals(utmMedium)) {
+            Prefs.saveToPrefs(mContext, VisilabsConstant.UTM_MEDIUM_PREF, VisilabsConstant.UTM_MEDIUM_PREF_KEY, mUtmMedium);
+        }
+    }
+
+    synchronized private void setUtmSource(String utmSource) {
+        mUtmSource = utmSource;
+        String previousUtmSource = Prefs.getFromPrefs(mContext, VisilabsConstant.UTM_SOURCE_PREF,
+                VisilabsConstant.UTM_SOURCE_PREF_KEY, null);
+        if (previousUtmSource == null || !previousUtmSource.equals(utmSource)) {
+            Prefs.saveToPrefs(mContext, VisilabsConstant.UTM_SOURCE_PREF, VisilabsConstant.UTM_SOURCE_PREF_KEY, mUtmSource);
+        }
+    }
+
+    synchronized private void setUtmTerm(String utmTerm) {
+        mUtmTerm = utmTerm;
+        String previousUtmTerm = Prefs.getFromPrefs(mContext, VisilabsConstant.UTM_TERM_PREF,
+                VisilabsConstant.UTM_TERM_PREF_KEY, null);
+        if (previousUtmTerm == null || !previousUtmTerm.equals(utmTerm)) {
+            Prefs.saveToPrefs(mContext, VisilabsConstant.UTM_TERM_PREF, VisilabsConstant.UTM_TERM_PREF_KEY, mUtmTerm);
+        }
+    }
+
+    synchronized private void setUtmContent(String utmContent) {
+        mUtmContent = utmContent;
+        String previousUtmContent = Prefs.getFromPrefs(mContext, VisilabsConstant.UTM_CONTENT_PREF,
+                VisilabsConstant.UTM_CONTENT_PREF_KEY, null);
+        if (previousUtmContent == null || !previousUtmContent.equals(utmContent)) {
+            Prefs.saveToPrefs(mContext, VisilabsConstant.UTM_CONTENT_PREF, VisilabsConstant.UTM_CONTENT_PREF_KEY, mUtmContent);
+        }
+    }
+
     synchronized public void setVisitData(String visitData) {
         mVisitData = visitData;
     }
@@ -1857,6 +2027,26 @@ public class Visilabs {
 
     public String getExVisitorID() {
         return mExVisitorID;
+    }
+
+    public String getUtmCampaign() {
+        return mUtmCampaign;
+    }
+
+    public String getUtmMedium() {
+        return mUtmMedium;
+    }
+
+    public String getUtmSource() {
+        return mUtmSource;
+    }
+
+    public String getUtmTerm() {
+        return mUtmTerm;
+    }
+
+    public String getUtmContent() {
+        return mUtmContent;
     }
 
     public String getSdkVersion() {
