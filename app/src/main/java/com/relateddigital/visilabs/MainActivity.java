@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 properties.put("utm_campaign", "android-test-campaign");
                 properties.put("utm_source", "euromsg");
                 properties.put("utm_medium", "push");
-                Visilabs.CallAPI().sendCampaignParameters(properties);
+                Visilabs.CallAPI().sendCampaignParameters(properties,getParent());
                 Toast.makeText(getApplicationContext(), "The campaign parameters are sent.", Toast.LENGTH_LONG).show();
             }
         });
