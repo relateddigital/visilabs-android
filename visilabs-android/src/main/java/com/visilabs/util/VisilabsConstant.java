@@ -13,7 +13,6 @@ import java.util.List;
 
 public class VisilabsConstant {
     public static final String SDK_VERSION = BuildConfig.VERSION_NAME;
-    public static final String SDK_TYPE = BuildConfig.SDK_TYPE;
 
     public static final String LAST_EVENT_TIME_KEY = "last_event_time";
     public static final String PVIV_KEY = "pviv";
@@ -25,6 +24,8 @@ public class VisilabsConstant {
     public static final String VISILABS_DATA_SOURCE = "VisilabsDataSource";
     public static final String VISILABS_REAL_TIME_URL = "VisilabsRealTimeURL";
     public static final String VISILABS_CHANNEL = "VisilabsChannel";
+
+    public static final String VISILABS_SDK_TYPE = "VisilabsSdkType";
 
     public static final String VISILABS_REQUEST_TIMEOUT_IN_SECONDS = "VisilabsRequestTimeoutInSeconds";
     public static final String VISILABS_REST_URL = "VisilabsRESTURL";
@@ -73,6 +74,8 @@ public class VisilabsConstant {
     public static final String UTM_TERM_PREF_KEY = "utmTerm";
     public static final String TOKENID_PREF_KEY = "sysTokenID";
     public static final String APPID_PREF_KEY = "sysAppID";
+
+    public static final String SDK_TYPE_PREF_KEY = "sdk_type";
     public static final String SHOWN_STORIES_PREF_KEY = "shownStories";
 
     public static final String VISILABS_ENCODING_CHARSET = "UTF-8";
@@ -96,7 +99,6 @@ public class VisilabsConstant {
     public static final String TOKENID_KEY = "OM.sys.TokenID";
     public static final String APPID_KEY = "OM.sys.AppID";
     public static final String SDK_VERSION_KEY = "sdk_version";
-    public static final String SDK_TYPE_KEY = "sdk_type";
     public static final String APP_VERSION_KEY = "OM.appVersion";
     public static final String NRV_REQUEST_KEY = "OM.nrv";
     public static final String PVIV_REQUEST_KEY = "OM.pviv";

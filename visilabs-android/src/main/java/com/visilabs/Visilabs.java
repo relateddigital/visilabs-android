@@ -87,6 +87,7 @@ public class Visilabs {
     private static String mActionURL;
     private static String mUserAgent;
     private String mSdkVersion;
+
     private String mSdkType;
     private String mAppVersion;
     private List<HashMap<String, String>> mSendQueue;
@@ -148,7 +149,7 @@ public class Visilabs {
     private InAppButtonInterface mInAppButtonInterface = null;
 
     private Visilabs(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
-            , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource, String targetURL, String actionURL, String geofenceURL, boolean geofenceEnabled) {
+            , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource, String targetURL, String actionURL, String geofenceURL, boolean geofenceEnabled, String sdkType) {
         if (context == null) {
             return;
         }
@@ -176,7 +177,8 @@ public class Visilabs {
                 targetURL,
                 actionURL,
                 geofenceURL,
-                geofenceEnabled
+                geofenceEnabled,
+                sdkType
         );
 
         String parametersStr = new Gson().toJson(parameters);
@@ -197,6 +199,7 @@ public class Visilabs {
         actionURL = parameters2.getActionUrl();
         geofenceURL = parameters2.getGeofenceUrl();
         geofenceEnabled = parameters2.getGeofenceEnabled();
+        sdkType = parameters2.getSdkType();
 
         mGeofenceURL = geofenceURL;
         mGeofenceEnabled = geofenceEnabled;
@@ -213,6 +216,7 @@ public class Visilabs {
         mOrganizationID = VisilabsEncoder.encode(organizationID);
         mSiteID = VisilabsEncoder.encode(siteID);
         mChannel = (channel != null) ? channel : "ANDROID";
+        mSdkType = (sdkType != null) ? sdkType : "native";
 
         mUserAgent =  System.getProperty("http.agent");
         if(mUserAgent != null) {
@@ -231,7 +235,6 @@ public class Visilabs {
         mActionURL = actionURL;
 
         mSdkVersion = VisilabsConstant.SDK_VERSION;
-        mSdkType = VisilabsConstant.SDK_TYPE;
         mAppVersion = AppUtils.appVersion(context);
 
         mExVisitorID = Prefs.getFromPrefs(mContext, VisilabsConstant.EXVISITORID_PREF,
@@ -277,47 +280,47 @@ public class Visilabs {
 
     public static synchronized Visilabs CreateAPI(String organizationID, String siteID,
                                                   String segmentURL, String dataSource,
-                                                  String realTimeURL, String channel, Context context) {
+                                                  String realTimeURL, String channel, String sdkType,Context context) {
         if (visilabs == null) {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource,
                     realTimeURL, channel, context, 30
                     , null, null, null, null,
-                    null, false);
+                    null, false, sdkType);
         }
         return visilabs;
     }
 
     public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
                                                   String dataSource, String realTimeURL, String channel, Context context
-            , int requestTimeoutSeconds) {
+            , int requestTimeoutSeconds, String sdkType) {
         if (visilabs == null) {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL,
                     channel, context, requestTimeoutSeconds
                     , null, null, null, null,
-                    null, false);
+                    null, false, sdkType);
         }
         return visilabs;
     }
 
     public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
                                                   String dataSource, String realTimeURL, String channel, Context context
-            , int requestTimeoutSeconds, String targetURL) {
+            , int requestTimeoutSeconds, String targetURL, String sdkType) {
         if (visilabs == null) {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL,
                     channel, context, requestTimeoutSeconds
                     , null, null, targetURL, null, null,
-                    false);
+                    false, sdkType);
         }
         return visilabs;
     }
 
     public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
                                                   String dataSource, String realTimeURL, String channel, Context context
-            , String targetURL, String actionURL, int requestTimeoutSeconds) {
+            , String targetURL, String actionURL, int requestTimeoutSeconds, String sdkType) {
         if (visilabs == null) {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
-                    , null, null, targetURL, actionURL, null, false);
+                    , null, null, targetURL, actionURL, null, false, sdkType);
         }
         return visilabs;
     }
@@ -325,11 +328,11 @@ public class Visilabs {
     public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
                                                   String dataSource, String realTimeURL, String channel,
                                                   Context context, String targetURL, String actionURL,
-                                                  int requestTimeoutSeconds, String geofenceURL, boolean geofenceEnabled) {
+                                                  int requestTimeoutSeconds, String geofenceURL, boolean geofenceEnabled, String sdkType) {
         if (visilabs == null) {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
-                    , null, null, targetURL, actionURL, geofenceURL, geofenceEnabled);
+                    , null, null, targetURL, actionURL, geofenceURL, geofenceEnabled, sdkType);
             if (geofenceEnabled && !StringUtils.isNullOrWhiteSpace(geofenceURL)) {
                 Visilabs.CallAPI().startGpsManager();
             }
@@ -339,11 +342,11 @@ public class Visilabs {
 
     public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
                                                   String dataSource, String realTimeURL, String channel, Context context
-            , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource) {
+            , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource, String sdkType) {
         if (visilabs == null) {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
-                    , RESTURL, encryptedDataSource, null, null, null, false);
+                    , RESTURL, encryptedDataSource, null, null, null, false, sdkType);
         }
         return visilabs;
     }
@@ -363,6 +366,7 @@ public class Visilabs {
             String actionURL = null;
             String geofenceURL = null;
             boolean geofenceEnabled = false;
+            String sdkType = null;
 
             try {
                 ApplicationInfo ai = context.getPackageManager().getApplicationInfo(context.getPackageName(),
@@ -382,6 +386,7 @@ public class Visilabs {
                 geofenceURL = ai.metaData.getString(VisilabsConstant.VISILABS_GEOFENCE_URL);
                 geofenceEnabled = ai.metaData.getBoolean(VisilabsConstant.VISILABS_GEOFENCE_ENABLED,
                         false);
+                sdkType = ai.metaData.getString(VisilabsConstant.VISILABS_SDK_TYPE);
 
             } catch (Exception e) {
                 Log.d("CreateApi", e.toString());
@@ -408,12 +413,13 @@ public class Visilabs {
                     actionURL = parameters.getActionUrl();
                     geofenceURL = parameters.getGeofenceUrl();
                     geofenceEnabled = parameters.getGeofenceEnabled();
+                    sdkType = parameters.getSdkType();
                 }
 
             }
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
-                    , RESTURL, encryptedDataSource, targetURL, actionURL, geofenceURL, geofenceEnabled);
+                    , RESTURL, encryptedDataSource, targetURL, actionURL, geofenceURL, geofenceEnabled, sdkType);
             if (geofenceEnabled && !StringUtils.isNullOrWhiteSpace(geofenceURL)) {
                 Visilabs.CallAPI().startGpsManager();
             }
@@ -514,9 +520,9 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.URI_KEY, VisilabsConstant.PAGE_NAME_REQUEST_VAL);
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
+        queryMap.put(VisilabsConstant.SDK_TYPE_PREF_KEY, mSdkType);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -583,9 +589,9 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.URI_KEY, VisilabsConstant.PAGE_NAME_REQUEST_VAL);
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
+        queryMap.put(VisilabsConstant.SDK_TYPE_PREF_KEY, mSdkType);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -643,9 +649,9 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.URI_KEY, VisilabsConstant.PAGE_NAME_REQUEST_VAL);
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
+        queryMap.put(VisilabsConstant.SDK_TYPE_PREF_KEY, mSdkType);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -703,9 +709,9 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.URI_KEY, VisilabsConstant.PAGE_NAME_REQUEST_VAL);
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
+        queryMap.put(VisilabsConstant.SDK_TYPE_PREF_KEY, mSdkType);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -843,9 +849,9 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.URI_KEY, VisilabsConstant.PAGE_NAME_REQUEST_VAL);
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
+        queryMap.put(VisilabsConstant.SDK_TYPE_PREF_KEY, mSdkType);
         queryMap.put(VisilabsConstant.DOMAIN_KEY, mDataSource + "_Android");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -901,12 +907,12 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
+        queryMap.put(VisilabsConstant.SDK_TYPE_PREF_KEY, mSdkType);
         queryMap.put(VisilabsConstant.TYPE_KEY, type);
         queryMap.put(VisilabsConstant.ACTION_ID_KEY, actId);
         queryMap.put(VisilabsConstant.AUTH_KEY, auth);
         queryMap.put(VisilabsConstant.SUBS_EMAIL_KEY, email);
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -1187,9 +1193,9 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.EXVISITORID_KEY, exVisitorID);
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
+        queryMap.put(VisilabsConstant.SDK_TYPE_PREF_KEY, mSdkType);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -1263,9 +1269,9 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.EXVISITORID_KEY, exVisitorID);
         queryMap.put(VisilabsConstant.COOKIEID_KEY, mCookieID);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
+        queryMap.put(VisilabsConstant.SDK_TYPE_PREF_KEY, mSdkType);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -1401,6 +1407,13 @@ public class Visilabs {
                 properties.remove(VisilabsConstant.CHANNEL_KEY);
             }
 
+            if (properties.containsKey(VisilabsConstant.SDK_TYPE_PREF_KEY)) {
+                if (properties.get(VisilabsConstant.SDK_TYPE_PREF_KEY) != null) {
+                    mSdkType = properties.get(VisilabsConstant.SDK_TYPE_PREF_KEY);
+                }
+                properties.remove(VisilabsConstant.SDK_TYPE_PREF_KEY);
+            }
+
             if (properties.containsKey(VisilabsConstant.TOKENID_KEY)) {
                 if (properties.get(VisilabsConstant.TOKENID_KEY) != null) {
                     mSysTokenID = properties.get(VisilabsConstant.TOKENID_KEY);
@@ -1441,9 +1454,9 @@ public class Visilabs {
         if (mUtmContent != null && mUtmContent.length() > 0)
             queryMap.put(VisilabsConstant.UTM_CONTENT_KEY, mUtmContent);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
+        queryMap.put(VisilabsConstant.SDK_TYPE_PREF_KEY, mSdkType);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -1553,6 +1566,13 @@ public class Visilabs {
                 properties.remove(VisilabsConstant.CHANNEL_KEY);
             }
 
+            if (properties.containsKey(VisilabsConstant.SDK_TYPE_PREF_KEY)) {
+                if (properties.get(VisilabsConstant.SDK_TYPE_PREF_KEY) != null) {
+                    mSdkType = properties.get(VisilabsConstant.SDK_TYPE_PREF_KEY);
+                }
+                properties.remove(VisilabsConstant.SDK_TYPE_PREF_KEY);
+            }
+
             if (properties.containsKey(VisilabsConstant.TOKENID_KEY)) {
                 if (properties.get(VisilabsConstant.TOKENID_KEY) != null) {
                     mSysTokenID = properties.get(VisilabsConstant.TOKENID_KEY);
@@ -1634,9 +1654,9 @@ public class Visilabs {
         if (mUtmContent != null && mUtmContent.length() > 0)
             queryMap.put(VisilabsConstant.UTM_CONTENT_KEY, mUtmContent);
         queryMap.put(VisilabsConstant.CHANNEL_KEY, mChannel);
+        queryMap.put(VisilabsConstant.SDK_TYPE_PREF_KEY, mSdkType);
         queryMap.put(VisilabsConstant.MAPPL_KEY, "true");
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, mSdkVersion);
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, mSdkType);
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, mAppVersion);
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -2051,10 +2071,6 @@ public class Visilabs {
 
     public String getSdkVersion() {
         return mSdkVersion;
-    }
-
-    public String getSdkType() {
-        return mSdkType;
     }
 
     public String getAppVersion() {

@@ -740,7 +740,6 @@ public class VisilabsActionRequest extends VisilabsRemote {
         }
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, Visilabs.CallAPI().getSdkType());
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, Visilabs.CallAPI().getAppVersion());
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -859,7 +858,6 @@ public class VisilabsActionRequest extends VisilabsRemote {
         }
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, Visilabs.CallAPI().getSdkType());
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, Visilabs.CallAPI().getAppVersion());
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));
@@ -956,7 +954,6 @@ public class VisilabsActionRequest extends VisilabsRemote {
         }
 
         queryMap.put(VisilabsConstant.SDK_VERSION_KEY, Visilabs.CallAPI().getSdkVersion());
-        queryMap.put(VisilabsConstant.SDK_TYPE_KEY, Visilabs.CallAPI().getSdkType());
         queryMap.put(VisilabsConstant.APP_VERSION_KEY, Visilabs.CallAPI().getAppVersion());
         queryMap.put(VisilabsConstant.NOTIFICATION_PERMISSION_REQUEST_KEY,
                 AppUtils.getNotificationPermissionStatus(mContext));

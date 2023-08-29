@@ -66,6 +66,9 @@
         <meta-data
             android:name="VisilabsActionURL"
             android:value="https://s.visilabs.net/actjson" />
+        <meta-data
+            android:name="VisilabsSdkType"
+            android:value="native" />
 
         <activity
             android:name=".MainActivity"

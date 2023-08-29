@@ -19,6 +19,8 @@ public class VisilabsParameters implements Serializable {
     private String geofenceUrl;
     private boolean geofenceEnabled;
 
+    private String sdkType;
+
     public VisilabsParameters(
             String organizationId,
             String siteId,
@@ -32,7 +34,8 @@ public class VisilabsParameters implements Serializable {
             String targetUrl,
             String actionUrl,
             String geofenceUrl,
-            boolean geofenceEnabled) {
+            boolean geofenceEnabled,
+            String sdkType) {
 
         this.organizationId = organizationId;
         this.siteId = siteId;
@@ -47,6 +50,7 @@ public class VisilabsParameters implements Serializable {
         this.actionUrl = actionUrl;
         this.geofenceUrl = geofenceUrl;
         this.geofenceEnabled = geofenceEnabled;
+        this.sdkType = sdkType;
     }
 
     public String getOrganizationId() {
@@ -99,5 +103,9 @@ public class VisilabsParameters implements Serializable {
 
     public boolean getGeofenceEnabled() {
         return this.geofenceEnabled;
+    }
+
+    public String getSdkType() {
+        return this.sdkType;
     }
 }
