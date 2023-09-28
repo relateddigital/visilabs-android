@@ -770,6 +770,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), mInAppMessage.getActionData().getPromotionCode());
                     clipboard.setPrimaryClip(clip);
                     Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+                    if(!mInAppMessage.getActionData().getmPromoCodeCopyButtonFunction().isEmpty()) {
+                        if (mInAppMessage.getActionData().getmPromoCodeCopyButtonFunction().equals("copy_close")) {
+                            finish();
+                        }
+                    }
                 }
             });
         } else {

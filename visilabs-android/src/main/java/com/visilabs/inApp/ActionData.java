@@ -111,6 +111,8 @@ public class ActionData implements Parcelable {
     private final String mSecondPopupVideoUrl1;
     @SerializedName("secondPopup_videourl2")
     private final String mSecondPopupVideoUrl2;
+    @SerializedName("promocode_copybutton_function")
+    private final String mPromoCodeCopyButtonFunction;
 
     protected ActionData(Parcel in) {
         mAlertType = in.readString();
@@ -157,6 +159,7 @@ public class ActionData implements Parcelable {
         mMsgTitleBackgroundColor = in.readString();
         mMsgBodyBackgroundColor = in.readString();
         mButtonFunction = in.readString();
+        mPromoCodeCopyButtonFunction = in.readString();
         mVideoUrl = in.readString();
         mSecondPopupVideoUrl1 = in.readString();
         mSecondPopupVideoUrl2 = in.readString();
@@ -226,6 +229,7 @@ public class ActionData implements Parcelable {
         dest.writeString(mMsgTitleBackgroundColor);
         dest.writeString(mMsgBodyBackgroundColor);
         dest.writeString(mButtonFunction);
+        dest.writeString(mPromoCodeCopyButtonFunction);
         dest.writeString(mVideoUrl);
         dest.writeString(mSecondPopupVideoUrl1);
         dest.writeString(mSecondPopupVideoUrl2);
@@ -543,6 +547,10 @@ public class ActionData implements Parcelable {
 
     public String getButtonFunction() {
         return mButtonFunction;
+    }
+
+    public String getmPromoCodeCopyButtonFunction() {
+        return mPromoCodeCopyButtonFunction;
     }
 
     public String getVideoUrl() {
