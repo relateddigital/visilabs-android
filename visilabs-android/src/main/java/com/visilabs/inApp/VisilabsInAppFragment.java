@@ -22,6 +22,7 @@ import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
 import com.visilabs.Visilabs;
 import com.visilabs.android.databinding.FragmentInAppMiniBinding;
+import com.visilabs.android.databinding.FragmentInAppMiniTopBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.util.AnimationManager;
 
@@ -39,18 +40,24 @@ public class VisilabsInAppFragment extends Fragment {
     private Runnable mRemover, mDisplayMini;
     private boolean mCleanedUp;
     private FragmentInAppMiniBinding binding;
+    private FragmentInAppMiniTopBinding bindingTop;
+    private boolean useBinding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCleanedUp = false;
+        useBinding = true;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        binding = FragmentInAppMiniBinding.inflate(inflater, container, false);
-        View view = binding.getRoot();
+        if(useBinding){
+
+            binding = FragmentInAppMiniBinding.inflate(inflater, container, false);
+            View view = binding.getRoot();
+
 
         if (mInAppNotificationState != null) {
             if(mInAppMessage == null) {
@@ -59,7 +66,8 @@ public class VisilabsInAppFragment extends Fragment {
 
                 binding.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
                 binding.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
-
+                // TODO when backend ready setCloseButton()
+                //setCloseButton()
                 if (!mInAppMessage.getActionData().getImg().equals("")) {
                     binding.ivInAppImageMini.setVisibility(View.VISIBLE);
                     Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivInAppImageMini);
@@ -78,6 +86,75 @@ public class VisilabsInAppFragment extends Fragment {
         return view;
     }
 
+    else {
+
+        bindingTop = FragmentInAppMiniTopBinding.inflate(inflater, container, false);
+        View viewTop = bindingTop.getRoot();
+        if (mInAppNotificationState != null) {
+            if(mInAppMessage == null) {
+                remove();
+            } else {
+
+                bindingTop.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
+                bindingTop.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
+
+                if (!mInAppMessage.getActionData().getImg().equals("")) {
+                    bindingTop.ivInAppImageMini.setVisibility(View.VISIBLE);
+                    Picasso.get().load(mInAppMessage.getActionData().getImg()).into(bindingTop.ivInAppImageMini);
+                } else {
+                    bindingTop.ivInAppImageMini.setVisibility(View.GONE);
+                }
+
+                mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
+            }
+
+        } else {
+            cleanUp();
+            viewTop = null;
+        }
+        return viewTop;
+    }
+
+    }
+
+    private int getCloseIcon() {
+        if (mInAppMessage != null && mInAppMessage.getActionData() != null) {
+            String closeButtonColor = mInAppMessage.getActionData().getCloseButtonColor();
+            if ("white".equals(closeButtonColor)) {
+                return R.drawable.ic_close_white_24dp;
+            } else if ("black".equals(closeButtonColor)) {
+                return R.drawable.ic_close_black_24dp;
+            }
+        }
+        return R.drawable.ic_close_black_24dp;
+    }
+
+    public void setCloseButton() {
+        // TODO: up or bottom
+    /*
+    if (mInAppMessage != null && mInAppMessage.getActionData() != null) {
+        if (mInAppMessage.getActionData().isUp()) {
+            binding.ibClose.setVisibility(View.VISIBLE);
+            binding.ibClose.setBackgroundResource(R.drawable.ic_close_white_24dp);
+            binding.ibClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    remove();
+                }
+            });
+        } else {
+            bindingTop.ibClose.setVisibility(View.VISIBLE);
+            bindingTop.ibClose.setBackgroundResource(R.drawable.ic_close_white_24dp);
+            bindingTop.ibClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    remove();
+                }
+            });
+        }
+    }
+    */
+    }
     public void setInAppState(int stateId, InAppNotificationState inAppState) {
         mInAppStateId = stateId;
         mInAppNotificationState = inAppState;
@@ -99,6 +176,7 @@ public class VisilabsInAppFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if(mInAppMessage != null) {
+            // TODO when backend ready make arrangement for delay time here
             mHandler.postDelayed(mDisplayMini, 500);
         }
     }
@@ -141,11 +219,19 @@ public class VisilabsInAppFragment extends Fragment {
                         return VisilabsInAppFragment.this.mDetector.onTouchEvent(event);
                     }
                 });
-
+                if(useBinding){
                 getView().startAnimation(AnimationManager.getMiniTranslateAnimation(getActivity()));
 
                 binding.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
-            }
+
+
+                    }
+                else {
+                    getView().startAnimation(AnimationManager.getMiniTranslateTopAnimation(getActivity()));
+
+                    bindingTop.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
+                }
+                }
         };
     }
 
@@ -244,6 +330,7 @@ public class VisilabsInAppFragment extends Fragment {
             final FragmentManager fragmentManager = mParent.getFragmentManager();
 
             try {
+                // TODO When backend ready arrange close animation here
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(0, R.anim.anim_slide_down).remove(this).commitAllowingStateLoss();
                 VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);

@@ -45,6 +45,17 @@ public class AnimationManager {
         return translate;
     }
 
+    public static TranslateAnimation getMiniTranslateTopAnimation(Context context) {
+        float heightDp = 75f;
+        float heightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, heightDp, context.getResources().getDisplayMetrics());
+
+        TranslateAnimation translate = new TranslateAnimation(0f, 0f, -heightPx, 0f);
+        translate.setInterpolator(new DecelerateInterpolator());
+        translate.setDuration(200);
+
+        return translate;
+    }
+
     public static TranslateAnimation getTranslateAnimation() {
         TranslateAnimation translate = new TranslateAnimation(
                 Animation.RELATIVE_TO_SELF, 0.0f,

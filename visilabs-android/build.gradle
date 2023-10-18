@@ -26,11 +26,11 @@ ext {
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 4
         versionName "6.1.6"
         buildConfigField 'String', 'VERSION_NAME', "\"6.1.6\""

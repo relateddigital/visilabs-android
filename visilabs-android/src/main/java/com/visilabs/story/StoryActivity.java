@@ -40,6 +40,7 @@ import com.visilabs.util.AppUtils;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.VisilabsConstant;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
@@ -334,7 +335,11 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     @Override
     protected void onDestroy() {
         mStoriesProgressView.destroy();
-        mRetriever.release();
+        try {
+            mRetriever.release();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if(mTimerCountDown!=null){
             mTimerCountDown.cancel();
         }
