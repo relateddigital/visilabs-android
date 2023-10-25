@@ -42,7 +42,6 @@ public class VisilabsInAppFragment extends Fragment {
     private boolean mCleanedUp = false;
     private FragmentInAppMiniBinding binding;
     private FragmentInAppMiniTopBinding bindingTop;
-    private boolean useBinding = true;
     private int MINI_REMOVE_TIME = 5000;
 
     @Override
@@ -56,12 +55,15 @@ public class VisilabsInAppFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         if(mInAppMessage.getActionData().getPos() !=null){
-        if (mInAppMessage.getActionData().getPos().equals("top"))
+        if (mInAppMessage.getActionData().getPos().equals("top")) {
             bindingTop = FragmentInAppMiniTopBinding.inflate(inflater, container, false);
             View viewTop = bindingTop.getRoot();
             if (mInAppNotificationState != null) {
                 bindingTop.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
                 bindingTop.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
+                if(mInAppMessage.getActionData().getMsgTitleColor() != null) {
+                    bindingTop.tvInAppTitleMini.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+                }
                 setCloseButton();
                 if (!mInAppMessage.getActionData().getImg().equals("")) {
                     bindingTop.ivInAppImageMini.setVisibility(View.VISIBLE);
@@ -71,12 +73,13 @@ public class VisilabsInAppFragment extends Fragment {
                 }
                 delay();
                 mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
-            } else {
+              } else {
                 cleanUp();
                 viewTop = null;
             }
             return viewTop;
-         } else {
+         }
+        else {
             binding = FragmentInAppMiniBinding.inflate(inflater, container, false);
             View view = binding.getRoot();
             if (mInAppNotificationState != null) {
@@ -85,6 +88,9 @@ public class VisilabsInAppFragment extends Fragment {
                 } else {
                     binding.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
                     binding.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
+                    if(mInAppMessage.getActionData().getMsgTitleColor() != null) {
+                        binding.tvInAppTitleMini.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+                    }
                     setCloseButton();
                     if (!mInAppMessage.getActionData().getImg().equals("")) {
                         binding.ivInAppImageMini.setVisibility(View.VISIBLE);
@@ -102,9 +108,39 @@ public class VisilabsInAppFragment extends Fragment {
                 view = null;
             }
             return view;
-        }
+        }  } else {
+            binding = FragmentInAppMiniBinding.inflate(inflater, container, false);
+            View view = binding.getRoot();
+            if (mInAppNotificationState != null) {
+                if (mInAppMessage == null) {
+                    remove();
+                } else {
+                    binding.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
+                    binding.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
+                    if(mInAppMessage.getActionData().getMsgTitleColor() != null) {
+                        binding.tvInAppTitleMini.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+                    }
+                    setCloseButton();
+                    if (!mInAppMessage.getActionData().getImg().equals("")) {
+                        binding.ivInAppImageMini.setVisibility(View.VISIBLE);
+                        Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivInAppImageMini);
+                    } else {
+                        binding.ivInAppImageMini.setVisibility(View.GONE);
+                    }
+                    if (mInAppMessage.getActionData().getDuration() != null) {
+                        delay();
+                    }
+                    mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
+                }
+            } else {
+                cleanUp();
+                view = null;
+            }
+            return view;
 
+        }
     }
+
 
     public void setCloseButton() {
         if (!mInAppMessage.getActionData().getCloseButtonColor().isEmpty()) {
@@ -189,6 +225,12 @@ public class VisilabsInAppFragment extends Fragment {
             public void run() {
                 getView().setVisibility(View.VISIBLE);
                 getView().setBackgroundColor(mInAppNotificationState.getHighlightColor());
+                if(mInAppMessage.getActionData().getBackground() != null) {
+                    getView().setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+                }
+            else {
+                    getView().setBackgroundColor(mInAppNotificationState.getHighlightColor());
+                }
                 getView().setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View view, MotionEvent event) {
@@ -196,10 +238,14 @@ public class VisilabsInAppFragment extends Fragment {
                     }
                 });
                 if(mInAppMessage.getActionData().getPos() != null) {
-                if (mInAppMessage.getActionData().getPos().equals("top"))
+                if (mInAppMessage.getActionData().getPos().equals("top")) {
                     getView().startAnimation(AnimationManager.getMiniTranslateTopAnimation(getActivity()));
                     bindingTop.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
-                  }else {
+                } else {
+                    getView().startAnimation(AnimationManager.getMiniTranslateAnimation(getActivity()));
+                    binding.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
+                }
+                }else {
                     getView().startAnimation(AnimationManager.getMiniTranslateAnimation(getActivity()));
                     binding.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
                 }
