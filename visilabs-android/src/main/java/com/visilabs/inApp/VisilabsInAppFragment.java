@@ -8,6 +8,7 @@ import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,132 +30,108 @@ import com.visilabs.util.AnimationManager;
 public class VisilabsInAppFragment extends Fragment {
 
     private static final String LOG_TAG = "VisilabsFragment";
-    private static final int MINI_REMOVE_TIME = 10000;
 
     private Activity mParent;
     private GestureDetector mDetector;
     private Handler mHandler;
-    private int mInAppStateId;
+    private int mInAppStateId = 0;
     private InAppNotificationState mInAppNotificationState;
     private InAppMessage mInAppMessage;
-    private Runnable mRemover, mDisplayMini;
-    private boolean mCleanedUp;
+    private Runnable mRemover;
+    private Runnable mDisplayMini;
+    private boolean mCleanedUp = false;
     private FragmentInAppMiniBinding binding;
     private FragmentInAppMiniTopBinding bindingTop;
-    private boolean useBinding;
+    private boolean useBinding = true;
+    private int MINI_REMOVE_TIME = 5000;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCleanedUp = false;
-        useBinding = true;
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        if(useBinding){
-
-            binding = FragmentInAppMiniBinding.inflate(inflater, container, false);
-            View view = binding.getRoot();
-
-
-        if (mInAppNotificationState != null) {
-            if(mInAppMessage == null) {
-                remove();
-            } else {
-
-                binding.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
-                binding.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
-                // TODO when backend ready setCloseButton()
-                //setCloseButton()
-                if (!mInAppMessage.getActionData().getImg().equals("")) {
-                    binding.ivInAppImageMini.setVisibility(View.VISIBLE);
-                    Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivInAppImageMini);
-                } else {
-                    binding.ivInAppImageMini.setVisibility(View.GONE);
-                }
-
-                mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
-            }
-
-        } else {
-            cleanUp();
-            view = null;
-        }
-
-        return view;
-    }
-
-    else {
-
-        bindingTop = FragmentInAppMiniTopBinding.inflate(inflater, container, false);
-        View viewTop = bindingTop.getRoot();
-        if (mInAppNotificationState != null) {
-            if(mInAppMessage == null) {
-                remove();
-            } else {
-
+        if(mInAppMessage.getActionData().getPos() !=null){
+        if (mInAppMessage.getActionData().getPos().equals("top"))
+            bindingTop = FragmentInAppMiniTopBinding.inflate(inflater, container, false);
+            View viewTop = bindingTop.getRoot();
+            if (mInAppNotificationState != null) {
                 bindingTop.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
                 bindingTop.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
-
+                setCloseButton();
                 if (!mInAppMessage.getActionData().getImg().equals("")) {
                     bindingTop.ivInAppImageMini.setVisibility(View.VISIBLE);
                     Picasso.get().load(mInAppMessage.getActionData().getImg()).into(bindingTop.ivInAppImageMini);
                 } else {
                     bindingTop.ivInAppImageMini.setVisibility(View.GONE);
                 }
-
+                delay();
                 mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
+            } else {
+                cleanUp();
+                viewTop = null;
             }
-
-        } else {
-            cleanUp();
-            viewTop = null;
-        }
-        return viewTop;
-    }
-
-    }
-
-    private int getCloseIcon() {
-        if (mInAppMessage != null && mInAppMessage.getActionData() != null) {
-            String closeButtonColor = mInAppMessage.getActionData().getCloseButtonColor();
-            if ("white".equals(closeButtonColor)) {
-                return R.drawable.ic_close_white_24dp;
-            } else if ("black".equals(closeButtonColor)) {
-                return R.drawable.ic_close_black_24dp;
+            return viewTop;
+         } else {
+            binding = FragmentInAppMiniBinding.inflate(inflater, container, false);
+            View view = binding.getRoot();
+            if (mInAppNotificationState != null) {
+                if (mInAppMessage == null) {
+                    remove();
+                } else {
+                    binding.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
+                    binding.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
+                    setCloseButton();
+                    if (!mInAppMessage.getActionData().getImg().equals("")) {
+                        binding.ivInAppImageMini.setVisibility(View.VISIBLE);
+                        Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivInAppImageMini);
+                    } else {
+                        binding.ivInAppImageMini.setVisibility(View.GONE);
+                    }
+                    if (mInAppMessage.getActionData().getDuration() != null) {
+                        delay();
+                    }
+                    mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
+                }
+            } else {
+                cleanUp();
+                view = null;
             }
+            return view;
         }
-        return R.drawable.ic_close_black_24dp;
+
     }
 
     public void setCloseButton() {
-        // TODO: up or bottom
-    /*
-    if (mInAppMessage != null && mInAppMessage.getActionData() != null) {
-        if (mInAppMessage.getActionData().isUp()) {
-            binding.ibClose.setVisibility(View.VISIBLE);
-            binding.ibClose.setBackgroundResource(R.drawable.ic_close_white_24dp);
-            binding.ibClose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    remove();
-                }
-            });
-        } else {
-            bindingTop.ibClose.setVisibility(View.VISIBLE);
-            bindingTop.ibClose.setBackgroundResource(R.drawable.ic_close_white_24dp);
-            bindingTop.ibClose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    remove();
-                }
-            });
+        if (!mInAppMessage.getActionData().getCloseButtonColor().isEmpty()) {
+            if (mInAppMessage.getActionData().getPos().equals("top")) {
+                bindingTop.ibClose.setVisibility(View.VISIBLE);
+                bindingTop.ibClose.setColorFilter(Color.parseColor(mInAppMessage.getActionData().getCloseButtonColor()));
+                bindingTop.ibClose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        remove();
+                    }
+                });
+            } else {
+                binding.ibClose.setVisibility(View.VISIBLE);
+                binding.ibClose.setColorFilter(Color.parseColor(mInAppMessage.getActionData().getCloseButtonColor()));
+                binding.ibClose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        remove();
+                    }
+                });
+            }
         }
     }
-    */
-    }
+
+
+
     public void setInAppState(int stateId, InAppNotificationState inAppState) {
         mInAppStateId = stateId;
         mInAppNotificationState = inAppState;
@@ -176,7 +153,6 @@ public class VisilabsInAppFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if(mInAppMessage != null) {
-            // TODO when backend ready make arrangement for delay time here
             mHandler.postDelayed(mDisplayMini, 500);
         }
     }
@@ -219,17 +195,13 @@ public class VisilabsInAppFragment extends Fragment {
                         return VisilabsInAppFragment.this.mDetector.onTouchEvent(event);
                     }
                 });
-                if(useBinding){
-                getView().startAnimation(AnimationManager.getMiniTranslateAnimation(getActivity()));
-
-                binding.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
-
-
-                    }
-                else {
+                if(mInAppMessage.getActionData().getPos() != null) {
+                if (mInAppMessage.getActionData().getPos().equals("top"))
                     getView().startAnimation(AnimationManager.getMiniTranslateTopAnimation(getActivity()));
-
                     bindingTop.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
+                  }else {
+                    getView().startAnimation(AnimationManager.getMiniTranslateAnimation(getActivity()));
+                    binding.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
                 }
                 }
         };
@@ -330,13 +302,28 @@ public class VisilabsInAppFragment extends Fragment {
             final FragmentManager fragmentManager = mParent.getFragmentManager();
 
             try {
-                // TODO When backend ready arrange close animation here
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(0, R.anim.anim_slide_down).remove(this).commitAllowingStateLoss();
-                VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
-                mCleanedUp = true;
+                if (mInAppMessage.getActionData().getPos().equals("top")) {
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.setCustomAnimations(0, R.anim.slide_up).remove(this).commitAllowingStateLoss();
+                    VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
+                    mCleanedUp = true;
+                } else {
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.setCustomAnimations(0, R.anim.anim_slide_down).remove(this).commitAllowingStateLoss();
+                    VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
+                    mCleanedUp = true;
+                }
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Fragment can not be removed.", e);
+            }
+        }
+    }
+    private void delay() {
+        if (mInAppMessage != null) {
+            if (mInAppMessage.getActionData().getDuration() != null) {
+                MINI_REMOVE_TIME = (mInAppMessage.getActionData().getDuration() * 1000) + 1000;
+            } else {
+                MINI_REMOVE_TIME = 5000;
             }
         }
     }

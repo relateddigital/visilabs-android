@@ -4,14 +4,12 @@
     android:layout_gravity="bottom"
     android:orientation="horizontal"
     android:visibility="gone">
-
     <com.visilabs.view.MiniCircleImageView
         android:id="@+id/iv_in_app_image_mini"
         android:layout_width="75dp"
         android:layout_height="match_parent"
         android:contentDescription="@string/com_visilabs_android_notification_image"
-        android:scaleType="centerInside" />
-
+        android:scaleType="centerCrop" />
     <TextView
         android:id="@+id/tv_in_app_title_mini"
         android:layout_width="0dp"
@@ -22,5 +20,15 @@
         android:paddingRight="15dp"
         android:textColor="#ffffff"
         android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/ib_close"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="5dp"
+        android:src="@drawable/ic_baseline_close_24"
+        android:textColor="#000000"
+        android:visibility="gone"/>
 
 </LinearLayout>

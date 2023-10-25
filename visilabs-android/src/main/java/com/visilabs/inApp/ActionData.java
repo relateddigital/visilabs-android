@@ -89,6 +89,8 @@ public class ActionData implements Parcelable {
     private final String mSecondPopupImg2;
     @SerializedName("pos")
     private final String mPos;
+    @SerializedName("duration")
+    private  Integer mDuration = null ;
     @SerializedName("msg_title_textsize")
     private final String mMsgTitleTextSize;
     @SerializedName("close_event_trigger")
@@ -519,6 +521,10 @@ public class ActionData implements Parcelable {
 
     public String getPos() {
         return mPos;
+    }
+
+    public Integer getDuration() {
+        return mDuration;
     }
 
     public String getMsgTitleTextSize() {
