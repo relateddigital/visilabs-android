@@ -30,7 +30,8 @@ public class RemoteConfigApiClient {
                     new OkHttpClient.Builder()
                             .addInterceptor(interceptor)
                             .connectTimeout(30, TimeUnit.SECONDS)
-                            .readTimeout(30, TimeUnit.SECONDS);
+                            .readTimeout(30, TimeUnit.SECONDS)
+                            .retryOnConnectionFailure(true);
 
             synchronized (RemoteConfigApiClient.class) {
                 if(retrofit == null) {

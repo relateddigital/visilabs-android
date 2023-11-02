@@ -29,7 +29,8 @@ public class RealTimeApiClient {
                     new OkHttpClient.Builder()
                             .addInterceptor(interceptor)
                             .connectTimeout(connectTimeOutInSec, TimeUnit.SECONDS)
-                            .readTimeout(30, TimeUnit.SECONDS);
+                            .readTimeout(30, TimeUnit.SECONDS)
+                            .retryOnConnectionFailure(true);
 
             synchronized (RealTimeApiClient.class) {
                 if(retrofit == null) {
