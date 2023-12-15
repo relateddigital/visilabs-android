@@ -69,6 +69,7 @@ public class InAppNotificationFragment extends Fragment {
     private boolean isMiniBackgroundImage = false;
     private boolean isMaxiBackgroundImage = false;
 
+
     public InAppNotificationFragment() {
         // Required empty public constructor
     }
@@ -91,6 +92,8 @@ public class InAppNotificationFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(DrawerActive.isDrawerActive() == false) {
         if(savedInstanceState != null) {
             response = (DrawerModel) savedInstanceState.getSerializable("drawer");
         } else {
@@ -112,11 +115,15 @@ public class InAppNotificationFragment extends Fragment {
                 endFragment();
             }
         }
+
+        DrawerActive.setDrawerActive(true);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if(DrawerViewActive.isDrawerViewActive() == false) {
         View view;
 
         isRight = !response.getActionData().getPos().equals("topLeft") &&
@@ -185,7 +192,11 @@ public class InAppNotificationFragment extends Fragment {
         }
 
         setupInitialView();
-        return view;
+            DrawerViewActive.setDrawerViewActive(true);
+            return view;
+    }
+        return null;
+
     }
 
     private void setupInitialView() {
