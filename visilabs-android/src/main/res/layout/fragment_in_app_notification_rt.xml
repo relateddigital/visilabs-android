@@ -14,17 +14,17 @@
         android:layout_marginTop="32dp" >
 
         <ImageView
+            android:id="@+id/big_background_image_rt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/big_background_image_rt"
-            android:scaleType="centerCrop"/>
+            android:scaleType="fitXY" />
 
         <ImageView
+            android:id="@+id/big_image_rt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/big_image_rt"
-            android:scaleType="centerCrop"
-            android:layout_margin="4dp"/>
+            android:layout_margin="4dp"
+            android:scaleType="fitXY" />
     </FrameLayout>
 
     <FrameLayout
@@ -38,10 +38,10 @@
         android:layout_marginTop="40dp">
 
         <ImageView
+            android:id="@+id/small_square_background_image_rt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/small_square_background_image_rt"
-            android:scaleType="centerCrop"/>
+            android:scaleType="fitXY" />
 
         <com.visilabs.inappnotification.VerticalTextView
             android:id="@+id/small_square_text_rt"
@@ -54,10 +54,10 @@
             android:textSize="14sp" />
 
         <ImageView
+            android:id="@+id/small_square_image_rt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/small_square_image_rt"
-            android:scaleType="centerCrop"/>
+            android:scaleType="fitXY" />
 
         <TextView
             android:id="@+id/arrow_square_rt"
@@ -79,10 +79,10 @@
         android:layout_marginTop="62dp">
 
         <ImageView
+            android:id="@+id/small_circle_background_image_rt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/small_circle_background_image_rt"
-            android:scaleType="centerCrop"/>
+            android:scaleType="fitXY" />
 
         <com.visilabs.inappnotification.VerticalTextView
             android:id="@+id/small_circle_text_rt"
@@ -95,10 +95,10 @@
             android:textSize="12sp" />
 
         <ImageView
+            android:id="@+id/small_circle_image_rt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/small_circle_image_rt"
-            android:scaleType="centerCrop"/>
+            android:scaleType="fitXY" />
 
         <TextView
             android:id="@+id/arrow_circle_rt"

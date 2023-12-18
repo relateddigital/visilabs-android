@@ -16,13 +16,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/big_background_image_rm"
-            android:scaleType="centerCrop"/>
+            android:scaleType="fitXY"/>
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/big_image_rm"
-            android:scaleType="centerCrop"
+            android:scaleType="fitXY"
             android:layout_margin="4dp"/>
     </FrameLayout>
 
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/small_square_background_image_rm"
-            android:scaleType="centerCrop"/>
+            android:scaleType="fitXY"/>
 
         <com.visilabs.inappnotification.VerticalTextView
             android:id="@+id/small_square_text_rm"
@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/small_square_image_rm"
-            android:scaleType="centerCrop"/>
+            android:scaleType="fitXY"/>
 
         <TextView
             android:id="@+id/arrow_square_rm"
@@ -79,7 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/small_circle_background_image_rm"
-            android:scaleType="centerCrop"/>
+            android:scaleType="fitXY"/>
 
         <com.visilabs.inappnotification.VerticalTextView
             android:id="@+id/small_circle_text_rm"
@@ -95,7 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/small_circle_image_rm"
-            android:scaleType="centerCrop"/>
+            android:scaleType="fitXY"/>
 
         <TextView
             android:id="@+id/arrow_circle_rm"
