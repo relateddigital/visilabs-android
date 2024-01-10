@@ -17,11 +17,13 @@ import androidx.fragment.app.Fragment;
 
 import com.google.gson.Gson;
 import com.visilabs.android.R;
+import com.visilabs.inApp.customactions.model.CustomActions;
+import com.visilabs.inApp.customactions.model.CustomActionsExtendedProps;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-/*public class CustomActionFragment extends Fragment {
+public class CustomActionFragment extends Fragment {
 
     private static final String LOG_TAG = "CustomActionNotification";
     private static final String ARG_PARAM1 = "dataKey";
@@ -141,4 +143,4 @@ import java.net.URISyntaxException;
     }
 
     // Diğer metotlar ve iç sınıflar aynı şekilde çevrilebilir
-} */
+}
