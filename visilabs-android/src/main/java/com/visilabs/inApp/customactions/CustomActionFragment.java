@@ -1,5 +1,6 @@
 package com.visilabs.inApp.customactions;
 
+
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,36 +13,53 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
+import android.app.Fragment;
 
 import com.google.gson.Gson;
 import com.visilabs.android.R;
 import com.visilabs.inApp.customactions.model.CustomActions;
 import com.visilabs.inApp.customactions.model.CustomActionsExtendedProps;
+import com.visilabs.inappnotification.InAppNotificationFragment;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link CustomActionFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
 public class CustomActionFragment extends Fragment {
+
 
     private static final String LOG_TAG = "CustomActionNotification";
     private static final String ARG_PARAM1 = "dataKey";
 
-    private CustomActions response;
-    private CustomActionsExtendedProps mExtendedProps;
+    private CustomActions response = null;
+    private CustomActionsExtendedProps mExtendedProps = null;
     private String position;
     private Integer width, height;
     private String combined, customActionJsStr, jsonStr;
     private String combinedHtml = "";
     private String jsCode, htmlContent;
+    public CustomActionFragment() {
+
+        // Required empty public constructor
+    }
+    public static CustomActionFragment newInstance(CustomActions model) {
+        CustomActionFragment fragment = new CustomActionFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_PARAM1, model);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         response = savedInstanceState != null ?
                 (CustomActions) savedInstanceState.getSerializable("customactions") :
-                (CustomActions) requireArguments().getSerializable(ARG_PARAM1);
+                (CustomActions) getArguments().getSerializable(ARG_PARAM1);
 
         if (response == null) {
             Log.e(LOG_TAG, "The data could not get properly!");
@@ -114,7 +132,75 @@ public class CustomActionFragment extends Fragment {
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
 
-        // ... (Devamı aynı şekilde çevrilebilir)
+
+        if ("topLeft".equals(position)) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            closeParams.topMargin = 45;
+            closeParams.leftMargin = (int) ((screenWidth * width / 100.0) - 90);
+        } else if ("topCenter".equals(position)) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            closeParams.topMargin = 45;
+            closeParams.leftMargin = (int) ((screenWidth * width / 200.0) + (screenWidth / 2) - 90);
+        } else if ("topRight".equals(position)) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            closeParams.topMargin = 45;
+            closeParams.leftMargin = 45;
+        } else if ("middleRight".equals(position)) {
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            closeParams.bottomMargin = (int) ((screenHeight * height / 200.0) + (screenHeight / 2) - 180);
+            closeParams.leftMargin = 45;
+        } else if ("bottomRight".equals(position)) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            closeParams.bottomMargin = (int) ((screenHeight * height / 100.0) - 90);
+            closeParams.leftMargin = 45;
+        } else if ("bottomCenter".equals(position)) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            closeParams.bottomMargin = (int) ((screenHeight * height / 100.0) - 90);
+            closeParams.leftMargin = (int) ((screenWidth * width / 200.0) + (screenWidth / 2) - 90);
+        } else if ("bottomLeft".equals(position)) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            closeParams.bottomMargin = (int) ((screenHeight * height / 100.0) - 90);
+            closeParams.leftMargin = (int) ((screenWidth * width / 100.0) - 90);
+        } else if ("middleLeft".equals(position)) {
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            closeParams.bottomMargin = (int) ((screenHeight * height / 200.0) + (screenHeight / 2) - 180);
+            closeParams.leftMargin = (int) ((screenWidth * width / 100.0) - 90);
+        } else if ("middleCenter".equals(position)) {
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            closeParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            closeParams.bottomMargin = (int) ((screenHeight * height / 200.0) + (screenHeight / 2) - 180);
+            closeParams.leftMargin = (int) ((screenWidth * width / 200.0) + (screenWidth / 2) - 90);
+        } else {
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        }
+
+        params.width = (int) (screenWidth * width / 100.0);
+        params.height = (int) (screenHeight * height / 100.0);
 
         webView.setLayoutParams(params);
         closeButton.setLayoutParams(closeParams);
@@ -131,9 +217,7 @@ public class CustomActionFragment extends Fragment {
 
     private void endFragment() {
         if (getActivity() != null) {
-            requireActivity().getSupportFragmentManager().beginTransaction()
-                    .remove(this)
-                    .commit();
+            getActivity().getFragmentManager().beginTransaction().remove(CustomActionFragment.this).commit();
         }
     }
 

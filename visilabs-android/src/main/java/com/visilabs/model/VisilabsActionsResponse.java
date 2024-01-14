@@ -3,6 +3,7 @@ package com.visilabs.model;
 import com.google.gson.annotations.SerializedName;
 import com.visilabs.favs.FavoriteAttributeAction;
 import com.visilabs.inApp.ProductStatNotifierModel;
+import com.visilabs.inApp.customactions.model.CustomActions;
 import com.visilabs.inappnotification.DrawerModel;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.scratchToWin.model.ScratchToWinModel;
@@ -21,6 +22,9 @@ public class VisilabsActionsResponse implements Serializable {
     private List<SpinToWinModel> mSpinToWinList = null;
     @SerializedName("ScratchToWin")
     private List<ScratchToWinModel> mScratchToWinList = null;
+
+    @SerializedName("MobileCustomActions")
+    private List<CustomActions> mCustomActionList = null;
     @SerializedName("ProductStatNotifier")
     private List<ProductStatNotifierModel> mProductStatNotifier = null;
     @SerializedName("Story")
@@ -58,6 +62,14 @@ public class VisilabsActionsResponse implements Serializable {
 
     public List<ScratchToWinModel> getScratchToWinList() {
         return mScratchToWinList;
+    }
+
+    public List<CustomActions> getCustomActionList() {
+        return mCustomActionList;
+    }
+
+    public void setCustomActionList(List<CustomActions> customActionList) {
+        mCustomActionList = customActionList;
     }
 
     public void setScratchToWinList(List<ScratchToWinModel> scratchToWinList) {

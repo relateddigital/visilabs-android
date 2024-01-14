@@ -21,7 +21,7 @@ public class CustomActions implements Serializable {
     @SerializedName("panelv2")
     private Boolean panelv2;
 
-    // Getter ve Setter metotları
+
 
     public String getActid() {
         return actid;

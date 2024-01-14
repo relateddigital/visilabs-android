@@ -39,6 +39,7 @@
     <string name="nps_3">NPS 3</string>
     <string name="half_screen">HALF SCREEN</string>
     <string name="notification">NOTIFICATION</string>
+    <string name="custom_action">CUSTOM ACTION</string>
     <string name="geofence">GEOFENCING</string>
 
     <string name="alert">Alert</string>

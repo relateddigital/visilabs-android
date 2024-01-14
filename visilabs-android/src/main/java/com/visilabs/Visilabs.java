@@ -5,6 +5,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
+import com.visilabs.android.R;
 import com.visilabs.api.LoggerApiClient;
 import com.visilabs.api.RealTimeApiClient;
 import com.visilabs.api.SApiClient;
@@ -36,6 +38,7 @@ import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.SocialProofFragment;
 import com.visilabs.inApp.VisilabsActionRequest;
+import com.visilabs.inApp.customactions.CustomActionFragment;
 import com.visilabs.inappnotification.InAppNotificationFragment;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.mailSub.Report;
@@ -763,7 +766,7 @@ public class Visilabs {
             return;
         }
         try {
-            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier~drawer");
+            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier~drawer~MobileCustomActions");
             visilabsActionRequest.setPageName(pageName);
             visilabsActionRequest.setProperties(properties);
             visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback(parent));
@@ -797,7 +800,19 @@ public class Visilabs {
                         ScratchToWinModel scratchToWinModel = (ScratchToWinModel) response.getScratchToWinList().get(0);
                         intent.putExtra("scratch-to-win-data", scratchToWinModel);
                         parent.startActivity(intent);
-                    } else if (!response.getMailSubscriptionForm().isEmpty()) {
+                    }
+                    else if (!response.getCustomActionList().isEmpty()) {
+                        CustomActionFragment customActionFragment = CustomActionFragment.newInstance(response.getCustomActionList().get(0));
+
+                        customActionFragment.setRetainInstance(true);
+
+                        int fragmentContainerId = R.id.fragment_container;
+
+                        FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
+                        transaction.add(android.R.id.content, customActionFragment);
+                        transaction.commit();
+                    }
+                    else if (!response.getMailSubscriptionForm().isEmpty()) {
                         MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm) response.getMailSubscriptionForm().get(0);
                         new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
                     } else if (!response.getProductStatNotifierList().isEmpty()) {
