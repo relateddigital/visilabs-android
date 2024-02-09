@@ -806,7 +806,6 @@ public class Visilabs {
 
                         customActionFragment.setRetainInstance(true);
 
-                        int fragmentContainerId = R.id.fragment_container;
 
                         FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
                         transaction.add(android.R.id.content, customActionFragment);
