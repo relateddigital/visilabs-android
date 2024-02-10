@@ -81,6 +81,7 @@
         </activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".StoryActivity" />
+        <activity android:name=".SearchActivity" />
 
         <service
             android:name="com.visilabs.gps.geofence.GeofenceTransitionsIntentService"
