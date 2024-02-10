@@ -12,6 +12,7 @@
     <string name="go_to_inapp_page">GO TO IN-APP PAGE</string>
     <string name="go_to_story_page">GO TO STORY PAGE</string>
     <string name="go_to_app_banner">GO TO APP BANNER PAGE</string>
+    <string name="go_to_search">GO TO SEARCH PAGE</string>
 
     <string name="custom_event_1">CUSTOM EVENT 1</string>
     <string name="custom_event_2">CUSTOM EVENT 2</string>
@@ -46,5 +47,6 @@
     <string name="story_id_optional">Story ID (optional)</string>
     <string name="show_story">Show Story</string>
     <string name="clear_story_cache">Clear Story Cache</string>
+    <string name="search">Type here</string>
 
 </resources>

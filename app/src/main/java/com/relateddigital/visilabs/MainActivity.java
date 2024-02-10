@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-test");
-        Visilabs.CallAPI().customEvent("android-visilab", parameters);
+        Visilabs.CallAPI().customEvent("android-visilabs", parameters);
 
         binding.btnGoToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +57,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, BannerCarouselDemoActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        binding.btnGoToSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
                 startActivity(intent);
             }
         });
