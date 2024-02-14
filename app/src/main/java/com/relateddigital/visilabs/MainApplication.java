@@ -1,8 +1,10 @@
 package com.relateddigital.visilabs;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -15,13 +17,25 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.Constants;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.common.ApiException;
 import com.visilabs.Visilabs;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import euromsg.com.euromobileandroid.EuroMobileManager;
 
@@ -47,24 +61,31 @@ public class MainApplication extends MultiDexApplication {
         profileId = "356467332F6533766975593D";
         dataSource = "visistore";
 
+        //search-test
+        if(getProfile("search-test") != null){
+            organizationId = Objects.requireNonNull(getProfile("search-test")).getOrganizationId();
+            profileId = Objects.requireNonNull(getProfile("search-test")).getProfileId();
+            dataSource = Objects.requireNonNull(getProfile("search-test")).getDataSource();
+        }
 
-        try{
+
+        try {
             appInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-        } catch (PackageManager.NameNotFoundException e){
+        } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
 
-        if(appInfo!=null){
+        if (appInfo != null) {
             bundle = appInfo.metaData;
         }
-        if(isTest){
+        if (isTest) {
             organizationId = "394A48556A2F76466136733D";
             profileId = "75763259366A3345686E303D";
             dataSource = "mrhp";
             VisilabsConstant.ACTION_ENDPOINT = "http://tests.visilabs.net/";
         }
 
-        if(bundle!=null){
+        if (bundle != null) {
             appAlias = bundle.getString("AppAlias", "");
             Visilabs.CreateAPI(
                     organizationId,
@@ -79,7 +100,7 @@ public class MainApplication extends MultiDexApplication {
                     bundle.getInt("VisilabsRequestTimeoutInSeconds", 30),
                     bundle.getString("VisilabsGeofenceURL", ""),
                     bundle.getBoolean("VisilabsGeofenceEnabled", false),
-                    bundle.getString("VisilabsSdkType","native")
+                    bundle.getString("VisilabsSdkType", "native")
             );
         }
 
@@ -89,7 +110,7 @@ public class MainApplication extends MultiDexApplication {
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         boolean accessCoarseLocationPermission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        if(bundle!=null) {
+        if (bundle != null) {
             if (bundle.getBoolean("VisilabsGeofenceEnabled", false)
                     && !StringUtils.isNullOrWhiteSpace(bundle.getString("VisilabsGeofenceURL", ""))) {
                 if (!(accessFineLocationPermission || accessCoarseLocationPermission)) {
@@ -120,7 +141,7 @@ public class MainApplication extends MultiDexApplication {
                             return;
                         }
                         String token = task.getResult();
-                        HashMap<String, String> parameters= new HashMap<String, String>();
+                        HashMap<String, String> parameters = new HashMap<String, String>();
                         parameters.put("OM.sys.TokenID", token);
                         parameters.put("OM.sys.AppID", appAlias);
                         Visilabs.CallAPI().customEvent("Register Token", parameters);
@@ -137,7 +158,7 @@ public class MainApplication extends MultiDexApplication {
                     String appId = AGConnectServicesConfig.fromContext(getApplicationContext()).getString("client/app_id");
                     final String token = HmsInstanceId.getInstance(getApplicationContext()).getToken(appId, "HCM");
 
-                    HashMap<String, String> parameters= new HashMap<String, String>();
+                    HashMap<String, String> parameters = new HashMap<String, String>();
                     parameters.put("OM.sys.TokenID", token);
                     parameters.put("OM.sys.AppID", appAlias);
                     Visilabs.CallAPI().customEvent("Register Token", parameters);
@@ -149,4 +170,35 @@ public class MainApplication extends MultiDexApplication {
             }
         }.start();
     }
+
+    private String getProfiles() {
+        try {
+            InputStream inputStream = getApplicationContext().getAssets().open("profiles.json");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            return builder.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Profile getProfile(String key) {
+        try {
+            String profilesString = getProfiles();
+            Gson gson = new Gson();
+            Type listUserType = new TypeToken<Map<String, Profile>>() {
+            }.getType();
+            Map<String, Profile> profiles = gson.fromJson(profilesString, listUserType);
+            return profiles != null ? profiles.get(key) : null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Profile();
+        }
+    }
+
 }
