@@ -1,4 +1,4 @@
-package com.relateddigital.visilabs;
+package com.relateddigital.visilabs.model;
 
 import androidx.annotation.NonNull;
 

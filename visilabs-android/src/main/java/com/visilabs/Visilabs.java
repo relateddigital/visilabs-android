@@ -5,7 +5,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -20,14 +19,15 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
-import com.visilabs.android.R;
 import com.visilabs.api.LoggerApiClient;
 import com.visilabs.api.RealTimeApiClient;
 import com.visilabs.api.SApiClient;
+import com.visilabs.api.SearchRecommendationApiClient;
 import com.visilabs.api.VisilabsAction;
 import com.visilabs.api.VisilabsActionsCallback;
 import com.visilabs.api.VisilabsApiMethods;
 import com.visilabs.api.VisilabsInAppMessageCallback;
+import com.visilabs.api.VisilabsSearchRequest;
 import com.visilabs.api.VisilabsTargetFilter;
 import com.visilabs.api.VisilabsTargetRequest;
 import com.visilabs.exceptions.VisilabsNotReadyException;
@@ -148,7 +148,6 @@ public class Visilabs {
     private VisilabsApiMethods mVisilabsLoggerApiInterface;
     private VisilabsApiMethods mVisilabsRealTimeApiInterface;
     private VisilabsApiMethods mVisilabsSApiInterface;
-
     private InAppButtonInterface mInAppButtonInterface = null;
 
     private Visilabs(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
@@ -1008,6 +1007,17 @@ public class Visilabs {
     }
 
 
+
+    public VisilabsSearchRequest buildSearchRecommendationRequest(String keyword, String searchType)
+            throws Exception {
+        VisilabsSearchRequest request = (VisilabsSearchRequest) buildSearchAction();
+        request.setSearchType(searchType);
+        request.setDataSource(mDataSource);
+        request.setKeyword(keyword);
+        request.setApiVer("Android");
+        return request;
+    }
+
     public VisilabsTargetRequest buildTargetRequest(String zoneID, String productCode)
             throws Exception {
         VisilabsTargetRequest request = (VisilabsTargetRequest) buildAction();
@@ -1116,6 +1126,13 @@ public class Visilabs {
         request.setVisitData(mVisitData);
 
         return request;
+    }
+
+    private VisilabsAction buildSearchAction() throws VisilabsNotReadyException {
+        if (!mIsCreated) {
+            throw new VisilabsNotReadyException();
+        }
+        return new VisilabsSearchRequest(mContext);
     }
 
     private VisilabsAction buildAction() throws VisilabsNotReadyException {

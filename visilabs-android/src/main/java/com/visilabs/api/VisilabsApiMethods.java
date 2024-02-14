@@ -109,6 +109,13 @@ public interface VisilabsApiMethods {
             @QueryMap Map<String, String> queryParameters
     );
 
+    @GET("{dataSource}/search")
+    Call<ResponseBody> getSearch(
+            @Path("dataSource") String dataSource,
+            @HeaderMap Map<String, String> headers,
+            @QueryMap Map<String, String> queryParameters
+    );
+
     //Methods for js files -- mbls domain
     @GET("/spin_to_win.js")
     Call<ResponseBody> getSpinToWinJsFile(
