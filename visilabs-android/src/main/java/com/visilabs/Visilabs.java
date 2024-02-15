@@ -760,6 +760,10 @@ public class Visilabs {
         send();
     }
 
+    public void trackSearchRecommendationClick(String qs){
+        trackRecommendationClick(qs);
+    }
+
     private void showActions(String pageName, Activity parent, HashMap<String, String> properties) {
         if (Build.VERSION.SDK_INT < VisilabsConstant.UI_FEATURES_MIN_API) {
             return;

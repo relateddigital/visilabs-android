@@ -20,13 +20,9 @@ import com.relateddigital.visilabs.model.Product;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsCallback;
-import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.api.VisilabsSearchRequest;
-import com.visilabs.favs.FavsResponse;
-import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.json.JSONArray;
 import com.visilabs.json.JSONObject;
-import com.visilabs.util.VisilabsConstant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +31,6 @@ public class SearchActivity extends AppCompatActivity {
     private static final String LOG_TAG = "SearchActivity";
 
     private ActivitySearchBinding binding;
-
-    private final Handler handler = new Handler();
-    private Runnable fetchSuggestionsRunnable;
 
     List<String> suggestions = new ArrayList<>();
 
@@ -62,9 +55,6 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 fetchSuggestions(s.toString());
-                //handler.removeCallbacks(fetchSuggestionsRunnable);
-                //fetchSuggestionsRunnable = () -> fetchSuggestions(s.toString());
-                //handler.postDelayed(fetchSuggestionsRunnable, 0);
             }
 
             @Override
@@ -110,7 +100,6 @@ public class SearchActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = response.getJson();
                     JSONObject productAreaContainer = jsonObject.getJSONObject("ProductAreaContainer");
-                    String productAreaContainerTitle = productAreaContainer.getString("Title");
                     JSONArray productAreaContainerProducts = productAreaContainer.getJSONArray("Products");
                     ArrayList<Product> products = new ArrayList<>();
                     ArrayList<String> suggestions = new ArrayList<>();
@@ -128,9 +117,35 @@ public class SearchActivity extends AppCompatActivity {
                         products.add(new Product(currentProductTitle, currentProductUrl, currentProductImageUrl, currentProductBrandName, currentProductPrice, currentProductDiscountPrice, currentProductCode, currentProductCurrency, currentProductDiscountCurrency));
                         suggestions.add(currentProductTitle);
                     }
+                    String productAreaContainerTitle = productAreaContainer.getString("Title");
+                    String productAreaContainerPreTitle = productAreaContainer.getString("PreTitle");
+                    String productAreaContainerSearchResultMessage = productAreaContainer.getString("SearchResultMessage");
+                    boolean productAreaContainerChangeTitle = productAreaContainer.getBoolean("ChangeTitle");
+                    JSONObject report = productAreaContainer.getJSONObject("report");
+                    String click = report.getString("click");
+
+
                     Log.d(LOG_TAG, "ProductAreaContainer Title: " + productAreaContainerTitle);
+                    Log.d(LOG_TAG, "ProductAreaContainer PreTitle: " + productAreaContainerPreTitle);
+                    Log.d(LOG_TAG, "ProductAreaContainer SearchResultMessage: " + productAreaContainerSearchResultMessage);
+                    Log.d(LOG_TAG, "ProductAreaContainer ChangeTitle: " + productAreaContainerChangeTitle);
                     Log.d(LOG_TAG, "ProductAreaContainer Products: " + products);
                     Log.d(LOG_TAG, "ProductAreaContainer Suggestions: " + suggestions);
+
+
+                    JSONObject categoryContainer = jsonObject.getJSONObject("CategoryContainer");
+                    JSONArray categoryContainerPopularCategories = categoryContainer.getJSONArray("PopularCategories");
+
+                    String categoryContainerTitle = categoryContainer.getString("Title");
+                    boolean categoryContainerIsActive = categoryContainer.getBoolean("IsActive");
+
+
+
+
+
+
+
+
                     updateAutoCompleteTextView(suggestions);
                 } catch (Exception e) {
                     Log.e(LOG_TAG, e.getMessage(), e);
