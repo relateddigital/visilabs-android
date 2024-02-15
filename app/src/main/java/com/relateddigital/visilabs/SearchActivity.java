@@ -16,12 +16,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.relateddigital.visilabs.databinding.ActivitySearchBinding;
+import com.relateddigital.visilabs.model.Category;
 import com.relateddigital.visilabs.model.Product;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.api.VisilabsSearchRequest;
 import com.visilabs.json.JSONArray;
+import com.visilabs.json.JSONException;
 import com.visilabs.json.JSONObject;
 
 import java.util.ArrayList;
@@ -92,37 +94,47 @@ public class SearchActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+
+    private Product createProductFromJsonObject(JSONObject productObject) throws JSONException {
+        String name = productObject.getString("Name");
+        String url = productObject.getString("Url");
+        String imageUrl = productObject.getString("ImageUrl");
+        String brandName = productObject.getString("BrandName");
+        double price = productObject.getDouble("Price");
+        double discountPrice = productObject.getDouble("DiscountPrice");
+        String code = productObject.getString("Code");
+        String currency = productObject.getString("Currency");
+        String discountCurrency = productObject.getString("DiscountCurrency");
+        return new Product(name, url, imageUrl, brandName, price, discountPrice, code, currency, discountCurrency);
+    }
+
     private VisilabsCallback getVisilabsCallback() {
 
         return new VisilabsCallback() {
             @Override
             public void success(VisilabsResponse response) {
+                suggestions = new ArrayList<>();
+                ArrayList<Product> products = new ArrayList<>();
+                ArrayList<Category> categories = new ArrayList<>();
                 try {
                     JSONObject jsonObject = response.getJson();
+
+                    // ProductAreaContainer
                     JSONObject productAreaContainer = jsonObject.getJSONObject("ProductAreaContainer");
                     JSONArray productAreaContainerProducts = productAreaContainer.getJSONArray("Products");
-                    ArrayList<Product> products = new ArrayList<>();
-                    ArrayList<String> suggestions = new ArrayList<>();
+
                     for (int i = 0; i < productAreaContainerProducts.length(); i++) {
                         JSONObject productObject = productAreaContainerProducts.getJSONObject(i);
-                        String currentProductTitle = productObject.getString("Name");
-                        String currentProductUrl = productObject.getString("Url");
-                        String currentProductImageUrl = productObject.getString("ImageUrl");
-                        String currentProductBrandName = productObject.getString("BrandName");
-                        double currentProductPrice = productObject.getDouble("Price");
-                        double currentProductDiscountPrice = productObject.getDouble("DiscountPrice");
-                        String currentProductCode = productObject.getString("Code");
-                        String currentProductCurrency = productObject.getString("Currency");
-                        String currentProductDiscountCurrency = productObject.getString("DiscountCurrency");
-                        products.add(new Product(currentProductTitle, currentProductUrl, currentProductImageUrl, currentProductBrandName, currentProductPrice, currentProductDiscountPrice, currentProductCode, currentProductCurrency, currentProductDiscountCurrency));
-                        suggestions.add(currentProductTitle);
+                        Product product = createProductFromJsonObject(productObject);
+                        products.add(product);
+                        suggestions.add(product.name);
                     }
                     String productAreaContainerTitle = productAreaContainer.getString("Title");
                     String productAreaContainerPreTitle = productAreaContainer.getString("PreTitle");
                     String productAreaContainerSearchResultMessage = productAreaContainer.getString("SearchResultMessage");
                     boolean productAreaContainerChangeTitle = productAreaContainer.getBoolean("ChangeTitle");
-                    JSONObject report = productAreaContainer.getJSONObject("report");
-                    String click = report.getString("click");
+                    JSONObject productAreaContainerReport = productAreaContainer.getJSONObject("report");
+                    String productAreaContainerReportClick = productAreaContainerReport.getString("click");
 
 
                     Log.d(LOG_TAG, "ProductAreaContainer Title: " + productAreaContainerTitle);
@@ -130,22 +142,52 @@ public class SearchActivity extends AppCompatActivity {
                     Log.d(LOG_TAG, "ProductAreaContainer SearchResultMessage: " + productAreaContainerSearchResultMessage);
                     Log.d(LOG_TAG, "ProductAreaContainer ChangeTitle: " + productAreaContainerChangeTitle);
                     Log.d(LOG_TAG, "ProductAreaContainer Products: " + products);
-                    Log.d(LOG_TAG, "ProductAreaContainer Suggestions: " + suggestions);
 
 
+                    // CategoryContainer
                     JSONObject categoryContainer = jsonObject.getJSONObject("CategoryContainer");
                     JSONArray categoryContainerPopularCategories = categoryContainer.getJSONArray("PopularCategories");
+                    for (int i = 0; i < categoryContainerPopularCategories.length(); i++) {
+                        JSONObject categoryObject = categoryContainerPopularCategories.getJSONObject(i);
+                        JSONArray categoryProductsArray = categoryObject.getJSONArray("Products");
+                        ArrayList<Product> categoryProducts = new ArrayList<>();
+
+                        for (int j = 0; j < categoryProductsArray.length(); j++) {
+                            JSONObject productObject = categoryProductsArray.getJSONObject(i);
+                            Product product = createProductFromJsonObject(productObject);
+                            categoryProducts.add(product);
+                        }
+                        String categoryName = categoryObject.getString("Name");
+                        Category category = new Category(categoryName, categoryProducts);
+                        categories.add(category);
+                    }
 
                     String categoryContainerTitle = categoryContainer.getString("Title");
                     boolean categoryContainerIsActive = categoryContainer.getBoolean("IsActive");
+                    Log.d(LOG_TAG, "CategoryContainer Title: " + categoryContainerTitle);
+                    Log.d(LOG_TAG, "CategoryContainer IsActive: " + categoryContainerIsActive);
+                    Log.d(LOG_TAG, "CategoryContainer Categories: " + categories);
+
+
+                    // BrandContainer
+                    JSONObject brandContainer = jsonObject.getJSONObject("BrandContainer");
+                    JSONArray brandContainerPopularBrands = brandContainer.getJSONArray("PopularBrands");
+                    for (int i = 0; i < brandContainerPopularBrands.length(); i++) {
+                        JSONObject brandObject = brandContainerPopularBrands.getJSONObject(i);
+
+                    }
+
+                    String brandContainerTitle = brandContainer.getString("Title");
+                    boolean brandContainerIsActive = brandContainer.getBoolean("IsActive");
+                    Log.d(LOG_TAG, "BrandContainer Title: " + brandContainerTitle);
+                    Log.d(LOG_TAG, "BrandContainer IsActive: " + brandContainerIsActive);
 
 
 
 
 
 
-
-
+                    Log.d(LOG_TAG, "Suggestions: " + suggestions);
                     updateAutoCompleteTextView(suggestions);
                 } catch (Exception e) {
                     Log.e(LOG_TAG, e.getMessage(), e);

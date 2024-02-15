@@ -1,7 +1,7 @@
 package com.relateddigital.visilabs.model;
 
 public class Product {
-    public String title;
+    public String name;
     public String url;
     public String imageUrl;
     public String brandName;
@@ -11,8 +11,8 @@ public class Product {
     public String currency;
     public String discountCurrency;
 
-    public Product(String title, String url, String imageUrl, String brandName, double price, double discountPrice, String code, String currency, String discountCurrency) {
-        this.title = title;
+    public Product(String name, String url, String imageUrl, String brandName, double price, double discountPrice, String code, String currency, String discountCurrency) {
+        this.name = name;
         this.url = url;
         this.imageUrl = imageUrl;
         this.brandName = brandName;
