@@ -2,7 +2,6 @@ package com.relateddigital.visilabs;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -16,8 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.relateddigital.visilabs.databinding.ActivitySearchBinding;
-import com.relateddigital.visilabs.model.Category;
-import com.relateddigital.visilabs.model.Product;
+import com.relateddigital.visilabs.model.*;
 import com.visilabs.Visilabs;
 import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsCallback;
@@ -27,24 +25,24 @@ import com.visilabs.json.JSONException;
 import com.visilabs.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SearchActivity extends AppCompatActivity {
     private static final String LOG_TAG = "SearchActivity";
 
-    private ActivitySearchBinding binding;
-
-    List<String> suggestions = new ArrayList<>();
+    Map<String, String> searchResults = new HashMap<>();
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivitySearchBinding.inflate(getLayoutInflater());
+        ActivitySearchBinding binding = ActivitySearchBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, suggestions);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line,
+                searchResults.keySet().toArray(new String[0]));
         binding.autoCompleteTextView.setAdapter(adapter);
         binding.autoCompleteTextView.setThreshold(0);
         adapter.notifyDataSetChanged();
@@ -64,13 +62,11 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-        binding.autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                in.hideSoftInputFromWindow(arg1.getApplicationWindowToken(), 0);
-            }
-
+        binding.autoCompleteTextView.setOnItemClickListener((parent, view1, position, id) -> {
+            String selected = (String) parent.getItemAtPosition(position);
+            Visilabs.CallAPI().trackSearchRecommendationClick(searchResults.get(selected));
+            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            in.hideSoftInputFromWindow(view1.getApplicationWindowToken(), 0);
         });
 
     }
@@ -87,9 +83,10 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 
-    private void updateAutoCompleteTextView(List<String> suggestions) {
+    private void updateAutoCompleteTextView(Map<String, String> searchResults) {
         AutoCompleteTextView autoCompleteTextView = findViewById(R.id.autoCompleteTextView);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, suggestions);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line,
+                searchResults.keySet().toArray(new String[0]));
         autoCompleteTextView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
@@ -113,22 +110,19 @@ public class SearchActivity extends AppCompatActivity {
         return new VisilabsCallback() {
             @Override
             public void success(VisilabsResponse response) {
-                suggestions = new ArrayList<>();
+
+                searchResults = new HashMap<>();
                 ArrayList<Product> products = new ArrayList<>();
                 ArrayList<Category> categories = new ArrayList<>();
+                ArrayList<Brand> brands = new ArrayList<>();
+                ArrayList<PopularSearch> popularSearches = new ArrayList<>();
+
                 try {
                     JSONObject jsonObject = response.getJson();
 
                     // ProductAreaContainer
                     JSONObject productAreaContainer = jsonObject.getJSONObject("ProductAreaContainer");
                     JSONArray productAreaContainerProducts = productAreaContainer.getJSONArray("Products");
-
-                    for (int i = 0; i < productAreaContainerProducts.length(); i++) {
-                        JSONObject productObject = productAreaContainerProducts.getJSONObject(i);
-                        Product product = createProductFromJsonObject(productObject);
-                        products.add(product);
-                        suggestions.add(product.name);
-                    }
                     String productAreaContainerTitle = productAreaContainer.getString("Title");
                     String productAreaContainerPreTitle = productAreaContainer.getString("PreTitle");
                     String productAreaContainerSearchResultMessage = productAreaContainer.getString("SearchResultMessage");
@@ -136,12 +130,20 @@ public class SearchActivity extends AppCompatActivity {
                     JSONObject productAreaContainerReport = productAreaContainer.getJSONObject("report");
                     String productAreaContainerReportClick = productAreaContainerReport.getString("click");
 
+                    for (int i = 0; i < productAreaContainerProducts.length(); i++) {
+                        JSONObject productObject = productAreaContainerProducts.getJSONObject(i);
+                        Product product = createProductFromJsonObject(productObject);
+                        products.add(product);
+                        searchResults.put(product.name, productAreaContainerReportClick);
+                    }
+
 
                     Log.d(LOG_TAG, "ProductAreaContainer Title: " + productAreaContainerTitle);
                     Log.d(LOG_TAG, "ProductAreaContainer PreTitle: " + productAreaContainerPreTitle);
                     Log.d(LOG_TAG, "ProductAreaContainer SearchResultMessage: " + productAreaContainerSearchResultMessage);
                     Log.d(LOG_TAG, "ProductAreaContainer ChangeTitle: " + productAreaContainerChangeTitle);
                     Log.d(LOG_TAG, "ProductAreaContainer Products: " + products);
+                    Log.d(LOG_TAG, "ProductAreaContainer ReportClick: " + productAreaContainerReportClick);
 
 
                     // CategoryContainer
@@ -164,9 +166,13 @@ public class SearchActivity extends AppCompatActivity {
 
                     String categoryContainerTitle = categoryContainer.getString("Title");
                     boolean categoryContainerIsActive = categoryContainer.getBoolean("IsActive");
+                    JSONObject categoryContainerReport = categoryContainer.getJSONObject("report");
+                    String categoryContainerReportClick = categoryContainerReport.getString("click");
+
                     Log.d(LOG_TAG, "CategoryContainer Title: " + categoryContainerTitle);
                     Log.d(LOG_TAG, "CategoryContainer IsActive: " + categoryContainerIsActive);
                     Log.d(LOG_TAG, "CategoryContainer Categories: " + categories);
+                    Log.d(LOG_TAG, "CategoryContainer ReportClick: " + categoryContainerReportClick);
 
 
                     // BrandContainer
@@ -174,21 +180,51 @@ public class SearchActivity extends AppCompatActivity {
                     JSONArray brandContainerPopularBrands = brandContainer.getJSONArray("PopularBrands");
                     for (int i = 0; i < brandContainerPopularBrands.length(); i++) {
                         JSONObject brandObject = brandContainerPopularBrands.getJSONObject(i);
-
+                        String brandName = brandObject.getString("Name");
+                        String url = brandObject.getString("Url");
+                        Brand brand = new Brand(brandName, url);
+                        brands.add(brand);
                     }
 
                     String brandContainerTitle = brandContainer.getString("Title");
                     boolean brandContainerIsActive = brandContainer.getBoolean("IsActive");
+                    JSONObject brandContainerReport = brandContainer.getJSONObject("report");
+                    String brandContainerReportClick = brandContainerReport.getString("click");
+
                     Log.d(LOG_TAG, "BrandContainer Title: " + brandContainerTitle);
                     Log.d(LOG_TAG, "BrandContainer IsActive: " + brandContainerIsActive);
+                    Log.d(LOG_TAG, "BrandContainer PopularBrands: " + brands);
+                    Log.d(LOG_TAG, "BrandContainer ReportClick: " + brandContainerReportClick);
+
+
+                    // SearchContainer
+                    JSONObject searchContainer = jsonObject.getJSONObject("SearchContainer");
+                    JSONArray searchContainerPopularBrands = searchContainer.getJSONArray("PopularSearches");
+                    for (int i = 0; i < searchContainerPopularBrands.length(); i++) {
+                        JSONObject searchObject = searchContainerPopularBrands.getJSONObject(i);
+                        String name = searchObject.optString("Name");
+                        String url = searchObject.optString("Url");
+                        PopularSearch popularSearch = new PopularSearch(name, url);
+                        popularSearches.add(popularSearch);
+                    }
+
+                    String searchContainerTitle = searchContainer.getString("Title");
+                    boolean searchContainerIsActive = searchContainer.getBoolean("IsActive");
+                    String searchContainerSearchUrlPrefix = searchContainer.getString("SearchUrlPrefix");
+                    JSONObject searchContainerReport = searchContainer.getJSONObject("report");
+                    String searchContainerReportClick = searchContainerReport.getString("click");
+
+                    Log.d(LOG_TAG, "SearchContainer Title: " + searchContainerTitle);
+                    Log.d(LOG_TAG, "SearchContainer IsActive: " + searchContainerIsActive);
+                    Log.d(LOG_TAG, "SearchContainer SearchUrlPrefix: " + searchContainerSearchUrlPrefix);
+                    Log.d(LOG_TAG, "SearchContainer PopularSearches: " + popularSearches);
+                    Log.d(LOG_TAG, "SearchContainer ReportClick: " + searchContainerReportClick);
 
 
 
+                    Log.d(LOG_TAG, "Suggestions: " + searchResults);
+                    updateAutoCompleteTextView(searchResults);
 
-
-
-                    Log.d(LOG_TAG, "Suggestions: " + suggestions);
-                    updateAutoCompleteTextView(suggestions);
                 } catch (Exception e) {
                     Log.e(LOG_TAG, e.getMessage(), e);
                 }
@@ -199,7 +235,7 @@ public class SearchActivity extends AppCompatActivity {
                 Log.e(LOG_TAG, response.getErrorMessage());
                 ArrayList<String> suggestions = new ArrayList<>();
                 suggestions.add("ERROR");
-                updateAutoCompleteTextView(suggestions);
+                updateAutoCompleteTextView(searchResults);
             }
         };
     }

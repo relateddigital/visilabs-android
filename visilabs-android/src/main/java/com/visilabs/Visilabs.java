@@ -22,7 +22,6 @@ import com.google.gson.Gson;
 import com.visilabs.api.LoggerApiClient;
 import com.visilabs.api.RealTimeApiClient;
 import com.visilabs.api.SApiClient;
-import com.visilabs.api.SearchRecommendationApiClient;
 import com.visilabs.api.VisilabsAction;
 import com.visilabs.api.VisilabsActionsCallback;
 import com.visilabs.api.VisilabsApiMethods;
@@ -760,8 +759,8 @@ public class Visilabs {
         send();
     }
 
-    public void trackSearchRecommendationClick(String qs){
-        trackRecommendationClick(qs);
+    public void trackSearchRecommendationClick(String reportClick){
+        trackRecommendationClick(reportClick);
     }
 
     private void showActions(String pageName, Activity parent, HashMap<String, String> properties) {
