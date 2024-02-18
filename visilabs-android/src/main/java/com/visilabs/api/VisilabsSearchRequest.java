@@ -109,7 +109,20 @@ public class VisilabsSearchRequest extends VisilabsRemote {
                         if (!rawJsonResponse.equals("")) {
                             Log.i(LOG_TAG, "Success Request : " + response.raw().request().url().toString());
                             VisilabsResponse visilabsResponse = new VisilabsResponse(formJsonObject(rawJsonResponse), new JSONArray(), null, null, null);
+
+                            try {
+                                JSONObject jsonObject = visilabsResponse.getJson();
+                                JSONObject productAreaContainer = jsonObject.getJSONObject("ProductAreaContainer");
+                                JSONObject productAreaContainerReport = productAreaContainer.getJSONObject("report");
+                                String reportImpression = productAreaContainerReport.getString("impression");
+                                Visilabs.CallAPI().trackSearchRecommendationImpression(reportImpression);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.e(LOG_TAG, "trackSearchRecommendationImpression error: " + e.getMessage());
+                            }
+
                             pCallback.success(visilabsResponse);
+
                         } else {
                             Log.e(LOG_TAG, "Empty response for the request : " + response.raw().request().url().toString());
                             VisilabsResponse visilabsResponse = new VisilabsResponse(null, null, "empty string", null, "empty string");

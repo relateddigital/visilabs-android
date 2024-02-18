@@ -64,7 +64,8 @@ public class SearchActivity extends AppCompatActivity {
 
         binding.autoCompleteTextView.setOnItemClickListener((parent, view1, position, id) -> {
             String selected = (String) parent.getItemAtPosition(position);
-            Visilabs.CallAPI().trackSearchRecommendationClick(searchResults.get(selected));
+            String click = searchResults.get(selected);
+            Visilabs.CallAPI().trackSearchRecommendationClick(click);
             InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             in.hideSoftInputFromWindow(view1.getApplicationWindowToken(), 0);
         });
@@ -219,7 +220,6 @@ public class SearchActivity extends AppCompatActivity {
                     Log.d(LOG_TAG, "SearchContainer SearchUrlPrefix: " + searchContainerSearchUrlPrefix);
                     Log.d(LOG_TAG, "SearchContainer PopularSearches: " + popularSearches);
                     Log.d(LOG_TAG, "SearchContainer ReportClick: " + searchContainerReportClick);
-
 
 
                     Log.d(LOG_TAG, "Suggestions: " + searchResults);

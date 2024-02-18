@@ -1,7 +1,5 @@
 package com.relateddigital.visilabs.model;
 
-import androidx.annotation.NonNull;
-
 public class Profile {
     String organizationId;
     String profileId;
