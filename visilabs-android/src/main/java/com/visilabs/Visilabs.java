@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -824,16 +825,36 @@ public class Visilabs {
                         transaction.commit();
                     }
                     else if (!response.getAppRatingList().isEmpty()) {
-                        ReviewManager manager = ReviewManagerFactory.create(parent);
-                        Task<ReviewInfo> request = manager.requestReviewFlow();
+                        ReviewManager reviewManager = ReviewManagerFactory.create(parent);
+
+                        Task<ReviewInfo> request = reviewManager.requestReviewFlow();
                         request.addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                // We can get the ReviewInfo object
-                                ReviewInfo reviewInfo = task.getResult();
-                            } else {
-                                // There was some problem, log or handle the error code.
-                                //@ReviewErrorCode int reviewErrorCode = ((ReviewException) task.getException()).getErrorCode();
+
+                            try{
+                                if(task.isSuccessful()) {
+                                    ReviewInfo reviewInfo = task.getResult();
+                                    Task<Void> reviewFlow = reviewManager.launchReviewFlow(parent,reviewInfo);
+
+                                    reviewFlow.addOnCompleteListener(task1 -> {
+
+                                    }).addOnFailureListener(error1 -> {
+                                        Toast.makeText(parent,"ERROR",Toast.LENGTH_SHORT);
+                                    });
+                                }
+                                else {
+                                   // String reviewError = ((ReviewException) task.getException().getMessage());
+                                    Toast.makeText(parent,"ERROR2",Toast.LENGTH_SHORT);
+
+                                }
+
+                            }catch (Exception e) {
+                                Toast.makeText(parent,"ERROR3",Toast.LENGTH_SHORT);
+
                             }
+
+                        }).addOnFailureListener(error1 -> {
+                            Toast.makeText(parent,"ERROR4",Toast.LENGTH_SHORT);
+
                         });
                     }
                     else if (!response.getMailSubscriptionForm().isEmpty()) {

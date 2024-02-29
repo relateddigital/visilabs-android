@@ -41,6 +41,7 @@
     <string name="half_screen">HALF SCREEN</string>
     <string name="notification">NOTIFICATION</string>
     <string name="custom_action">CUSTOM ACTION</string>
+    <string name="app_rating">INAPP REVIEW</string>
     <string name="geofence">GEOFENCING</string>
 
     <string name="alert">Alert</string>

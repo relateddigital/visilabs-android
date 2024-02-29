@@ -408,6 +408,15 @@
 
              />
 
+            <Button
+                android:id="@+id/inApp25"
+                android:layout_width="0.0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:text="@string/app_rating" />
+
+            />
+
         </LinearLayout>
 
     </LinearLayout>
