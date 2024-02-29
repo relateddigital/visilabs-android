@@ -15,9 +15,15 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.review.model.ReviewErrorCode;
+import com.google.android.play.core.tasks.Task;
 import com.google.gson.Gson;
 import com.visilabs.api.LoggerApiClient;
 import com.visilabs.api.RealTimeApiClient;
@@ -772,7 +778,7 @@ public class Visilabs {
             return;
         }
         try {
-            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier~drawer~MobileCustomActions");
+            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier~drawer~MobileCustomActions~MobileAppRating");
             visilabsActionRequest.setPageName(pageName);
             visilabsActionRequest.setProperties(properties);
             visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback(parent));
@@ -816,6 +822,19 @@ public class Visilabs {
                         FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
                         transaction.add(android.R.id.content, customActionFragment);
                         transaction.commit();
+                    }
+                    else if (!response.getAppRatingList().isEmpty()) {
+                        ReviewManager manager = ReviewManagerFactory.create(parent);
+                        Task<ReviewInfo> request = manager.requestReviewFlow();
+                        request.addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                // We can get the ReviewInfo object
+                                ReviewInfo reviewInfo = task.getResult();
+                            } else {
+                                // There was some problem, log or handle the error code.
+                                //@ReviewErrorCode int reviewErrorCode = ((ReviewException) task.getException()).getErrorCode();
+                            }
+                        });
                     }
                     else if (!response.getMailSubscriptionForm().isEmpty()) {
                         MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm) response.getMailSubscriptionForm().get(0);

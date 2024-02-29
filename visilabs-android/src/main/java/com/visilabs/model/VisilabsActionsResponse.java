@@ -3,6 +3,8 @@ package com.visilabs.model;
 import com.google.gson.annotations.SerializedName;
 import com.visilabs.favs.FavoriteAttributeAction;
 import com.visilabs.inApp.ProductStatNotifierModel;
+import com.visilabs.inApp.appratingmodel.AppRating;
+import com.visilabs.inApp.appratingmodel.AppRatingReport;
 import com.visilabs.inApp.customactions.model.CustomActions;
 import com.visilabs.inappnotification.DrawerModel;
 import com.visilabs.mailSub.MailSubscriptionForm;
@@ -25,6 +27,8 @@ public class VisilabsActionsResponse implements Serializable {
 
     @SerializedName("MobileCustomActions")
     private List<CustomActions> mCustomActionList = null;
+    @SerializedName("MobileAppRating")
+    private List<AppRating> mAppRatingList = null;
     @SerializedName("ProductStatNotifier")
     private List<ProductStatNotifierModel> mProductStatNotifier = null;
     @SerializedName("Story")
@@ -70,6 +74,14 @@ public class VisilabsActionsResponse implements Serializable {
 
     public void setCustomActionList(List<CustomActions> customActionList) {
         mCustomActionList = customActionList;
+    }
+
+    public List<AppRating> getAppRatingList() {
+        return mAppRatingList;
+    }
+
+    public void setAppRatingList(List<AppRating> appRatingList) {
+        mAppRatingList = appRatingList;
     }
 
     public void setScratchToWinList(List<ScratchToWinModel> scratchToWinList) {
