@@ -1105,14 +1105,14 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     .into(bindingCarousel.background);
         } else {
             bindingCarousel.background.setVisibility(View.GONE);
-            if (mCarouselItems.get(position).getBackgroundColor() != null &&
-                    !mCarouselItems.get(position).getBackgroundColor().isEmpty()) {
+            String backgroundColor =mCarouselItems.get(position).getBackgroundColor();
+            if (backgroundColor != null &&
+                    !backgroundColor.isEmpty()) {
                 bindingCarousel.background.setVisibility(View.GONE);
                 bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor(
                         mCarouselItems.get(position).getBackgroundColor()));
             }
         }
-
         if (mCarouselItems.get(position).getImage() != null && !mCarouselItems.get(position).getImage().isEmpty()) {
             bindingCarousel.carouselImage.setVisibility(View.VISIBLE);
             bindingCarousel.carouselVideo.setVisibility(View.GONE);
@@ -1141,21 +1141,28 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         }
 
+        String titleColor = mCarouselItems.get(position).getTitleColor();
         if (mCarouselItems.get(position).getTitle() != null &&
                 !mCarouselItems.get(position).getTitle().isEmpty()) {
             bindingCarousel.carouselTitle.setText(mCarouselItems.get(position).getTitle().replace("\\n", "\n"));
+            if (titleColor != null &&
+                    !titleColor.isEmpty()) {
             bindingCarousel.carouselTitle.setTextColor(Color.parseColor(mCarouselItems.get(position).getTitleColor()));
+            }
             bindingCarousel.carouselTitle.setTextSize(
                     Float.parseFloat(mCarouselItems.get(position).getTitleTextsize()) + 12);
             bindingCarousel.carouselTitle.setTypeface(mCarouselItems.get(position).getTitleFontFamily(this));
         } else {
             bindingCarousel.carouselTitle.setVisibility(View.GONE);
         }
-
+        String bodyColor = mCarouselItems.get(position).getBodyColor();
         if (mCarouselItems.get(position).getBody() != null &&
                 !mCarouselItems.get(position).getBody().isEmpty()) {
             bindingCarousel.carouselBodyText.setText(mCarouselItems.get(position).getBody().replace("\\n", "\n"));
+            if (bodyColor != null &&
+                    !bodyColor.isEmpty()) {
             bindingCarousel.carouselBodyText.setTextColor(Color.parseColor(mCarouselItems.get(position).getBodyColor()));
+            }
             bindingCarousel.carouselBodyText.setTextSize(
                     Float.parseFloat(mCarouselItems.get(position).getBodyTextsize()) + 8);
             bindingCarousel.carouselBodyText.setTypeface(mCarouselItems.get(position).getBodyFontFamily(this));
@@ -1182,11 +1189,18 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             bindingCarousel.couponContainer.setVisibility(View.GONE);
         }
 
+        String buttonColor =mCarouselItems.get(position).getButtonColor();
+        String buttonTextColor = mCarouselItems.get(position).getButtonTextColor();
         if (mCarouselItems.get(position).getButtonText() != null &&
                 !mCarouselItems.get(position).getButtonText().isEmpty()) {
-            bindingCarousel.carouselButton.setBackgroundColor(Color.parseColor(mCarouselItems.get(position).getButtonColor()));
+            if(buttonColor !=null && !buttonColor.isEmpty()){
+                bindingCarousel.carouselButton.setBackgroundColor(Color.parseColor(mCarouselItems.get(position).getButtonColor()));
+            }
             bindingCarousel.carouselButton.setText(mCarouselItems.get(position).getButtonText());
+
+            if(buttonTextColor !=null && !buttonTextColor.isEmpty()){
             bindingCarousel.carouselButton.setTextColor(Color.parseColor(mCarouselItems.get(position).getButtonTextColor()));
+            }
             bindingCarousel.carouselButton.setTextSize(
                     Float.parseFloat(mCarouselItems.get(position).getButtonTextsize()) + 12);
             bindingCarousel.carouselButton.setTypeface(mCarouselItems.get(position).getButtonFontFamily(this));
