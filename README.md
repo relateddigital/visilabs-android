@@ -5,7 +5,7 @@
 
 # Latest Version 
 
-***March 15, 2024*** - [Visilabs v6.2.3](https://github.com/relateddigital/visilabs-android/releases)
+***March 18, 2024*** - [Visilabs v6.2.4](https://github.com/relateddigital/visilabs-android/releases)
 
 # Latest Version [![Build Status](https://travis-ci.com/relateddigital/visilabs-android.svg?branch=master)](https://travis-ci.com/relateddigital/visilabs-android)
 
@@ -40,7 +40,7 @@ Add maven jitpack repository to your project/build.gradle file
 Add Visilabs to the ```dependencies``` in app/build.gradle.
 
 ```java
-implementation 'com.github.relateddigital:visilabs-android:6.2.3'
+implementation 'com.github.relateddigital:visilabs-android:6.2.4'
 ```
 This version uses AndroidX
 
