@@ -55,6 +55,13 @@
             android:layout_height="wrap_content"
             app:use_controller="false"
             app:resize_mode="fixed_width"/>
+        <WebView
+            android:id="@+id/full_web_view_inapp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            />
 
     </LinearLayout>
 

@@ -8,10 +8,13 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -129,9 +132,18 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
         } else {
             binding.fivInAppImage.setVisibility(View.GONE);
             if(mInApp.getActionData().getVideoUrl() != null && !mInApp.getActionData().getVideoUrl().equals("")) {
+                String videoUrl = mInApp.getActionData().getVideoUrl();
+                if (videoUrl.toLowerCase().contains("youtube.com") || videoUrl.toLowerCase().contains("youtu.be")) {
+                    binding.fullVideoView.setVisibility(View.GONE);
+                    binding.fullWebViewInapp.setVisibility(View.VISIBLE);
+                    setYoutubeVideo();
+                }
+                else {
                 binding.fullVideoView.setVisibility(View.VISIBLE);
+                binding.fullWebViewInapp.setVisibility(View.GONE);
                 initializePlayer();
                 startPlayer();
+                }
             } else {
                 binding.fullVideoView.setVisibility(View.GONE);
                 releasePlayer();
@@ -233,6 +245,79 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
                 mUpdateDisplayState.getDisplayState().getType()
         );
     }
+    private void setYoutubeVideo() {
+        WebSettings webViewSettings = binding.fullWebViewInapp.getSettings();
+        String backgroundColor = mInApp.getActionData().getBackground();
+        if (backgroundColor!= null && !backgroundColor.isEmpty()) {
+            binding.fullWebViewInapp.setBackgroundColor(Color.parseColor(mInApp.getActionData().getBackground()));
+        }
+        else binding.fullWebViewInapp.setBackgroundColor(getResources().getColor(R.color.black));
+        webViewSettings.setJavaScriptEnabled(true);
+        webViewSettings.setDomStorageEnabled(true);
+        webViewSettings.setSupportZoom(false);
+        webViewSettings.setBuiltInZoomControls(false);
+        webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            webViewSettings.setMediaPlaybackRequiresUserGesture(false);
+        }
+        webViewSettings.setAllowContentAccess(true);
+        webViewSettings.setAllowFileAccess(true);
+        webViewSettings.setAllowFileAccessFromFileURLs(true);
+        webViewSettings.setAllowUniversalAccessFromFileURLs(true);
+
+        binding.fullWebViewInapp.setWebChromeClient(new WebChromeClient());
+
+        String urlString = mInApp.getActionData().getVideoUrl();
+        String videoId = extractVideoId(urlString);
+        String html =  "<div class=\"iframe-container\">\n" +
+                " <div id=\"player\"></div>\n" +
+                "</div>\n" +
+                "<script>\n" +
+                " var tag = document.createElement('script');\n" +
+                " tag.src = \"https://www.youtube.com/iframe_api\";\n" +
+                " var firstScriptTag = document.getElementsByTagName('script')[0];\n" +
+                " firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);\n" +
+                " var player;\n" +
+                " var isPlaying = true;\n" +
+                " function onYouTubeIframeAPIReady() {\n" +
+                " player = new YT.Player('player', {\n" +
+                " width: '100%',\n" +
+                " videoId: '" + videoId + "',\n" +
+                " playerVars: { 'autoplay': 1, 'playsinline':1, 'rel': 0 },\n" +
+                " events: {\n" +
+                " 'onReady': function(event) {\n" +
+                " event.target.playVideo();\n" +
+                " }\n" +
+                " }\n" +
+                " });\n" +
+                " }\n" +
+                " function watchPlayingState() {\n" +
+                " if (isPlaying) {\n" +
+                " player.playVideo();\n" +
+                " } else {\n" +
+                " player.pauseVideo();\n" +
+                " }\n" +
+                " }\n" +
+                "</script>";
+
+        binding.fullWebViewInapp.loadDataWithBaseURL("https://www.youtube.com", html, "text/html", "UTF-8", null);
+    }
+
+    private String extractVideoId(String videoUrl) {
+        String videoId = null;
+        if (videoUrl != null && videoUrl.trim().length() > 0) {
+            String[] split = videoUrl.split("v=");
+            if (split.length > 1) {
+                videoId = split[1];
+                int ampersandPosition = videoId.indexOf('&');
+                if (ampersandPosition != -1) {
+                    videoId = videoId.substring(0, ampersandPosition);
+                }
+            }
+        }
+        return videoId;
+    }
+
 
     private void initializePlayer() {
         player = new ExoPlayer.Builder(this).build();

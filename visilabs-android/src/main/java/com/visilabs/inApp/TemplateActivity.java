@@ -558,7 +558,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 " player = new YT.Player('player', {\n" +
                 " width: '100%',\n" +
                 " videoId: '" + videoId + "',\n" +
-                " playerVars: { 'autoplay': 1, 'playsinline': 1 },\n" +
+                " playerVars: { 'autoplay': 1, 'playsinline': 1 , 'rel': 0 },\n" +
                 " events: {\n" +
                 " 'onReady': function(event) {\n" +
                 " event.target.playVideo();\n" +
