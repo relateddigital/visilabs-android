@@ -2456,6 +2456,35 @@ public class Visilabs {
         activity.startActivity(intent);
     }
 
+    public void requestBackgroundLocationPermission(Activity activity, String backgroundTitle , String backgroundMessage,String positiveButton,String negativeButton ){
+        Intent intent = new Intent(activity, PermissionActivity.class);
+        intent.putExtra("BackgroundMessage", backgroundMessage);
+        intent.putExtra("BackgroundTitle", backgroundTitle);
+        intent.putExtra("PositiveButton", positiveButton);
+        intent.putExtra("NegativeButton", negativeButton);
+        activity.startActivity(intent);
+    }
+
+    public void requestLocationPermission(Activity activity,  String locationTitle , String locationMessage,String positiveButton,String negativeButton){
+        Intent intent = new Intent(activity, PermissionActivity.class);
+        intent.putExtra("LocationTitle", locationTitle);
+        intent.putExtra("LocationMessage", locationMessage);
+        intent.putExtra("PositiveButton", positiveButton);
+        intent.putExtra("NegativeButton", negativeButton);
+        activity.startActivity(intent);
+    }
+
+    public void requestLocationPermission(Activity activity,  String locationTitle , String locationMessage , String backgroundTitle , String backgroundMessage ,String positiveButton,String negativeButton ){
+        Intent intent = new Intent(activity, PermissionActivity.class);
+        intent.putExtra("LocationTitle", locationTitle);
+        intent.putExtra("LocationMessage", locationMessage);
+        intent.putExtra("BackgroundMessage", backgroundMessage);
+        intent.putExtra("BackgroundTitle", backgroundTitle);
+        intent.putExtra("PositiveButton", positiveButton);
+        intent.putExtra("NegativeButton", negativeButton);
+        activity.startActivity(intent);
+    }
+
     public void sendLocationPermission() {
         LocationPermission locationPermission = AppUtils.getLocationPermissionStatus(mContext);
         String locationPermissionStr = "";
