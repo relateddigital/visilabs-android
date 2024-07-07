@@ -13,6 +13,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -802,11 +803,20 @@ public class Visilabs {
                             Log.e(LOG_TAG, "SpinToWin feature is not supported for API levels smaller than 19!"
                                     + " Currently, " + Build.VERSION.SDK_INT + ".");
                         } else {
+                            long waitTime = 0L;
                             ActivityUtils.setParentActivity(parent);
                             Intent intent = new Intent(parent, SpinToWinActivity.class);
                             SpinToWinModel spinToWinModel = (SpinToWinModel) response.getSpinToWinList().get(0);
+                            waitTime = spinToWinModel.getActiondata().getWaitingTime();
                             intent.putExtra("spin-to-win-data", spinToWinModel);
-                            parent.startActivity(intent);
+
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    parent.startActivity(intent);
+                                }
+                            }, waitTime * 1000L);
+
                         }
                     } else if (!response.getScratchToWinList().isEmpty()) {
                         Intent intent = new Intent(parent, ScratchToWinActivity.class);
