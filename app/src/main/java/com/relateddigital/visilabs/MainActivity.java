@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp23.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Visilabs.CallAPI().requestLocationPermission(activity);
+                Visilabs.CallAPI().requestBackgroundLocationPermission(activity,"title","message","ok","no");
             }
         });
 

@@ -27,11 +27,14 @@ public class PermissionActivity extends Activity {
     private  String backgroundTitle;
 
     private  String backgroundMessage;
-    private  String isBackground;
+    private  String backgroundRequest;
+    private  String locationRequest;
 
     private String positiveButton;
     private String negativeButton;
-    private  Boolean permissionRequestMessage = false ;
+    private  Boolean permissionRequestPopUp = false ;
+
+    private  Boolean permissionBackgroundPopUp = false ;
 
 
     @Override
@@ -40,7 +43,9 @@ public class PermissionActivity extends Activity {
 
         Intent intent = getIntent();
         if(intent != null) {
-            isBackground = intent.getStringExtra("Background");
+            backgroundRequest = intent.getStringExtra("Background");
+            locationRequest = intent.getStringExtra("Location");
+
             backgroundMessage = intent.getStringExtra("BackgroundMessage");
             backgroundTitle = intent.getStringExtra("BackgroundTitle");
             locationMessage = intent.getStringExtra("LocationMessage");
@@ -48,26 +53,12 @@ public class PermissionActivity extends Activity {
             positiveButton = intent.getStringExtra("PositiveButton");
             negativeButton= intent.getStringExtra("NegativeButton");
 
-            permissionRequestMessage = (backgroundMessage != null || backgroundTitle != null || locationMessage != null || locationTitle != null);
+            permissionRequestPopUp = ( locationMessage != null || locationTitle != null);
+            permissionBackgroundPopUp = (backgroundMessage != null || backgroundTitle != null);
 
         }
 
-        if(isBackground != null) {
-            // Check if the ACCESS_BACKGROUND_LOCATION has been already granted
-            LocationPermission locationPermission = AppUtils.getLocationPermissionStatus(this);
-            if(locationPermission != LocationPermission.ALWAYS) {
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
-                            BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE
-                    );
-                }
-            } else {
-                finish();
-            }
-        }
 
-        else {
 
         // Check if ACCESS_FINE_LOCATION or ACCESS_COARSE_LOCATION permission has been already granted
         boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(this,
@@ -76,39 +67,43 @@ public class PermissionActivity extends Activity {
                 Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
         if (!(accessFineLocationPermission || accessCoarseLocationPermission)) {
-            if (permissionRequestMessage) {
-                showLocationPermissionExplanation();
+            if (locationRequest !=null)  {
+                if (permissionRequestPopUp) {
+                    showLocationPermissionExplanation();
                 }
+                else {
 
-            else {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE
-            );
-            }
-        } else {
-            if (permissionRequestMessage) {
-            checkBackgroundLocationPermission();
-            }
-            else {
-            // Check if the ACCESS_BACKGROUND_LOCATION has been already granted
-            LocationPermission locationPermission = AppUtils.getLocationPermissionStatus(this);
-            if(locationPermission != LocationPermission.ALWAYS) {
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
                     ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
-                            BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION},
+                            LOCATION_PERMISSION_REQUEST_CODE
                     );
                 }
-            } else {
-                finish();
+
             }
+            if (backgroundRequest != null ){
+                if( permissionBackgroundPopUp) {
+                    checkBackgroundLocationPermission();
+                }
+                else {
+                    // Check if the ACCESS_BACKGROUND_LOCATION has been already granted
+                    LocationPermission locationPermission = AppUtils.getLocationPermissionStatus(this);
+                    if(locationPermission != LocationPermission.ALWAYS) {
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                            ActivityCompat.requestPermissions(this,
+                                    new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
+                                    BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE
+                            );
+                        }
+                    } else {
+                        finish();
+                    }
+                }
             }
         }
+
     }
-    }
+
 
 
     private void showLocationPermissionExplanation() {
@@ -131,22 +126,31 @@ public class PermissionActivity extends Activity {
                     }
                 })
                 .show();
-        permissionRequestMessage = false ;
+        permissionRequestPopUp = false ;
     }
 
     private void checkBackgroundLocationPermission() {
         LocationPermission locationPermission = AppUtils.getLocationPermissionStatus(this);
         if (locationPermission != LocationPermission.ALWAYS) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                new AlertDialog.Builder(this)
+                new AlertDialog.Builder(this, R.style.AlertDialogStyle)
                         .setTitle(backgroundTitle)
                         .setMessage(backgroundMessage)
                         .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ActivityCompat.requestPermissions(PermissionActivity.this,
-                                        new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
-                                        BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE);
+                                // Check if the ACCESS_BACKGROUND_LOCATION has been already granted
+                                LocationPermission locationPermission = AppUtils.getLocationPermissionStatus(PermissionActivity.this);
+                                if(locationPermission != LocationPermission.ALWAYS) {
+                                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                                        ActivityCompat.requestPermissions(PermissionActivity.this,
+                                                new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
+                                                BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE
+                                        );
+                                    }
+                                } else {
+                                    finish();
+                                }
                             }
                         })
                         .setNegativeButton(negativeButton, new DialogInterface.OnClickListener() {
@@ -160,7 +164,7 @@ public class PermissionActivity extends Activity {
         } else {
             finish();
         }
-        permissionRequestMessage = false ;
+        permissionBackgroundPopUp = false ;
 
     }
 

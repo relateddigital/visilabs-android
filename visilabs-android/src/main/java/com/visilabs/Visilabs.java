@@ -2463,12 +2463,14 @@ public class Visilabs {
 
     public void requestLocationPermission(Activity activity){
         Intent intent = new Intent(activity, PermissionActivity.class);
+        intent.putExtra("Background", "True");
+        intent.putExtra("Location", "True");
         activity.startActivity(intent);
     }
 
     public void requestBackgroundLocationPermission(Activity activity){
         Intent intent = new Intent(activity, PermissionActivity.class);
-        intent.putExtra("isBackground", "True");
+        intent.putExtra("Background", "True");
         activity.startActivity(intent);
     }
 
@@ -2478,6 +2480,7 @@ public class Visilabs {
         intent.putExtra("BackgroundTitle", backgroundTitle);
         intent.putExtra("PositiveButton", positiveButton);
         intent.putExtra("NegativeButton", negativeButton);
+        intent.putExtra("Background", "True");
         activity.startActivity(intent);
     }
 
@@ -2487,6 +2490,7 @@ public class Visilabs {
         intent.putExtra("LocationMessage", locationMessage);
         intent.putExtra("PositiveButton", positiveButton);
         intent.putExtra("NegativeButton", negativeButton);
+        intent.putExtra("Location", "True");
         activity.startActivity(intent);
     }
 
@@ -2498,6 +2502,8 @@ public class Visilabs {
         intent.putExtra("BackgroundTitle", backgroundTitle);
         intent.putExtra("PositiveButton", positiveButton);
         intent.putExtra("NegativeButton", negativeButton);
+        intent.putExtra("Background", "True");
+        intent.putExtra("Location", "True");
         activity.startActivity(intent);
     }
 
