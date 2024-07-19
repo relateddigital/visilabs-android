@@ -2466,6 +2466,12 @@ public class Visilabs {
         activity.startActivity(intent);
     }
 
+    public void requestBackgroundLocationPermission(Activity activity){
+        Intent intent = new Intent(activity, PermissionActivity.class);
+        intent.putExtra("isBackground", "True");
+        activity.startActivity(intent);
+    }
+
     public void requestBackgroundLocationPermission(Activity activity, String backgroundTitle , String backgroundMessage,String positiveButton,String negativeButton ){
         Intent intent = new Intent(activity, PermissionActivity.class);
         intent.putExtra("BackgroundMessage", backgroundMessage);

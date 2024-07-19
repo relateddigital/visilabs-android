@@ -27,6 +27,8 @@ public class PermissionActivity extends Activity {
     private  String backgroundTitle;
 
     private  String backgroundMessage;
+    private  String isBackground;
+
     private String positiveButton;
     private String negativeButton;
     private  Boolean permissionRequestMessage = false ;
@@ -38,6 +40,7 @@ public class PermissionActivity extends Activity {
 
         Intent intent = getIntent();
         if(intent != null) {
+            isBackground = intent.getStringExtra("Background");
             backgroundMessage = intent.getStringExtra("BackgroundMessage");
             backgroundTitle = intent.getStringExtra("BackgroundTitle");
             locationMessage = intent.getStringExtra("LocationMessage");
@@ -48,6 +51,23 @@ public class PermissionActivity extends Activity {
             permissionRequestMessage = (backgroundMessage != null || backgroundTitle != null || locationMessage != null || locationTitle != null);
 
         }
+
+        if(isBackground != null) {
+            // Check if the ACCESS_BACKGROUND_LOCATION has been already granted
+            LocationPermission locationPermission = AppUtils.getLocationPermissionStatus(this);
+            if(locationPermission != LocationPermission.ALWAYS) {
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
+                            BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE
+                    );
+                }
+            } else {
+                finish();
+            }
+        }
+
+        else {
 
         // Check if ACCESS_FINE_LOCATION or ACCESS_COARSE_LOCATION permission has been already granted
         boolean accessFineLocationPermission = ContextCompat.checkSelfPermission(this,
@@ -87,6 +107,7 @@ public class PermissionActivity extends Activity {
             }
             }
         }
+    }
     }
 
 
