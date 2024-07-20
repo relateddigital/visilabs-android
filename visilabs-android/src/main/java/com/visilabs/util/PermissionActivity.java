@@ -69,10 +69,9 @@ public class PermissionActivity extends Activity {
         if (!(accessFineLocationPermission || accessCoarseLocationPermission)) {
             if (locationRequest !=null)  {
                 if (permissionRequestPopUp) {
-                    showLocationPermissionExplanation();
+                    showLocationPermission();
                 }
                 else {
-
                     ActivityCompat.requestPermissions(this,
                             new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                                     Manifest.permission.ACCESS_COARSE_LOCATION},
@@ -83,7 +82,7 @@ public class PermissionActivity extends Activity {
             }
             if (backgroundRequest != null ){
                 if( permissionBackgroundPopUp) {
-                    checkBackgroundLocationPermission();
+                    showBackgroundLocationPermission();
                 }
                 else {
                     // Check if the ACCESS_BACKGROUND_LOCATION has been already granted
@@ -106,7 +105,7 @@ public class PermissionActivity extends Activity {
 
 
 
-    private void showLocationPermissionExplanation() {
+    private void showLocationPermission() {
         new AlertDialog.Builder(this, R.style.AlertDialogStyle)
                 .setTitle(locationTitle)
                 .setMessage(locationMessage)
@@ -129,7 +128,7 @@ public class PermissionActivity extends Activity {
         permissionRequestPopUp = false ;
     }
 
-    private void checkBackgroundLocationPermission() {
+    private void showBackgroundLocationPermission() {
         LocationPermission locationPermission = AppUtils.getLocationPermissionStatus(this);
         if (locationPermission != LocationPermission.ALWAYS) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
