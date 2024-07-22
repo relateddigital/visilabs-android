@@ -20,7 +20,7 @@ project.afterEvaluate {
 
 ext {
     PUBLISH_GROUP_ID = 'com.github.relateddigital'
-    PUBLISH_VERSION = "6.3.0"
+    PUBLISH_VERSION = "6.3.1"
     PUBLISH_VERSION_CODE = "50"
     PUBLISH_ARTIFACT_ID = 'visilabs-android'
 }
@@ -32,8 +32,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 33
         versionCode 4
-        versionName "6.3.0"
-        buildConfigField 'String', 'VERSION_NAME', "\"6.3.0\""
+        versionName "6.3.1"
+        buildConfigField 'String', 'VERSION_NAME', "\"6.3.1\""
         buildConfigField 'String', 'SDK_TYPE', "\"native\""
     }
     buildTypes {
