@@ -64,6 +64,7 @@ public class PermissionActivity extends Activity {
         boolean accessCoarseLocationPermission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
+        //in version 6.3.2 it should look like this : ((!accessFineLocationPermission) || (!accessCoarseLocationPermission))
         if ((!accessFineLocationPermission) || (!accessCoarseLocationPermission)) {
             if (isLocationPopUpValid) {
                 showLocationPermissionPopUp();
