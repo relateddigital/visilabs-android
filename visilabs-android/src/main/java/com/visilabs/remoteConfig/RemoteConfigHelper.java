@@ -33,7 +33,8 @@ public class RemoteConfigHelper {
                         Log.i(LOG_TAG, "Successful Request : " + response.raw().request().url().toString());
                         List<String> profileIds = response.body();
                         boolean isMatch = false;
-                        if (profileIds != null && !profileIds.isEmpty()) {
+                        if (profileIds != null) {
+                            if(!profileIds.isEmpty()) {
                             for (int i = 0; i < profileIds.size(); i++) {
                                 if (Visilabs.CallAPI().getSiteID().equals(profileIds.get(i))) {
                                     isMatch = true;
@@ -44,7 +45,13 @@ public class RemoteConfigHelper {
                             if (!isMatch) {
                                 setBlockState(context, false);
                             }
-                        } else {
+                           }
+                            else {
+                                setBlockState(context, false);
+                                Log.w(LOG_TAG, "ProfileIds is empty!");
+                            }
+                        }else {
+                            Log.w(LOG_TAG, "ProfileIds is null!");
                             setBlockState(context, false);
                         }
                     } catch (Exception e) {
