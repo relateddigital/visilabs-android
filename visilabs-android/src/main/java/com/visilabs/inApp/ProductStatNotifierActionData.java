@@ -1,8 +1,9 @@
 package com.visilabs.inApp;
 
 import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 
-public class ProductStatNotifierActionData {
+public class ProductStatNotifierActionData implements Serializable {
 
     @SerializedName("content")
     private String content;
