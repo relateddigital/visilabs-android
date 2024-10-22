@@ -23,9 +23,6 @@ import androidx.core.content.ContextCompat;
 
 
 import com.google.android.gms.tasks.Task;
-import com.google.android.play.core.review.ReviewInfo;
-import com.google.android.play.core.review.ReviewManager;
-import com.google.android.play.core.review.ReviewManagerFactory;
 import com.google.gson.Gson;
 import com.visilabs.api.LoggerApiClient;
 import com.visilabs.api.RealTimeApiClient;
@@ -834,7 +831,7 @@ public class Visilabs {
                         transaction.add(android.R.id.content, customActionFragment);
                         transaction.commit();
                     }
-                    else if (!response.getAppRatingList().isEmpty()) {
+                    /*else if (!response.getAppRatingList().isEmpty()) {
                         ReviewManager reviewManager = ReviewManagerFactory.create(parent);
 
                         Task<ReviewInfo> request = reviewManager.requestReviewFlow();
@@ -866,7 +863,7 @@ public class Visilabs {
                             Toast.makeText(parent,"ERROR4",Toast.LENGTH_SHORT);
 
                         });
-                    }
+                    }*/
                     else if (!response.getMailSubscriptionForm().isEmpty()) {
                         MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm) response.getMailSubscriptionForm().get(0);
                         new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
