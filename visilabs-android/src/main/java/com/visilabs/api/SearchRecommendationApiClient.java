@@ -35,7 +35,7 @@ public class SearchRecommendationApiClient {
             synchronized (SApiClient.class) {
                 if (retrofit == null) {
                     retrofit = new Retrofit.Builder()
-                            .baseUrl(VisilabsConstant.ACTION_ENDPOINT)
+                            .baseUrl("https://s.visilabs.net/")
                             .addConverterFactory(GsonConverterFactory.create())
                             .client(httpClient.build())
                             .build();
