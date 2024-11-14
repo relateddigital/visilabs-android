@@ -56,7 +56,7 @@ public class WebViewJavaScriptInterface {
      * @param couponCode - String: coupon code
      */
     @JavascriptInterface
-    public void copyToClipboard(String couponCode) {
+    public void copyToClipboard(String couponCode, String link) {
         this.mWebViewDialogFragment.dismiss();
 
         if (spinToWinModel.getActiondata().getCopyButtonFunction().equals("copy_redirect") &&
@@ -65,6 +65,7 @@ public class WebViewJavaScriptInterface {
             mCopyToClipboardInterface.copyToClipboard(couponCode, spinToWinModel.getActiondata().getSlices().get(selectedIndex).getAndroidLink());
         } else {
             mCopyToClipboardInterface.copyToClipboard(couponCode, null);
+            mCopyToClipboardInterface.copyToClipboard(couponCode, link);
         }
     }
 

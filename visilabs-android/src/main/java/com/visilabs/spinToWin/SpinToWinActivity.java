@@ -178,10 +178,20 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
 
         if(link != null && !link.isEmpty()) {
             sliceLink = link;
+            sendDeeplinkToApp(link);
         }
 
         finish();
     }
+
+    private void sendDeeplinkToApp(String deeplink) {
+        Intent intent = new Intent();
+        intent.setAction("InAppLink");
+        intent.putExtra("link", deeplink);
+        sendBroadcast(intent);
+        Log.i("LOG_TAG", "Link sent successfully!");
+    }
+
 
     @Override
     public void onCodeShown(String code) {
