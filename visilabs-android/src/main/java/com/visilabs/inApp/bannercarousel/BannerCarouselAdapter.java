@@ -68,7 +68,7 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
         if (isSwipe) {
             Glide.with(mContext)
                     .asBitmap()
-                    .transform(new MultiTransformation<>(new CenterCrop(), new GranularRoundedCorners(30f, 30f, 30f, 30f)))
+                    .transform(new MultiTransformation<>(new CenterCrop(), new GranularRoundedCorners(0f, 0f, 0f, 0f)))
                     .load(mAppBanner.getActionData().getAppBanners().get(position).getImage())
                     .into(bannerHolder.swipeImageView);
 
@@ -108,7 +108,7 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
         } else {
             Glide.with(mContext)
                     .asBitmap()
-                    .transform(new MultiTransformation<>(new CenterCrop(), new GranularRoundedCorners(30f, 30f, 30f, 30f)))
+                    .transform(new MultiTransformation<>(new CenterCrop(), new GranularRoundedCorners(0f, 0f, 0f, 0f)))
                     .load(mAppBanner.getActionData().getAppBanners().get(position).getImage())
                     .into(bannerHolder.slideImageView);
 
@@ -197,7 +197,7 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
         notifyDataSetChanged();
     }
     public class BannerHolder extends RecyclerView.ViewHolder {
-        public ImageView swipeImageView;
+        public ImageView  swipeImageView;
         public ImageView slideImageView;
         public LinearLayout dotIndicator;
         public TextView numberIndicator;
