@@ -66,6 +66,22 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
     @Override
     public void onBindViewHolder(@NonNull BannerHolder bannerHolder, int position) {
         if (isSwipe) {
+            if (getItemCount() == 1) {
+                if (bannerHolder.dotIndicator != null) {
+                bannerHolder.dotIndicator.setVisibility(View.GONE);
+            }
+            if (bannerHolder.numberIndicator != null) {
+                bannerHolder.numberIndicator.setVisibility(View.GONE);
+            }
+        } else {
+            if (bannerHolder.dotIndicator != null) {
+                bannerHolder.dotIndicator.setVisibility(View.VISIBLE);
+            }
+            if (bannerHolder.numberIndicator != null) {
+                bannerHolder.numberIndicator.setVisibility(View.VISIBLE);
+            }
+        }
+
             Glide.with(mContext)
                     .asBitmap()
                     .transform(new MultiTransformation<>(new CenterCrop(), new GranularRoundedCorners(0f, 0f, 0f, 0f)))
@@ -106,6 +122,22 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
             report.click = mAppBanner.getActionData().getReport().getClick();
             Visilabs.CallAPI().trackActionClick(report); });
         } else {
+
+            if (getItemCount() == 1) {
+                if (bannerHolder.dotIndicator != null) {
+                    bannerHolder.dotIndicator.setVisibility(View.GONE);
+                }
+                if (bannerHolder.numberIndicator != null) {
+                    bannerHolder.numberIndicator.setVisibility(View.GONE);
+                }
+            } else {
+                if (bannerHolder.dotIndicator != null) {
+                    bannerHolder.dotIndicator.setVisibility(View.VISIBLE);
+                }
+                if (bannerHolder.numberIndicator != null) {
+                    bannerHolder.numberIndicator.setVisibility(View.VISIBLE);
+                }
+            }
             Glide.with(mContext)
                     .asBitmap()
                     .transform(new MultiTransformation<>(new CenterCrop(), new GranularRoundedCorners(0f, 0f, 0f, 0f)))
