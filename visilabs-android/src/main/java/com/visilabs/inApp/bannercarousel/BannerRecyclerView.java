@@ -1,6 +1,7 @@
 package com.visilabs.inApp.bannercarousel;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -87,6 +88,15 @@ public class BannerRecyclerView extends RecyclerView {
                     SnapHelper snapHelper = new PagerSnapHelper();
                     snapHelper.attachToRecyclerView(BannerRecyclerView.this);
                     bannerCarouselAdapter.notifyDataSetChanged();
+                    Handler handler = new Handler();
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            bannerCarouselAdapter.notifyItemChanged(0);
+                            handler.postDelayed(this, 2000);
+                        }
+                    };
+                    handler.postDelayed(runnable, 2000);
 
                 } catch (Exception ex) {
                     Log.e(LOG_TAG, ex.getMessage(), ex);
