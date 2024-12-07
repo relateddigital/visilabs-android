@@ -10,14 +10,15 @@
         android:layout_height="0dp"
         android:layout_weight="7"
         android:id="@+id/banner_swipe_image_item"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="5dp"
+        android:layout_gravity="center"
         android:scaleType="centerCrop"
         android:background="@drawable/rounded_corners_full"/>
 
     <LinearLayout
         android:id="@+id/banner_dot_indicator_item"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="5dp"
         android:layout_weight="1"
         android:gravity="center"
         android:orientation="horizontal" />

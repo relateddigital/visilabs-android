@@ -88,15 +88,6 @@ public class BannerRecyclerView extends RecyclerView {
                     SnapHelper snapHelper = new PagerSnapHelper();
                     snapHelper.attachToRecyclerView(BannerRecyclerView.this);
                     bannerCarouselAdapter.notifyDataSetChanged();
-                    Handler handler = new Handler();
-                    Runnable runnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            bannerCarouselAdapter.notifyItemChanged(0);
-                            handler.postDelayed(this, 2000);
-                        }
-                    };
-                    handler.postDelayed(runnable, 2000);
 
                 } catch (Exception ex) {
                     Log.e(LOG_TAG, ex.getMessage(), ex);

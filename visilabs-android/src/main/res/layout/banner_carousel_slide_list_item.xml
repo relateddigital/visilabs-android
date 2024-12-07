@@ -5,11 +5,18 @@
     android:layout_height="match_parent"
     >
 
+    <FrameLayout
+        android:id="@+id/banner_slide_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/banner_slide_image_item"
         android:scaleType="centerCrop"
+        android:layout_gravity="center"
         android:background="@drawable/rounded_corners_full"/>
 
     <TextView
@@ -21,5 +28,7 @@
         android:gravity="center"
         android:background="@drawable/banner_number_circle"
         android:textColor="#fff" />
+    </FrameLayout>
+
 
 </FrameLayout>

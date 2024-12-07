@@ -18,6 +18,10 @@ public class AppBannerActionData implements Serializable {
     @SerializedName("report")
     private AppBannerReport report;
 
+    @SerializedName("ExtendedProps")
+    private String extendedProps;
+
+
     // getter and setter methods for each field
     public String getTaTemplate() {
         return taTemplate;
@@ -49,5 +53,13 @@ public class AppBannerActionData implements Serializable {
 
     public void setReport(AppBannerReport report) {
         this.report = report;
+    }
+
+    public String getExtendedProps() {
+        return extendedProps;
+    }
+
+    public void setExtendedProps(String extendedProps) {
+        this.extendedProps = extendedProps;
     }
 }
