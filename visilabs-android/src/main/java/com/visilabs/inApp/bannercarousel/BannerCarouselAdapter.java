@@ -193,14 +193,14 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
 
                    if  (mExtendedProps != null ) {
                        ViewGroup.LayoutParams layoutParams = bannerHolder.slideImageView.getLayoutParams();
-                       ViewGroup.LayoutParams layoutParams2 = bannerHolder.slideFrame.getLayoutParams();
+                       //ViewGroup.LayoutParams layoutParams2 = bannerHolder.slideFrame.getLayoutParams();
 
                        if(mExtendedProps.getHeight() != null && mExtendedProps.getHeight() != 0) {
                            int height = mExtendedProps.getHeight();
                            layoutParams.height = height;
                        }
                        else {
-                           layoutParams2.height = 500;
+                           //layoutParams2.height = 500;
                        }
 
                        if (mExtendedProps.getWidth() != null && mExtendedProps.getWidth() != 0 ) {
@@ -208,17 +208,17 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
                            layoutParams.width = width;
                        }
                        else {
-                           layoutParams2.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                           //layoutParams2.width = ViewGroup.LayoutParams.MATCH_PARENT;
                        }
 
 
                        bannerHolder.slideImageView.setLayoutParams(layoutParams);
                    }
                    else {
-                       ViewGroup.LayoutParams layoutParams = bannerHolder.slideFrame.getLayoutParams();
-                       layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                       layoutParams.height = 1000;
-                       bannerHolder.slideImageView.setLayoutParams(layoutParams);
+                       //ViewGroup.LayoutParams layoutParams = bannerHolder.slideFrame.getLayoutParams();
+                       //layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                       //layoutParams.height = 1000;
+                       //bannerHolder.slideImageView.setLayoutParams(layoutParams);
 
                    }
 
@@ -315,7 +315,7 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
     public class BannerHolder extends RecyclerView.ViewHolder {
         public ImageView  swipeImageView;
         public ImageView slideImageView;
-        public FrameLayout slideFrame;
+
         public LinearLayout dotIndicator;
         public TextView numberIndicator;
 
@@ -326,7 +326,6 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
             dotIndicator = itemView.findViewById(R.id.banner_dot_indicator_item);
         } else {
             slideImageView = itemView.findViewById(R.id.banner_slide_image_item);
-            slideFrame = itemView.findViewById(R.id.banner_slide_frame);
             numberIndicator = itemView.findViewById(R.id.banner_number_indicator_item);
         }
     }

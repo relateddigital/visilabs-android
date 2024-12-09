@@ -12,7 +12,7 @@
         android:id="@+id/banner_swipe_image_item"
         android:layout_marginBottom="5dp"
         android:layout_gravity="center"
-        android:scaleType="centerCrop"
+        android:scaleType="fitXY"
         android:background="@drawable/rounded_corners_full"/>
 
     <LinearLayout
