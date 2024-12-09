@@ -53,10 +53,17 @@ public class BannerCarouselDemoActivity extends AppCompatActivity {
     private void showBanner() {
         BannerRequestListener bannerRequestListener = new BannerRequestListener() {
             @Override
-            public void onRequestResult(boolean isAvailable) {
+            public void onRequestResult(boolean isAvailable , int height , int width) {
                 if (!isAvailable) {
                     binding.bannerListView.setVisibility(View.GONE);
                 }
+
+                int newHeight = height ;
+                int newWidth = width ;
+
+                Log.e("height", String.valueOf(newHeight));
+                Log.e("width", String.valueOf(newWidth));
+
             }
         };
 

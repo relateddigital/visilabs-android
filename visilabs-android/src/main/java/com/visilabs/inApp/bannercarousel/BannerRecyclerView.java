@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
-
 import com.google.gson.Gson;
 import com.squareup.picasso.RequestHandler;
 import com.visilabs.Visilabs;
@@ -19,8 +18,10 @@ import com.visilabs.VisilabsResponse;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.inApp.appBannerModel.AppBanner;
+import com.visilabs.inApp.appBannerModel.AppBannerExtendedProps;
 import com.visilabs.inApp.appBannerModel.BannerResponse;
 
+import java.net.URI;
 import java.util.HashMap;
 
 public class BannerRecyclerView extends RecyclerView {
@@ -28,6 +29,7 @@ public class BannerRecyclerView extends RecyclerView {
     private Context mContext;
     private BannerItemClickListener mBannerItemClickListener;
     private BannerRequestListener mBannerRequestListener;
+    private AppBannerExtendedProps mExtendedProps = null;
 
     public BannerRecyclerView(@NonNull Context context) {
         super(context);
@@ -50,9 +52,7 @@ public class BannerRecyclerView extends RecyclerView {
                                             BannerItemClickListener bannerItemClickListener) {
         if (Visilabs.CallAPI().isBlocked()) {
             Log.e(LOG_TAG, "Too much server load, ignoring the request!");
-            if (bannerRequestListener != null) {
-                bannerRequestListener.onRequestResult(false);
-            }
+
             return;
         }
 
@@ -72,14 +72,35 @@ public class BannerRecyclerView extends RecyclerView {
 
     private VisilabsCallback getBannerCallback(final Context context) {
         return new VisilabsCallback() {
+            int height = 110;
+            int width = 600;
+
             @Override
             public void success(VisilabsResponse response) {
-                if (mBannerRequestListener != null) {
-                    mBannerRequestListener.onRequestResult(true);
-                }
+
                 try {
+
                     BannerResponse mBannerResponse = new Gson().fromJson(response.getRawResponse(), BannerResponse.class);
                     AppBanner mAppBanner = mBannerResponse.getAppBanner().get(0);
+                    if(mAppBanner.getActionData().getExtendedProps() != null) {
+                        mExtendedProps = new Gson().fromJson(
+                                new URI(mAppBanner.getActionData().getExtendedProps()).getPath(),
+                                AppBannerExtendedProps.class
+
+                        );
+                        if(mExtendedProps.getHeight() !=null) {
+                            height=  mExtendedProps.getHeight();
+
+                        }
+                        if(mExtendedProps.getWidth() !=null) {
+                            width= mExtendedProps.getWidth();
+                        }
+
+                    }
+
+                    if (mBannerRequestListener != null) {
+                        mBannerRequestListener.onRequestResult(true,height ,width);
+                    }
                     BannerCarouselAdapter bannerCarouselAdapter = new BannerCarouselAdapter(context, mBannerItemClickListener);
                     setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
                     bannerCarouselAdapter.setBannerList(BannerRecyclerView.this, mAppBanner);
@@ -92,7 +113,7 @@ public class BannerRecyclerView extends RecyclerView {
                 } catch (Exception ex) {
                     Log.e(LOG_TAG, ex.getMessage(), ex);
                     if (mBannerRequestListener != null) {
-                        mBannerRequestListener.onRequestResult(false);
+                        mBannerRequestListener.onRequestResult(false, height ,width);
                     }
                 }
             }
@@ -101,7 +122,7 @@ public class BannerRecyclerView extends RecyclerView {
             public void fail(VisilabsResponse response) {
                 Log.e(LOG_TAG, response.getRawResponse());
                 if (mBannerRequestListener != null) {
-                    mBannerRequestListener.onRequestResult(false);
+                    mBannerRequestListener.onRequestResult(false, height, width);
                 }
             }
         };
