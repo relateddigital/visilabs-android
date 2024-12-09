@@ -22,8 +22,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.FitCenter;
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
@@ -106,7 +108,7 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
                             AppBannerExtendedProps.class
                     );
 
-                    if ( mExtendedProps != null) {
+                    /*if ( mExtendedProps != null) {
                         ViewGroup.LayoutParams layoutParams = bannerHolder.swipeImageView.getLayoutParams();
                         if(mExtendedProps.getHeight() != null  && mExtendedProps.getHeight() != 0 ) {
                             int height = mExtendedProps.getHeight();
@@ -121,7 +123,7 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
                         }
 
                         bannerHolder.swipeImageView.setLayoutParams(layoutParams);
-                    }
+                    } */
 
 
                 }
@@ -180,8 +182,9 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
             }
             Glide.with(mContext)
                     .asBitmap()
-                    .transform(new MultiTransformation<>(new CenterCrop(), new GranularRoundedCorners(0f, 0f, 0f, 0f)))
+                    .transform(new MultiTransformation<>(new CenterCrop(), new FitCenter(), new GranularRoundedCorners(0f, 0f, 0f, 0f)))
                     .load(mAppBanner.getActionData().getAppBanners().get(position).getImage())
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                     .into(bannerHolder.slideImageView);
 
             try {
@@ -192,12 +195,12 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
                 );
 
                    if  (mExtendedProps != null ) {
-                       ViewGroup.LayoutParams layoutParams = bannerHolder.slideImageView.getLayoutParams();
+                       //ViewGroup.LayoutParams layoutParams = bannerHolder.slideImageView.getLayoutParams();
                        //ViewGroup.LayoutParams layoutParams2 = bannerHolder.slideFrame.getLayoutParams();
 
                        if(mExtendedProps.getHeight() != null && mExtendedProps.getHeight() != 0) {
                            int height = mExtendedProps.getHeight();
-                           layoutParams.height = height;
+                          // layoutParams.height = height;
                        }
                        else {
                            //layoutParams2.height = 500;
@@ -205,14 +208,14 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
 
                        if (mExtendedProps.getWidth() != null && mExtendedProps.getWidth() != 0 ) {
                            int width = mExtendedProps.getWidth();
-                           layoutParams.width = width;
+                           //layoutParams.width = width;
                        }
                        else {
                            //layoutParams2.width = ViewGroup.LayoutParams.MATCH_PARENT;
                        }
 
 
-                       bannerHolder.slideImageView.setLayoutParams(layoutParams);
+                       //bannerHolder.slideImageView.setLayoutParams(layoutParams);
                    }
                    else {
                        //ViewGroup.LayoutParams layoutParams = bannerHolder.slideFrame.getLayoutParams();
