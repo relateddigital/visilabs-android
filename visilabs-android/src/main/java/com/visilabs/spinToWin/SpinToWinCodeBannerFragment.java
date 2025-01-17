@@ -1,5 +1,7 @@
 package com.visilabs.spinToWin;
 
+
+
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.ClipData;
@@ -7,12 +9,15 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -98,52 +103,62 @@ public class SpinToWinCodeBannerFragment extends Fragment {
         }
 
         binding.bannerText.setText(mExtendedProps.getPromocodeBannerText().replace("\\n", "\n"));
-        binding.bannerLabel.setText(mExtendedProps.getPromocodeBannerButtonLabel());
+        //binding.bannerLabel.setText(mExtendedProps.getPromocodeBannerButtonLabel());
         binding.bannerCode.setText(bannerCode);
 
         if(mExtendedProps.getPromocodeBannerTextColor() != null &&
                 !mExtendedProps.getPromocodeBannerTextColor().isEmpty()) {
             binding.bannerText.setTextColor(Color.parseColor(mExtendedProps.getPromocodeBannerTextColor()));
-            binding.bannerLabel.setTextColor(Color.parseColor(mExtendedProps.getPromocodeBannerTextColor()));
+            //binding.bannerLabel.setTextColor(Color.parseColor(mExtendedProps.getPromocodeBannerTextColor()));
+            GradientDrawable drawable = (GradientDrawable) ContextCompat.getDrawable(getContext(), R.drawable.dotted_border);
+            if (drawable != null) {
+                drawable.setStroke(
+                        3, // Çizgi kalınlığı (px)
+                        Color.parseColor(mExtendedProps.getPromocodeBannerTextColor()), // Renk
+                        6f, // Noktaların uzunluğu (dp)
+                        6f  // Noktalar arası boşluk (dp)
+                );
+                binding.bannerCodeBorder.setBackground(drawable);
+            }
             binding.bannerCode.setTextColor(Color.parseColor(mExtendedProps.getPromocodeBannerTextColor()));
         } else {
             binding.bannerText.setTextColor(getResources().getColor(R.color.white));
-            binding.bannerLabel.setTextColor(getResources().getColor(R.color.white));
+            //binding.bannerLabel.setTextColor(getResources().getColor(R.color.white));
             binding.bannerCode.setTextColor(getResources().getColor(R.color.white));
         }
 
         if(mExtendedProps.getTextSize() != null &&
                 !mExtendedProps.getTextSize().isEmpty()) {
             binding.bannerText.setTextSize(Float.parseFloat(mExtendedProps.getTextSize()) + 10);
-            binding.bannerLabel.setTextSize(Float.parseFloat(mExtendedProps.getTextSize()) + 12);
+            //binding.bannerLabel.setTextSize(Float.parseFloat(mExtendedProps.getTextSize()) + 12);
             binding.bannerCode.setTextSize(Float.parseFloat(mExtendedProps.getTextSize()) + 10);
         } else {
             binding.bannerText.setTextSize(14);
-            binding.bannerLabel.setTextSize(16);
+            //binding.bannerLabel.setTextSize(16);
             binding.bannerCode.setTextSize(14);
         }
 
         if (mExtendedProps.getTextFontFamily() == null || mExtendedProps.getTextFontFamily().equals("")) {
             binding.bannerText.setTypeface(Typeface.DEFAULT);
-            binding.bannerLabel.setTypeface(Typeface.DEFAULT);
+            //binding.bannerLabel.setTypeface(Typeface.DEFAULT);
         } else if (FontFamily.Monospace.toString().equals(mExtendedProps.getTextFontFamily().toLowerCase())) {
             binding.bannerText.setTypeface(Typeface.MONOSPACE);
-            binding.bannerLabel.setTypeface(Typeface.MONOSPACE);
+            //binding.bannerLabel.setTypeface(Typeface.MONOSPACE);
         } else if (FontFamily.SansSerif.toString().equals(mExtendedProps.getTextFontFamily().toLowerCase())) {
             binding.bannerText.setTypeface(Typeface.SANS_SERIF);
-            binding.bannerLabel.setTypeface(Typeface.SANS_SERIF);
+            //binding.bannerLabel.setTypeface(Typeface.SANS_SERIF);
         } else if (FontFamily.Serif.toString().equals(mExtendedProps.getTextFontFamily().toLowerCase())) {
             binding.bannerText.setTypeface(Typeface.SERIF);
-            binding.bannerLabel.setTypeface(Typeface.SERIF);
+            //binding.bannerLabel.setTypeface(Typeface.SERIF);
         } else if(mExtendedProps.getTextCustomFontFamilyAndroid() != null && !mExtendedProps.getTextCustomFontFamilyAndroid().isEmpty()) {
             if (AppUtils.isResourceAvailable(getActivity(), mExtendedProps.getTextCustomFontFamilyAndroid())) {
                 int id = getActivity().getResources().getIdentifier(mExtendedProps.getTextCustomFontFamilyAndroid(), "font", getActivity().getPackageName());
                 binding.bannerText.setTypeface(ResourcesCompat.getFont(getActivity(), id));
-                binding.bannerLabel.setTypeface(ResourcesCompat.getFont(getActivity(), id));
+                //binding.bannerLabel.setTypeface(ResourcesCompat.getFont(getActivity(), id));
             }
         } else {
             binding.bannerText.setTypeface(Typeface.DEFAULT);
-            binding.bannerLabel.setTypeface(Typeface.DEFAULT);
+            //binding.bannerLabel.setTypeface(Typeface.DEFAULT);
         }
 
         binding.closeButton.setBackgroundResource(getCloseIcon());

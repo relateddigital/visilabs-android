@@ -1,46 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:id="@+id/container">
+    android:layout_height="70dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"
         android:layout_marginEnd="28dp"
+        android:gravity="center"
         android:orientation="horizontal"
-        android:gravity="center">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:id="@+id/banner_text"/>
+        android:padding="8dp">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/banner_code_border"
+            android:layout_width="100dp"
+            android:layout_marginStart="10dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:gravity="center"
-            android:layout_marginStart="16dp"
+            android:background="@drawable/dotted_border"
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/banner_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:id="@+id/banner_label"
-                android:layout_marginBottom="2dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginTop="2dp"
-                android:id="@+id/banner_code" />
+                android:gravity="center"
+                android:textStyle="bold" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/banner_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center" />
+
     </LinearLayout>
 
     <ImageButton
