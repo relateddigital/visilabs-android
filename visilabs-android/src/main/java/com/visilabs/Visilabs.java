@@ -2400,6 +2400,12 @@ public class Visilabs {
                     mLvt = lastEventTime;
                 }
 
+                Prefs.saveToPrefs(mContext, VisilabsConstant.UTM_CAMPAIGN_PREF, VisilabsConstant.UTM_CAMPAIGN_KEY, null);
+                Prefs.saveToPrefs(mContext, VisilabsConstant.UTM_CONTENT_PREF, VisilabsConstant.UTM_CONTENT_KEY, null);
+                Prefs.saveToPrefs(mContext, VisilabsConstant.UTM_MEDIUM_PREF, VisilabsConstant.UTM_MEDIUM_KEY, null);
+                Prefs.saveToPrefs(mContext, VisilabsConstant.UTM_SOURCE_PREF, VisilabsConstant.UTM_SOURCE_KEY, null);
+                Prefs.saveToPrefs(mContext, VisilabsConstant.UTM_TERM_PREF, VisilabsConstant.UTM_TERM_KEY, null);
+
             } else {
                 if(!pageName.equals(VisilabsConstant.PAGE_NAME_REQUEST_VAL)) {
                     int prevPviv = Integer.parseInt(Prefs.getFromPrefs(mContext, VisilabsConstant.PVIV_PREF,
