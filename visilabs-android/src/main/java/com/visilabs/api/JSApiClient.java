@@ -28,7 +28,7 @@ public class JSApiClient {
 
             OkHttpClient.Builder httpClient =
                     new OkHttpClient.Builder()
-                            .addInterceptor(interceptor)
+                            .addInterceptor(new SafeInterceptor())
                             .connectTimeout(connectTimeOutInSec, TimeUnit.SECONDS)
                             .readTimeout(30, TimeUnit.SECONDS);
 
