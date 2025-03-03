@@ -15,3 +15,6 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-keep class androidx.media3.** { *; }
+-keep class androidx.media3.exoplayer.** { *; }
+-keep class androidx.media3.ui.** { *; }

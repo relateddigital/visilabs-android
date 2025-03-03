@@ -14,10 +14,11 @@ import android.view.ViewGroup;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.media3.common.MediaItem;
+import androidx.media3.exoplayer.ExoPlayer;
 
 import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
+
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
@@ -301,7 +302,7 @@ public class HalfScreenFragment extends Fragment {
     }
 
     private void initializePlayer() {
-        player = new ExoPlayer.Builder(getActivity()).build();
+        player = new androidx.media3.exoplayer.ExoPlayer.Builder(getActivity()).build();
         if (mIsTop) {
             binding.topVideoView.setPlayer(player);
         } else {

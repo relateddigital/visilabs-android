@@ -35,7 +35,7 @@
                 android:id="@+id/top_image_view"
                 android:adjustViewBounds="true"/>
 
-            <com.google.android.exoplayer2.ui.PlayerView
+            <androidx.media3.ui.PlayerView
                 android:id="@+id/top_video_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
                 android:id="@+id/bot_image_view"
                 android:adjustViewBounds="true"/>
 
-            <com.google.android.exoplayer2.ui.PlayerView
+            <androidx.media3.ui.PlayerView
                 android:id="@+id/bot_video_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

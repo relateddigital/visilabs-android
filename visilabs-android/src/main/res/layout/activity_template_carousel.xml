@@ -29,7 +29,7 @@
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true" />
 
-            <com.google.android.exoplayer2.ui.PlayerView
+            <androidx.media3.ui.PlayerView
                 android:id="@+id/carousel_video"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -18,10 +18,11 @@ import android.webkit.WebSettings;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.media3.common.MediaItem;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
@@ -320,8 +321,8 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
 
 
     private void initializePlayer() {
-        player = new ExoPlayer.Builder(this).build();
-        binding.fullVideoView.setPlayer(player);
+        player = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
+        ((PlayerView) binding.fullVideoView).setPlayer(player);
         MediaItem mediaItem = MediaItem.fromUri(mInApp.getActionData().getVideoUrl());
         player.setMediaItem(mediaItem);
         player.prepare();

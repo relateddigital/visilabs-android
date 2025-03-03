@@ -21,10 +21,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.media3.common.MediaItem;
+import androidx.media3.exoplayer.ExoPlayer;
 
 import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
 import com.squareup.picasso.Picasso;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.Visilabs;
@@ -733,7 +733,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     if (mInAppMessage.getActionData().getSecondPopupVideoUrl2() != null &&
                             !mInAppMessage.getActionData().getSecondPopupVideoUrl2().isEmpty()) {
                         bindingSecondPopUp.secondVideoView2.setVisibility(View.VISIBLE);
-                        player2 = new ExoPlayer.Builder(this).build();
+                        player2 = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
                         bindingSecondPopUp.secondVideoView2.setPlayer(player2);
                         MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getSecondPopupVideoUrl2());
                         player2.setMediaItem(mediaItem);
@@ -790,7 +790,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             if (mInAppMessage.getActionData().getSecondPopupVideoUrl1() != null &&
                     !mInAppMessage.getActionData().getSecondPopupVideoUrl1().isEmpty()) {
                 bindingSecondPopUp.secondVideoView.setVisibility(View.VISIBLE);
-                player = new ExoPlayer.Builder(this).build();
+                player = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
                 bindingSecondPopUp.secondVideoView.setPlayer(player);
                 MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getSecondPopupVideoUrl1());
                 player.setMediaItem(mediaItem);
@@ -1172,7 +1172,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void initializePlayer() {
         if (!mIsCarousel) {
-            player = new ExoPlayer.Builder(this).build();
+            player = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
             binding.videoView.setPlayer(player);
             MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getVideoUrl());
             player.setMediaItem(mediaItem);
@@ -1228,7 +1228,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             bindingCarousel.carouselImage.setVisibility(View.GONE);
             if (mCarouselItems.get(position).getVideoUrl() != null && !mCarouselItems.get(position).getVideoUrl().isEmpty()) {
                 bindingCarousel.carouselVideo.setVisibility(View.VISIBLE);
-                player = new ExoPlayer.Builder(this).build();
+                player = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
                 bindingCarousel.carouselVideo.setPlayer(player);
                 MediaItem mediaItem = MediaItem.fromUri(mCarouselItems.get(position).getVideoUrl());
                 player.setMediaItem(mediaItem);

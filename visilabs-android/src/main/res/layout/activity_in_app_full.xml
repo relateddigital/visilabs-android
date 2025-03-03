@@ -49,7 +49,7 @@
             android:contentDescription="@string/com_visilabs_android_notification_image"
             android:scaleType="fitCenter" />
 
-        <com.google.android.exoplayer2.ui.PlayerView
+        <androidx.media3.ui.PlayerView
             android:id="@+id/full_video_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
