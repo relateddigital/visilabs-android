@@ -55,7 +55,7 @@ android {
 dependencies {
 
     api 'com.google.android.gms:play-services-base:18.0.1'
-    api 'com.google.android.gms:play-services-location:19.0.1'
+    api 'com.google.android.gms:play-services-location:21.3.0'
     api 'com.google.code.gson:gson:2.8.6'
 
     api 'com.squareup.picasso:picasso:2.71828'
