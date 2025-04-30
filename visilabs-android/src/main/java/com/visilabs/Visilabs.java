@@ -816,10 +816,16 @@ public class Visilabs {
 
                         }
                     } else if (!response.getScratchToWinList().isEmpty()) {
+                        long waitTime = 0L;
+                        ActivityUtils.setParentActivity(parent);
                         Intent intent = new Intent(parent, ScratchToWinActivity.class);
                         ScratchToWinModel scratchToWinModel = (ScratchToWinModel) response.getScratchToWinList().get(0);
+                        waitTime = scratchToWinModel.getActiondata().getWaitingTime();
                         intent.putExtra("scratch-to-win-data", scratchToWinModel);
-                        parent.startActivity(intent);
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() { parent.startActivity(intent); }
+                            }, waitTime * 1000L);
                     }
                     else if (!response.getCustomActionList().isEmpty()) {
                         CustomActionFragment customActionFragment = CustomActionFragment.newInstance(response.getCustomActionList().get(0));
