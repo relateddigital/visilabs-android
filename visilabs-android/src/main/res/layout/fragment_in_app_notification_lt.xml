@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
         android:layout_width="@dimen/in_app_notification_big_width"
@@ -109,5 +109,30 @@
             android:layout_marginRight="10dp"
             android:layout_gravity="center_horizontal|top"
             android:layout_marginEnd="10dp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/close_frameLayout_lt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/big_container_lt"
+        android:layout_alignStart="@+id/big_container_lt"
+        android:layout_alignEnd="@id/big_container_lt"
+        android:layout_marginTop="8dp"
+        android:elevation="4dp">
+
+        <ImageView
+            android:id="@+id/close_button_lt"
+            android:background="@drawable/circle_background"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="8dp"
+            android:layout_gravity="center"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="Kapat"
+            android:clickable="true"
+            android:focusable="true"
+            app:tint="@color/black" />
+
     </FrameLayout>
 </RelativeLayout>

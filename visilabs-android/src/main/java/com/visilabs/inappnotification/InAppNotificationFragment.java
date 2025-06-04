@@ -239,6 +239,8 @@ public class InAppNotificationFragment extends Fragment {
         bindingRt.smallCircleBackgroundImageRt.setVisibility(View.VISIBLE);
         bindingRt.smallSquareBackgroundImageRt.setVisibility(View.VISIBLE);
         bindingRt.bigContainerRt.setVisibility(View.GONE);
+        bindingRt.closeFrameLayoutRt.setVisibility(View.GONE);
+        bindingRt.closeButtonRt.setOnClickListener(v -> endFragment());
 
         switch (shape) {
             case SHARP_EDGE:
@@ -372,11 +374,15 @@ public class InAppNotificationFragment extends Fragment {
             bindingRt.smallCircleContainerRt.setOnClickListener(v -> {
                 if(isExpanded) {
                     isExpanded = false;
+                    bindingRt.closeFrameLayoutRt.setVisibility(View.GONE);
+                    bindingRt.closeButtonRt.setVisibility(View.GONE);
                     bindingRt.bigContainerRt.setVisibility(View.GONE);
                     bindingRt.arrowCircleRt.setText(getString(R.string.notification_right_arrow));
                 } else {
                     isExpanded = true;
                     bindingRt.bigContainerRt.setVisibility(View.VISIBLE);
+                    bindingRt.closeFrameLayoutRt.setVisibility(View.VISIBLE);
+                    bindingRt.closeButtonRt.setVisibility(View.VISIBLE);
                     bindingRt.arrowCircleRt.setText(getString(R.string.notification_left_arrow));
                 }
             });
@@ -426,10 +432,14 @@ public class InAppNotificationFragment extends Fragment {
             bindingRt.smallSquareContainerRt.setOnClickListener(v -> {
                 if(isExpanded) {
                     isExpanded = false;
+                    bindingRt.closeFrameLayoutRt.setVisibility(View.GONE);
+                    bindingRt.closeButtonRt.setVisibility(View.GONE);
                     bindingRt.bigContainerRt.setVisibility(View.GONE);
                     bindingRt.arrowSquareRt.setText(getString(R.string.notification_right_arrow));
                 } else {
                     isExpanded = true;
+                    bindingRt.closeFrameLayoutRt.setVisibility(View.VISIBLE);
+                    bindingRt.closeButtonRt.setVisibility(View.VISIBLE);
                     bindingRt.bigContainerRt.setVisibility(View.VISIBLE);
                     bindingRt.arrowSquareRt.setText(getString(R.string.notification_left_arrow));
                 }
@@ -490,6 +500,8 @@ public class InAppNotificationFragment extends Fragment {
         bindingRm.smallCircleBackgroundImageRm.setVisibility(View.VISIBLE);
         bindingRm.smallSquareBackgroundImageRm.setVisibility(View.VISIBLE);
         bindingRm.bigContainerRm.setVisibility(View.GONE);
+        bindingRm.closeFrameLayoutRm.setVisibility(View.GONE);
+        bindingRm.closeButtonRm.setOnClickListener(v -> endFragment());
 
         switch (shape) {
             case SHARP_EDGE:
@@ -623,10 +635,14 @@ public class InAppNotificationFragment extends Fragment {
             bindingRm.smallCircleContainerRm.setOnClickListener(v -> {
                 if(isExpanded) {
                     isExpanded = false;
+                    bindingRm.closeFrameLayoutRm.setVisibility(View.GONE);
+                    bindingRm.closeButtonRm.setVisibility(View.GONE);
                     bindingRm.bigContainerRm.setVisibility(View.GONE);
                     bindingRm.arrowCircleRm.setText(getString(R.string.notification_right_arrow));
                 } else {
                     isExpanded = true;
+                    bindingRm.closeFrameLayoutRm.setVisibility(View.VISIBLE);
+                    bindingRm.closeButtonRm.setVisibility(View.VISIBLE);
                     bindingRm.bigContainerRm.setVisibility(View.VISIBLE);
                     bindingRm.arrowCircleRm.setText(getString(R.string.notification_left_arrow));
                 }
@@ -677,10 +693,14 @@ public class InAppNotificationFragment extends Fragment {
             bindingRm.smallSquareContainerRm.setOnClickListener(v -> {
                 if(isExpanded) {
                     isExpanded = false;
+                    bindingRm.closeFrameLayoutRm.setVisibility(View.GONE);
+                    bindingRm.closeButtonRm.setVisibility(View.GONE);
                     bindingRm.bigContainerRm.setVisibility(View.GONE);
                     bindingRm.arrowSquareRm.setText(getString(R.string.notification_right_arrow));
                 } else {
                     isExpanded = true;
+                    bindingRm.closeFrameLayoutRm.setVisibility(View.VISIBLE);
+                    bindingRm.closeButtonRm.setVisibility(View.VISIBLE);
                     bindingRm.bigContainerRm.setVisibility(View.VISIBLE);
                     bindingRm.arrowSquareRm.setText(getString(R.string.notification_left_arrow));
                 }
@@ -741,6 +761,8 @@ public class InAppNotificationFragment extends Fragment {
         bindingRb.smallCircleBackgroundImageRb.setVisibility(View.VISIBLE);
         bindingRb.smallSquareBackgroundImageRb.setVisibility(View.VISIBLE);
         bindingRb.bigContainerRb.setVisibility(View.GONE);
+        bindingRb.closeFrameLayoutRb.setVisibility(View.GONE);
+        bindingRb.closeButtonRb.setOnClickListener(v -> endFragment());
 
         switch (shape) {
             case SHARP_EDGE:
@@ -874,10 +896,14 @@ public class InAppNotificationFragment extends Fragment {
             bindingRb.smallCircleContainerRb.setOnClickListener(v -> {
                 if(isExpanded) {
                     isExpanded = false;
+                    bindingRb.closeFrameLayoutRb.setVisibility(View.GONE);
+                    bindingRb.closeButtonRb.setVisibility(View.GONE);
                     bindingRb.bigContainerRb.setVisibility(View.GONE);
                     bindingRb.arrowCircleRb.setText(getString(R.string.notification_right_arrow));
                 } else {
                     isExpanded = true;
+                    bindingRb.closeFrameLayoutRb.setVisibility(View.VISIBLE);
+                    bindingRb.closeButtonRb.setVisibility(View.VISIBLE);
                     bindingRb.bigContainerRb.setVisibility(View.VISIBLE);
                     bindingRb.arrowCircleRb.setText(getString(R.string.notification_left_arrow));
                 }
@@ -928,12 +954,16 @@ public class InAppNotificationFragment extends Fragment {
             bindingRb.smallSquareContainerRb.setOnClickListener(v -> {
                 if(isExpanded) {
                     isExpanded = false;
+                    bindingRb.closeFrameLayoutRb.setVisibility(View.GONE);
+                    bindingRb.closeButtonRb.setVisibility(View.GONE);
                     bindingRb.bigContainerRb.setVisibility(View.GONE);
-                    bindingRb.arrowSquareRb.setText(getString(R.string.notification_right_arrow));
+                    bindingRb.arrowCircleRb.setText(getString(R.string.notification_right_arrow));
                 } else {
                     isExpanded = true;
+                    bindingRb.closeFrameLayoutRb.setVisibility(View.VISIBLE);
+                    bindingRb.closeButtonRb.setVisibility(View.VISIBLE);
                     bindingRb.bigContainerRb.setVisibility(View.VISIBLE);
-                    bindingRb.arrowSquareRb.setText(getString(R.string.notification_left_arrow));
+                    bindingRb.arrowCircleRb.setText(getString(R.string.notification_left_arrow));
                 }
             });
         }
@@ -992,6 +1022,8 @@ public class InAppNotificationFragment extends Fragment {
         bindingLt.smallCircleBackgroundImageLt.setVisibility(View.VISIBLE);
         bindingLt.smallSquareBackgroundImageLt.setVisibility(View.VISIBLE);
         bindingLt.bigContainerLt.setVisibility(View.GONE);
+        bindingLt.closeFrameLayoutLt.setVisibility(View.GONE);
+        bindingLt.closeButtonLt.setOnClickListener(v -> endFragment());
 
         switch (shape) {
             case SHARP_EDGE:
@@ -1125,12 +1157,16 @@ public class InAppNotificationFragment extends Fragment {
             bindingLt.smallCircleContainerLt.setOnClickListener(v -> {
                 if(isExpanded) {
                     isExpanded = false;
+                    bindingLt.closeFrameLayoutLt.setVisibility(View.GONE);
+                    bindingLt.closeButtonLt.setVisibility(View.GONE);
                     bindingLt.bigContainerLt.setVisibility(View.GONE);
-                    bindingLt.arrowCircleLt.setText(getString(R.string.notification_left_arrow));
+                    bindingLt.arrowCircleLt.setText(getString(R.string.notification_right_arrow));
                 } else {
                     isExpanded = true;
+                    bindingLt.closeFrameLayoutLt.setVisibility(View.VISIBLE);
+                    bindingLt.closeButtonLt.setVisibility(View.VISIBLE);
                     bindingLt.bigContainerLt.setVisibility(View.VISIBLE);
-                    bindingLt.arrowCircleLt.setText(getString(R.string.notification_right_arrow));
+                    bindingLt.arrowCircleLt.setText(getString(R.string.notification_left_arrow));
                 }
             });
         } else {
@@ -1179,12 +1215,16 @@ public class InAppNotificationFragment extends Fragment {
             bindingLt.smallSquareContainerLt.setOnClickListener(v -> {
                 if(isExpanded) {
                     isExpanded = false;
+                    bindingLt.closeFrameLayoutLt.setVisibility(View.GONE);
+                    bindingLt.closeButtonLt.setVisibility(View.GONE);
                     bindingLt.bigContainerLt.setVisibility(View.GONE);
-                    bindingLt.arrowSquareLt.setText(getString(R.string.notification_left_arrow));
+                    bindingLt.arrowCircleLt.setText(getString(R.string.notification_right_arrow));
                 } else {
                     isExpanded = true;
+                    bindingLt.closeFrameLayoutLt.setVisibility(View.VISIBLE);
+                    bindingLt.closeButtonLt.setVisibility(View.VISIBLE);
                     bindingLt.bigContainerLt.setVisibility(View.VISIBLE);
-                    bindingLt.arrowSquareLt.setText(getString(R.string.notification_right_arrow));
+                    bindingLt.arrowCircleLt.setText(getString(R.string.notification_left_arrow));
                 }
             });
         }
@@ -1243,6 +1283,8 @@ public class InAppNotificationFragment extends Fragment {
         bindingLm.smallCircleBackgroundImageLm.setVisibility(View.VISIBLE);
         bindingLm.smallSquareBackgroundImageLm.setVisibility(View.VISIBLE);
         bindingLm.bigContainerLm.setVisibility(View.GONE);
+        bindingLm.closeFrameLayoutLm.setVisibility(View.GONE);
+        bindingLm.closeButtonLm.setOnClickListener(v -> endFragment());
 
         switch (shape) {
             case SHARP_EDGE:
@@ -1376,12 +1418,16 @@ public class InAppNotificationFragment extends Fragment {
             bindingLm.smallCircleContainerLm.setOnClickListener(v -> {
                 if(isExpanded) {
                     isExpanded = false;
+                    bindingLm.closeFrameLayoutLm.setVisibility(View.GONE);
+                    bindingLm.closeButtonLm.setVisibility(View.GONE);
                     bindingLm.bigContainerLm.setVisibility(View.GONE);
-                    bindingLm.arrowCircleLm.setText(getString(R.string.notification_left_arrow));
+                    bindingLm.arrowCircleLm.setText(getString(R.string.notification_right_arrow));
                 } else {
                     isExpanded = true;
+                    bindingLm.closeFrameLayoutLm.setVisibility(View.VISIBLE);
+                    bindingLm.closeButtonLm.setVisibility(View.VISIBLE);
                     bindingLm.bigContainerLm.setVisibility(View.VISIBLE);
-                    bindingLm.arrowCircleLm.setText(getString(R.string.notification_right_arrow));
+                    bindingLm.arrowCircleLm.setText(getString(R.string.notification_left_arrow));
                 }
             });
         } else {
@@ -1430,12 +1476,16 @@ public class InAppNotificationFragment extends Fragment {
             bindingLm.smallSquareContainerLm.setOnClickListener(v -> {
                 if(isExpanded) {
                     isExpanded = false;
+                    bindingLm.closeFrameLayoutLm.setVisibility(View.GONE);
+                    bindingLm.closeButtonLm.setVisibility(View.GONE);
                     bindingLm.bigContainerLm.setVisibility(View.GONE);
-                    bindingLm.arrowSquareLm.setText(getString(R.string.notification_left_arrow));
+                    bindingLm.arrowCircleLm.setText(getString(R.string.notification_right_arrow));
                 } else {
                     isExpanded = true;
+                    bindingLm.closeFrameLayoutLm.setVisibility(View.VISIBLE);
+                    bindingLm.closeButtonLm.setVisibility(View.VISIBLE);
                     bindingLm.bigContainerLm.setVisibility(View.VISIBLE);
-                    bindingLm.arrowSquareLm.setText(getString(R.string.notification_right_arrow));
+                    bindingLm.arrowCircleLm.setText(getString(R.string.notification_left_arrow));
                 }
             });
         }
@@ -1494,6 +1544,8 @@ public class InAppNotificationFragment extends Fragment {
         bindingLb.smallCircleBackgroundImageLb.setVisibility(View.VISIBLE);
         bindingLb.smallSquareBackgroundImageLb.setVisibility(View.VISIBLE);
         bindingLb.bigContainerLb.setVisibility(View.GONE);
+        bindingLb.closeFrameLayoutLb.setVisibility(View.GONE);
+        bindingLb.closeButtonLb.setOnClickListener(v -> endFragment());
 
         switch (shape) {
             case SHARP_EDGE:
@@ -1627,12 +1679,16 @@ public class InAppNotificationFragment extends Fragment {
             bindingLb.smallCircleContainerLb.setOnClickListener(v -> {
                 if(isExpanded) {
                     isExpanded = false;
+                    bindingLb.closeFrameLayoutLb.setVisibility(View.GONE);
+                    bindingLb.closeButtonLb.setVisibility(View.GONE);
                     bindingLb.bigContainerLb.setVisibility(View.GONE);
-                    bindingLb.arrowCircleLb.setText(getString(R.string.notification_left_arrow));
+                    bindingLb.arrowCircleLb.setText(getString(R.string.notification_right_arrow));
                 } else {
                     isExpanded = true;
+                    bindingLb.closeFrameLayoutLb.setVisibility(View.VISIBLE);
+                    bindingLb.closeButtonLb.setVisibility(View.VISIBLE);
                     bindingLb.bigContainerLb.setVisibility(View.VISIBLE);
-                    bindingLb.arrowCircleLb.setText(getString(R.string.notification_right_arrow));
+                    bindingLb.arrowCircleLb.setText(getString(R.string.notification_left_arrow));
                 }
             });
         } else {
