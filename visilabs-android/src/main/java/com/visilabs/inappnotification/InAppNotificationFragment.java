@@ -1,6 +1,9 @@
 package com.visilabs.inappnotification;
 
 import android.app.Fragment;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -10,6 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
@@ -47,6 +54,10 @@ public class InAppNotificationFragment extends Fragment {
         SOFT_EDGE
     }
 
+    enum ButtonFunction {
+        COPY, REDIRECT, COPY_REDIRECT
+    }
+
     private static final String LOG_TAG = "InAppNotification";
     private static final String ARG_PARAM1 = "dataKey";
 
@@ -68,6 +79,8 @@ public class InAppNotificationFragment extends Fragment {
     private boolean isArrow = false;
     private boolean isMiniBackgroundImage = false;
     private boolean isMaxiBackgroundImage = false;
+    private String staticCode = "";
+    private ButtonFunction buttonFunction = ButtonFunction.COPY;
 
 
     public InAppNotificationFragment() {
@@ -152,6 +165,9 @@ public class InAppNotificationFragment extends Fragment {
         } else {
             shape = Shape.SHARP_EDGE;
         }
+
+        buttonFunction = getButtonFunctionFromString(response.getActionData().getButtonFunction());
+        staticCode = response.getActionData().getStaticCode();
 
         isArrow = mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("");
 
@@ -464,27 +480,7 @@ public class InAppNotificationFragment extends Fragment {
         }
 
         bindingRt.bigContainerRt.setOnClickListener(v -> {
-            final String uriString = response.getActionData().getAndroidLnk();
-            InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
-            Report report = new Report();
-            report.impression = response.getActionData().getReport().getImpression();
-            report.click = response.getActionData().getReport().getClick();
-            Visilabs.CallAPI().trackActionClick(report);
-            if(buttonInterface != null) {
-                Visilabs.CallAPI().setInAppButtonInterface(null);
-                buttonInterface.onPress(uriString);
-            } else {
-                if (uriString != null && uriString.length() > 0) {
-                    Uri uri;
-                    try {
-                        uri = Uri.parse(uriString);
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        getActivity().startActivity(viewIntent);
-                    } catch (Exception e) {
-                        Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                    }
-                }
-            }
+            handleBigContainerClick();
         });
     }
 
@@ -725,27 +721,7 @@ public class InAppNotificationFragment extends Fragment {
         }
 
         bindingRm.bigContainerRm.setOnClickListener(v -> {
-            final String uriString = response.getActionData().getAndroidLnk();
-            InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
-            Report report = new Report();
-            report.impression = response.getActionData().getReport().getImpression();
-            report.click = response.getActionData().getReport().getClick();
-            Visilabs.CallAPI().trackActionClick(report);
-            if(buttonInterface != null) {
-                Visilabs.CallAPI().setInAppButtonInterface(null);
-                buttonInterface.onPress(uriString);
-            } else {
-                if (uriString != null && uriString.length() > 0) {
-                    Uri uri;
-                    try {
-                        uri = Uri.parse(uriString);
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        getActivity().startActivity(viewIntent);
-                    } catch (Exception e) {
-                        Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                    }
-                }
-            }
+            handleBigContainerClick();
         });
     }
 
@@ -986,27 +962,7 @@ public class InAppNotificationFragment extends Fragment {
         }
 
         bindingRb.bigContainerRb.setOnClickListener(v -> {
-            final String uriString = response.getActionData().getAndroidLnk();
-            InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
-            Report report = new Report();
-            report.impression = response.getActionData().getReport().getImpression();
-            report.click = response.getActionData().getReport().getClick();
-            Visilabs.CallAPI().trackActionClick(report);
-            if(buttonInterface != null) {
-                Visilabs.CallAPI().setInAppButtonInterface(null);
-                buttonInterface.onPress(uriString);
-            } else {
-                if (uriString != null && uriString.length() > 0) {
-                    Uri uri;
-                    try {
-                        uri = Uri.parse(uriString);
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        getActivity().startActivity(viewIntent);
-                    } catch (Exception e) {
-                        Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                    }
-                }
-            }
+            handleBigContainerClick();
         });
     }
 
@@ -1247,27 +1203,7 @@ public class InAppNotificationFragment extends Fragment {
         }
 
         bindingLt.bigContainerLt.setOnClickListener(v -> {
-            final String uriString = response.getActionData().getAndroidLnk();
-            InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
-            Report report = new Report();
-            report.impression = response.getActionData().getReport().getImpression();
-            report.click = response.getActionData().getReport().getClick();
-            Visilabs.CallAPI().trackActionClick(report);
-            if(buttonInterface != null) {
-                Visilabs.CallAPI().setInAppButtonInterface(null);
-                buttonInterface.onPress(uriString);
-            } else {
-                if (uriString != null && uriString.length() > 0) {
-                    Uri uri;
-                    try {
-                        uri = Uri.parse(uriString);
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        getActivity().startActivity(viewIntent);
-                    } catch (Exception e) {
-                        Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                    }
-                }
-            }
+            handleBigContainerClick();
         });
     }
 
@@ -1508,27 +1444,7 @@ public class InAppNotificationFragment extends Fragment {
         }
 
         bindingLm.bigContainerLm.setOnClickListener(v -> {
-            final String uriString = response.getActionData().getAndroidLnk();
-            InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
-            Report report = new Report();
-            report.impression = response.getActionData().getReport().getImpression();
-            report.click = response.getActionData().getReport().getClick();
-            Visilabs.CallAPI().trackActionClick(report);
-            if(buttonInterface != null) {
-                Visilabs.CallAPI().setInAppButtonInterface(null);
-                buttonInterface.onPress(uriString);
-            } else {
-                if (uriString != null && uriString.length() > 0) {
-                    Uri uri;
-                    try {
-                        uri = Uri.parse(uriString);
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        getActivity().startActivity(viewIntent);
-                    } catch (Exception e) {
-                        Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                    }
-                }
-            }
+            handleBigContainerClick();
         });
     }
 
@@ -1737,10 +1653,14 @@ public class InAppNotificationFragment extends Fragment {
             bindingLb.smallSquareContainerLb.setOnClickListener(v -> {
                 if(isExpanded) {
                     isExpanded = false;
+                    bindingLb.closeFrameLayoutLb.setVisibility(View.GONE);
+                    bindingLb.closeButtonLb.setVisibility(View.GONE);
                     bindingLb.bigContainerLb.setVisibility(View.GONE);
                     bindingLb.arrowSquareLb.setText(getString(R.string.notification_left_arrow));
                 } else {
                     isExpanded = true;
+                    bindingLb.closeFrameLayoutLb.setVisibility(View.VISIBLE);
+                    bindingLb.closeButtonLb.setVisibility(View.VISIBLE);
                     bindingLb.bigContainerLb.setVisibility(View.VISIBLE);
                     bindingLb.arrowSquareLb.setText(getString(R.string.notification_right_arrow));
                 }
@@ -1765,29 +1685,102 @@ public class InAppNotificationFragment extends Fragment {
         }
 
         bindingLb.bigContainerLb.setOnClickListener(v -> {
-            final String uriString = response.getActionData().getAndroidLnk();
-            InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
-            Report report = new Report();
-            report.impression = response.getActionData().getReport().getImpression();
-            report.click = response.getActionData().getReport().getClick();
-            Visilabs.CallAPI().trackActionClick(report);
-            if(buttonInterface != null) {
-                Visilabs.CallAPI().setInAppButtonInterface(null);
-                buttonInterface.onPress(uriString);
-            } else {
-                if (uriString != null && uriString.length() > 0) {
-                    Uri uri;
-                    try {
-                        uri = Uri.parse(uriString);
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        getActivity().startActivity(viewIntent);
-                    } catch (Exception e) {
-                        Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                    }
-                }
-            }
+            handleBigContainerClick();
         });
     }
+
+    private ButtonFunction getButtonFunctionFromString(@Nullable String functionName) {
+        // Kotlin'in ?.uppercase() operatörü, functionName null ise null döner.
+        // Java'da bunu açık bir null kontrolü ile yapmalıyız.
+        if (functionName == null) {
+            // Eğer gelen string null ise varsayılan değeri döndür.
+            return ButtonFunction.COPY_REDIRECT;
+        }
+
+        // Java'da 'when' yerine 'switch' kullanılır.
+        // String karşılaştırmaları için büyük/küçük harf duyarlılığını
+        // ortadan kaldırmak için toUpperCase() kullanılır.
+        switch (functionName.toUpperCase()) {
+            case "copy":
+                return ButtonFunction.COPY;
+            case "redirect":
+                return ButtonFunction.REDIRECT;
+            default:
+                // 'else' bloğu, 'default' case'ine karşılık gelir.
+                return ButtonFunction.COPY_REDIRECT;
+        }
+    }
+
+    private void copyStaticCodeToClipboard(@Nullable String staticCode) {
+        // requireContext() yerine getContext() kullanılır ve null kontrolü yapılır.
+        if (getContext() == null) {
+            return; // Context yoksa işlem yapılamaz.
+        }
+
+        // getSystemService çağrısı aynıdır, ancak cast (tip dönüştürme)
+        // Kotlin'deki 'as' yerine Java'da parantez içinde yapılır.
+        ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+
+        // ClipboardManager'ın null olabileceği nadir durumlar için kontrol eklenebilir.
+        if (clipboard == null) {
+            return;
+        }
+
+        // Panoya kopyalanacak veriyi oluştur.
+        ClipData clip = ClipData.newPlainText("staticCode", staticCode);
+
+        // Veriyi panoya set et.
+        clipboard.setPrimaryClip(clip);
+
+        // Kullanıcıya geri bildirimde bulun.
+        Toast.makeText(getContext(), "Kod kopyalandı!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void handleBigContainerClick() {
+        ;
+        Report report = new Report();
+        report.impression = response.getActionData().getReport().getImpression();
+        report.click = response.getActionData().getReport().getClick();
+        Visilabs.CallAPI().trackActionClick(report);
+
+
+        // Belirlenen buton fonksiyonuna göre işlem yap
+        // Java'da 'when' yerine 'switch' kullanılır.
+        switch (buttonFunction) {
+            case COPY:
+                copyStaticCodeToClipboard(staticCode);
+                break;
+            case REDIRECT:
+                performRedirect();
+                break;
+            case COPY_REDIRECT:
+                copyStaticCodeToClipboard(staticCode);
+                performRedirect();
+                break;
+        }
+    }
+
+    private void performRedirect() {
+        final String uriString = response.getActionData().getAndroidLnk();
+        InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
+        if(buttonInterface != null) {
+            Visilabs.CallAPI().setInAppButtonInterface(null);
+            buttonInterface.onPress(uriString);
+        } else {
+            if (uriString != null && uriString.length() > 0) {
+                Uri uri;
+                try {
+                    uri = Uri.parse(uriString);
+                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
+                    getActivity().startActivity(viewIntent);
+                } catch (Exception e) {
+                    Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
+                }
+            }
+        }
+    }
+
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

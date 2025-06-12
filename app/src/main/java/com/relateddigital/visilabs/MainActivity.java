@@ -13,6 +13,7 @@ import com.visilabs.Visilabs;
 import com.visilabs.api.VisilabsFavsRequestCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.CountdownTimerFragment;
+import com.visilabs.inApp.InAppButtonInterface;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.util.VisilabsConstant;
 import java.util.HashMap;
@@ -309,6 +310,14 @@ public class MainActivity extends AppCompatActivity {
          * applications installed from a store in the device to the server.
          */
         // Visilabs.CallAPI().sendTheListOfAppsInstalled();
+
+        InAppButtonInterface buttonCallback = new InAppButtonInterface() {
+            @Override
+            public void onPress(String link) {
+                Log.i("DrawerLink: ", link);
+            }
+        };
+        Visilabs.CallAPI().setInAppButtonInterface(buttonCallback);
     }
 
     private void sendInAppRequest(String type) {

@@ -25,6 +25,18 @@ public class Actiondata implements Serializable {
     private String extendedProps;
     @SerializedName("report")
     private Report report;
+    @SerializedName("copybutton_function")
+    private String buttonFunction;
+    @SerializedName("staticcode")
+    private String staticCode;
+
+    public String getButtonFunction() {
+        return buttonFunction;
+    }
+
+    public String getStaticCode() {
+        return staticCode;
+    }
 
     public String getShape() {
         return shape;
