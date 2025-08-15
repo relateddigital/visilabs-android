@@ -21,7 +21,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'adopt'
-        
+
     - name: Create google-services.json
       env:
         GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
