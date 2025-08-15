@@ -21,6 +21,11 @@
             android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
+            android:name="com.visilabs.survey.SurveyActivity"
+            android:configChanges="orientation"
+            android:noHistory="true"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="com.visilabs.inApp.VisilabsInAppActivity"
             android:noHistory="true"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />

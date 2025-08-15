@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 
@@ -49,11 +50,17 @@ import com.visilabs.mailSub.Report;
 import com.visilabs.model.LocationPermission;
 import com.visilabs.model.VisilabsActionsResponse;
 import com.visilabs.model.VisilabsParameters;
+import com.visilabs.notificationbell.NotificationBellAdapter;
+import com.visilabs.notificationbell.NotificationBellClickCallback;
+import com.visilabs.notificationbell.NotificationBellFragment;
+import com.visilabs.notificationbell.model.NotificationBell;
 import com.visilabs.remoteConfig.RemoteConfigHelper;
 import com.visilabs.scratchToWin.ScratchToWinActivity;
 import com.visilabs.scratchToWin.model.ScratchToWinModel;
 import com.visilabs.spinToWin.SpinToWinActivity;
 import com.visilabs.spinToWin.model.SpinToWinModel;
+import com.visilabs.survey.SurveyActivity;
+import com.visilabs.survey.model.SurveyModel;
 import com.visilabs.util.ActivityUtils;
 import com.visilabs.util.AppUtils;
 import com.visilabs.util.NetworkManager;
@@ -153,6 +160,7 @@ public class Visilabs {
     private VisilabsApiMethods mVisilabsRealTimeApiInterface;
     private VisilabsApiMethods mVisilabsSApiInterface;
     private InAppButtonInterface mInAppButtonInterface = null;
+    private NotificationBellClickCallback mNotificationBellClickCallback;
 
     private Visilabs(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
             , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource, String targetURL, String actionURL, String geofenceURL, boolean geofenceEnabled, String sdkType) {
@@ -777,16 +785,16 @@ public class Visilabs {
             return;
         }
         try {
-            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier~drawer~MobileCustomActions~MobileAppRating");
+            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier~drawer~MobileCustomActions~MobileAppRating~MultipleChoiceSurvey~NotificationBell");
             visilabsActionRequest.setPageName(pageName);
             visilabsActionRequest.setProperties(properties);
-            visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback(parent));
+            visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback((AppCompatActivity) parent));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private VisilabsActionsCallback getVisilabsActionsCallback(final Activity parent) {
+    private VisilabsActionsCallback getVisilabsActionsCallback(final AppCompatActivity parent) {
 
         return new VisilabsActionsCallback() {
             @Override
@@ -888,6 +896,35 @@ public class Visilabs {
 
                         FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
                         transaction.add(android.R.id.content, inAppNotificationFragment);
+                        transaction.commit();
+                    } else if (!response.getSurveyList().isEmpty()) {
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                            Log.e(LOG_TAG, "Survey feature is not supported for API levels smaller than 19!"
+                                    + " Currently, " + Build.VERSION.SDK_INT + ".");
+                        } else {
+                            long waitTime = 0L;
+                            ActivityUtils.setParentActivity(parent);
+                            Intent intent = new Intent(parent, SurveyActivity.class);
+                            SurveyModel surveyModel = (SurveyModel) response.getSurveyList().get(0);
+
+                            intent.putExtra("survey-data", surveyModel);
+
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    parent.startActivity(intent);
+                                }
+                            }, waitTime);
+
+                        }
+                    } else if (!response.getNotificationBellList().isEmpty()) {
+
+                        NotificationBellFragment notificationBellFragment = NotificationBellFragment.newInstance(response.getNotificationBellList().get(0));
+
+                        notificationBellFragment.setRetainInstance(true);
+
+                        androidx.fragment.app.FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
+                        transaction.add(android.R.id.content, notificationBellFragment);
                         transaction.commit();
                     } else {
                         Log.e(LOG_TAG, "Response is null : " + url);
@@ -2468,6 +2505,14 @@ public class Visilabs {
 
     public void setInAppButtonInterface(InAppButtonInterface inAppButtonInterface) {
         mInAppButtonInterface = inAppButtonInterface;
+    }
+
+    public void getNotificationBellClickCallback(NotificationBellClickCallback notificationBellClickCallback) {
+        mNotificationBellClickCallback = notificationBellClickCallback;
+    }
+
+    public NotificationBellClickCallback setNotificationBellClickCallback() {
+        return mNotificationBellClickCallback;
     }
 
     public void requestLocationPermission(Activity activity){

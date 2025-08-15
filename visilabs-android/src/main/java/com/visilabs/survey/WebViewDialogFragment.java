@@ -1,4 +1,4 @@
-package com.visilabs.spinToWin;
+package com.visilabs.survey;
 
 import android.app.Dialog;
 import android.os.Build;
@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import com.visilabs.android.R;
-import com.visilabs.survey.SurveyCompleteInterface;
 import com.visilabs.util.VisilabsConstant;
 
 public class WebViewDialogFragment extends DialogFragment {
@@ -30,9 +29,7 @@ public class WebViewDialogFragment extends DialogFragment {
     private String baseUrl = "";
     private String htmlString = "";
     private boolean mIsRotation = false;
-    private SpinToWinCompleteInterface mListener;
-    private SpinToWinCopyToClipboardInterface mCopyToClipboardInterface;
-    private SpinToWinShowCodeInterface mSpinToWinShowCodeInterface;
+    private SurveyCompleteInterface mListener;
 
     public WebViewDialogFragment (){}
 
@@ -72,9 +69,10 @@ public class WebViewDialogFragment extends DialogFragment {
             this.htmlString = getArguments().getString("htmlString");
             mResponse = getArguments().getString("response");
             mJavaScriptInterface = new WebViewJavaScriptInterface(this, mResponse);
-            mJavaScriptInterface.setSpinToWinListeners(mListener, mCopyToClipboardInterface, mSpinToWinShowCodeInterface);
         }
     }
+
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -97,20 +95,47 @@ public class WebViewDialogFragment extends DialogFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.layout_web_view, container, false);
         webView = view.findViewById(R.id.webview);
-        webView.setWebChromeClient(getWebViewClient());
+
+        // --- DÜZENLEME: Loglamanın doğru çalışması için bu sırayı takip ediyoruz ---
+
+        // 1. WebView Ayarlarını Yap
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setAllowContentAccess(true);
         webView.getSettings().setAllowFileAccess(true);
-
         if (Build.VERSION.SDK_INT >= VisilabsConstant.UI_FEATURES_MIN_API) {
             webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
         }
 
-        webView.addJavascriptInterface(mJavaScriptInterface, "Android");
+        // 2. WebChromeClient'ı set et. Bu, console.log'ları yakalayacak.
+        webView.setWebChromeClient(new WebChromeClient() {
+            public boolean onConsoleMessage(ConsoleMessage cm) {
+                // Logcat'te "WebViewConsole" etiketiyle arama yapabilirsiniz.
+                Log.d("WebViewConsole", cm.message() + " -- From line "
+                        + cm.lineNumber() + " of "
+                        + cm.sourceId());
+                return true;
+            }
+        });
 
-        webView.loadDataWithBaseURL(baseUrl , htmlString, "text/html", "utf-8", "about:blank");
+        // 3. JavaScript Arayüzünü Ekle
+        if(mJavaScriptInterface != null) {
+            webView.addJavascriptInterface(mJavaScriptInterface, "Android");
+        } else {
+            Log.e(TAG, "JavaScript Interface null! Köprü kurulamadı.");
+        }
 
-        webView.reload();
+        // 4. Veriyi Yükle
+        // Native tarafta, WebView'a gönderilen HTML ve JSON'ı logluyoruz.
+        Log.d(TAG, "loadDataWithBaseURL çağrılıyor.");
+        Log.d(TAG, "Base URL: " + baseUrl);
+        Log.d(TAG, "Response (JSON): " + mResponse);
+        // Log.d(TAG, "HTML String: " + htmlString); // HTML çok uzun olabilir, gerekirse açın.
+
+        webView.loadDataWithBaseURL(baseUrl, htmlString, "text/html", "utf-8", "about:blank");
+
+        // webView.reload(); Bu komut genellikle gereksizdir ve yükleme sorunlarına yol açabilir.
+        // Yükleme zaten loadDataWithBaseURL ile başlar.
+
         return view;
     }
 
@@ -134,12 +159,8 @@ public class WebViewDialogFragment extends DialogFragment {
         return webView;
     }
 
-    public void setSpinToWinListeners(SpinToWinCompleteInterface listener,
-                                      SpinToWinCopyToClipboardInterface copyToClipboardInterface,
-                                      SpinToWinShowCodeInterface spinToWinShowCodeInterface){
+    public void setSurveyListeners(SurveyCompleteInterface listener){
         mListener = listener;
-        mCopyToClipboardInterface = copyToClipboardInterface;
-        mSpinToWinShowCodeInterface = spinToWinShowCodeInterface;
     }
 
 }

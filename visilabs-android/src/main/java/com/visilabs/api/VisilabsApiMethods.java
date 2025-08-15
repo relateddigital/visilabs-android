@@ -122,6 +122,11 @@ public interface VisilabsApiMethods {
             @HeaderMap Map<String, String> headers
     );
 
+    @GET("/survey.js")
+    Call<ResponseBody> getSurveyJsFile(
+            @HeaderMap Map<String, String> headers
+    );
+
     //Methods for remote config
     @GET("rc.json")
     Call<List<String>> getRemoteConfig(

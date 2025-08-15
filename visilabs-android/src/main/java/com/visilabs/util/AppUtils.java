@@ -22,6 +22,7 @@ import com.visilabs.inApp.FontFamily;
 import com.visilabs.model.LocationPermission;
 import com.visilabs.spinToWin.model.ExtendedProps;
 import com.visilabs.spinToWin.model.SpinToWinModel;
+import com.visilabs.survey.model.SurveyModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -209,7 +211,7 @@ public final class AppUtils {
         String copyButtonFontFamily = extendedProps.getCopyButtonFontFamily();
         String promoCodesSoldOutMessageFontFamily = extendedProps.getPromocodesSoldOutMessageFontFamily();
 
-        htmlStr = writeHtmlToFile(context, spinToWinJsStr);
+        htmlStr = writeHtmlToFile(context, spinToWinJsStr, "spin_to_win");
 
         if(displayNameFontFamily.equals("custom")) {
             String fontExtension = getFontNameWithExtension(context, extendedProps.getDisplayNameCustomFontFamilyAndroid());
@@ -277,6 +279,39 @@ public final class AppUtils {
         return result;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static ArrayList<String> createSurveyFiles(Context context, String jsonStr, String surveyJsStr) {
+        ArrayList<String> result = null;
+        SurveyModel surveyModel = null;
+        ExtendedProps extendedProps = null;
+        String baseUrlPath = "file://" + context.getFilesDir().getAbsolutePath() + "/";
+        String htmlStr = "";
+        try {
+            surveyModel = new Gson().fromJson(jsonStr, SurveyModel.class);
+            extendedProps = new Gson().fromJson(new java.net.URI(surveyModel.getActiondata().
+                    getExtendedProps()).getPath(), ExtendedProps.class);
+        } catch (Exception e) {
+            Log.e("Survey", "Extended properties could not be parsed properly!");
+            return null;
+        }
+
+        if(surveyModel == null || extendedProps == null) {
+            return null;
+        }
+
+        htmlStr = writeHtmlToFile(context, surveyJsStr, "survey");
+
+
+        if(!htmlStr.isEmpty()) {
+            result = new ArrayList<>();
+            result.add(baseUrlPath);
+            result.add(htmlStr);
+            result.add(new Gson().toJson(surveyModel, SurveyModel.class));
+        }
+
+        return result;
+    }
+
     public static void goToNotificationSettings(Context context) {
         try {
             Intent intent = new Intent();
@@ -318,61 +353,118 @@ public final class AppUtils {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private static String writeHtmlToFile(Context context, String jsStr) {
-        String spinToWinFileName = "spin_to_win";
-        String htmlString = "";
+    private static String writeHtmlToFile(Context context, String jsStr, String game) {
+        if (Objects.equals(game, "spin_to_win")) {
+            String spinToWinFileName = "spin_to_win";
+            String htmlString = "";
 
-        File spintowinRelatedDigitalCacheDir = context.getFilesDir();
-        InputStream is = null;
-        FileOutputStream fos = null;
-        try {
-            File htmlFile = new File(spintowinRelatedDigitalCacheDir + "/" + spinToWinFileName + ".html");
-            File jsFile = new File(spintowinRelatedDigitalCacheDir + "/" + spinToWinFileName + ".js");
+            File spintowinRelatedDigitalCacheDir = context.getFilesDir();
+            InputStream is = null;
+            FileOutputStream fos = null;
+            try {
+                File htmlFile = new File(spintowinRelatedDigitalCacheDir + "/" + spinToWinFileName + ".html");
+                File jsFile = new File(spintowinRelatedDigitalCacheDir + "/" + spinToWinFileName + ".js");
 
-            htmlFile.createNewFile();
-            jsFile.createNewFile();
+                htmlFile.createNewFile();
+                jsFile.createNewFile();
 
-            is = context.getAssets().open(spinToWinFileName + ".html");
+                is = context.getAssets().open(spinToWinFileName + ".html");
 
-            byte[] bytes = getBytesFromInputStream(is);
-            is.close();
-            htmlString = new String(bytes, StandardCharsets.UTF_8);
+                byte[] bytes = getBytesFromInputStream(is);
+                is.close();
+                htmlString = new String(bytes, StandardCharsets.UTF_8);
 
-            fos = new FileOutputStream(htmlFile, false);
-            fos.write(bytes);
-            fos.close();
+                fos = new FileOutputStream(htmlFile, false);
+                fos.write(bytes);
+                fos.close();
 
-            bytes = jsStr.getBytes(StandardCharsets.UTF_8);
+                bytes = jsStr.getBytes(StandardCharsets.UTF_8);
 
-            fos = new FileOutputStream(jsFile);
-            fos.write(bytes);
-            fos.close();
+                fos = new FileOutputStream(jsFile);
+                fos.write(bytes);
+                fos.close();
 
-        } catch (Exception e) {
-            Log.e("SpinToWin", "Could not create spintowin cache files properly!");
-            e.printStackTrace();
-            return "";
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception e) {
-                    Log.e("SpinToWin", "Could not close spintowin is stream properly!");
-                    e.printStackTrace();
+            } catch (Exception e) {
+                Log.e("SpinToWin", "Could not create spintowin cache files properly!");
+                e.printStackTrace();
+                return "";
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (Exception e) {
+                        Log.e("SpinToWin", "Could not close spintowin is stream properly!");
+                        e.printStackTrace();
+                    }
                 }
-            }
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Exception e) {
-                    Log.e("SpinToWin", "Could not close spintowin fos stream properly!");
-                    e.printStackTrace();
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (Exception e) {
+                        Log.e("SpinToWin", "Could not close spintowin fos stream properly!");
+                        e.printStackTrace();
+                    }
                 }
+
             }
 
+            return htmlString;
+        } else {
+            String surveyFileName = "survey";
+            String htmlString = "";
+
+            File surveyRelatedDigitalCacheDir = context.getFilesDir();
+            InputStream is = null;
+            FileOutputStream fos = null;
+            try {
+                File htmlFile = new File(surveyRelatedDigitalCacheDir + "/" + surveyFileName + ".html");
+                File jsFile = new File(surveyRelatedDigitalCacheDir + "/" + surveyFileName + ".js");
+
+                htmlFile.createNewFile();
+                jsFile.createNewFile();
+
+                is = context.getAssets().open(surveyFileName + ".html");
+
+                byte[] bytes = getBytesFromInputStream(is);
+                is.close();
+                htmlString = new String(bytes, StandardCharsets.UTF_8);
+
+                fos = new FileOutputStream(htmlFile, false);
+                fos.write(bytes);
+                fos.close();
+
+                bytes = jsStr.getBytes(StandardCharsets.UTF_8);
+
+                fos = new FileOutputStream(jsFile);
+                fos.write(bytes);
+                fos.close();
+
+            } catch (Exception e) {
+                Log.e("Survey", "Could not create survey cache files properly!");
+                e.printStackTrace();
+                return "";
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (Exception e) {
+                        Log.e("Survey", "Could not close survey is stream properly!");
+                        e.printStackTrace();
+                    }
+                }
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (Exception e) {
+                        Log.e("Survey", "Could not close survey fos stream properly!");
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+
+            return htmlString;
         }
-
-        return htmlString;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

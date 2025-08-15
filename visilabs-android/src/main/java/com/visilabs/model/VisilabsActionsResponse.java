@@ -8,9 +8,11 @@ import com.visilabs.inApp.appratingmodel.AppRatingReport;
 import com.visilabs.inApp.customactions.model.CustomActions;
 import com.visilabs.inappnotification.DrawerModel;
 import com.visilabs.mailSub.MailSubscriptionForm;
+import com.visilabs.notificationbell.model.NotificationBell;
 import com.visilabs.scratchToWin.model.ScratchToWinModel;
 import com.visilabs.spinToWin.model.SpinToWinModel;
 import com.visilabs.story.model.storylookingbanners.Story;
+import com.visilabs.survey.model.SurveyModel;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,9 +26,12 @@ public class VisilabsActionsResponse implements Serializable {
     private List<SpinToWinModel> mSpinToWinList = null;
     @SerializedName("ScratchToWin")
     private List<ScratchToWinModel> mScratchToWinList = null;
-
     @SerializedName("MobileCustomActions")
     private List<CustomActions> mCustomActionList = null;
+    @SerializedName("MultipleChoiceSurvey")
+    private List<SurveyModel> mMultipleChoiceSurveyList = null;
+    @SerializedName("NotificationBell")
+    private List<NotificationBell> mNotificationBellList = null;
     @SerializedName("MobileAppRating")
     private List<AppRating> mAppRatingList = null;
     @SerializedName("ProductStatNotifier")
@@ -62,6 +67,22 @@ public class VisilabsActionsResponse implements Serializable {
 
     public void setSpinToWinList(List<SpinToWinModel> spinToWinList) {
         mSpinToWinList = spinToWinList;
+    }
+
+    public List<SurveyModel> getSurveyList() {
+        return mMultipleChoiceSurveyList;
+    }
+
+    public void setSurveyList(List<SurveyModel> surveyList) {
+        mMultipleChoiceSurveyList = surveyList;
+    }
+
+    public List<NotificationBell> getNotificationBellList() {
+        return mNotificationBellList;
+    }
+
+    public void setNotificationBellList(List<NotificationBell> notificationBellList) {
+        mNotificationBellList = notificationBellList;
     }
 
     public List<ScratchToWinModel> getScratchToWinList() {

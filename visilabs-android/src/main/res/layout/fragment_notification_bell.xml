@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.visilabs.notificationbell.NotificationBellFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dialog_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/fab_bell"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/dialog_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/dialog_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="48dp"
+                        android:layout_marginEnd="48dp"
+                        android:textAlignment="center"
+                        android:textColor="#1D1D1F"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Online Özel Ayrıcalıklar" />
+
+                    <ImageView
+                        android:id="@+id/iv_close"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_close_modern_24dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_notifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:overScrollMode="never"
+                    android:paddingBottom="12dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="5"
+                    tools:listitem="@layout/item_notification_bell" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <ImageView
+            android:id="@+id/iv_pointer"
+            android:layout_width="24dp"
+            android:layout_height="12dp"
+            android:elevation="8dp"
+            android:src="@drawable/ic_dialog_pointer"
+            android:translationY="-1dp"
+            app:layout_constraintEnd_toEndOf="@+id/dialog_card"
+            app:layout_constraintStart_toStartOf="@+id/dialog_card"
+            app:layout_constraintTop_toBottomOf="@id/dialog_card"
+            app:layout_constraintHorizontal_bias="0.85"
+            tools:ignore="ContentDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/fab_bell"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_margin="24dp"
+        android:elevation="8dp"
+        android:padding="4dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+        app:strokeColor="@android:color/darker_gray"
+        app:strokeWidth="1dp"
+        tools:src="@tools:sample/avatars" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

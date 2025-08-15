@@ -15,6 +15,7 @@ import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.CountdownTimerFragment;
 import com.visilabs.inApp.InAppButtonInterface;
 import com.visilabs.inApp.VisilabsActionRequest;
+import com.visilabs.notificationbell.NotificationBellClickCallback;
 import com.visilabs.util.VisilabsConstant;
 import java.util.HashMap;
 
@@ -297,12 +298,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        binding.inApp26.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("MultipleChoiceSurvey");
+            }
+        });
+
+        binding.inApp27.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("notification_bell");
+            }
+        });
+
         try {
             VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
             visilabsActionRequest.executeAsyncAction(getVisilabsCallback());
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        Visilabs.CallAPI().getNotificationBellClickCallback(new NotificationBellClickCallback() {
+            @Override
+            public void onNotificationBellClick(String link) {
+                Log.d("onNotificationBellClick", "Notification Bell'den gelen link: " + link);
+            }
+        });
 
         /**
          * Optional

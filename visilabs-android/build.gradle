@@ -1,41 +1,33 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'maven-publish'
+
 group = 'com.github.relateddigital'
 
-task androidSourcesJar(type: Jar) {
-    classifier 'sources'
-    from android.sourceSets.main.java.srcDirs
-}
-
-project.afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-                artifact androidSourcesJar
-            }
-        }
-    }
-}
-
-ext {
-    PUBLISH_GROUP_ID = 'com.github.relateddigital'
-    PUBLISH_VERSION = "6.5.3"
-    PUBLISH_VERSION_CODE = "50"
-    PUBLISH_ARTIFACT_ID = 'visilabs-android'
-}
+// KALDIRILDI: Eski "androidSourcesJar" ve "publishing" blokları artık gereksiz.
+// AGP'nin modern publishing özelliği bu işleri otomatik yapıyor.
 
 android {
-    compileSdkVersion 34
+    namespace 'com.visilabs.android'
+    compileSdkVersion 35
 
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 34
-        versionCode 4
-        versionName "6.5.3"
-        buildConfigField 'String', 'VERSION_NAME', "\"6.5.3\""
+        targetSdkVersion 35
+        versionCode 51 // Versiyonu artırdım
+        versionName "6.5.4" // Versiyonu artırdım
+        buildConfigField 'String', 'VERSION_NAME', "\"${versionName}\"" // Düzeltildi
         buildConfigField 'String', 'SDK_TYPE', "\"native\""
     }
+
+    // DÜZELTİLDİ: Modern ve doğru publishing yapısı budur.
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -43,13 +35,23 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
     buildFeatures {
+        buildConfig true
         viewBinding true
     }
+
     lint {
         abortOnError false
     }
-
 }
 
 dependencies {
@@ -81,11 +83,3 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
 }
-
-allprojects {
-    tasks.withType(Javadoc) {
-        enabled = false
-    }
-}
-
-//apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"

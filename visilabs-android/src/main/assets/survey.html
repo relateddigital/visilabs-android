@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <title>Anket</title>
+    <style>
+        /* Genel Sayfa Stilleri */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background-color: #f4f4f7; /* Arka plana hafif bir renk */
+}
+
+/* Anketin Ana Konteyneri */
+#survey-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+/* Anket Başlığı */
+.survey-header {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.survey-header h2 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+    padding-right: 30px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+/* Anket İçeriği ve Form (Kaydırılabilir Alan) */
+.survey-body {
+    padding: 15px 25px;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+/* Her Bir Soru Bloğu */
+.question-block {
+    margin-bottom: 40px; /* Sorular arası boşluğu artırdık */
+}
+
+/* Soru Metni */
+.question-block p {
+    font-weight: 600; /* Daha belirgin */
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #2c3e50; /* Daha yumuşak bir siyah */
+}
+
+/* --- YENİ VE MODERN SEÇENEK TASARIMI --- */
+
+/* Seçeneklerin Kapsayıcısı */
+.options-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobil için tek sütun */
+    gap: 12px; /* Seçenekler arası boşluk */
+}
+
+/* Tablet ve daha geniş ekranlar için 2 sütunlu yapı */
+@media (min-width: 600px) {
+    .options-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Gerçek Radio Butonu Gizle */
+.options-container input[type="radio"] {
+    display: none;
+}
+
+/* Tıklanabilir Label (Yeni Tasarım) */
+.options-container label {
+    display: block;
+    background-color: #ffffff;
+    padding: 16px;
+    border: 1px solid #dfe6e9; /* Hafif bir sınır */
+    border-radius: 8px; /* Yumuşak köşeler */
+    cursor: pointer;
+    font-size: 16px;
+    color: #34495e;
+    text-align: left;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    padding-left: 50px; /* İkon için yer aç */
+}
+
+/* Label üzerine gelince (hover) */
+.options-container label:hover {
+    border-color: #000000;
+    background-color: #fafafa;
+}
+
+/* Sahte Radio Buton İkonu (Boş Hali) */
+.options-container label::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #bdc3c7;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Seçili Durumdaki Label Stili */
+.options-container input[type="radio"]:checked + label {
+    background-color: #000000;
+    color: #ffffff;
+    border-color: #000000;
+    font-weight: 600;
+}
+
+/* Seçili Durumdaki İkon (İçi Dolu Hali) */
+.options-container input[type="radio"]:checked + label::before {
+    background-color: #ffffff;
+    border-color: #ffffff;
+}
+
+/* Seçili Durumdaki İkonun İçindeki Tik İşareti */
+.options-container input[type="radio"]:checked + label::after {
+    content: '✔';
+    position: absolute;
+    left: 19px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    font-weight: bold;
+    color: #000000;
+}
+
+/* Gönder Butonu */
+.submit-btn {
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    padding: 16px 40px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: block;
+    width: 100%; /* Tam genişlik */
+    max-width: 400px;
+    margin: 40px auto 20px;
+    border-radius: 8px; /* Diğer elementlerle uyumlu köşe */
+    transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+    background-color: #333;
+}
+    </style>
+</head>
+<body>
+<script src="survey.js"></script>
+<script type="text/javascript">
+    var survey;
+
+    function initSurvey(config) {
+        survey = new Survey(config);
+    }
+
+    // --- NATIVE KÖPRÜSÜ ---
+    if (window.Android) {
+        try {
+            var config = JSON.parse(Android.getResponse());
+            initSurvey(config);
+        } catch (e) {
+            console.error("Android'den gelen veri parse edilemedi:", e);
+        }
+    }
+    else if (window.webkit && window.webkit.messageHandlers.eventHandler) {
+        window.webkit.messageHandlers.eventHandler.postMessage({
+            method: "initSurvey"
+        });
+    }
+    // Native ortamı değilse, tarayıcıda test için varsayılan verileri kullan
+    else {
+        console.log("Native ortam bulunamadı. Test verileri kullanılıyor.");
+
+        // --- GÜNCELLENEN BÖLÜM ---
+        // Bana gönderdiğiniz orijinal JSON verisini burada test için kullanıyoruz.
+        const testConfig = {
+            "capping": "{\"data\":{}}",
+            "VERSION": 9,
+            "MultipleChoiceSurvey": [{
+                "actid": 1287,
+                "title": "RMC-1377 için tayfun",
+                "actiontype": "MultipleChoiceSurvey",
+                "actiondata": {
+                    "title": "TitleTitleTitleTitleTitle",
+                    "survey_questions": [{
+                        "question_text": "Soru2",
+                        "options": ["Cevap21", "Cevap22", "Cevap23"]
+                    }, {
+                        "question_text": "Soru1",
+                        "options": ["Cevap11", "Cevap12", "Cevap13", "Cevap14"]
+                    }],
+                    "ExtendedProps": "%7B%22background_color%22%3A%22%23c1baba%22%2C%22font_family%22%3A%22Monospace%22%2C%22title_text_color%22%3A%22%23444040%22%2C%22title_text_size%22%3A%228%22%2C%22navigationbar_color%22%3A%22%22%7D",
+                    "report": {
+                        "impression": "",
+                        "click": "OM.zn=acttype-45&OM.zpc=act-1287"
+                    }
+                },
+                "panelv2": false
+            }]
+        };
+
+        // JSON verisindeki `options` dizisi nesneler içerdiği için
+        // bunu script.js'in beklediği string dizisine dönüştürelim.
+        // Bu, script'in esnekliğini bozmadan farklı formatları desteklemesini sağlar.
+        testConfig.MultipleChoiceSurvey[0].actiondata.survey_questions.forEach(q => {
+            if (q.options && q.options[0] && typeof q.options[0] === 'object') {
+                q.options = q.options.map(opt => opt.option_text);
+            }
+        });
+
+
+        initSurvey(testConfig);
+    }
+</script>
+</body>
+</html>

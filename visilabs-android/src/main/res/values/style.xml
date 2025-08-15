@@ -6,6 +6,11 @@
 
     <style name="dark" parent="Base.Theme.AppCompat.Dialog.Alert" />
 
+    <style name="ShapeAppearanceOverlay.App.CornerSize50Percent" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
     <declare-styleable name="SmileRating">
         <attr name="angryColor" format="color" />
         <attr name="normalColor" format="color" />
