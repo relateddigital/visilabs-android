@@ -241,6 +241,9 @@ public class InAppNotificationFragment extends Fragment {
                     break;
             }
         }
+        Report report = new Report();
+        report.impression = response.getActionData().getReport().getImpression();
+        Visilabs.CallAPI().trackActionImpression(report);
     }
 
     private void adjustRt() {
@@ -1697,9 +1700,6 @@ public class InAppNotificationFragment extends Fragment {
             return ButtonFunction.COPY_REDIRECT;
         }
 
-        // Java'da 'when' yerine 'switch' kullanılır.
-        // String karşılaştırmaları için büyük/küçük harf duyarlılığını
-        // ortadan kaldırmak için toUpperCase() kullanılır.
         switch (functionName.toUpperCase()) {
             case "copy":
                 return ButtonFunction.COPY;
@@ -1712,40 +1712,29 @@ public class InAppNotificationFragment extends Fragment {
     }
 
     private void copyStaticCodeToClipboard(@Nullable String staticCode) {
-        // requireContext() yerine getContext() kullanılır ve null kontrolü yapılır.
+
         if (getContext() == null) {
-            return; // Context yoksa işlem yapılamaz.
+            return;
         }
 
-        // getSystemService çağrısı aynıdır, ancak cast (tip dönüştürme)
-        // Kotlin'deki 'as' yerine Java'da parantez içinde yapılır.
         ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
 
-        // ClipboardManager'ın null olabileceği nadir durumlar için kontrol eklenebilir.
         if (clipboard == null) {
             return;
         }
 
-        // Panoya kopyalanacak veriyi oluştur.
         ClipData clip = ClipData.newPlainText("staticCode", staticCode);
 
-        // Veriyi panoya set et.
         clipboard.setPrimaryClip(clip);
 
-        // Kullanıcıya geri bildirimde bulun.
         Toast.makeText(getContext(), "Kod kopyalandı!", Toast.LENGTH_SHORT).show();
     }
 
     private void handleBigContainerClick() {
-        ;
         Report report = new Report();
-        report.impression = response.getActionData().getReport().getImpression();
         report.click = response.getActionData().getReport().getClick();
         Visilabs.CallAPI().trackActionClick(report);
 
-
-        // Belirlenen buton fonksiyonuna göre işlem yap
-        // Java'da 'when' yerine 'switch' kullanılır.
         switch (buttonFunction) {
             case COPY:
                 copyStaticCodeToClipboard(staticCode);

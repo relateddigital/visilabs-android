@@ -36,6 +36,7 @@ import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.inApp.carousel.CarouselItem;
 import com.visilabs.inApp.carousel.OnSwipeTouchListener;
 import com.visilabs.inApp.inlineNpsWithNumber.InlineNpsWithNumbersView;
+import com.visilabs.mailSub.Report;
 import com.visilabs.util.AppUtils;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
@@ -341,11 +342,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         }
 
-
     }
 
     private void setNpsSecondPopUpCloseButton() {
-        binding.ibClose.setVisibility(View.GONE);
         switch (mInAppMessage.getActionData().getSecondPopupType()) {
             case "image_text_button": {
                 secondPopUpType = NpsSecondPopUpType.IMAGE_TEXT_BUTTON;
@@ -759,6 +758,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 break;
             }
         }
+        binding.ibClose.setVisibility(View.GONE);
         if (mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
             bindingSecondPopUp.closeButton.setVisibility(View.GONE);
             this.setFinishOnTouchOutside(true);

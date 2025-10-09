@@ -95,7 +95,6 @@ public class WebViewJavaScriptInterface {
 
         try {
             report = new Report();
-            report.setImpression(spinToWinModel.getActiondata().getReport().getImpression());
             report.setClick(spinToWinModel.getActiondata().getReport().getClick());
         } catch (Exception e) {
             Log.e("Spin to Win : ", "There is no report to send!");
@@ -105,6 +104,24 @@ public class WebViewJavaScriptInterface {
 
         if (report != null) {
             Visilabs.CallAPI().trackActionClick(report);
+        }
+    }
+
+    @JavascriptInterface
+    public void sendImpression() {
+        Report report = null;
+
+        try {
+            report = new Report();
+            report.setImpression(spinToWinModel.getActiondata().getReport().getImpression());
+        } catch (Exception e) {
+            Log.e("Spin to Win : ", "There is no report to send!");
+            e.printStackTrace();
+            report = null;
+        }
+
+        if (report != null) {
+            Visilabs.CallAPI().trackActionImpression(report);
         }
     }
 
@@ -309,6 +326,8 @@ public class WebViewJavaScriptInterface {
         mListener = listener;
         mCopyToClipboardInterface = copyToClipboardInterface;
         mSpinToWinShowCodeInterface = spinToWinShowCodeInterface;
+        sendImpression();
+
     }
 
     private void sendPromotionCodeInfo(final String promotionCode, final String sliceText) {

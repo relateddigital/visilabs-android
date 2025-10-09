@@ -149,6 +149,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
                 finish();
             }
         });
+        sendReport(true);
     }
 
     private void setupEmail() {
@@ -348,16 +349,20 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
 
     @Override
     public void onScratchingComplete() {
-        sendReport();
+        sendReport(false);
         binding.copyToClipboard.setVisibility(View.VISIBLE);
     }
 
-    private void sendReport() {
+    private void sendReport(Boolean isImpression) {
         Report report = null;
+        report = new Report();
+
         try {
-            report = new Report();
-            report.setImpression(mScratchToWinMessage.getActiondata().getReport().getImpression());
-            report.setClick(mScratchToWinMessage.getActiondata().getReport().getClick());
+            if (isImpression) {
+                report.setImpression(mScratchToWinMessage.getActiondata().getReport().getImpression());
+            } else {
+                report.setClick(mScratchToWinMessage.getActiondata().getReport().getClick());
+            }
         } catch (Exception e) {
             Log.e(LOG_TAG, "There is no report to send!");
             e.printStackTrace();
@@ -365,7 +370,12 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         }
 
         if(report != null) {
-            Visilabs.CallAPI().trackActionClick(report);
+            if (isImpression) {
+                Visilabs.CallAPI().trackActionImpression(report);
+            } else {
+                Visilabs.CallAPI().trackActionClick(report);
+            }
+
         }
     }
 }
