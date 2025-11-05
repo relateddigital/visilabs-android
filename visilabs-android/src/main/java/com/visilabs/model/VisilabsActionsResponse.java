@@ -1,6 +1,7 @@
 package com.visilabs.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.visilabs.countdownTimerBanner.model.CountdownTimerBanner;
 import com.visilabs.favs.FavoriteAttributeAction;
 import com.visilabs.inApp.ProductStatNotifierModel;
 import com.visilabs.inApp.appratingmodel.AppRating;
@@ -9,6 +10,7 @@ import com.visilabs.inApp.customactions.model.CustomActions;
 import com.visilabs.inappnotification.DrawerModel;
 import com.visilabs.mailSub.MailSubscriptionForm;
 import com.visilabs.notificationbell.model.NotificationBell;
+import com.visilabs.countdownTimerBanner.model.CountdownTimerBanner;
 import com.visilabs.scratchToWin.model.ScratchToWinModel;
 import com.visilabs.spinToWin.model.SpinToWinModel;
 import com.visilabs.story.model.storylookingbanners.Story;
@@ -32,6 +34,8 @@ public class VisilabsActionsResponse implements Serializable {
     private List<SurveyModel> mMultipleChoiceSurveyList = null;
     @SerializedName("NotificationBell")
     private List<NotificationBell> mNotificationBellList = null;
+    @SerializedName("CountdownTimerBanner")
+    private List<CountdownTimerBanner> mCountdownTimerBannerList = null;
     @SerializedName("MobileAppRating")
     private List<AppRating> mAppRatingList = null;
     @SerializedName("ProductStatNotifier")
@@ -83,6 +87,14 @@ public class VisilabsActionsResponse implements Serializable {
 
     public void setNotificationBellList(List<NotificationBell> notificationBellList) {
         mNotificationBellList = notificationBellList;
+    }
+
+    public List<CountdownTimerBanner> getCountdownTimerBannerList() {
+        return mCountdownTimerBannerList;
+    }
+
+    public void setCountdownTimerBannerList(List<CountdownTimerBanner> countdownTimerBannerList) {
+        mCountdownTimerBannerList = countdownTimerBannerList;
     }
 
     public List<ScratchToWinModel> getScratchToWinList() {

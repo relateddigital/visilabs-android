@@ -21,6 +21,7 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.visilabs.InAppNotificationState;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.FragmentCountdownTimerBinding;
+import com.visilabs.countdownTimerBanner.model.CountdownTimerBanner;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -72,6 +73,7 @@ public class CountdownTimerFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

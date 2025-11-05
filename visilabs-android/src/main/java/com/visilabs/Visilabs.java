@@ -35,9 +35,13 @@ import com.visilabs.api.VisilabsInAppMessageCallback;
 import com.visilabs.api.VisilabsSearchRequest;
 import com.visilabs.api.VisilabsTargetFilter;
 import com.visilabs.api.VisilabsTargetRequest;
+import com.visilabs.countdownTimerBanner.CountdownTimerBannerClickCallback;
+import com.visilabs.countdownTimerBanner.CountdownTimerBannerFragment;
+import com.visilabs.countdownTimerBanner.model.CountdownTimerBanner;
 import com.visilabs.exceptions.VisilabsNotReadyException;
 import com.visilabs.gps.factory.GpsFactory;
 import com.visilabs.gps.manager.GpsManager;
+import com.visilabs.inApp.CountdownTimerFragment;
 import com.visilabs.inApp.InAppButtonInterface;
 import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.inApp.InAppMessage;
@@ -161,6 +165,7 @@ public class Visilabs {
     private VisilabsApiMethods mVisilabsSApiInterface;
     private InAppButtonInterface mInAppButtonInterface = null;
     private NotificationBellClickCallback mNotificationBellClickCallback;
+    private CountdownTimerBannerClickCallback mCountdownTimerBannerClickCallback;
 
     private Visilabs(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
             , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource, String targetURL, String actionURL, String geofenceURL, boolean geofenceEnabled, String sdkType) {
@@ -785,7 +790,7 @@ public class Visilabs {
             return;
         }
         try {
-            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier~drawer~MobileCustomActions~MobileAppRating~MultipleChoiceSurvey~NotificationBell");
+            VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier~drawer~MobileCustomActions~MobileAppRating~MultipleChoiceSurvey~NotificationBell~CountdownTimerBanner");
             visilabsActionRequest.setPageName(pageName);
             visilabsActionRequest.setProperties(properties);
             visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback((AppCompatActivity) parent));
@@ -926,6 +931,34 @@ public class Visilabs {
                         androidx.fragment.app.FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
                         transaction.add(android.R.id.content, notificationBellFragment);
                         transaction.commit();
+                    } else if (!response.getCountdownTimerBannerList().isEmpty()) {
+                        long waitTime = 0L;
+
+                        // 1. Modeli al ve null kontrolü yap
+                        CountdownTimerBanner bannerModel = response.getCountdownTimerBannerList().get(0);
+                        if (bannerModel == null || bannerModel.getActiondata() == null) {
+                            Log.e(LOG_TAG, "CountdownTimerBanner data or actionData is null. Cannot display banner.");
+                            return; // Veri bozuksa işlemi durdur
+                        }
+
+                        // 2. Fragment'ı oluştur
+                        CountdownTimerBannerFragment countdownTimerFragment = CountdownTimerBannerFragment.newInstance(bannerModel);
+                        countdownTimerFragment.setRetainInstance(true);
+
+                        waitTime = bannerModel.getActiondata().getWaiting_time();
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // 3. Fragment'ı doğrudan android.R.id.content'e ekle.
+                                // Pozisyonlama mantığı artık Fragment'ın kendi içinde.
+                                androidx.fragment.app.FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
+                                transaction.add(android.R.id.content, countdownTimerFragment);
+                                transaction.commit();
+                            }
+                        }, waitTime * 1000L);
+
+
+
                     } else {
                         Log.e(LOG_TAG, "Response is null : " + url);
                     }
@@ -2577,6 +2610,14 @@ public class Visilabs {
 
     public NotificationBellClickCallback setNotificationBellClickCallback() {
         return mNotificationBellClickCallback;
+    }
+
+    public void getCountdownTimerBannerClickCallback(CountdownTimerBannerClickCallback countdownTimerBannerClickCallback) {
+        mCountdownTimerBannerClickCallback = countdownTimerBannerClickCallback;
+    }
+
+    public CountdownTimerBannerClickCallback setCountdownTimerBannerClickCallback() {
+        return mCountdownTimerBannerClickCallback;
     }
 
     public void requestLocationPermission(Activity activity){

@@ -45,6 +45,7 @@
     <string name="geofence">GEOFENCING</string>
     <string name="multiple_choice_survey">MULTIPLE CHOICE SURVEY</string>
     <string name="notification_bell">NOTIFICATION BELL</string>
+    <string name="countdown_timer_banner">COUNTDOWN TIMER BANNER</string>
 
     <string name="alert">Alert</string>
     <string name="story_id_optional">Story ID (optional)</string>

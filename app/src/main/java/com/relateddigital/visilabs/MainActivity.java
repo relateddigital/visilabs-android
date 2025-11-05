@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.relateddigital.visilabs.databinding.ActivityMainBinding;
 import com.visilabs.Visilabs;
 import com.visilabs.api.VisilabsFavsRequestCallback;
+import com.visilabs.countdownTimerBanner.CountdownTimerBannerClickCallback;
 import com.visilabs.favs.FavsResponse;
 import com.visilabs.inApp.CountdownTimerFragment;
 import com.visilabs.inApp.InAppButtonInterface;
@@ -312,6 +313,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        binding.inApp28.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("CountdownTimerBanner");
+            }
+        });
+
         try {
             VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
             visilabsActionRequest.executeAsyncAction(getVisilabsCallback());
@@ -323,6 +331,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNotificationBellClick(String link) {
                 Log.d("onNotificationBellClick", "Notification Bell'den gelen link: " + link);
+            }
+        });
+
+        Visilabs.CallAPI().getCountdownTimerBannerClickCallback(new CountdownTimerBannerClickCallback() {
+            @Override
+            public void onCountdownTimerBannerClick(String link) {
+                Log.d("onCountdownTimerBannerClick", "Countdown Timer Banner'den gelen link: " + link);
             }
         });
 
