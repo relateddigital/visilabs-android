@@ -1,6 +1,6 @@
 package com.visilabs.inappnotification;
 
-import android.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.MultiTransformation;
@@ -1778,8 +1779,10 @@ public class InAppNotificationFragment extends Fragment {
     }
 
     private void endFragment() {
-        if (getActivity() != null) {
-            getActivity().getFragmentManager().beginTransaction().remove(InAppNotificationFragment.this).commit();
+        if (isAdded() && getParentFragmentManager() != null) {
+            getParentFragmentManager().beginTransaction().remove(this).commit();
+        } else if (getActivity() != null && getActivity() instanceof FragmentActivity) {
+            ((FragmentActivity) getActivity()).getSupportFragmentManager().beginTransaction().remove(this).commit();
         }
     }
 }

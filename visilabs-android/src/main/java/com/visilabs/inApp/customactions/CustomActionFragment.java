@@ -13,7 +13,8 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import android.app.Fragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.gson.Gson;
 import com.visilabs.android.R;
@@ -216,8 +217,10 @@ public class CustomActionFragment extends Fragment {
     }
 
     private void endFragment() {
-        if (getActivity() != null) {
-            getActivity().getFragmentManager().beginTransaction().remove(CustomActionFragment.this).commit();
+        if (isAdded() && getParentFragmentManager() != null) {
+            getParentFragmentManager().beginTransaction().remove(this).commit();
+        } else if (getActivity() != null && getActivity() instanceof FragmentActivity) {
+            ((FragmentActivity) getActivity()).getSupportFragmentManager().beginTransaction().remove(this).commit();
         }
     }
 

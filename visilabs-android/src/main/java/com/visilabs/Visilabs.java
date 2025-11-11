@@ -5,7 +5,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,8 +18,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 
 import com.google.android.gms.tasks.Task;
@@ -793,13 +793,13 @@ public class Visilabs {
             VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier~drawer~MobileCustomActions~MobileAppRating~MultipleChoiceSurvey~NotificationBell~CountdownTimerBanner");
             visilabsActionRequest.setPageName(pageName);
             visilabsActionRequest.setProperties(properties);
-            visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback((AppCompatActivity) parent));
+            visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback((FragmentActivity) parent));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private VisilabsActionsCallback getVisilabsActionsCallback(final AppCompatActivity parent) {
+    private VisilabsActionsCallback getVisilabsActionsCallback(final FragmentActivity parent) {
 
         return new VisilabsActionsCallback() {
             @Override
@@ -846,7 +846,7 @@ public class Visilabs {
                         customActionFragment.setRetainInstance(true);
 
 
-                        FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
+                        FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
                         transaction.add(android.R.id.content, customActionFragment);
                         transaction.commit();
                     }
@@ -891,7 +891,7 @@ public class Visilabs {
 
                         socialProofFragment.setRetainInstance(true);
 
-                        FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
+                        FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
                         transaction.add(android.R.id.content, socialProofFragment);
                         transaction.commit();
                     } else if (!response.getDrawer().isEmpty()) {
@@ -899,7 +899,7 @@ public class Visilabs {
 
                         inAppNotificationFragment.setRetainInstance(true);
 
-                        FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
+                        FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
                         transaction.add(android.R.id.content, inAppNotificationFragment);
                         transaction.commit();
                     } else if (!response.getSurveyList().isEmpty()) {

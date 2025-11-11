@@ -4,7 +4,7 @@ import android.app.ActionBar;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.gson.Gson;
 import com.visilabs.android.R;
@@ -253,8 +254,10 @@ public class SocialProofFragment extends Fragment {
         if(mTimer!=null){
             mTimer.cancel();
         }
-        if(getActivity() != null) {
-            getActivity().getFragmentManager().beginTransaction().remove(SocialProofFragment.this).commit();
+        if (isAdded() && getParentFragmentManager() != null) {
+            getParentFragmentManager().beginTransaction().remove(this).commit();
+        } else if (getActivity() != null && getActivity() instanceof FragmentActivity) {
+            ((FragmentActivity) getActivity()).getSupportFragmentManager().beginTransaction().remove(this).commit();
         }
     }
 
