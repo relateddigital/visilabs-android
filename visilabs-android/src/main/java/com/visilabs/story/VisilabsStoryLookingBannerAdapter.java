@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,33 +118,39 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
         String borderRadius = extendedProps.getStorylb_img_borderRadius();
 
-        if (borderRadius != null) {
-            switch (borderRadius) {
-                case VisilabsConstant.STORY_CIRCLE:
-                    if(moveShownToEnd) {
-                        storyHolder.setCircleViewProperties(shown);
-                    } else {
-                        storyHolder.setCircleViewProperties(isItShown(position));
-                    }
-                    break;
+        boolean isRectangle = extendedProps.getShape() != null && extendedProps.getShape().equalsIgnoreCase(VisilabsConstant.STORY_SHAPE_RECTANGLE);
 
-                case VisilabsConstant.STORY_ROUNDED_RECTANGLE:
-                    float[] roundedRectangleBorderRadius = new float[]{15, 15, 15, 15, 15, 15, 15, 15};
-                    if(moveShownToEnd) {
-                        storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, shown);
-                    } else {
-                        storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, isItShown(position));
-                    }
-                    break;
+        if (isRectangle) {
+            storyHolder.setShapeRectangle(shown);
+        } else {
+            if (borderRadius != null) {
+                switch (borderRadius) {
+                    case VisilabsConstant.STORY_CIRCLE:
+                        if(moveShownToEnd) {
+                            storyHolder.setCircleViewProperties(shown);
+                        } else {
+                            storyHolder.setCircleViewProperties(isItShown(position));
+                        }
+                        break;
 
-                case VisilabsConstant.STORY_RECTANGLE:
-                    float[] rectangleBorderRadius = new float[]{0, 0, 0, 0, 0, 0, 0, 0};
-                    if(moveShownToEnd) {
-                        storyHolder.setRectangleViewProperties(rectangleBorderRadius, shown);
-                    } else {
-                        storyHolder.setRectangleViewProperties(rectangleBorderRadius, isItShown(position));
-                    }
-                    break;
+                    case VisilabsConstant.STORY_ROUNDED_RECTANGLE:
+                        float[] roundedRectangleBorderRadius = new float[]{15, 15, 15, 15, 15, 15, 15, 15};
+                        if(moveShownToEnd) {
+                            storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, shown);
+                        } else {
+                            storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, isItShown(position));
+                        }
+                        break;
+
+                    case VisilabsConstant.STORY_RECTANGLE:
+                        float[] rectangleBorderRadius = new float[]{0, 0, 0, 0, 0, 0, 0, 0};
+                        if(moveShownToEnd) {
+                            storyHolder.setRectangleViewProperties(rectangleBorderRadius, shown);
+                        } else {
+                            storyHolder.setRectangleViewProperties(rectangleBorderRadius, isItShown(position));
+                        }
+                        break;
+                }
             }
         }
     }
@@ -219,11 +226,30 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         private void setRectangleViewProperties(float[] borderRadius, boolean shown) {
             int borderColor = shown ? Color.rgb(127, 127, 127) : Color.parseColor(extendedProps.getStorylb_img_borderColor());
             ivStory.setVisibility(View.VISIBLE);
+            civStory.setVisibility(View.GONE); // Ensure circle is hidden
 
             if (extendedProps.getStorylb_img_boxShadow().equals("")){
                 flRectangleShadow.setBackground(null);
             }
             ivStory.setVisibility(View.VISIBLE);
+
+            // Reset size to default 72dp in case it was changed by setShapeRectangle
+            float density = mContext.getResources().getDisplayMetrics().density;
+            int size = (int) (72 * density);
+            ViewGroup.LayoutParams params = ivStory.getLayoutParams();
+            if (params.width != size || params.height != size) {
+                params.width = size;
+                params.height = size;
+                ivStory.setLayoutParams(params);
+            }
+
+            // Adjust TextView width to match image width and increase font size
+            ViewGroup.LayoutParams tvParams = tvStoryName.getLayoutParams();
+            if (tvParams.width != size) {
+                tvParams.width = size;
+                tvStoryName.setLayoutParams(tvParams);
+            }
+            tvStoryName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
@@ -239,8 +265,49 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
             }
 
             civStory.setVisibility(View.VISIBLE);
+            ivStory.setVisibility(View.GONE); // Ensure rectangle is hidden
             civStory.setBorderColor(borderColor);
             civStory.setBorderWidth(Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2);
+        }
+
+        private void setShapeRectangle(boolean shown) {
+            int borderColor = shown ? Color.rgb(127, 127, 127) : Color.parseColor(extendedProps.getStorylb_img_borderColor());
+            ivStory.setVisibility(View.VISIBLE);
+            civStory.setVisibility(View.GONE);
+
+            if (extendedProps.getStorylb_img_boxShadow().equals("")){
+                flRectangleShadow.setBackground(null);
+            }
+
+            // 9:16 aspect ratio logic
+            // 9:16 aspect ratio logic
+            // User requested a larger size similar to the banner in the screenshot.
+            // Setting to approx 135dp width and 240dp height.
+            float density = mContext.getResources().getDisplayMetrics().density;
+            int size = (int) (72 * density); // Default size for resetting
+            int width = (int) (135 * density);
+            int height = (int) (240 * density);
+
+            ViewGroup.LayoutParams params = ivStory.getLayoutParams();
+            params.width = width;
+            params.height = height;
+            ivStory.setLayoutParams(params);
+
+            ViewGroup.LayoutParams tvParams = tvStoryName.getLayoutParams();
+            if (tvParams.width != width) {
+                tvParams.width = width;
+                tvStoryName.setLayoutParams(tvParams);
+            }
+            tvStoryName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+
+            // Also update the container/shadow frame if needed, but ivStory change might be enough if frame wraps content
+            // The layout xml says FrameLayout wrap_content, so it should be fine.
+
+            GradientDrawable shape = new GradientDrawable();
+            shape.setShape(GradientDrawable.RECTANGLE);
+            shape.setCornerRadii(new float[]{0, 0, 0, 0, 0, 0, 0, 0});
+            shape.setStroke( Integer.parseInt(extendedProps.getStorylb_img_borderWidth()) * 2, borderColor);
+            ivStory.setBackground(shape);
         }
     }
 

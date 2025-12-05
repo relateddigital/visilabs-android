@@ -22,6 +22,8 @@ public class ExtendedProps implements Serializable {
 
     private boolean moveShownToEnd;
 
+    private String shape;
+
     public String getStorylb_img_borderWidth() {
         return storylb_img_borderWidth;
     }
@@ -93,6 +95,10 @@ public class ExtendedProps implements Serializable {
     public void setMoveShownToEnd(boolean moveShownToEnd) {
         this.moveShownToEnd = moveShownToEnd;
     }
+
+    public String getShape() { return shape; }
+
+    public void setShape(String shape) { this.shape = shape; }
 
     @Override
     public String toString() {
