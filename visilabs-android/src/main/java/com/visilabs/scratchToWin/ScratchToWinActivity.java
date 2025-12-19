@@ -150,6 +150,17 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
             }
         });
         sendReport(true);
+
+        if(mScratchToWinMessage.getActiondata().getDownContentBody() != null &&
+                !mScratchToWinMessage.getActiondata().getDownContentBody().isEmpty()) {
+            binding.contentBottomText.setText(mScratchToWinMessage.getActiondata().getDownContentBody().replace("\\n", "\n"));
+            binding.contentBottomText.setTextColor(Color.parseColor(mExtendedProps.getDownContentBodyTextColor()));
+            binding.contentBottomText.setTextSize(Float.parseFloat(mExtendedProps.getDownContentBodyTextSize()) + 12);
+            binding.contentBottomText.setTypeface(mExtendedProps.getDownContentBodyFontFamily(this));
+            binding.contentBottomText.setVisibility(View.VISIBLE);
+        } else {
+            binding.contentBottomText.setVisibility(View.GONE);
+        }
     }
 
     private void setupEmail() {

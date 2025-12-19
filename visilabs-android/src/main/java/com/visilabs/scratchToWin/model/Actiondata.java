@@ -37,6 +37,8 @@ public class Actiondata implements Serializable {
     private String contentTitle;
     @SerializedName("content_body")
     private String contentBody;
+    @SerializedName("down_content_body")
+    private String downContentBody;
 
     public String getCid() {
         return cid;
@@ -164,5 +166,13 @@ public class Actiondata implements Serializable {
 
     public void setContentBody(String contentBody) {
         this.contentBody = contentBody;
+    }
+
+    public String getDownContentBody() {
+        return downContentBody;
+    }
+
+    public void setDownContentBody(String downContentBody) {
+        this.downContentBody = downContentBody;
     }
 }

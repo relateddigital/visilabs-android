@@ -13,8 +13,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 35
         versionCode 51
-        versionName "6.5.6"
-        buildConfigField 'String', 'VERSION_NAME', "\"6.5.6\""
+        versionName "6.6.0"
+        buildConfigField 'String', 'VERSION_NAME', "\"6.6.0\""
         buildConfigField 'String', 'SDK_TYPE', "\"native\""
     }
 

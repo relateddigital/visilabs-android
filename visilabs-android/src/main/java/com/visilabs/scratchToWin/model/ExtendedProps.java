@@ -78,6 +78,16 @@ public class ExtendedProps implements Serializable {
     private String close_button_color;
     @SerializedName("background_color")
     private String background_color;
+    @SerializedName("down_content_body_text_color")
+    private String down_content_body_text_color;
+    @SerializedName("down_content_body_font_family")
+    private String down_content_body_font_family;
+    @SerializedName("down_content_body_custom_font_family_ios")
+    private String down_content_body_custom_font_family_ios;
+    @SerializedName("down_content_body_custom_font_family_android")
+    private String down_content_body_custom_font_family_android;
+    @SerializedName("down_content_body_text_size")
+    private String down_content_body_text_size;
 
     public void setContentTitleTextColor(String contentTitleTextColor) {
         content_title_text_color = contentTitleTextColor;
@@ -356,5 +366,48 @@ public class ExtendedProps implements Serializable {
 
     public String getBackgroundColor() {
         return background_color;
+    }
+
+    public void setDownContentBodyTextColor(String downContentBodyTextColor) {
+        down_content_body_text_color = downContentBodyTextColor;
+    }
+
+    public String getDownContentBodyTextColor() {
+        return down_content_body_text_color;
+    }
+
+    public void setDownContentBodyFontFamily(String downContentBodyFontFamily) {
+        down_content_body_font_family = downContentBodyFontFamily;
+    }
+
+    public Typeface getDownContentBodyFontFamily(Context context) {
+        if (down_content_body_font_family == null || down_content_body_font_family.equals("")) {
+            return Typeface.DEFAULT;
+        }
+        if (FontFamily.Monospace.toString().equals(down_content_body_font_family.toLowerCase())) {
+            return Typeface.MONOSPACE;
+        }
+        if (FontFamily.SansSerif.toString().equals(down_content_body_font_family.toLowerCase())) {
+            return Typeface.SANS_SERIF;
+        }
+        if (FontFamily.Serif.toString().equals(down_content_body_font_family.toLowerCase())) {
+            return Typeface.SERIF;
+        }
+        if(down_content_body_custom_font_family_android != null && !down_content_body_custom_font_family_android.isEmpty()) {
+            if (AppUtils.isResourceAvailable(context, down_content_body_custom_font_family_android)) {
+                int id = context.getResources().getIdentifier(down_content_body_custom_font_family_android, "font", context.getPackageName());
+                return ResourcesCompat.getFont(context, id);
+            }
+        }
+
+        return Typeface.DEFAULT;
+    }
+
+    public void setDownContentBodyTextSize(String downContentBodyTextSize) {
+        down_content_body_text_size = downContentBodyTextSize;
+    }
+
+    public String getDownContentBodyTextSize() {
+        return down_content_body_text_size;
     }
 }

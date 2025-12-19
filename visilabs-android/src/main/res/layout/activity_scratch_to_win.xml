@@ -82,6 +82,18 @@
 
         </FrameLayout>
 
+        <TextView
+            android:id="@+id/content_bottom_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:visibility="gone" />
+
         <EditText
             android:id="@+id/emailEdit"
             android:layout_width="match_parent"
