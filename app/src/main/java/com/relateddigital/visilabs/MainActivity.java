@@ -36,6 +36,17 @@ public class MainActivity extends AppCompatActivity {
 
         activity = this;
 
+        Visilabs.CallAPI().setNotificationBellClickCallback(new NotificationBellClickCallback() {
+            @Override
+            public void onNotificationBellClick(String link) {
+                // Link parametresi tıklanan bildirimin linkini/değerini taşır.
+                Log.i("NotificationBell", "Tıklanan Link: " + link);
+
+                // Burada link ile istediğin işlemi yapabilirsin.
+                // Örneğin özel bir deep link ise ona göre yönlendirme yapabilirsin.
+            }
+        });
+
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("OM.sys.AppID", "visilabs-android-test");
         Visilabs.CallAPI().customEvent("android-visilabs", parameters);
@@ -356,6 +367,8 @@ public class MainActivity extends AppCompatActivity {
         };
         Visilabs.CallAPI().setInAppButtonInterface(buttonCallback);
     }
+
+
 
     private void sendInAppRequest(String type) {
         HashMap<String, String> parameters = new HashMap<>();

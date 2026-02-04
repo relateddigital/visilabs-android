@@ -465,6 +465,14 @@ public class Visilabs {
         mCheckForNotificationsOnLoggerRequest = checkForNotificationsOnLoggerRequest;
     }
 
+    public void setNotificationBellClickCallback(NotificationBellClickCallback notificationBellClickCallback) {
+        mNotificationBellClickCallback = notificationBellClickCallback;
+    }
+
+    public NotificationBellClickCallback getNotificationBellClickCallback() {
+        return mNotificationBellClickCallback;
+    }
+
     /**
      * This method is used to send the list of the
      * applications installed from a store in the device to the server.

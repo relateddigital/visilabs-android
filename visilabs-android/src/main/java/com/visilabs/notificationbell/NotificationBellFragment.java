@@ -12,7 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import android.animation.ValueAnimator;
+import android.view.MotionEvent;
+import android.view.Display;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
+import android.content.Context;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.visilabs.Visilabs;
@@ -82,13 +89,83 @@ public class NotificationBellFragment extends Fragment {
     }
 
     private void setupInitialView() {
-        loadBellAnimation();
+        loadStaticBellIcon();
         setupDialogContent();
-        binding.fabBell.setOnClickListener(v -> {
-            if (binding.dialogContainer.getVisibility() == View.VISIBLE) {
-                hideDialog();
-            } else {
-                showDialog();
+        binding.fabBell.setOnTouchListener(new View.OnTouchListener() {
+            private int initialX, initialY;
+            private float initialTouchX, initialTouchY;
+            private boolean isDragging = false;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) v.getLayoutParams();
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Mevcut konumu al
+                        int currentX = (int) v.getX();
+                        int currentY = (int) v.getY();
+
+                        // Constraintleri sol-üst köseye gore ayarla ki margin ile tasiyabilelim
+                        params.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
+                        params.endToEnd = ConstraintLayout.LayoutParams.UNSET;
+                        params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+                        params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
+                        params.leftMargin = currentX;
+                        params.topMargin = currentY;
+                        // Marginleri set ettikten sonra view yerinde kalsin diye hemen uygula
+                        v.setLayoutParams(params);
+
+                        initialX = params.leftMargin;
+                        initialY = params.topMargin;
+                        initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
+                        isDragging = false;
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        int dx = (int) (event.getRawX() - initialTouchX);
+                        int dy = (int) (event.getRawY() - initialTouchY);
+                        
+                        // Hareket eşiği
+                        if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                            isDragging = true;
+                        }
+
+                        params.leftMargin = initialX + dx;
+                        params.topMargin = initialY + dy;
+                        v.setLayoutParams(params);
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        DisplayMetrics displayMetrics = new DisplayMetrics();
+                        if(getActivity() != null) {
+                            getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                            int height = displayMetrics.heightPixels;
+                            int width = displayMetrics.widthPixels;
+                            
+                            // Saga mi sola mi yakin?
+                            // getX() guncel sol pozisyonu verir
+                            int targetX = (v.getX() + v.getWidth() / 2 < width / 2) ? 0 : (width - v.getWidth());
+                            
+                            ValueAnimator animator = ValueAnimator.ofInt(params.leftMargin, targetX);
+                            animator.addUpdateListener(animation -> {
+                                params.leftMargin = (int) animation.getAnimatedValue();
+                                v.setLayoutParams(params);
+                            });
+                            animator.start();
+
+                            // Eğer sürükleme olmadıysa (tıklama) dialog'u aç/kapa
+                            if (!isDragging) {
+                                if (binding.dialogContainer.getVisibility() == View.VISIBLE) {
+                                    hideDialog();
+                                } else {
+                                    showDialog();
+                                }
+                            }
+                        }
+                        return true;
+                }
+                return false;
             }
         });
     }
@@ -162,23 +239,28 @@ public class NotificationBellFragment extends Fragment {
         if (!notificationTexts.isEmpty()) {
             NotificationBellAdapter adapter = new NotificationBellAdapter(requireContext(), notificationTexts, extendedProps, link -> {
                 if (link != null) {
-                    NotificationBellClickCallback callback = Visilabs.CallAPI().setNotificationBellClickCallback();
+                    try {
+                        Report report = new Report();
+                        report.click = notificationBell.getActiondata().getReport().getClick();
+                        Visilabs.CallAPI().trackActionClick(report);
+                    } catch (Exception e) {
+                         Log.e(LOG_TAG, "Error tracking click", e);
+                    }
+
+                    NotificationBellClickCallback callback = Visilabs.CallAPI().getNotificationBellClickCallback();
                     if (callback != null) {
                         try {
-                            Report report = new Report();
-                            report.click = notificationBell.getActiondata().getReport().getClick();
-                            Visilabs.CallAPI().trackActionClick(report);
                             callback.onNotificationBellClick(link);
                         } catch (Exception e) {
                             Log.e(LOG_TAG, "Error firing NotificationBellClickCallback", e);
                         }
-                    }
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-                        startActivity(intent);
-
-                    } catch (Exception e) {
-                        Log.e(LOG_TAG, "Could not open the link: " + link, e);
+                    } else {
+                        try {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                            startActivity(intent);
+                        } catch (Exception e) {
+                            Log.e(LOG_TAG, "Could not open the link: " + link, e);
+                        }
                     }
                 }
                 hideDialog();
@@ -205,13 +287,44 @@ public class NotificationBellFragment extends Fragment {
     }
 
     private void showDialog() {
-        loadStaticBellIcon();
+        loadBellAnimation();
+        updateDialogPosition();
         // TODO: Raporlama kodunu buraya ekle (impression report)
         binding.dialogContainer.setVisibility(View.VISIBLE);
     }
+    
+    // ... (updateDialogPosition remains changed, omitted for brevity if possible, but replace_file_content needs contiguous block. 
+    // Since updateDialogPosition is between show and hide, I should probably use multi_replace or just two replace calls if they are far apart.
+    // Wait, updateDialogPosition is between them in my previous view_file output.
+    // showDialog is at 289, updateDialogPosition at 296, hideDialog at 319.
+    // They are close enough I can just replace showDialog and hideDialog separately.
+    // actually they are not that close, 20 lines apart. using multi_replace is better.
+    
+    private void updateDialogPosition() {
+        float bellY = binding.fabBell.getY();
+        if(getActivity() == null) {
+            return;
+        }
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int screenHeight = displayMetrics.heightPixels;
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) binding.dialogContainer.getLayoutParams();
+        
+        layoutParams.topToBottom = ConstraintLayout.LayoutParams.UNSET;
+        layoutParams.bottomToTop = ConstraintLayout.LayoutParams.UNSET;
+
+        if (bellY < screenHeight / 2) {
+            layoutParams.topToBottom = binding.fabBell.getId();
+            binding.ivPointer.setRotation(180f);
+        } else {
+            layoutParams.bottomToTop = binding.fabBell.getId();
+            binding.ivPointer.setRotation(0f);
+        }
+        binding.dialogContainer.setLayoutParams(layoutParams);
+    }
 
     private void hideDialog() {
-        loadBellAnimation();
+        loadStaticBellIcon();
         binding.dialogContainer.setVisibility(View.GONE);
     }
 
