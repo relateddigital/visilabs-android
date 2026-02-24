@@ -1,15 +1,21 @@
 package com.visilabs.inApp;
 
 import android.app.ActionBar;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -110,6 +116,78 @@ public class HalfScreenFragment extends Fragment {
             adjustBottom();
         }
         setupCloseButton();
+        setupPromotionCode();
+    }
+
+    private void setupPromotionCode() {
+        String promoCode = mInAppMessage.getActionData().getPromotionCode();
+        if (promoCode != null && !promoCode.isEmpty()) {
+            String bgColor = mInAppMessage.getActionData().getPromotionBackgroundColor();
+            String textColor = mInAppMessage.getActionData().getPromotionTextColor();
+            
+            if (mIsTop) {
+                binding.topPromotionContainer.setVisibility(View.VISIBLE);
+                try {
+                    if (bgColor != null && !bgColor.isEmpty()) {
+                        binding.topPromotionContainer.setBackgroundColor(Color.parseColor(bgColor));
+                    }
+                } catch (Exception e) {}
+                binding.topPromotionCodeText.setText(promoCode);
+                try {
+                    if (textColor != null && !textColor.isEmpty()) {
+                        binding.topPromotionCodeText.setTextColor(Color.parseColor(textColor));
+                    }
+                } catch (Exception e) {}
+                binding.topPromotionCodeText.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 8);
+                binding.topPromotionCodeText.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
+                binding.topPromotionCopyButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        copyToClipboard(promoCode, binding.topPromotionCopyButton);
+                    }
+                });
+            } else {
+                binding.botPromotionContainer.setVisibility(View.VISIBLE);
+                try {
+                    if (bgColor != null && !bgColor.isEmpty()) {
+                        binding.botPromotionContainer.setBackgroundColor(Color.parseColor(bgColor));
+                    }
+                } catch (Exception e) {}
+                binding.botPromotionCodeText.setText(promoCode);
+                try {
+                    if (textColor != null && !textColor.isEmpty()) {
+                        binding.botPromotionCodeText.setTextColor(Color.parseColor(textColor));
+                    }
+                } catch (Exception e) {}
+                binding.botPromotionCodeText.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 8);
+                binding.botPromotionCodeText.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
+                binding.botPromotionCopyButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        copyToClipboard(promoCode, binding.botPromotionCopyButton);
+                    }
+                });
+            }
+        }
+    }
+
+    private void copyToClipboard(String text, final android.widget.ImageButton button) {
+        if (getActivity() != null) {
+            ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Promotion Code", text);
+            if (clipboard != null) {
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getActivity(), getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show();
+
+                button.setImageResource(R.drawable.checked_mark);
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        button.setImageResource(R.drawable.content_copy_24);
+                    }
+                }, 2000);
+            }
+        }
     }
 
     private void adjustTop() {
@@ -143,7 +221,7 @@ public class HalfScreenFragment extends Fragment {
             binding.halfScreenContainerTop.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
             binding.topTitleView.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
             binding.topTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
-            binding.topTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 14);
+            binding.topTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 8);
             binding.topTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
         } else {
             binding.topTitleView.setVisibility(View.GONE);
@@ -208,7 +286,7 @@ public class HalfScreenFragment extends Fragment {
             binding.halfScreenContainerBot.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
             binding.botTitleView.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
             binding.botTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
-            binding.botTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 14);
+            binding.botTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 8);
             binding.botTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
         } else {
             binding.botTitleView.setVisibility(View.GONE);

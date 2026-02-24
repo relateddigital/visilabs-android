@@ -41,6 +41,35 @@
                 android:layout_height="wrap_content"
                 app:use_controller="false"
                 app:resize_mode="fixed_width"/>
+
+            <LinearLayout
+                android:id="@+id/top_promotion_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="4dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/top_promotion_code_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center" />
+
+                <ImageButton
+                    android:id="@+id/top_promotion_copy_button"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/content_copy_24"
+                    android:scaleType="fitCenter" />
+            </LinearLayout>
         </LinearLayout>
 
         <ImageButton
@@ -89,6 +118,35 @@
                 android:layout_height="wrap_content"
                 app:use_controller="false"
                 app:resize_mode="fixed_width"/>
+
+            <LinearLayout
+                android:id="@+id/bot_promotion_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="4dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/bot_promotion_code_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center" />
+
+                <ImageButton
+                    android:id="@+id/bot_promotion_copy_button"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/content_copy_24"
+                    android:scaleType="fitCenter" />
+            </LinearLayout>
         </LinearLayout>
 
         <ImageButton

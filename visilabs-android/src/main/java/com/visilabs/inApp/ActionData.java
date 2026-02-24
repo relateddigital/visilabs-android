@@ -115,6 +115,10 @@ public class ActionData implements Parcelable {
     private final String mSecondPopupVideoUrl2;
     @SerializedName("promocode_copybutton_function")
     private final String mPromoCodeCopyButtonFunction;
+    @SerializedName("promotion_background_color")
+    private String mPromotionBackgroundColor;
+    @SerializedName("promotion_text_color")
+    private String mPromotionTextColor;
 
     protected ActionData(Parcel in) {
         mAlertType = in.readString();
@@ -139,6 +143,8 @@ public class ActionData implements Parcelable {
         mPromoCodeBackgroundColor = in.readString();
         mPromoCodeTextColor = in.readString();
         mPromotionCode = in.readString();
+        mPromotionBackgroundColor = in.readString();
+        mPromotionTextColor = in.readString();
         in.readStringArray(mNumberColors);
         mQs = in.readString();
         mVisitData = in.readString();
@@ -209,6 +215,8 @@ public class ActionData implements Parcelable {
         dest.writeString(mPromoCodeBackgroundColor);
         dest.writeString(mPromoCodeTextColor);
         dest.writeString(mPromotionCode);
+        dest.writeString(mPromotionBackgroundColor);
+        dest.writeString(mPromotionTextColor);
         dest.writeStringArray(mNumberColors);
         dest.writeString(mQs);
         dest.writeString(mVisitData);
@@ -452,6 +460,22 @@ public class ActionData implements Parcelable {
     public String getDisplayType()  {
         return mDisplayType;
 
+    }
+
+    public String getPromotionBackgroundColor() {
+        if (mPromotionBackgroundColor != null && !mPromotionBackgroundColor.isEmpty()) {
+            return mPromotionBackgroundColor;
+        } else {
+            return mPromoCodeBackgroundColor;
+        }
+    }
+
+    public String getPromotionTextColor() {
+        if (mPromotionTextColor != null && !mPromotionTextColor.isEmpty()) {
+            return mPromotionTextColor;
+        } else {
+            return mPromoCodeTextColor;
+        }
     }
 
 
