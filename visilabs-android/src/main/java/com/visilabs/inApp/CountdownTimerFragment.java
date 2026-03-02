@@ -5,6 +5,8 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -180,6 +182,14 @@ public class CountdownTimerFragment extends Fragment {
                 ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), binding.couponTextTop.getText().toString());
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(getActivity(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+
+                binding.couponButtonTop.setBackgroundResource(R.drawable.checked_mark);
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.couponButtonTop.setBackgroundResource(R.drawable.content_copy_24);
+                    }
+                }, 2000);
                 //TODO track this click later
             }
         });
@@ -200,6 +210,14 @@ public class CountdownTimerFragment extends Fragment {
                 ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), binding.couponTextBot.getText().toString());
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(getActivity(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+
+                binding.couponButtonBot.setBackgroundResource(R.drawable.checked_mark);
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.couponButtonBot.setBackgroundResource(R.drawable.content_copy_24);
+                    }
+                }, 2000);
                 //TODO track this click later
             }
         });

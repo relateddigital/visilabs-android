@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -168,6 +170,14 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
                     ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), mInApp.getActionData().getPromotionCode());
                     clipboard.setPrimaryClip(clip);
                     Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+
+                    binding.tvCouponCode.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.checked_mark, 0);
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            binding.tvCouponCode.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.content_copy_24, 0);
+                        }
+                    }, 2000);
                 }
             });
         } else {

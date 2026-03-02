@@ -12,6 +12,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -705,6 +707,14 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                             ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), mInAppMessage.getActionData().getPromotionCode());
                             clipboard.setPrimaryClip(clip);
                             Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+
+                            bindingSecondPopUp.couponCode.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.checked_mark, 0);
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    bindingSecondPopUp.couponCode.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.content_copy_24, 0);
+                                }
+                            }, 2000);
                         }
                     });
                 } else {
@@ -857,6 +867,18 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), mInAppMessage.getActionData().getPromotionCode());
                     clipboard.setPrimaryClip(clip);
                     Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+                    
+                    if (binding.llCouponContainer.getChildCount() > 1 && binding.llCouponContainer.getChildAt(1) instanceof android.widget.ImageView) {
+                        final android.widget.ImageView copyIcon = (android.widget.ImageView) binding.llCouponContainer.getChildAt(1);
+                        copyIcon.setBackgroundResource(R.drawable.checked_mark);
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                copyIcon.setBackgroundResource(R.drawable.content_copy_24);
+                            }
+                        }, 2000);
+                    }
+
                     if(!mInAppMessage.getActionData().getmPromoCodeCopyButtonFunction().isEmpty()) {
                         if (mInAppMessage.getActionData().getmPromoCodeCopyButtonFunction().equals("copy_close")) {
                             finish();
@@ -1282,6 +1304,17 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     ClipData clip = ClipData.newPlainText(getString(R.string.coupon_code), mCarouselItems.get(position).getPromotionCode());
                     clipboard.setPrimaryClip(clip);
                     Toast.makeText(getApplicationContext(), getString(R.string.copied_to_clipboard), Toast.LENGTH_LONG).show();
+
+                    if (bindingCarousel.couponContainer.getChildCount() > 1 && bindingCarousel.couponContainer.getChildAt(1) instanceof android.widget.ImageView) {
+                        final android.widget.ImageView copyIcon = (android.widget.ImageView) bindingCarousel.couponContainer.getChildAt(1);
+                        copyIcon.setBackgroundResource(R.drawable.checked_mark);
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                copyIcon.setBackgroundResource(R.drawable.content_copy_24);
+                            }
+                        }, 2000);
+                    }
                 }
             });
         } else {
