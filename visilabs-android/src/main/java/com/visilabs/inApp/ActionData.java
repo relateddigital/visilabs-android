@@ -113,6 +113,36 @@ public class ActionData implements Parcelable {
     private final String mSecondPopupVideoUrl1;
     @SerializedName("secondPopup_videourl2")
     private final String mSecondPopupVideoUrl2;
+    @SerializedName("multiple_popup_msg_title")
+    private final String mMultiplePopupMsgTitle;
+    @SerializedName("multiple_popup_msg_body")
+    private final String mMultiplePopupMsgBody;
+    @SerializedName("multiple_popup_button_text2")
+    private final String mMultiplePopupButtonText2;
+    @SerializedName("multiple_popup_button_text_color2")
+    private final String mMultiplePopupButtonTextColor2;
+    @SerializedName("multiple_popup_button_color2")
+    private final String mMultiplePopupButtonColor2;
+    @SerializedName("multiple_popup_button_text3")
+    private final String mMultiplePopupButtonText3;
+    @SerializedName("multiple_popup_button_text_color3")
+    private final String mMultiplePopupButtonTextColor3;
+    @SerializedName("multiple_popup_button_color3")
+    private final String mMultiplePopupButtonColor3;
+    @SerializedName("multiple_popup_msg_title3")
+    private final String mMultiplePopupMsgTitle3;
+    @SerializedName("multiple_popup_button_text4")
+    private final String mMultiplePopupButtonText4;
+    @SerializedName("multiple_popup_button_text_color4")
+    private final String mMultiplePopupButtonTextColor4;
+    @SerializedName("multiple_popup_button_color4")
+    private final String mMultiplePopupButtonColor4;
+    @SerializedName("multiple_popup_image3")
+    private final String mMultiplePopupImage3;
+    @SerializedName("multiple_popup_msg_body_textsize2")
+    private final String mMultiplePopupMsgBodyTextSize2;
+    @SerializedName("multiple_popup_feedbackform_minpoint")
+    private final String mMultiplePopupFeedbackFormMinPoint;
     @SerializedName("promocode_copybutton_function")
     private final String mPromoCodeCopyButtonFunction;
     @SerializedName("promotion_background_color")
@@ -171,6 +201,21 @@ public class ActionData implements Parcelable {
         mVideoUrl = in.readString();
         mSecondPopupVideoUrl1 = in.readString();
         mSecondPopupVideoUrl2 = in.readString();
+        mMultiplePopupMsgTitle = in.readString();
+        mMultiplePopupMsgBody = in.readString();
+        mMultiplePopupButtonText2 = in.readString();
+        mMultiplePopupButtonTextColor2 = in.readString();
+        mMultiplePopupButtonColor2 = in.readString();
+        mMultiplePopupButtonText3 = in.readString();
+        mMultiplePopupButtonTextColor3 = in.readString();
+        mMultiplePopupButtonColor3 = in.readString();
+        mMultiplePopupMsgTitle3 = in.readString();
+        mMultiplePopupButtonText4 = in.readString();
+        mMultiplePopupButtonTextColor4 = in.readString();
+        mMultiplePopupButtonColor4 = in.readString();
+        mMultiplePopupImage3 = in.readString();
+        mMultiplePopupMsgBodyTextSize2 = in.readString();
+        mMultiplePopupFeedbackFormMinPoint = in.readString();
         mDisplayType = in.readString();
     }
 
@@ -243,6 +288,21 @@ public class ActionData implements Parcelable {
         dest.writeString(mVideoUrl);
         dest.writeString(mSecondPopupVideoUrl1);
         dest.writeString(mSecondPopupVideoUrl2);
+        dest.writeString(mMultiplePopupMsgTitle);
+        dest.writeString(mMultiplePopupMsgBody);
+        dest.writeString(mMultiplePopupButtonText2);
+        dest.writeString(mMultiplePopupButtonTextColor2);
+        dest.writeString(mMultiplePopupButtonColor2);
+        dest.writeString(mMultiplePopupButtonText3);
+        dest.writeString(mMultiplePopupButtonTextColor3);
+        dest.writeString(mMultiplePopupButtonColor3);
+        dest.writeString(mMultiplePopupMsgTitle3);
+        dest.writeString(mMultiplePopupButtonText4);
+        dest.writeString(mMultiplePopupButtonTextColor4);
+        dest.writeString(mMultiplePopupButtonColor4);
+        dest.writeString(mMultiplePopupImage3);
+        dest.writeString(mMultiplePopupMsgBodyTextSize2);
+        dest.writeString(mMultiplePopupFeedbackFormMinPoint);
     }
 
     public String getAlertType() {
@@ -445,6 +505,8 @@ public class ActionData implements Parcelable {
             result = InAppActionType.CAROUSEL;
         } else if(InAppActionType.NPS_AND_SECOND_POP_UP.toString().equals(mMsgType.toLowerCase())) {
             result = InAppActionType.NPS_AND_SECOND_POP_UP;
+        } else if(InAppActionType.NPS_WITH_MULTIPLE_POPUP.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.NPS_WITH_MULTIPLE_POPUP;
         } else if(InAppActionType.HALF_SCREEN.toString().equals(mMsgType.toLowerCase())) {
             result = InAppActionType.HALF_SCREEN;
         } else {
@@ -593,5 +655,65 @@ public class ActionData implements Parcelable {
 
     public String getSecondPopupVideoUrl2() {
         return mSecondPopupVideoUrl2;
+    }
+
+    public String getMultiplePopupMsgTitle() {
+        return mMultiplePopupMsgTitle;
+    }
+
+    public String getMultiplePopupMsgBody() {
+        return mMultiplePopupMsgBody;
+    }
+
+    public String getMultiplePopupButtonText2() {
+        return mMultiplePopupButtonText2;
+    }
+
+    public String getMultiplePopupButtonTextColor2() {
+        return mMultiplePopupButtonTextColor2;
+    }
+
+    public String getMultiplePopupButtonColor2() {
+        return mMultiplePopupButtonColor2;
+    }
+
+    public String getMultiplePopupButtonText3() {
+        return mMultiplePopupButtonText3;
+    }
+
+    public String getMultiplePopupButtonTextColor3() {
+        return mMultiplePopupButtonTextColor3;
+    }
+
+    public String getMultiplePopupButtonColor3() {
+        return mMultiplePopupButtonColor3;
+    }
+
+    public String getMultiplePopupMsgTitle3() {
+        return mMultiplePopupMsgTitle3;
+    }
+
+    public String getMultiplePopupButtonText4() {
+        return mMultiplePopupButtonText4;
+    }
+
+    public String getMultiplePopupButtonTextColor4() {
+        return mMultiplePopupButtonTextColor4;
+    }
+
+    public String getMultiplePopupButtonColor4() {
+        return mMultiplePopupButtonColor4;
+    }
+
+    public String getMultiplePopupImage3() {
+        return mMultiplePopupImage3;
+    }
+
+    public String getMultiplePopupMsgBodyTextSize2() {
+        return mMultiplePopupMsgBodyTextSize2;
+    }
+
+    public String getMultiplePopupFeedbackFormMinPoint() {
+        return mMultiplePopupFeedbackFormMinPoint;
     }
 }

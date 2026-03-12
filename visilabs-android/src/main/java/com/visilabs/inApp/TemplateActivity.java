@@ -60,6 +60,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         SMILE_RATING,
         NPS_WITH_NUMBERS,
         NPS_WITH_SECOND_POPUP,
+        NPS_WITH_MULTIPLE_POPUP,
         NONE
     }
 
@@ -340,6 +341,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 setNpsSecondPopUpButton();
                 showNps();
 
+                break;
+
+            case NPS_WITH_MULTIPLE_POPUP:
+                npsType = NpsType.NPS_WITH_MULTIPLE_POPUP;
+                setupNpsWithMultiplePopup();
                 break;
 
         }
@@ -1359,5 +1365,195 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         } else {
             bindingCarousel.carouselButton.setVisibility(View.GONE);
         }
+    }
+
+    private void setupNpsWithMultiplePopup() {
+        getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        setContentView(R.layout.inapp_nps_with_multiple_popup);
+        
+        // Find views
+        android.widget.RelativeLayout container = findViewById(R.id.container);
+        if (container != null) {
+            container.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        }
+        androidx.cardview.widget.CardView llBack = findViewById(R.id.llBack);
+        android.widget.ImageButton ibClose = findViewById(R.id.ibClose);
+        
+        LinearLayout npsPage1 = findViewById(R.id.nps_page1);
+        android.widget.TextView tvTitle = findViewById(R.id.tvTitle);
+        android.widget.RatingBar ratingBar = findViewById(R.id.ratingBar);
+        android.widget.TextView tvScaleLabel = findViewById(R.id.tvScaleLabel);
+        android.widget.Button btnSubmit1 = findViewById(R.id.btnSubmit1);
+        
+        LinearLayout npsPage2 = findViewById(R.id.nps_page2);
+        android.widget.TextView tvTitle2 = findViewById(R.id.tvTitle2);
+        android.widget.TextView tvBody2 = findViewById(R.id.tvBody2);
+        android.widget.EditText etFeedback = findViewById(R.id.etFeedback);
+        android.widget.Button btnBack2 = findViewById(R.id.btnBack2);
+        android.widget.Button btnSave2 = findViewById(R.id.btnSave2);
+        
+        LinearLayout npsPage3 = findViewById(R.id.nps_page3);
+        android.widget.ImageView ivImage3 = findViewById(R.id.ivImage3);
+        android.widget.TextView tvTitle3 = findViewById(R.id.tvTitle3);
+        android.widget.Button btnClose3 = findViewById(R.id.btnClose3);
+
+        ActionData actionData = mInAppMessage.getActionData();
+
+        // Background Color
+        if (actionData.getBackground() != null && !actionData.getBackground().isEmpty()) {
+            try {
+                llBack.setCardBackgroundColor(Color.parseColor(actionData.getBackground()));
+            } catch (Exception e) {}
+        }
+        
+        // Close Button
+        if (actionData.getCloseEventTrigger() != null && actionData.getCloseEventTrigger().equals("backgroundclick")) {
+            ibClose.setVisibility(View.GONE);
+            this.setFinishOnTouchOutside(true);
+        } else {
+            this.setFinishOnTouchOutside(actionData.getCloseEventTrigger() == null || !actionData.getCloseEventTrigger().equals("closebutton"));
+            ibClose.setOnClickListener(v -> closeMultiplePopup());
+            if ("white".equals(actionData.getCloseButtonColor())) {
+                ibClose.setBackgroundResource(R.drawable.ic_close_white_24dp);
+            } else {
+                ibClose.setBackgroundResource(R.drawable.ic_close_black_24dp);
+            }
+        }
+
+        // Fonts
+        android.graphics.Typeface fontFamily = actionData.getFontFamily(this);
+
+        // ==== PAGE 1 ====
+        tvTitle.setTypeface(fontFamily);
+        tvTitle.setText(actionData.getMsgTitle().replace("\\n", "\n"));
+        try {
+            tvTitle.setTextColor(Color.parseColor(actionData.getMsgTitleColor()));
+            tvTitle.setTextSize(Float.parseFloat(actionData.getMsgBodyTextSize()) + 12);
+        } catch (Exception e) {}
+
+        tvScaleLabel.setTypeface(fontFamily);
+        if (actionData.getMsgBody() != null) {
+            tvScaleLabel.setText(actionData.getMsgBody().replace("\\n", "\n"));
+        } else {
+            tvScaleLabel.setText("");
+        }
+        
+        try {
+            if (actionData.getMsgBodyColor() != null && !actionData.getMsgBodyColor().isEmpty()) {
+                tvScaleLabel.setTextColor(Color.parseColor(actionData.getMsgBodyColor()));
+            }
+            if (actionData.getMsgBodyTextSize() != null) {
+                tvScaleLabel.setTextSize(Float.parseFloat(actionData.getMsgBodyTextSize()) + 8);
+            }
+        } catch (Exception e) {}
+
+        ratingBar.setOnRatingBarChangeListener((ratingBar1, rating, fromUser) -> {
+            // No longer updating the label with rating text
+        });
+
+        btnSubmit1.setTypeface(fontFamily);
+        btnSubmit1.setText(actionData.getBtnText() != null ? actionData.getBtnText().replace("\\n", "\n") : "Gönder");
+        if (actionData.getButtonTextColor() != null && !actionData.getButtonTextColor().isEmpty()) {
+            try {
+                btnSubmit1.setTextColor(Color.parseColor(actionData.getButtonTextColor()));
+            } catch (Exception e) {}
+        }
+        if (actionData.getButtonColor() != null && !actionData.getButtonColor().isEmpty()) {
+            try {
+                btnSubmit1.setBackgroundColor(Color.parseColor(actionData.getButtonColor()));
+            } catch (Exception e) {}
+        }
+
+        btnSubmit1.setOnClickListener(v -> {
+            float rating = ratingBar.getRating();
+            if (rating > 0) {
+                float minPoint = 0;
+                try {
+                    if (actionData.getMultiplePopupFeedbackFormMinPoint() != null) {
+                        minPoint = Float.parseFloat(actionData.getMultiplePopupFeedbackFormMinPoint());
+                    }
+                } catch (Exception e) {}
+                
+                if (rating >= minPoint) {
+                    Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, "OM.s_point=" + rating + "&OM.s_cat=" + actionData.getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId());
+                    closeMultiplePopup();
+                } else {
+                    npsPage1.setVisibility(View.GONE);
+                    npsPage2.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        // ==== PAGE 2 ====
+        tvTitle2.setTypeface(fontFamily);
+        tvTitle2.setText(actionData.getMultiplePopupMsgTitle().replace("\\n", "\n"));
+        try {
+            tvTitle2.setTextColor(Color.parseColor(actionData.getMsgTitleColor()));
+            tvTitle2.setTextSize(Float.parseFloat(actionData.getMultiplePopupMsgBodyTextSize2()) + 12);
+        } catch (Exception e) {}
+
+        tvBody2.setTypeface(fontFamily);
+        tvBody2.setText(actionData.getMultiplePopupMsgBody().replace("\\n", "\n"));
+        try {
+            tvBody2.setTextColor(Color.parseColor(actionData.getMsgBodyColor()));
+            tvBody2.setTextSize(Float.parseFloat(actionData.getMultiplePopupMsgBodyTextSize2()) + 8);
+        } catch (Exception e) {}
+
+        btnBack2.setTypeface(fontFamily);
+        btnBack2.setText(actionData.getMultiplePopupButtonText3());
+        try {
+            btnBack2.setTextColor(Color.parseColor(actionData.getMultiplePopupButtonTextColor3()));
+            btnBack2.setBackgroundColor(Color.parseColor(actionData.getMultiplePopupButtonColor3()));
+        } catch (Exception e) {}
+        btnBack2.setOnClickListener(v -> {
+            npsPage2.setVisibility(View.GONE);
+            npsPage1.setVisibility(View.VISIBLE);
+        });
+
+        btnSave2.setTypeface(fontFamily);
+        btnSave2.setText(actionData.getMultiplePopupButtonText2());
+        try {
+            btnSave2.setTextColor(Color.parseColor(actionData.getMultiplePopupButtonTextColor2()));
+            btnSave2.setBackgroundColor(Color.parseColor(actionData.getMultiplePopupButtonColor2()));
+        } catch (Exception e) {}
+        btnSave2.setOnClickListener(v -> {
+            String feedback = etFeedback.getText().toString();
+            Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, "OM.s_point=" + ratingBar.getRating() + "&OM.s_cat=" + actionData.getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId() + "&OM.s_feed=" + feedback);
+            npsPage2.setVisibility(View.GONE);
+            npsPage3.setVisibility(View.VISIBLE);
+            
+            // If image 3 exists, load it now that it's visible
+            if (actionData.getMultiplePopupImage3() != null && !actionData.getMultiplePopupImage3().isEmpty()) {
+                ivImage3.setVisibility(View.VISIBLE);
+                if (AppUtils.isAnImage(actionData.getMultiplePopupImage3())) {
+                    Picasso.get().load(actionData.getMultiplePopupImage3()).into(ivImage3);
+                } else {
+                    Glide.with(this).load(actionData.getMultiplePopupImage3()).into(ivImage3);
+                }
+            } else {
+                ivImage3.setVisibility(View.GONE);
+            }
+        });
+
+        // ==== PAGE 3 ====
+        tvTitle3.setTypeface(fontFamily);
+        tvTitle3.setText(actionData.getMultiplePopupMsgTitle3().replace("\\n", "\n"));
+        try {
+            tvTitle3.setTextColor(Color.parseColor(actionData.getMsgTitleColor()));
+            tvTitle3.setTextSize(Float.parseFloat(actionData.getMsgBodyTextSize()) + 12);
+        } catch (Exception e) {}
+
+        btnClose3.setTypeface(fontFamily);
+        btnClose3.setText(actionData.getMultiplePopupButtonText4());
+        try {
+            btnClose3.setTextColor(Color.parseColor(actionData.getMultiplePopupButtonTextColor4()));
+            btnClose3.setBackgroundColor(Color.parseColor(actionData.getMultiplePopupButtonColor4()));
+        } catch (Exception e) {}
+        btnClose3.setOnClickListener(v -> closeMultiplePopup());
+    }
+
+    private void closeMultiplePopup() {
+        VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+        finish();
     }
 }

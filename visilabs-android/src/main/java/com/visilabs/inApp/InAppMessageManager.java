@@ -161,6 +161,8 @@ public class InAppMessageManager {
 
                         case NPS_AND_SECOND_POP_UP:
 
+                        case NPS_WITH_MULTIPLE_POPUP:
+
                             intent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
 
                             parent.startActivity(intent);

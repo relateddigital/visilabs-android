@@ -92,6 +92,14 @@ public enum InAppActionType {
         }
     },
 
+    NPS_WITH_MULTIPLE_POPUP {
+        @NonNull
+        @Override
+        public String toString() {
+            return "nps_with_multiple_popup";
+        }
+    },
+
     HALF_SCREEN {
         @NonNull
         @Override
