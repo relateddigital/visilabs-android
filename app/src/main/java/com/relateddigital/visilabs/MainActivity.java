@@ -338,6 +338,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        binding.inApp30.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("fullscreen_carousel");
+            }
+        });
+
         try {
             VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
             visilabsActionRequest.executeAsyncAction(getVisilabsCallback());

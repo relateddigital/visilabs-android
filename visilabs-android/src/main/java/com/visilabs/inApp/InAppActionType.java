@@ -84,6 +84,14 @@ public enum InAppActionType {
         }
     },
 
+    CAROUSEL_FULLSCREEN {
+        @NonNull
+        @Override
+        public String toString() {
+            return "carousel_fullscreen";
+        }
+    },
+
     NPS_AND_SECOND_POP_UP {
         @NonNull
         @Override

@@ -169,6 +169,14 @@ public class InAppMessageManager {
 
                             break;
 
+                        case CAROUSEL_FULLSCREEN:
+                            Intent carouselFullscreenIntent = new Intent(parent, com.visilabs.inApp.carousel.CarouselFullscreenActivity.class);
+                            carouselFullscreenIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            carouselFullscreenIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                            carouselFullscreenIntent.putExtra(VisilabsInAppActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
+                            parent.startActivity(carouselFullscreenIntent);
+                            break;
+
                         case ALERT:
 
                             stateId = getStateId(parent, inAppMessage);

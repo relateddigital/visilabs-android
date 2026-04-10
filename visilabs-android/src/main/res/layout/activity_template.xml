@@ -142,14 +142,34 @@
                     android:layout_weight="1"
                     android:visibility="gone" />
 
-                <Button
-                    android:id="@+id/btn_template"
+                <LinearLayout
+                    android:id="@+id/ll_button_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:padding="5dp"
-                    android:text="@string/OK"
-                    android:textAllCaps="false" />
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_template"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:text="@string/OK"
+                        android:textAllCaps="false" />
+
+                    <Button
+                        android:id="@+id/btn_template_second"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:text="@string/OK"
+                        android:textAllCaps="false"
+                        android:visibility="gone" />
+                </LinearLayout>
             </LinearLayout>
 
             <ImageButton

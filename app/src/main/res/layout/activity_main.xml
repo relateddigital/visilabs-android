@@ -467,5 +467,19 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/inApp30"
+                android:layout_width="0.0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:text="Carousel Fullscreen" />
+
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>

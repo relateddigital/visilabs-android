@@ -113,6 +113,24 @@ public class ActionData implements Parcelable {
     private final String mSecondPopupVideoUrl1;
     @SerializedName("secondPopup_videourl2")
     private final String mSecondPopupVideoUrl2;
+    @SerializedName("second_button_function")
+    private final String mSecondButtonFunction;
+    @SerializedName("second_button_text")
+    private final String mSecondButtonText;
+    @SerializedName("second_button_text_color")
+    private final String mSecondButtonTextColor;
+    @SerializedName("second_button_color")
+    private final String mSecondButtonColor;
+    @SerializedName("second_button_ios_lnk")
+    private final String mSecondButtonIosLink;
+    @SerializedName("second_button_android_lnk")
+    private final String mSecondButtonAndroidLink;
+    @SerializedName("second_button_font_family")
+    private final String mSecondButtonFontFamily;
+    @SerializedName("second_button_custom_font_family_ios")
+    private final String mSecondButtonCustomFontFamilyIos;
+    @SerializedName("second_button_custom_font_family_android")
+    private final String mSecondButtonCustomFontFamilyAndroid;
     @SerializedName("multiple_popup_msg_title")
     private final String mMultiplePopupMsgTitle;
     @SerializedName("multiple_popup_msg_body")
@@ -149,6 +167,8 @@ public class ActionData implements Parcelable {
     private String mPromotionBackgroundColor;
     @SerializedName("promotion_text_color")
     private String mPromotionTextColor;
+    @SerializedName("button_border_radius")
+    private String mButtonBorderRadius;
 
     protected ActionData(Parcel in) {
         mAlertType = in.readString();
@@ -217,6 +237,16 @@ public class ActionData implements Parcelable {
         mMultiplePopupMsgBodyTextSize2 = in.readString();
         mMultiplePopupFeedbackFormMinPoint = in.readString();
         mDisplayType = in.readString();
+        mButtonBorderRadius = in.readString();
+        mSecondButtonFunction = in.readString();
+        mSecondButtonText = in.readString();
+        mSecondButtonTextColor = in.readString();
+        mSecondButtonColor = in.readString();
+        mSecondButtonIosLink = in.readString();
+        mSecondButtonAndroidLink = in.readString();
+        mSecondButtonFontFamily = in.readString();
+        mSecondButtonCustomFontFamilyIos = in.readString();
+        mSecondButtonCustomFontFamilyAndroid = in.readString();
     }
 
     public static final Creator<ActionData> CREATOR = new Creator<ActionData>() {
@@ -303,6 +333,16 @@ public class ActionData implements Parcelable {
         dest.writeString(mMultiplePopupImage3);
         dest.writeString(mMultiplePopupMsgBodyTextSize2);
         dest.writeString(mMultiplePopupFeedbackFormMinPoint);
+        dest.writeString(mButtonBorderRadius);
+        dest.writeString(mSecondButtonFunction);
+        dest.writeString(mSecondButtonText);
+        dest.writeString(mSecondButtonTextColor);
+        dest.writeString(mSecondButtonColor);
+        dest.writeString(mSecondButtonIosLink);
+        dest.writeString(mSecondButtonAndroidLink);
+        dest.writeString(mSecondButtonFontFamily);
+        dest.writeString(mSecondButtonCustomFontFamilyIos);
+        dest.writeString(mSecondButtonCustomFontFamilyAndroid);
     }
 
     public String getAlertType() {
@@ -503,6 +543,8 @@ public class ActionData implements Parcelable {
             result = InAppActionType.NPS_WITH_NUMBERS;
         } else if(InAppActionType.CAROUSEL.toString().equals(mMsgType.toLowerCase())) {
             result = InAppActionType.CAROUSEL;
+        } else if(InAppActionType.CAROUSEL_FULLSCREEN.toString().equals(mMsgType.toLowerCase())) {
+            result = InAppActionType.CAROUSEL_FULLSCREEN;
         } else if(InAppActionType.NPS_AND_SECOND_POP_UP.toString().equals(mMsgType.toLowerCase())) {
             result = InAppActionType.NPS_AND_SECOND_POP_UP;
         } else if(InAppActionType.NPS_WITH_MULTIPLE_POPUP.toString().equals(mMsgType.toLowerCase())) {
@@ -641,6 +683,10 @@ public class ActionData implements Parcelable {
         return mButtonFunction;
     }
 
+    public String getButtonBorderRadius() {
+        return mButtonBorderRadius;
+    }
+
     public String getmPromoCodeCopyButtonFunction() {
         return mPromoCodeCopyButtonFunction;
     }
@@ -715,5 +761,63 @@ public class ActionData implements Parcelable {
 
     public String getMultiplePopupFeedbackFormMinPoint() {
         return mMultiplePopupFeedbackFormMinPoint;
+    }
+
+    public String getSecondButtonFunction() {
+        return mSecondButtonFunction;
+    }
+
+    public String getSecondButtonText() {
+        return mSecondButtonText;
+    }
+
+    public String getSecondButtonTextColor() {
+        return mSecondButtonTextColor;
+    }
+
+    public String getSecondButtonColor() {
+        return mSecondButtonColor;
+    }
+
+    public String getSecondButtonIosLink() {
+        return mSecondButtonIosLink;
+    }
+
+    public String getSecondButtonAndroidLink() {
+        return mSecondButtonAndroidLink;
+    }
+
+    public String getSecondButtonFontFamily() {
+        return mSecondButtonFontFamily;
+    }
+
+    public String getSecondButtonCustomFontFamilyIos() {
+        return mSecondButtonCustomFontFamilyIos;
+    }
+
+    public String getSecondButtonCustomFontFamilyAndroid() {
+        return mSecondButtonCustomFontFamilyAndroid;
+    }
+
+    public Typeface getSecondButtonFontFamily(Context context) {
+        if (mSecondButtonFontFamily == null || mSecondButtonFontFamily.equals("")) {
+            return getFontFamily(context);
+        }
+        if (FontFamily.Monospace.toString().equals(mSecondButtonFontFamily.toLowerCase())) {
+            return Typeface.MONOSPACE;
+        }
+        if (FontFamily.SansSerif.toString().equals(mSecondButtonFontFamily.toLowerCase())) {
+            return Typeface.SANS_SERIF;
+        }
+        if (FontFamily.Serif.toString().equals(mSecondButtonFontFamily.toLowerCase())) {
+            return Typeface.SERIF;
+        }
+        if (mSecondButtonCustomFontFamilyAndroid != null && !mSecondButtonCustomFontFamilyAndroid.isEmpty()) {
+            if (AppUtils.isResourceAvailable(context, mSecondButtonCustomFontFamilyAndroid)) {
+                int id = context.getResources().getIdentifier(mSecondButtonCustomFontFamilyAndroid, "font", context.getPackageName());
+                return ResourcesCompat.getFont(context, id);
+            }
+        }
+        return getFontFamily(context);
     }
 }

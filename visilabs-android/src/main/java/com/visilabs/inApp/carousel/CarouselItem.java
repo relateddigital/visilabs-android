@@ -73,6 +73,24 @@ public class CarouselItem implements Parcelable {
     private String androidLnk;
     @SerializedName("videourl")
     private String videoUrl;
+    @SerializedName("button_function")
+    private String buttonFunction;
+    @SerializedName("second_button_text")
+    private String secondButtonText;
+    @SerializedName("second_button_text_color")
+    private String secondButtonTextColor;
+    @SerializedName("second_button_color")
+    private String secondButtonColor;
+    @SerializedName("second_button_font_family")
+    private String secondButtonFontFamily;
+    @SerializedName("second_button_custom_font_family_android")
+    private String secondButtonCustomFontFamilyAndroid;
+    @SerializedName("second_button_textsize")
+    private String secondButtonTextsize;
+    @SerializedName("second_button_android_lnk")
+    private String secondAndroidLnk;
+    @SerializedName("second_button_function")
+    private String secondButtonFunction;
 
     protected CarouselItem(Parcel in) {
         image = in.readString();
@@ -105,6 +123,15 @@ public class CarouselItem implements Parcelable {
         iosLnk = in.readString();
         androidLnk = in.readString();
         videoUrl = in.readString();
+        buttonFunction = in.readString();
+        secondButtonText = in.readString();
+        secondButtonTextColor = in.readString();
+        secondButtonColor = in.readString();
+        secondButtonFontFamily = in.readString();
+        secondButtonCustomFontFamilyAndroid = in.readString();
+        secondButtonTextsize = in.readString();
+        secondAndroidLnk = in.readString();
+        secondButtonFunction = in.readString();
     }
 
     public static final Creator<CarouselItem> CREATOR = new Creator<CarouselItem>() {
@@ -416,6 +443,96 @@ public class CarouselItem implements Parcelable {
         this.videoUrl = videoUrl;
     }
 
+    public String getButtonFunction() {
+        return buttonFunction;
+    }
+
+    public void setButtonFunction(String buttonFunction) {
+        this.buttonFunction = buttonFunction;
+    }
+
+    public String getSecondButtonText() {
+        return secondButtonText;
+    }
+
+    public void setSecondButtonText(String secondButtonText) {
+        this.secondButtonText = secondButtonText;
+    }
+
+    public String getSecondButtonTextColor() {
+        return secondButtonTextColor;
+    }
+
+    public void setSecondButtonTextColor(String secondButtonTextColor) {
+        this.secondButtonTextColor = secondButtonTextColor;
+    }
+
+    public String getSecondButtonColor() {
+        return secondButtonColor;
+    }
+
+    public void setSecondButtonColor(String secondButtonColor) {
+        this.secondButtonColor = secondButtonColor;
+    }
+
+    public Typeface getSecondButtonFontFamily(Context context) {
+        if (secondButtonFontFamily == null || secondButtonFontFamily.equals("")) {
+            return Typeface.DEFAULT;
+        }
+        if (FontFamily.Monospace.toString().equals(secondButtonFontFamily.toLowerCase())) {
+            return Typeface.MONOSPACE;
+        }
+        if (FontFamily.SansSerif.toString().equals(secondButtonFontFamily.toLowerCase())) {
+            return Typeface.SANS_SERIF;
+        }
+        if (FontFamily.Serif.toString().equals(secondButtonFontFamily.toLowerCase())) {
+            return Typeface.SERIF;
+        }
+        if (secondButtonCustomFontFamilyAndroid != null && !secondButtonCustomFontFamilyAndroid.isEmpty()) {
+            if (AppUtils.isResourceAvailable(context, secondButtonCustomFontFamilyAndroid)) {
+                int id = context.getResources().getIdentifier(secondButtonCustomFontFamilyAndroid, "font", context.getPackageName());
+                return ResourcesCompat.getFont(context, id);
+            }
+        }
+        return Typeface.DEFAULT;
+    }
+
+    public void setSecondButtonFontFamily(String secondButtonFontFamily) {
+        this.secondButtonFontFamily = secondButtonFontFamily;
+    }
+
+    public String getSecondButtonCustomFontFamilyAndroid() {
+        return secondButtonCustomFontFamilyAndroid;
+    }
+
+    public void setSecondButtonCustomFontFamilyAndroid(String secondButtonCustomFontFamilyAndroid) {
+        this.secondButtonCustomFontFamilyAndroid = secondButtonCustomFontFamilyAndroid;
+    }
+
+    public String getSecondButtonTextsize() {
+        return secondButtonTextsize;
+    }
+
+    public void setSecondButtonTextsize(String secondButtonTextsize) {
+        this.secondButtonTextsize = secondButtonTextsize;
+    }
+
+    public String getSecondAndroidLnk() {
+        return secondAndroidLnk;
+    }
+
+    public void setSecondAndroidLnk(String secondAndroidLnk) {
+        this.secondAndroidLnk = secondAndroidLnk;
+    }
+
+    public String getSecondButtonFunction() {
+        return secondButtonFunction;
+    }
+
+    public void setSecondButtonFunction(String secondButtonFunction) {
+        this.secondButtonFunction = secondButtonFunction;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -453,5 +570,14 @@ public class CarouselItem implements Parcelable {
         dest.writeString(iosLnk);
         dest.writeString(androidLnk);
         dest.writeString(videoUrl);
+        dest.writeString(buttonFunction);
+        dest.writeString(secondButtonText);
+        dest.writeString(secondButtonTextColor);
+        dest.writeString(secondButtonColor);
+        dest.writeString(secondButtonFontFamily);
+        dest.writeString(secondButtonCustomFontFamilyAndroid);
+        dest.writeString(secondButtonTextsize);
+        dest.writeString(secondAndroidLnk);
+        dest.writeString(secondButtonFunction);
     }
 }

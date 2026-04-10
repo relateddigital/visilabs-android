@@ -257,6 +257,10 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 setTitle();
                 setBody();
                 setButton();
+                if (mInAppMessage.getActionData().getSecondButtonFunction() != null
+                        && !mInAppMessage.getActionData().getSecondButtonFunction().isEmpty()) {
+                    setupSecondButton();
+                }
                 setPromotionCode();
                 binding.ratingBar.setVisibility(View.GONE);
                 binding.smileRating.setVisibility(View.GONE);
@@ -527,6 +531,70 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             });
         }
     }
+
+    private void setupSecondButton() {
+        binding.btnTemplateSecond.setVisibility(View.VISIBLE);
+        binding.btnTemplateSecond.setTypeface(mInAppMessage.getActionData().getSecondButtonFontFamily(this));
+        binding.btnTemplateSecond.setText(mInAppMessage.getActionData().getSecondButtonText());
+        if (mInAppMessage.getActionData().getSecondButtonTextColor() != null && !mInAppMessage.getActionData().getSecondButtonTextColor().isEmpty()) {
+            try {
+                binding.btnTemplateSecond.setTextColor(Color.parseColor(mInAppMessage.getActionData().getSecondButtonTextColor()));
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse the data given for second button text color");
+                e.printStackTrace();
+                binding.btnTemplateSecond.setTextColor(getResources().getColor(R.color.black));
+            }
+        } else {
+            binding.btnTemplateSecond.setTextColor(getResources().getColor(R.color.black));
+        }
+        if (mInAppMessage.getActionData().getSecondButtonColor() != null && !mInAppMessage.getActionData().getSecondButtonColor().isEmpty()) {
+            try {
+                binding.btnTemplateSecond.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getSecondButtonColor()));
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse the data given for second button color");
+                e.printStackTrace();
+            }
+        }
+
+        binding.btnTemplateSecond.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
+                if (buttonCallback != null) {
+                    Visilabs.CallAPI().setInAppButtonInterface(null);
+                    buttonCallback.onPress(mInAppMessage.getActionData().getSecondButtonAndroidLink());
+                } else {
+                    String secondFunction = mInAppMessage.getActionData().getSecondButtonFunction();
+                    if (secondFunction != null && secondFunction.equals(VisilabsConstant.BUTTON_LINK)) {
+                        if (mInAppMessage.getActionData().getSecondButtonAndroidLink() != null && !mInAppMessage.getActionData().getSecondButtonAndroidLink().isEmpty()) {
+                            try {
+                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getSecondButtonAndroidLink()));
+                                startActivity(viewIntent);
+                            } catch (final ActivityNotFoundException e) {
+                                Log.i(LOG_TAG, "User doesn't have an activity for notification URI");
+                            }
+                        }
+                    } else if (secondFunction != null && secondFunction.equals(VisilabsConstant.BUTTON_REDIRECT)) {
+                        AppUtils.goToNotificationSettings(getApplicationContext());
+                    } else {
+                        if (mInAppMessage.getActionData().getSecondButtonAndroidLink() != null && !mInAppMessage.getActionData().getSecondButtonAndroidLink().isEmpty()) {
+                            try {
+                                Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getSecondButtonAndroidLink()));
+                                startActivity(viewIntent);
+                            } catch (final ActivityNotFoundException e) {
+                                Log.i(LOG_TAG, "User doesn't have an activity for notification URI");
+                            }
+                        } else {
+                            AppUtils.goToNotificationSettings(getApplicationContext());
+                        }
+                    }
+                }
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                finish();
+            }
+        });
+    }
+
     private void setYoutubeVideo() {
         WebSettings webViewSettings = binding.webViewInapp.getSettings();
         String backgroundColor = mInAppMessage.getActionData().getBackground();
@@ -1475,7 +1543,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 } catch (Exception e) {}
                 
                 if (rating >= minPoint) {
-                    Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, "OM.s_point=" + rating + "&OM.s_cat=" + actionData.getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId());
+                    Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, "OM.s_point=" + rating + "&OM.s_cat=" + actionData.getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId() + "&OM.s_feed=Feedback Sayfası Görüntülenmedi");
                     closeMultiplePopup();
                 } else {
                     npsPage1.setVisibility(View.GONE);
@@ -1517,7 +1585,13 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             btnSave2.setBackgroundColor(Color.parseColor(actionData.getMultiplePopupButtonColor2()));
         } catch (Exception e) {}
         btnSave2.setOnClickListener(v -> {
-            String feedback = etFeedback.getText().toString();
+            String feedback;
+            if (!etFeedback.getText().toString().isEmpty()) {
+                 feedback = etFeedback.getText().toString();
+            } else {
+                feedback = "Kullanıcı feedback alanını boş bıraktı";
+            }
+
             Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, "OM.s_point=" + ratingBar.getRating() + "&OM.s_cat=" + actionData.getMsgType() + "&OM.s_page=act-" + mInAppMessage.getActId() + "&OM.s_feed=" + feedback);
             npsPage2.setVisibility(View.GONE);
             npsPage3.setVisibility(View.VISIBLE);
