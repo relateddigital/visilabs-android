@@ -479,6 +479,13 @@
                 android:layout_weight="1.0"
                 android:text="Carousel Fullscreen" />
 
+            <Button
+                android:id="@+id/inApp31"
+                android:layout_width="0.0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:text="Drawer" />
+
         </LinearLayout>
 
     </LinearLayout>

@@ -328,9 +328,17 @@ public class NotificationBellFragment extends Fragment {
         binding.dialogContainer.setVisibility(View.GONE);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (getActivity() != null && !getActivity().isChangingConfigurations()) {
+            endFragment();
+        }
+    }
+
     private void endFragment() {
         if (getActivity() != null) {
-            getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+            getActivity().getSupportFragmentManager().beginTransaction().remove(this).commitAllowingStateLoss();
         }
     }
 }

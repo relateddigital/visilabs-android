@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
         binding.inApp27.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendInAppRequest("notification_bell");
+                sendInAppRequest("NotificationBell");
             }
         });
 
@@ -342,6 +342,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendInAppRequest("fullscreen_carousel");
+            }
+        });
+
+        binding.inApp31.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("drawer");
             }
         });
 

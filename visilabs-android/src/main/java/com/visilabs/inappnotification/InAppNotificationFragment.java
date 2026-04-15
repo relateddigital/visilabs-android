@@ -1773,16 +1773,26 @@ public class InAppNotificationFragment extends Fragment {
 
 
     @Override
+    public void onStop() {
+        super.onStop();
+        if (getActivity() != null && !getActivity().isChangingConfigurations()) {
+            endFragment();
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("drawer", response);
     }
 
     private void endFragment() {
+        DrawerActive.setDrawerActive(false);
+        DrawerViewActive.setDrawerViewActive(false);
         if (isAdded() && getParentFragmentManager() != null) {
-            getParentFragmentManager().beginTransaction().remove(this).commit();
+            getParentFragmentManager().beginTransaction().remove(this).commitAllowingStateLoss();
         } else if (getActivity() != null && getActivity() instanceof FragmentActivity) {
-            ((FragmentActivity) getActivity()).getSupportFragmentManager().beginTransaction().remove(this).commit();
+            ((FragmentActivity) getActivity()).getSupportFragmentManager().beginTransaction().remove(this).commitAllowingStateLoss();
         }
     }
 }
