@@ -1,13 +1,16 @@
 package com.visilabs.countdownTimerBanner;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -70,7 +73,37 @@ public class CountdownTimerBannerFragment extends Fragment {
         parseExtendedProps();
         positionBanner();
 
-        return binding.getRoot();
+        // iOS'taki PassthroughWindow davranışını taklit eden kapsayıcı:
+        // dokunuş yalnızca banner kartı içinde ise tüketilir, dışarıdaki
+        // dokunuşlar alttaki Activity içeriğine geçer.
+        Context ctx = inflater.getContext();
+        FrameLayout passthroughRoot = new FrameLayout(ctx) {
+            @Override
+            public boolean dispatchTouchEvent(MotionEvent ev) {
+                if (binding == null) {
+                    return super.dispatchTouchEvent(ev);
+                }
+                View card = binding.bannerCardView;
+                int[] location = new int[2];
+                card.getLocationInWindow(location);
+                int left = location[0];
+                int top = location[1];
+                int right = left + card.getWidth();
+                int bottom = top + card.getHeight();
+                int x = (int) ev.getRawX();
+                int y = (int) ev.getRawY();
+                if (x >= left && x <= right && y >= top && y <= bottom) {
+                    return super.dispatchTouchEvent(ev);
+                } else {
+                    return false;
+                }
+            }
+        };
+        passthroughRoot.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        passthroughRoot.addView(binding.getRoot());
+        return passthroughRoot;
     }
 
     private void positionBanner() {
@@ -201,8 +234,10 @@ public class CountdownTimerBannerFragment extends Fragment {
         }
 
         // --- Click listener'lar ---
+        // Tıklamalar yalnızca CardView üzerinde dinlenir; root'a click listener
+        // bağlanmaz, dış alanın passthrough davranışı dispatchTouchEvent ile sağlanır.
         binding.ibClose.setOnClickListener(v -> endFragment());
-        binding.getRoot().setOnClickListener(v -> {
+        binding.bannerCardView.setOnClickListener(v -> {
             var link = actionData.getAndroid_lnk();
 
             if (!link.isEmpty()) {

@@ -92,6 +92,14 @@ public enum InAppActionType {
         }
     },
 
+    FULLSCREEN_POPUP {
+        @NonNull
+        @Override
+        public String toString() {
+            return "fullscreen_popup";
+        }
+    },
+
     NPS_AND_SECOND_POP_UP {
         @NonNull
         @Override

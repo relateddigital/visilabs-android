@@ -177,6 +177,14 @@ public class InAppMessageManager {
                             parent.startActivity(carouselFullscreenIntent);
                             break;
 
+                        case FULLSCREEN_POPUP:
+                            Intent fullscreenPopupIntent = new Intent(parent, FullscreenPopupActivity.class);
+                            fullscreenPopupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            fullscreenPopupIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                            fullscreenPopupIntent.putExtra(FullscreenPopupActivity.INTENT_ID_KEY, getStateId(parent, inAppMessage));
+                            parent.startActivity(fullscreenPopupIntent);
+                            break;
+
                         case ALERT:
 
                             stateId = getStateId(parent, inAppMessage);

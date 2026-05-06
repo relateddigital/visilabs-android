@@ -352,6 +352,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        binding.inApp32.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendInAppRequest("fullscreen_popup");
+            }
+        });
+
         try {
             VisilabsActionRequest visilabsActionRequest = Visilabs.CallAPI().requestAction(VisilabsConstant.FavoriteAttributeAction);
             visilabsActionRequest.executeAsyncAction(getVisilabsCallback());
