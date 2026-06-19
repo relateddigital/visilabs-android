@@ -1,5 +1,6 @@
 package com.visilabs.countdownTimerBanner;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -9,12 +10,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
 import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -39,11 +45,20 @@ public class CountdownTimerBannerFragment extends Fragment {
     private static final String LOG_TAG = "CountdownTimerBanner";
     private static final String ARG_PARAM1 = "dataKey"; // Key eşleşmesi için
 
+    // Aynı anda yalnızca tek bir banner gösterilsin; tekrarlı tetiklemelerde
+    // (örn. butona arka arkaya tıklama) çoklama yapılmasın.
+    public static volatile boolean isShowing = false;
+
     private FragmentCountdownBannerBinding binding;
     private CountdownTimerBanner bannerModel;
     private CountdownTimerBannerActionData actionData;
     private CountdownTimerBannerExtendedProps extendedProps;
     private CountDownTimer timer;
+
+    // Sürükleme durumu
+    private float dragStartRawY = 0f;
+    private float dragStartTranslationY = 0f;
+    private boolean isDragging = false;
 
     public static CountdownTimerBannerFragment newInstance(CountdownTimerBanner model) {
         CountdownTimerBannerFragment fragment = new CountdownTimerBannerFragment();
@@ -51,6 +66,27 @@ public class CountdownTimerBannerFragment extends Fragment {
         args.putSerializable(ARG_PARAM1, model);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    /**
+     * Geri sayım hedef tarihi geçmişse banner gösterilmemelidir.
+     */
+    public static boolean isExpired(CountdownTimerBanner model) {
+        if (model == null || model.getActiondata() == null) {
+            return false;
+        }
+        try {
+            CountdownTimerBannerActionData data = model.getActiondata();
+            String targetDateString = data.getCounter_Date() + " " + data.getCounter_Time();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
+            Date targetDate = sdf.parse(targetDateString);
+            if (targetDate == null) {
+                return false;
+            }
+            return targetDate.getTime() <= System.currentTimeMillis();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Nullable
@@ -72,37 +108,64 @@ public class CountdownTimerBannerFragment extends Fragment {
         }
         parseExtendedProps();
         positionBanner();
+        isShowing = true;
 
         // iOS'taki PassthroughWindow davranışını taklit eden kapsayıcı:
         // dokunuş yalnızca banner kartı içinde ise tüketilir, dışarıdaki
         // dokunuşlar alttaki Activity içeriğine geçer.
         Context ctx = inflater.getContext();
         FrameLayout passthroughRoot = new FrameLayout(ctx) {
+            // Dokunuş banner kartı üzerinde başladıysa, sürükleme sırasında parmak
+            // kartın dışına çıksa bile tüm hareketi karta iletmeye devam et.
+            private boolean touchStartedInCard = false;
+
             @Override
             public boolean dispatchTouchEvent(MotionEvent ev) {
                 if (binding == null) {
                     return super.dispatchTouchEvent(ev);
                 }
                 View card = binding.bannerCardView;
-                int[] location = new int[2];
-                card.getLocationInWindow(location);
-                int left = location[0];
-                int top = location[1];
-                int right = left + card.getWidth();
-                int bottom = top + card.getHeight();
-                int x = (int) ev.getRawX();
-                int y = (int) ev.getRawY();
-                if (x >= left && x <= right && y >= top && y <= bottom) {
-                    return super.dispatchTouchEvent(ev);
-                } else {
+                int action = ev.getActionMasked();
+                if (action == MotionEvent.ACTION_DOWN) {
+                    int[] location = new int[2];
+                    // getRawX/Y ekran koordinatı olduğundan ekran konumu ile karşılaştır.
+                    card.getLocationOnScreen(location);
+                    int left = location[0];
+                    int top = location[1];
+                    int right = left + card.getWidth();
+                    int bottom = top + card.getHeight();
+                    int x = (int) ev.getRawX();
+                    int y = (int) ev.getRawY();
+                    touchStartedInCard = (x >= left && x <= right && y >= top && y <= bottom);
+                    return touchStartedInCard ? super.dispatchTouchEvent(ev) : false;
+                }
+
+                if (!touchStartedInCard) {
                     return false;
                 }
+
+                boolean handled = super.dispatchTouchEvent(ev);
+                if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                    touchStartedInCard = false;
+                }
+                return handled;
             }
         };
         passthroughRoot.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
         passthroughRoot.addView(binding.getRoot());
+
+        // Android 15+/16 edge-to-edge: banner status bar ve navigation bar'a
+        // yapışmasın diye sistem çubuğu inset'leri kadar padding uygulanır.
+        passthroughRoot.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(passthroughRoot, (v, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), bars.top, v.getPaddingRight(), bars.bottom);
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(passthroughRoot);
+
         return passthroughRoot;
     }
 
@@ -256,6 +319,83 @@ public class CountdownTimerBannerFragment extends Fragment {
                 }
             }
         });
+
+        setupDragToSnap();
+    }
+
+    /**
+     * Banner kartını dikey olarak sürüklenebilir yapar. Bırakıldığında karta
+     * göre ekranın üst yarısındaysa tam üste, alt yarısındaysa tam alta yapışır.
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    private void setupDragToSnap() {
+        if (binding == null) return;
+        final View card = binding.bannerCardView;
+        final int touchSlop = ViewConfiguration.get(card.getContext()).getScaledTouchSlop();
+        card.setOnTouchListener((v, event) -> {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    dragStartRawY = event.getRawY();
+                    dragStartTranslationY = v.getTranslationY();
+                    isDragging = false;
+                    return false;
+                case MotionEvent.ACTION_MOVE: {
+                    float dy = event.getRawY() - dragStartRawY;
+                    if (!isDragging && Math.abs(dy) > touchSlop) {
+                        isDragging = true;
+                    }
+                    if (isDragging) {
+                        v.setTranslationY(dragStartTranslationY + dy);
+                        return true;
+                    }
+                    return false;
+                }
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    if (isDragging) {
+                        isDragging = false;
+                        snapToNearestEdge(v);
+                        return true;
+                    }
+                    return false;
+                default:
+                    return false;
+            }
+        });
+    }
+
+    private void snapToNearestEdge(final View card) {
+        if (!(card.getParent() instanceof View)) return;
+        View parent = (View) card.getParent();
+        if (!(card.getLayoutParams() instanceof ConstraintLayout.LayoutParams)) return;
+        final ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) card.getLayoutParams();
+
+        float cardCenterY = card.getY() + card.getHeight() / 2f;
+        boolean snapTop = cardCenterY < parent.getHeight() / 2f;
+        final float startY = card.getY();
+
+        if (snapTop) {
+            params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+            params.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
+        } else {
+            params.topToTop = ConstraintLayout.LayoutParams.UNSET;
+            params.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
+        }
+        card.setTranslationY(0f);
+        card.setLayoutParams(params);
+
+        // Yeni yerleşim hesaplandıktan sonra (çizimden önce) görsel sıçramayı
+        // önlemek için kartı eski konumundan hedefe doğru animasyonla taşı.
+        card.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                card.getViewTreeObserver().removeOnPreDrawListener(this);
+                float newY = card.getY();
+                card.setTranslationY(startY - newY);
+                card.animate().translationY(0f).setDuration(200).start();
+                return true;
+            }
+        });
     }
 
     /**
@@ -326,5 +466,12 @@ public class CountdownTimerBannerFragment extends Fragment {
             timer = null;
         }
         binding = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Banner kapandığında yeniden gösterilebilmesi için bayrağı sıfırla.
+        isShowing = false;
     }
 }

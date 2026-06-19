@@ -949,21 +949,34 @@ public class Visilabs {
                             return; // Veri bozuksa işlemi durdur
                         }
 
-                        // 2. Fragment'ı oluştur
-                        CountdownTimerBannerFragment countdownTimerFragment = CountdownTimerBannerFragment.newInstance(bannerModel);
-                        countdownTimerFragment.setRetainInstance(true);
+                        // Süresi dolmuş banner hiç gösterilmez.
+                        if (CountdownTimerBannerFragment.isExpired(bannerModel)) {
+                            Log.i(LOG_TAG, "CountdownTimerBanner expired, not showing.");
+                        } else if (CountdownTimerBannerFragment.isShowing) {
+                            // Zaten bir banner gösteriliyorsa çoklama yapılmaz.
+                            Log.i(LOG_TAG, "CountdownTimerBanner already showing, skipping duplicate.");
+                        } else {
+                            // 2. Fragment'ı oluştur
+                            CountdownTimerBannerFragment countdownTimerFragment = CountdownTimerBannerFragment.newInstance(bannerModel);
+                            countdownTimerFragment.setRetainInstance(true);
 
-                        waitTime = bannerModel.getActiondata().getWaiting_time();
-                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                // 3. Fragment'ı doğrudan android.R.id.content'e ekle.
-                                // Pozisyonlama mantığı artık Fragment'ın kendi içinde.
-                                androidx.fragment.app.FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
-                                transaction.add(android.R.id.content, countdownTimerFragment);
-                                transaction.commit();
-                            }
-                        }, waitTime * 1000L);
+                            waitTime = bannerModel.getActiondata().getWaiting_time();
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (CountdownTimerBannerFragment.isExpired(bannerModel)
+                                            || CountdownTimerBannerFragment.isShowing) {
+                                        return;
+                                    }
+                                    CountdownTimerBannerFragment.isShowing = true;
+                                    // 3. Fragment'ı doğrudan android.R.id.content'e ekle.
+                                    // Pozisyonlama mantığı artık Fragment'ın kendi içinde.
+                                    androidx.fragment.app.FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
+                                    transaction.add(android.R.id.content, countdownTimerFragment);
+                                    transaction.commit();
+                                }
+                            }, waitTime * 1000L);
+                        }
 
 
 
