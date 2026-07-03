@@ -45,7 +45,11 @@ import com.visilabs.inApp.CountdownTimerFragment;
 import com.visilabs.inApp.InAppButtonInterface;
 import com.visilabs.inApp.InAppMessageManager;
 import com.visilabs.inApp.InAppMessage;
+import com.visilabs.inApp.ProductStatNotifierModel;
 import com.visilabs.inApp.SocialProofFragment;
+import com.visilabs.inApp.VisilabsActionFragmentActivity;
+import com.visilabs.inApp.customactions.model.CustomActions;
+import com.visilabs.inappnotification.DrawerModel;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.inApp.customactions.CustomActionFragment;
 import com.visilabs.inappnotification.InAppNotificationFragment;
@@ -801,13 +805,32 @@ public class Visilabs {
             VisilabsActionRequest visilabsActionRequest = requestAction("MailSubscriptionForm~SpinToWin~ScratchToWin~ProductStatNotifier~drawer~MobileCustomActions~MobileAppRating~MultipleChoiceSurvey~NotificationBell~CountdownTimerBanner");
             visilabsActionRequest.setPageName(pageName);
             visilabsActionRequest.setProperties(properties);
-            visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback((FragmentActivity) parent));
+            visilabsActionRequest.executeAsyncAction(getVisilabsActionsCallback(parent));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private VisilabsActionsCallback getVisilabsActionsCallback(final FragmentActivity parent) {
+    private void showActionFragment(final Activity parent, final androidx.fragment.app.Fragment fragment,
+                                    final String hostType, final java.io.Serializable data) {
+        try {
+            if (parent instanceof FragmentActivity) {
+                fragment.setRetainInstance(true);
+                FragmentTransaction transaction = ((FragmentActivity) parent).getSupportFragmentManager().beginTransaction();
+                transaction.add(android.R.id.content, fragment);
+                transaction.commit();
+            } else {
+                Intent intent = new Intent(parent, VisilabsActionFragmentActivity.class);
+                intent.putExtra(VisilabsActionFragmentActivity.EXTRA_TYPE, hostType);
+                intent.putExtra(VisilabsActionFragmentActivity.EXTRA_DATA, data);
+                parent.startActivity(intent);
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Could not show the action fragment: " + hostType, e);
+        }
+    }
+
+    private VisilabsActionsCallback getVisilabsActionsCallback(final Activity parent) {
 
         return new VisilabsActionsCallback() {
             @Override
@@ -849,14 +872,9 @@ public class Visilabs {
                             }, waitTime * 1000L);
                     }
                     else if (!response.getCustomActionList().isEmpty()) {
-                        CustomActionFragment customActionFragment = CustomActionFragment.newInstance(response.getCustomActionList().get(0));
-
-                        customActionFragment.setRetainInstance(true);
-
-
-                        FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
-                        transaction.add(android.R.id.content, customActionFragment);
-                        transaction.commit();
+                        CustomActions customActionModel = response.getCustomActionList().get(0);
+                        showActionFragment(parent, CustomActionFragment.newInstance(customActionModel),
+                                VisilabsActionFragmentActivity.TYPE_CUSTOM_ACTION, customActionModel);
                     }
                     /*else if (!response.getAppRatingList().isEmpty()) {
                         ReviewManager reviewManager = ReviewManagerFactory.create(parent);
@@ -895,21 +913,13 @@ public class Visilabs {
                         MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm) response.getMailSubscriptionForm().get(0);
                         new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
                     } else if (!response.getProductStatNotifierList().isEmpty()) {
-                        SocialProofFragment socialProofFragment = SocialProofFragment.newInstance(response.getProductStatNotifierList().get(0));
-
-                        socialProofFragment.setRetainInstance(true);
-
-                        FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
-                        transaction.add(android.R.id.content, socialProofFragment);
-                        transaction.commit();
+                        ProductStatNotifierModel productStatNotifierModel = response.getProductStatNotifierList().get(0);
+                        showActionFragment(parent, SocialProofFragment.newInstance(productStatNotifierModel),
+                                VisilabsActionFragmentActivity.TYPE_SOCIAL_PROOF, productStatNotifierModel);
                     } else if (!response.getDrawer().isEmpty()) {
-                        InAppNotificationFragment inAppNotificationFragment = InAppNotificationFragment.newInstance(response.getDrawer().get(0));
-
-                        inAppNotificationFragment.setRetainInstance(true);
-
-                        FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
-                        transaction.add(android.R.id.content, inAppNotificationFragment);
-                        transaction.commit();
+                        DrawerModel drawerModel = response.getDrawer().get(0);
+                        showActionFragment(parent, InAppNotificationFragment.newInstance(drawerModel),
+                                VisilabsActionFragmentActivity.TYPE_DRAWER, drawerModel);
                     } else if (!response.getSurveyList().isEmpty()) {
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                             Log.e(LOG_TAG, "Survey feature is not supported for API levels smaller than 19!"
@@ -931,14 +941,9 @@ public class Visilabs {
 
                         }
                     } else if (!response.getNotificationBellList().isEmpty()) {
-
-                        NotificationBellFragment notificationBellFragment = NotificationBellFragment.newInstance(response.getNotificationBellList().get(0));
-
-                        notificationBellFragment.setRetainInstance(true);
-
-                        androidx.fragment.app.FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
-                        transaction.add(android.R.id.content, notificationBellFragment);
-                        transaction.commit();
+                        NotificationBell notificationBellModel = response.getNotificationBellList().get(0);
+                        showActionFragment(parent, NotificationBellFragment.newInstance(notificationBellModel),
+                                VisilabsActionFragmentActivity.TYPE_NOTIFICATION_BELL, notificationBellModel);
                     } else if (!response.getCountdownTimerBannerList().isEmpty()) {
                         long waitTime = 0L;
 
@@ -956,10 +961,6 @@ public class Visilabs {
                             // Zaten bir banner gösteriliyorsa çoklama yapılmaz.
                             Log.i(LOG_TAG, "CountdownTimerBanner already showing, skipping duplicate.");
                         } else {
-                            // 2. Fragment'ı oluştur
-                            CountdownTimerBannerFragment countdownTimerFragment = CountdownTimerBannerFragment.newInstance(bannerModel);
-                            countdownTimerFragment.setRetainInstance(true);
-
                             waitTime = bannerModel.getActiondata().getWaiting_time();
                             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                                 @Override
@@ -969,11 +970,9 @@ public class Visilabs {
                                         return;
                                     }
                                     CountdownTimerBannerFragment.isShowing = true;
-                                    // 3. Fragment'ı doğrudan android.R.id.content'e ekle.
-                                    // Pozisyonlama mantığı artık Fragment'ın kendi içinde.
-                                    androidx.fragment.app.FragmentTransaction transaction = parent.getSupportFragmentManager().beginTransaction();
-                                    transaction.add(android.R.id.content, countdownTimerFragment);
-                                    transaction.commit();
+                                    // Pozisyonlama mantığı Fragment'ın kendi içinde.
+                                    showActionFragment(parent, CountdownTimerBannerFragment.newInstance(bannerModel),
+                                            VisilabsActionFragmentActivity.TYPE_COUNTDOWN_TIMER_BANNER, bannerModel);
                                 }
                             }, waitTime * 1000L);
                         }

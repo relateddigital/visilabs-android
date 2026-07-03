@@ -53,6 +53,11 @@
             android:name="com.visilabs.util.PermissionActivity"
             android:noHistory="true"
             android:theme="@style/Theme.Transparent" />
+        <activity
+            android:name="com.visilabs.inApp.VisilabsActionFragmentActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:noHistory="true"
+            android:theme="@style/Theme.Visilabs.TransparentAction" />
     </application>
 
 </manifest>
