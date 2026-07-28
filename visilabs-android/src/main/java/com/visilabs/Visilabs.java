@@ -61,6 +61,7 @@ import com.visilabs.model.VisilabsParameters;
 import com.visilabs.notificationbell.NotificationBellAdapter;
 import com.visilabs.notificationbell.NotificationBellClickCallback;
 import com.visilabs.notificationbell.NotificationBellFragment;
+import com.visilabs.notificationbell.NotificationBellOverlay;
 import com.visilabs.notificationbell.model.NotificationBell;
 import com.visilabs.remoteConfig.RemoteConfigHelper;
 import com.visilabs.scratchToWin.ScratchToWinActivity;
@@ -70,6 +71,7 @@ import com.visilabs.spinToWin.model.SpinToWinModel;
 import com.visilabs.survey.SurveyActivity;
 import com.visilabs.survey.model.SurveyModel;
 import com.visilabs.util.ActivityUtils;
+import com.visilabs.util.VisilabsActionGuard;
 import com.visilabs.util.AppUtils;
 import com.visilabs.util.NetworkManager;
 import com.visilabs.util.PermissionActivity;
@@ -811,22 +813,69 @@ public class Visilabs {
         }
     }
 
-    private void showActionFragment(final Activity parent, final androidx.fragment.app.Fragment fragment,
-                                    final String hostType, final java.io.Serializable data) {
+    /**
+     * Kendi Activity'sini açan aksiyonları (SpinToWin, ScratchToWin, Survey)
+     * başlatır. Aynı kurgu zaten ekrandaysa ikinci bir örnek açılmaz; guard,
+     * ilgili Activity'nin {@code onDestroy}'unda bırakılır.
+     */
+    private void startGuardedActivity(final Activity parent, final Intent intent, final String type) {
+        if (!VisilabsActionGuard.acquire(type)) {
+            Log.i(LOG_TAG, type + " already showing, skipping duplicate.");
+            return;
+        }
+        try {
+            parent.startActivity(intent);
+        } catch (Exception e) {
+            // Guard takılı kalmasın; aksi halde kurgu bir daha hiç gösterilemez.
+            VisilabsActionGuard.release(type);
+            Log.e(LOG_TAG, "Could not start the action activity: " + type, e);
+        }
+    }
+
+    /**
+     * Fragment tabanlı aksiyonu gösterir. Aynı tipte bir aksiyon zaten
+     * gösteriliyorsa çoklama yapmaz.
+     *
+     * @return aksiyon gösterildiyse {@code true}
+     */
+    private boolean showActionFragment(final Activity parent, final androidx.fragment.app.Fragment fragment,
+                                       final String hostType, final java.io.Serializable data) {
         try {
             if (parent instanceof FragmentActivity) {
+                // Host'un kendi FragmentManager'ı tek doğruluk kaynağı: tag varsa
+                // aksiyon hâlâ ekranda demektir.
+                androidx.fragment.app.FragmentManager fragmentManager =
+                        ((FragmentActivity) parent).getSupportFragmentManager();
+                if (fragmentManager.findFragmentByTag(hostType) != null) {
+                    Log.i(LOG_TAG, hostType + " already showing, skipping duplicate.");
+                    return false;
+                }
                 fragment.setRetainInstance(true);
-                FragmentTransaction transaction = ((FragmentActivity) parent).getSupportFragmentManager().beginTransaction();
-                transaction.add(android.R.id.content, fragment);
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.add(android.R.id.content, fragment, hostType);
                 transaction.commit();
             } else {
-                Intent intent = new Intent(parent, VisilabsActionFragmentActivity.class);
-                intent.putExtra(VisilabsActionFragmentActivity.EXTRA_TYPE, hostType);
-                intent.putExtra(VisilabsActionFragmentActivity.EXTRA_DATA, data);
-                parent.startActivity(intent);
+                // Ayrı host Activity'de gösterildiği için fragment tag'i sorgulanamaz;
+                // statik guard kullanılır (VisilabsActionFragmentActivity.onDestroy'da bırakılır).
+                if (!VisilabsActionGuard.acquire(hostType)) {
+                    Log.i(LOG_TAG, hostType + " already showing, skipping duplicate.");
+                    return false;
+                }
+                try {
+                    Intent intent = new Intent(parent, VisilabsActionFragmentActivity.class);
+                    intent.putExtra(VisilabsActionFragmentActivity.EXTRA_TYPE, hostType);
+                    intent.putExtra(VisilabsActionFragmentActivity.EXTRA_DATA, data);
+                    parent.startActivity(intent);
+                } catch (Exception e) {
+                    // Guard takılı kalmasın; aksi halde kurgu bir daha hiç gösterilemez.
+                    VisilabsActionGuard.release(hostType);
+                    throw e;
+                }
             }
+            return true;
         } catch (Exception e) {
             Log.e(LOG_TAG, "Could not show the action fragment: " + hostType, e);
+            return false;
         }
     }
 
@@ -854,7 +903,7 @@ public class Visilabs {
                             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    parent.startActivity(intent);
+                                    startGuardedActivity(parent, intent, VisilabsActionGuard.TYPE_SPIN_TO_WIN);
                                 }
                             }, waitTime * 1000L);
 
@@ -868,7 +917,9 @@ public class Visilabs {
                         intent.putExtra("scratch-to-win-data", scratchToWinModel);
                         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                             @Override
-                            public void run() { parent.startActivity(intent); }
+                            public void run() {
+                                startGuardedActivity(parent, intent, VisilabsActionGuard.TYPE_SCRATCH_TO_WIN);
+                            }
                             }, waitTime * 1000L);
                     }
                     else if (!response.getCustomActionList().isEmpty()) {
@@ -935,15 +986,23 @@ public class Visilabs {
                             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    parent.startActivity(intent);
+                                    startGuardedActivity(parent, intent, VisilabsActionGuard.TYPE_SURVEY);
                                 }
                             }, waitTime);
 
                         }
                     } else if (!response.getNotificationBellList().isEmpty()) {
                         NotificationBell notificationBellModel = response.getNotificationBellList().get(0);
-                        showActionFragment(parent, NotificationBellFragment.newInstance(notificationBellModel),
-                                VisilabsActionFragmentActivity.TYPE_NOTIFICATION_BELL, notificationBellModel);
+                        // Bell kalıcı ve modal olmayan bir overlay. FragmentActivity olmayan
+                        // host'larda (ör. Flutter'ın FlutterActivity'si) ayrı bir şeffaf
+                        // Activity açmak altındaki uygulamayı dokunuşlara kapatır; bu yüzden
+                        // doğrudan host'un android.R.id.content view'ına eklenir.
+                        if (parent instanceof FragmentActivity) {
+                            showActionFragment(parent, NotificationBellFragment.newInstance(notificationBellModel),
+                                    VisilabsActionFragmentActivity.TYPE_NOTIFICATION_BELL, notificationBellModel);
+                        } else {
+                            NotificationBellOverlay.show(parent, notificationBellModel);
+                        }
                     } else if (!response.getCountdownTimerBannerList().isEmpty()) {
                         long waitTime = 0L;
 
@@ -971,8 +1030,12 @@ public class Visilabs {
                                     }
                                     CountdownTimerBannerFragment.isShowing = true;
                                     // Pozisyonlama mantığı Fragment'ın kendi içinde.
-                                    showActionFragment(parent, CountdownTimerBannerFragment.newInstance(bannerModel),
-                                            VisilabsActionFragmentActivity.TYPE_COUNTDOWN_TIMER_BANNER, bannerModel);
+                                    if (!showActionFragment(parent, CountdownTimerBannerFragment.newInstance(bannerModel),
+                                            VisilabsActionFragmentActivity.TYPE_COUNTDOWN_TIMER_BANNER, bannerModel)) {
+                                        // Gösterilemediyse bayrak takılı kalmasın; aksi halde
+                                        // banner bir daha hiç gösterilemez.
+                                        CountdownTimerBannerFragment.isShowing = false;
+                                    }
                                 }
                             }, waitTime * 1000L);
                         }

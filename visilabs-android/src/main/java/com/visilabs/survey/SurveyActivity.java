@@ -22,6 +22,7 @@ import com.visilabs.survey.WebViewDialogFragment;
 import com.visilabs.survey.model.ExtendedProps;
 import com.visilabs.survey.model.SurveyModel;
 import com.visilabs.util.ActivityUtils;
+import com.visilabs.util.VisilabsActionGuard;
 import com.visilabs.util.AppUtils;
 
 import java.util.ArrayList;
@@ -124,7 +125,9 @@ public class SurveyActivity extends FragmentActivity implements SurveyCompleteIn
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        if (!isChangingConfigurations()) {
+            VisilabsActionGuard.release(VisilabsActionGuard.TYPE_SURVEY);
+        }
     }
 
     @Override

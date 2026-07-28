@@ -17,6 +17,7 @@ import com.visilabs.inappnotification.DrawerModel;
 import com.visilabs.inappnotification.InAppNotificationFragment;
 import com.visilabs.notificationbell.NotificationBellFragment;
 import com.visilabs.notificationbell.model.NotificationBell;
+import com.visilabs.util.VisilabsActionGuard;
 
 import java.io.Serializable;
 
@@ -38,6 +39,16 @@ public class VisilabsActionFragmentActivity extends FragmentActivity {
     public static final String TYPE_DRAWER = "drawer";
     public static final String TYPE_NOTIFICATION_BELL = "notification_bell";
     public static final String TYPE_COUNTDOWN_TIMER_BANNER = "countdown_timer_banner";
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Konfigürasyon değişiminde Activity yeniden oluşturulacağı için guard bırakılmaz.
+        if (!isChangingConfigurations()) {
+            String type = getIntent() != null ? getIntent().getStringExtra(EXTRA_TYPE) : null;
+            VisilabsActionGuard.release(type);
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

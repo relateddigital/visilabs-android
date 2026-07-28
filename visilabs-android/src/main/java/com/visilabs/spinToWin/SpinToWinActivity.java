@@ -21,6 +21,7 @@ import com.visilabs.api.VisilabsApiMethods;
 import com.visilabs.spinToWin.model.ExtendedProps;
 import com.visilabs.spinToWin.model.SpinToWinModel;
 import com.visilabs.util.ActivityUtils;
+import com.visilabs.util.VisilabsActionGuard;
 import com.visilabs.util.AppUtils;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import retrofit2.Response;
 public class SpinToWinActivity extends FragmentActivity implements SpinToWinCompleteInterface,
         SpinToWinCopyToClipboardInterface, SpinToWinShowCodeInterface {
     private static final String LOG_TAG = "SpinToWin";
+    private static final String CODE_BANNER_TAG = "spin_to_win_code_banner";
 
     private String jsonStr = "";
     private SpinToWinModel response;
@@ -129,6 +131,9 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (!isChangingConfigurations()) {
+            VisilabsActionGuard.release(VisilabsActionGuard.TYPE_SPIN_TO_WIN);
+        }
         if(spinToWinPromotionCode != null && !spinToWinPromotionCode.isEmpty()) {
             try {
                 ExtendedProps extendedProps = new Gson().fromJson(new java.net.URI(response.getActiondata().
@@ -137,14 +142,21 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
                 if(extendedProps.getPromocodeBannerButtonLabel() != null &&
                         !extendedProps.getPromocodeBannerButtonLabel().isEmpty()) {
                     if(ActivityUtils.getParentActivity() != null) {
-                        SpinToWinCodeBannerFragment spinToWinCodeBannerFragment =
-                                SpinToWinCodeBannerFragment.newInstance(extendedProps, spinToWinPromotionCode);
+                        android.app.FragmentManager fragmentManager =
+                                ActivityUtils.getParentActivity().getFragmentManager();
+                        // Aynı anda birden fazla kod banner'ı gösterilmesin.
+                        if (fragmentManager.findFragmentByTag(CODE_BANNER_TAG) == null) {
+                            SpinToWinCodeBannerFragment spinToWinCodeBannerFragment =
+                                    SpinToWinCodeBannerFragment.newInstance(extendedProps, spinToWinPromotionCode);
 
-                        spinToWinCodeBannerFragment.setRetainInstance(true);
+                            spinToWinCodeBannerFragment.setRetainInstance(true);
 
-                        FragmentTransaction transaction = ActivityUtils.getParentActivity().getFragmentManager().beginTransaction();
-                        transaction.add(android.R.id.content, spinToWinCodeBannerFragment);
-                        transaction.commit();
+                            FragmentTransaction transaction = fragmentManager.beginTransaction();
+                            transaction.add(android.R.id.content, spinToWinCodeBannerFragment, CODE_BANNER_TAG);
+                            transaction.commit();
+                        } else {
+                            Log.i(LOG_TAG, "SpinToWinCodeBanner already showing, skipping duplicate.");
+                        }
                         ActivityUtils.setParentActivity(null);
                     }
                 }

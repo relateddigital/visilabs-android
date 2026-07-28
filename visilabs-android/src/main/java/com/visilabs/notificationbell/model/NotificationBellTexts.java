@@ -1,8 +1,9 @@
 package com.visilabs.notificationbell.model;
 
 import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 
-public class NotificationBellTexts {
+public class NotificationBellTexts implements Serializable {
 
     @SerializedName("text")
     private String text;

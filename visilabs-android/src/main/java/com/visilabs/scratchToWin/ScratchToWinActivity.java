@@ -31,6 +31,7 @@ import com.visilabs.mailSub.Report;
 import com.visilabs.scratchToWin.model.ExtendedProps;
 import com.visilabs.scratchToWin.model.ScratchToWinModel;
 import com.visilabs.util.StringUtils;
+import com.visilabs.util.VisilabsActionGuard;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,6 +60,14 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         getScratchToWinMessage();
         parseExtendedProps();
         setupInitialView();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!isChangingConfigurations()) {
+            VisilabsActionGuard.release(VisilabsActionGuard.TYPE_SCRATCH_TO_WIN);
+        }
     }
 
     private void getScratchToWinMessage() {
