@@ -55,4 +55,10 @@
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
+    <!-- Host Activity'nin teması AppCompat/MaterialComponents soyundan gelmediğinde
+         (ör. Flutter'ın FlutterActivity'sinin android:Theme.Light tabanlı LaunchTheme'i)
+         kütüphane layout'ları inflate edilirken kullanılan yedek tema. Bkz.
+         AppUtils.ensureCompatTheme. -->
+    <style name="Theme.Visilabs.Compat" parent="Theme.MaterialComponents.Light.NoActionBar" />
+
 </resources>

@@ -26,6 +26,7 @@ import com.visilabs.mailSub.Report;
 import com.visilabs.notificationbell.model.NotificationBell;
 import com.visilabs.notificationbell.model.NotificationBellExtendedProps;
 import com.visilabs.notificationbell.model.NotificationBellTexts;
+import com.visilabs.util.AppUtils;
 
 import java.net.URI;
 import java.util.Collections;
@@ -54,7 +55,8 @@ public class NotificationBellController {
         this.activity = activity;
         this.notificationBell = notificationBell;
         this.onDismiss = onDismiss;
-        this.binding = FragmentNotificationBellBinding.inflate(inflater, container, false);
+        this.binding = FragmentNotificationBellBinding.inflate(
+                AppUtils.ensureCompatInflater(inflater), container, false);
 
         if (notificationBell == null) {
             Log.e(LOG_TAG, "NotificationBell data is null. Closing.");
@@ -239,7 +241,7 @@ public class NotificationBellController {
                 : Collections.emptyList();
 
         if (!notificationTexts.isEmpty()) {
-            NotificationBellAdapter adapter = new NotificationBellAdapter(activity, notificationTexts, extendedProps, link -> {
+            NotificationBellAdapter adapter = new NotificationBellAdapter(binding.getRoot().getContext(), notificationTexts, extendedProps, link -> {
                 if (link != null) {
                     try {
                         Report report = new Report();

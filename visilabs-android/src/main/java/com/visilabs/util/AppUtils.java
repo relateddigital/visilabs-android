@@ -11,6 +11,8 @@ import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationManagerCompat;
@@ -18,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.google.gson.Gson;
+import com.visilabs.android.R;
 import com.visilabs.inApp.FontFamily;
 import com.visilabs.model.LocationPermission;
 import com.visilabs.spinToWin.model.ExtendedProps;
@@ -40,6 +43,41 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class AppUtils {
+
+    /**
+     * Kütüphane layout'ları AppCompat/MaterialComponents tema attribute'larına
+     * ({@code ?attr/selectableItemBackgroundBorderless}, ShapeableImageView'ın
+     * beklediği {@code colorPrimaryVariant} vb.) bağımlıdır. Host Activity'nin teması
+     * bu soydan gelmiyorsa - Flutter'ın {@code FlutterActivity}'si {@code android:Theme.Light}
+     * tabanlı bir tema kullanır - inflate sırasında attribute çözülemez ve
+     * {@code UnsupportedOperationException} ile crash olur.
+     *
+     * <p>Bu metot host temasını kontrol eder; uyumluysa context'i olduğu gibi döner
+     * (native uygulamalarda görsel davranış değişmez), uyumlu değilse kütüphanenin
+     * kendi temasıyla sarmalar.
+     */
+    public static Context ensureCompatTheme(Context context) {
+        if (context == null) {
+            return null;
+        }
+        TypedValue outValue = new TypedValue();
+        boolean isCompatTheme = context.getTheme()
+                .resolveAttribute(androidx.appcompat.R.attr.colorPrimary, outValue, true);
+        if (isCompatTheme) {
+            return context;
+        }
+        return new ContextThemeWrapper(context, R.style.Theme_Visilabs_Compat);
+    }
+
+    /**
+     * {@link #ensureCompatTheme(Context)} ile temaya uygun hale getirilmiş bir inflater döner.
+     */
+    public static LayoutInflater ensureCompatInflater(LayoutInflater inflater) {
+        Context context = inflater.getContext();
+        Context themedContext = ensureCompatTheme(context);
+        return themedContext == context ? inflater : inflater.cloneInContext(themedContext);
+    }
+
     public static String appVersion(Context context) {
         try {
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
@@ -327,6 +365,40 @@ public final class AppUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Story gorseli icin panelden gelen borderRadius degeri "50%", "10%", "0%", "25%" ya da bos
+     * string olabilir. Degeri 0-50 araligindaki bir yuzdeye cevirir. Okunamayan ya da bos gelen
+     * degerler icin 0 (keskin kose) doner, boylece hicbir durumda gorsel cizilmeden kalmaz.
+     */
+    public static float parseStoryBorderRadiusPercentage(String borderRadius) {
+        if (borderRadius == null) {
+            return 0f;
+        }
+        String value = borderRadius.replace("%", "").trim();
+        if (value.isEmpty()) {
+            return 0f;
+        }
+        try {
+            float percentage = Float.parseFloat(value);
+            if (percentage <= 0f) {
+                return 0f;
+            }
+            return Math.min(percentage, 50f);
+        } catch (NumberFormatException e) {
+            return 0f;
+        }
+    }
+
+    /**
+     * Yuzde cinsinden gelen kose yuvarlamasini, verilen dp genisligindeki bir view icin
+     * GradientDrawable.setCornerRadii metodunun bekledigi px dizisine cevirir.
+     */
+    public static float[] getStoryCornerRadii(Context context, float borderRadiusPercentage, int viewSizeInDp) {
+        float sizeInPx = viewSizeInDp * context.getResources().getDisplayMetrics().density;
+        float radius = sizeInPx * borderRadiusPercentage / 100f;
+        return new float[]{radius, radius, radius, radius, radius, radius, radius, radius};
     }
 
     public static int calculateTimeDifferenceInSec(String endDate) {

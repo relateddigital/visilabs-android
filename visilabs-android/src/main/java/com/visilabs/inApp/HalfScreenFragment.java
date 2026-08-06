@@ -88,7 +88,7 @@ public class HalfScreenFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentHalfScreenBinding.inflate(inflater, container, false);
+        binding = FragmentHalfScreenBinding.inflate(AppUtils.ensureCompatInflater(inflater), container, false);
         View view = binding.getRoot();
 
         hideStatusBar();

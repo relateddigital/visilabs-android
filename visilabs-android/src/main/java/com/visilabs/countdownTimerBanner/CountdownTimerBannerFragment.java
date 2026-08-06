@@ -31,6 +31,7 @@ import com.visilabs.countdownTimerBanner.model.CountdownTimerBanner;
 import com.visilabs.countdownTimerBanner.model.CountdownTimerBannerActionData;
 import com.visilabs.countdownTimerBanner.model.CountdownTimerBannerExtendedProps;
 import com.visilabs.mailSub.Report;
+import com.visilabs.util.AppUtils;
 
 import java.net.URI;
 import java.text.SimpleDateFormat;
@@ -92,7 +93,8 @@ public class CountdownTimerBannerFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentCountdownBannerBinding.inflate(inflater, container, false);
+        binding = FragmentCountdownBannerBinding.inflate(
+                AppUtils.ensureCompatInflater(inflater), container, false);
 
         if (getArguments() != null) {
             bannerModel = (CountdownTimerBanner) getArguments().getSerializable(ARG_PARAM1);

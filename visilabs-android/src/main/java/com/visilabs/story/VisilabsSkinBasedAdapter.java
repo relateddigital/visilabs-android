@@ -33,6 +33,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinBasedAdapter.StoryHolder> {
 
+    // visilabs_story_item.xml icindeki iv_story/civ_story boyutu
+    private static final int STORY_IMAGE_SIZE_IN_DP = 72;
+
     Context mContext;
     RecyclerView mRecyclerView;
     VisilabsSkinBasedResponse mVisilabsSkinBasedResponse;
@@ -109,38 +112,18 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
 
         String borderRadius = extendedProps != null ? extendedProps.getStoryz_img_borderRadius() : null;
+        boolean isShown = moveShownToEnd ? shown : isItShown(position);
 
-        if (borderRadius != null) {
-            switch (borderRadius) {
-                case VisilabsConstant.STORY_CIRCLE:
-                    if(moveShownToEnd) {
-                        storyHolder.setCircleViewProperties(shown);
-                    } else {
-                        storyHolder.setCircleViewProperties(isItShown(position));
-                    }
-                    break;
-
-                case VisilabsConstant.STORY_ROUNDED_RECTANGLE:
-                    float[] roundedRectangleBorderRadius = new float[]{15, 15, 15, 15, 15, 15, 15, 15};
-                    if(moveShownToEnd) {
-                        storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, shown);
-                    } else {
-                        storyHolder.setRectangleViewProperties(roundedRectangleBorderRadius, isItShown(position));
-                    }
-                    break;
-
-                case VisilabsConstant.STORY_RECTANGLE:
-                    float[] rectangleBorderRadius = new float[]{0, 0, 0, 0, 0, 0, 0, 0};
-                    if(moveShownToEnd) {
-                        storyHolder.setRectangleViewProperties(rectangleBorderRadius, shown);
-                    } else {
-                        storyHolder.setRectangleViewProperties(rectangleBorderRadius, isItShown(position));
-                    }
-                    break;
-
-                default:
-                    storyHolder.setCircleViewProperties(shown);
-                    break;
+        if (borderRadius == null) {
+            // Panelden deger gelmediginde eski varsayilan davranis: daire
+            storyHolder.setCircleViewProperties(isShown);
+        } else {
+            float borderRadiusPercentage = AppUtils.parseStoryBorderRadiusPercentage(borderRadius);
+            if (borderRadiusPercentage >= 50f) {
+                storyHolder.setCircleViewProperties(isShown);
+            } else {
+                storyHolder.setRectangleViewProperties(AppUtils.getStoryCornerRadii(mContext,
+                        borderRadiusPercentage, STORY_IMAGE_SIZE_IN_DP), isShown);
             }
         }
     }
@@ -237,12 +220,9 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
         private void setRectangleViewProperties(float[] borderRadius, boolean shown) {
             ivStory.setVisibility(View.VISIBLE);
+            civStory.setVisibility(View.GONE); // holder yeniden kullanildiginda daire acik kalmasin
 
-            String borderColorString = extendedProps.getStoryz_img_borderColor();
-            if (borderColorString.equals("")){
-                borderColorString = "#161616";
-            }
-            int borderColor = shown ? Color.rgb(127, 127, 127) : Color.parseColor(borderColorString);
+            int borderColor = shown ? Color.rgb(127, 127, 127) : Color.parseColor(getBorderColorString());
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setCornerRadii(borderRadius);
@@ -252,15 +232,19 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
         private void setCircleViewProperties(boolean shown) {
             civStory.setVisibility(View.VISIBLE);
+            ivStory.setVisibility(View.GONE); // holder yeniden kullanildiginda dikdortgen acik kalmasin
 
-            String borderColorString = extendedProps.getStoryz_img_borderColor();
-            if (borderColorString.equals("")){
-                borderColorString = "#161616";
-            }
-
-            int borderColor = shown ? Color.rgb(127, 127, 127) : Color.parseColor(borderColorString);
+            int borderColor = shown ? Color.rgb(127, 127, 127) : Color.parseColor(getBorderColorString());
             civStory.setBorderColor(borderColor);
             civStory.setBorderWidth(3);
+        }
+
+        private String getBorderColorString() {
+            String borderColorString = extendedProps != null ? extendedProps.getStoryz_img_borderColor() : null;
+            if (borderColorString == null || borderColorString.isEmpty()) {
+                borderColorString = "#161616";
+            }
+            return borderColorString;
         }
     }
 
