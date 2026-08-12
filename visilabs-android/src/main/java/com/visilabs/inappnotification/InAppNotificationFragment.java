@@ -9,10 +9,16 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -35,6 +41,8 @@ import com.visilabs.android.databinding.FragmentInAppNotificationRtBinding;
 import com.visilabs.inApp.InAppButtonInterface;
 import com.visilabs.mailSub.Report;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,6 +69,9 @@ public class InAppNotificationFragment extends Fragment {
 
     private static final String LOG_TAG = "InAppNotification";
     private static final String ARG_PARAM1 = "dataKey";
+    private static final long AUTO_SCROLL_INTERVAL_MS = 5000L;
+    /** Vertical space the dot row occupies at the bottom of the minimized strip. */
+    private static final int MINIMIZED_DOTS_RESERVED_DP = 18;
 
     private FragmentInAppNotificationLtBinding bindingLt;
     private FragmentInAppNotificationLmBinding bindingLm;
@@ -82,6 +93,14 @@ public class InAppNotificationFragment extends Fragment {
     private boolean isMaxiBackgroundImage = false;
     private String staticCode = "";
     private ButtonFunction buttonFunction = ButtonFunction.COPY;
+
+    /** The drawer items. Always holds at least one item. */
+    private List<ExtendedProps> items = new ArrayList<>();
+    private int currentItemIndex = 0;
+    private final Handler autoScrollHandler = new Handler(Looper.getMainLooper());
+    private Runnable autoScrollRunnable = null;
+    private LinearLayout minimizedDots = null;
+    private LinearLayout maximizedDots = null;
 
 
     public InAppNotificationFragment() {
@@ -121,6 +140,7 @@ public class InAppNotificationFragment extends Fragment {
             try {
                 mExtendedProps = new Gson().fromJson(new java.net.URI(response.
                         getActionData().getExtendedProps()).getPath(), ExtendedProps.class);
+                buildItems();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
                 endFragment();
@@ -154,10 +174,7 @@ public class InAppNotificationFragment extends Fragment {
             positionOnScreen = PositionOnScreen.BOTTOM;
         }
 
-        isTopToBottom = mExtendedProps.getMiniTextOrientation().equals("topToBottom");
-
-        isSmallImage = response.getActionData().getContentMinimizedImage() != null &&
-                !response.getActionData().getContentMinimizedImage().equals("");
+        refreshItemFlags();
 
         if(response.getActionData().getShape().equals("circle")) {
             shape = Shape.CIRCLE;
@@ -169,12 +186,6 @@ public class InAppNotificationFragment extends Fragment {
 
         buttonFunction = getButtonFunctionFromString(response.getActionData().getButtonFunction());
         staticCode = response.getActionData().getStaticCode();
-
-        isArrow = mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("");
-
-        isMiniBackgroundImage = mExtendedProps.getMiniBackgroundImage() != null && !mExtendedProps.getMiniBackgroundImage().equals("");
-
-        isMaxiBackgroundImage = mExtendedProps.getMaxiBackgroundImage() != null && !mExtendedProps.getMaxiBackgroundImage().equals("");
 
         if(isRight) {
             switch (positionOnScreen) {
@@ -209,6 +220,8 @@ public class InAppNotificationFragment extends Fragment {
         }
 
         setupInitialView();
+        setupItemNavigation();
+        startAutoScroll();
             DrawerViewActive.setDrawerViewActive(true);
             return view;
     }
@@ -217,6 +230,14 @@ public class InAppNotificationFragment extends Fragment {
     }
 
     private void setupInitialView() {
+        applyCurrentItem();
+        Report report = new Report();
+        report.impression = response.getActionData().getReport().getImpression();
+        Visilabs.CallAPI().trackActionImpression(report);
+    }
+
+    /** Renders the item that is currently selected. Does not report an impression. */
+    private void applyCurrentItem() {
         if(isRight) {
             switch (positionOnScreen) {
                 case TOP:
@@ -242,9 +263,306 @@ public class InAppNotificationFragment extends Fragment {
                     break;
             }
         }
-        Report report = new Report();
-        report.impression = response.getActionData().getReport().getImpression();
-        Visilabs.CallAPI().trackActionImpression(report);
+    }
+
+    /**
+     * Collects the drawer items. A payload without content_minimized_items describes a single item
+     * through the extended props and the action data, so it is turned into a one item list.
+     */
+    private void buildItems() {
+        List<ExtendedProps> parsedItems = mExtendedProps.getItems();
+
+        items = new ArrayList<>();
+        if (parsedItems == null || parsedItems.isEmpty()) {
+            items.add(mExtendedProps);
+        } else {
+            items.addAll(parsedItems);
+        }
+
+        for (ExtendedProps item : items) {
+            item.fillMissingContentFrom(response.getActionData());
+        }
+
+        currentItemIndex = 0;
+        mExtendedProps = items.get(0);
+    }
+
+    /** Reads the flags that depend on the item that is currently shown. */
+    private void refreshItemFlags() {
+        isTopToBottom = mExtendedProps.getMiniTextOrientation() != null &&
+                mExtendedProps.getMiniTextOrientation().equals("topToBottom");
+        isSmallImage = mExtendedProps.getMiniImage() != null &&
+                !mExtendedProps.getMiniImage().equals("");
+        isArrow = mExtendedProps.getArrowColor() != null &&
+                !mExtendedProps.getArrowColor().equals("");
+        isMiniBackgroundImage = mExtendedProps.getMiniBackgroundImage() != null &&
+                !mExtendedProps.getMiniBackgroundImage().equals("");
+        isMaxiBackgroundImage = mExtendedProps.getMaxiBackgroundImage() != null &&
+                !mExtendedProps.getMaxiBackgroundImage().equals("");
+    }
+
+    private boolean hasMultipleItems() {
+        return items != null && items.size() > 1;
+    }
+
+    private FrameLayout minimizedContainer() {
+        boolean isCircle = shape == Shape.CIRCLE;
+        if (isRight) {
+            switch (positionOnScreen) {
+                case TOP:
+                    return isCircle ? bindingRt.smallCircleContainerRt : bindingRt.smallSquareContainerRt;
+                case MIDDLE:
+                    return isCircle ? bindingRm.smallCircleContainerRm : bindingRm.smallSquareContainerRm;
+                default:
+                    return isCircle ? bindingRb.smallCircleContainerRb : bindingRb.smallSquareContainerRb;
+            }
+        }
+        switch (positionOnScreen) {
+            case TOP:
+                return isCircle ? bindingLt.smallCircleContainerLt : bindingLt.smallSquareContainerLt;
+            case MIDDLE:
+                return isCircle ? bindingLm.smallCircleContainerLm : bindingLm.smallSquareContainerLm;
+            default:
+                return isCircle ? bindingLb.smallCircleContainerLb : bindingLb.smallSquareContainerLb;
+        }
+    }
+
+    private FrameLayout maximizedContainer() {
+        if (isRight) {
+            switch (positionOnScreen) {
+                case TOP:
+                    return bindingRt.bigContainerRt;
+                case MIDDLE:
+                    return bindingRm.bigContainerRm;
+                default:
+                    return bindingRb.bigContainerRb;
+            }
+        }
+        switch (positionOnScreen) {
+            case TOP:
+                return bindingLt.bigContainerLt;
+            case MIDDLE:
+                return bindingLm.bigContainerLm;
+            default:
+                return bindingLb.bigContainerLb;
+        }
+    }
+
+    private FrameLayout closeFrameLayout() {
+        if (isRight) {
+            switch (positionOnScreen) {
+                case TOP:
+                    return bindingRt.closeFrameLayoutRt;
+                case MIDDLE:
+                    return bindingRm.closeFrameLayoutRm;
+                default:
+                    return bindingRb.closeFrameLayoutRb;
+            }
+        }
+        switch (positionOnScreen) {
+            case TOP:
+                return bindingLt.closeFrameLayoutLt;
+            case MIDDLE:
+                return bindingLm.closeFrameLayoutLm;
+            default:
+                return bindingLb.closeFrameLayoutLb;
+        }
+    }
+
+    private View closeButton() {
+        if (isRight) {
+            switch (positionOnScreen) {
+                case TOP:
+                    return bindingRt.closeButtonRt;
+                case MIDDLE:
+                    return bindingRm.closeButtonRm;
+                default:
+                    return bindingRb.closeButtonRb;
+            }
+        }
+        switch (positionOnScreen) {
+            case TOP:
+                return bindingLt.closeButtonLt;
+            case MIDDLE:
+                return bindingLm.closeButtonLm;
+            default:
+                return bindingLb.closeButtonLb;
+        }
+    }
+
+    private void setupItemNavigation() {
+        if (!hasMultipleItems()) {
+            return;
+        }
+        reserveSpaceForMinimizedDots(minimizedContainer());
+        minimizedDots = addDots(minimizedContainer(), LinearLayout.HORIZONTAL);
+        maximizedDots = addDots(maximizedContainer(), LinearLayout.HORIZONTAL);
+        updateDots();
+        addSwipeDetection(minimizedContainer(), true);
+        addSwipeDetection(maximizedContainer());
+    }
+
+    private void selectItem(int index) {
+        if (!hasMultipleItems()) {
+            return;
+        }
+        int itemCount = items.size();
+        currentItemIndex = ((index % itemCount) + itemCount) % itemCount;
+        mExtendedProps = items.get(currentItemIndex);
+        refreshItemFlags();
+
+        applyCurrentItem();
+        restoreExpandedState();
+        updateDots();
+        // Restart the countdown so a manual change is not followed by an immediate automatic one.
+        startAutoScroll();
+    }
+
+    /** The adjust methods always collapse the drawer, so an open drawer has to be reopened. */
+    private void restoreExpandedState() {
+        if (!isExpanded) {
+            return;
+        }
+        maximizedContainer().setVisibility(View.VISIBLE);
+        closeFrameLayout().setVisibility(View.VISIBLE);
+        closeButton().setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Shrinks the minimized content so that it ends above the dots instead of sitting behind them.
+     * The background image is the first child and is left alone so that it keeps filling the strip.
+     */
+    private void reserveSpaceForMinimizedDots(FrameLayout container) {
+        int reservedHeight = dpToPx(MINIMIZED_DOTS_RESERVED_DP);
+        for (int index = 1; index < container.getChildCount(); index++) {
+            View child = container.getChildAt(index);
+            if (!(child.getLayoutParams() instanceof FrameLayout.LayoutParams)) {
+                continue;
+            }
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) child.getLayoutParams();
+            params.bottomMargin += reservedHeight;
+            child.setLayoutParams(params);
+        }
+    }
+
+    private LinearLayout addDots(FrameLayout container, int orientation) {
+        LinearLayout dots = new LinearLayout(requireContext());
+        dots.setOrientation(orientation);
+        dots.setGravity(Gravity.CENTER);
+
+        FrameLayout.LayoutParams containerParams = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+        containerParams.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+        containerParams.bottomMargin = dpToPx(6);
+        dots.setLayoutParams(containerParams);
+
+        int dotSize = dpToPx(7);
+        int halfSpacing = dpToPx(2);
+        for (int index = 0; index < items.size(); index++) {
+            final int itemIndex = index;
+            View dot = new View(requireContext());
+            LinearLayout.LayoutParams dotParams = new LinearLayout.LayoutParams(dotSize, dotSize);
+            if (orientation == LinearLayout.HORIZONTAL) {
+                dotParams.setMarginStart(halfSpacing);
+                dotParams.setMarginEnd(halfSpacing);
+            } else {
+                dotParams.topMargin = halfSpacing;
+                dotParams.bottomMargin = halfSpacing;
+            }
+            dot.setLayoutParams(dotParams);
+            dot.setOnClickListener(v -> selectItem(itemIndex));
+            dots.addView(dot);
+        }
+
+        // Consumes taps that land between the dots so that the drawer does not open or close.
+        dots.setOnClickListener(v -> { });
+        container.addView(dots);
+        return dots;
+    }
+
+    private void updateDots() {
+        updateDots(minimizedDots);
+        updateDots(maximizedDots);
+    }
+
+    private void updateDots(LinearLayout dots) {
+        if (dots == null) {
+            return;
+        }
+        for (int index = 0; index < dots.getChildCount(); index++) {
+            GradientDrawable background = new GradientDrawable();
+            background.setShape(GradientDrawable.OVAL);
+            background.setColor(index == currentItemIndex ? Color.WHITE : Color.argb(90, 255, 255, 255));
+            background.setStroke(dpToPx(1), Color.argb(64, 0, 0, 0));
+            dots.getChildAt(index).setBackground(background);
+        }
+    }
+
+    private void addSwipeDetection(View view) {
+        addSwipeDetection(view, false);
+    }
+
+    private void addSwipeDetection(View view, boolean horizontalOnly) {
+        final float[] start = new float[2];
+        // The minimized strip is only about 48dp wide, so a swipe there has to be recognized
+        // over a shorter distance than in the maximized panel.
+        final int threshold = dpToPx(horizontalOnly ? 16 : 24);
+
+        view.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    start[0] = event.getX();
+                    start[1] = event.getY();
+                    return false;
+                case MotionEvent.ACTION_UP:
+                    float deltaX = event.getX() - start[0];
+                    float deltaY = event.getY() - start[1];
+                    boolean isHorizontal = horizontalOnly || Math.abs(deltaX) >= Math.abs(deltaY);
+                    float travel = isHorizontal ? deltaX : deltaY;
+                    if (Math.abs(travel) > threshold) {
+                        selectItem(currentItemIndex + (travel < 0 ? 1 : -1));
+                        // Consuming the event keeps the swipe from also toggling the drawer.
+                        return true;
+                    }
+                    return false;
+                default:
+                    return false;
+            }
+        });
+    }
+
+    private void startAutoScroll() {
+        stopAutoScroll();
+        if (!hasMultipleItems()) {
+            return;
+        }
+        autoScrollRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!isAdded()) {
+                    return;
+                }
+                if (isExpanded) {
+                    // Paused while the drawer is open; check again on the next tick.
+                    autoScrollHandler.postDelayed(this, AUTO_SCROLL_INTERVAL_MS);
+                } else {
+                    selectItem(currentItemIndex + 1);
+                }
+            }
+        };
+        autoScrollHandler.postDelayed(autoScrollRunnable, AUTO_SCROLL_INTERVAL_MS);
+    }
+
+    private void stopAutoScroll() {
+        if (autoScrollRunnable != null) {
+            autoScrollHandler.removeCallbacks(autoScrollRunnable);
+            autoScrollRunnable = null;
+        }
+    }
+
+    private int dpToPx(int dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density);
     }
 
     private void adjustRt() {
@@ -374,11 +692,11 @@ public class InAppNotificationFragment extends Fragment {
                         .asBitmap()
                         .transform(new MultiTransformation(new CenterCrop(),
                                 new GranularRoundedCorners(500f, 0f, 0f, 500f)))
-                        .load(response.getActionData().getContentMinimizedImage())
+                        .load(mExtendedProps.getMiniImage())
                         .into(bindingRt.smallCircleImageRt);
                 bindingRt.smallCircleTextRt.setVisibility(View.GONE);
             } else {
-                bindingRt.smallCircleTextRt.setText(response.getActionData().getContentMinimizedText());
+                bindingRt.smallCircleTextRt.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
                     bindingRt.smallCircleTextRt.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
                 } else {
@@ -428,15 +746,15 @@ public class InAppNotificationFragment extends Fragment {
                             .asBitmap()
                             .transform(new MultiTransformation(new CenterCrop(),
                                     new GranularRoundedCorners(40f, 0f, 0f, 40f)))
-                            .load(response.getActionData().getContentMinimizedImage())
+                            .load(mExtendedProps.getMiniImage())
                             .into(bindingRt.smallSquareImageRt);
                 } else {
-                    Picasso.get().load(response.getActionData().getContentMinimizedImage())
+                    Picasso.get().load(mExtendedProps.getMiniImage())
                             .into(bindingRt.smallSquareImageRt);
                 }
                 bindingRt.smallSquareTextRt.setVisibility(View.GONE);
             } else {
-                bindingRt.smallSquareTextRt.setText(response.getActionData().getContentMinimizedText());
+                bindingRt.smallSquareTextRt.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
                     bindingRt.smallSquareTextRt.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
                 } else {
@@ -478,8 +796,8 @@ public class InAppNotificationFragment extends Fragment {
             bindingRt.bigBackgroundImageRt.setVisibility(View.GONE);
         }
 
-        if(response.getActionData().getContentMaximizedImage() != null && !response.getActionData().getContentMaximizedImage().equals("")) {
-            Picasso.get().load(response.getActionData().getContentMaximizedImage())
+        if(mExtendedProps.getMaxiImage() != null && !mExtendedProps.getMaxiImage().equals("")) {
+            Picasso.get().load(mExtendedProps.getMaxiImage())
                     .into(bindingRt.bigImageRt);
         }
 
@@ -615,11 +933,11 @@ public class InAppNotificationFragment extends Fragment {
                         .asBitmap()
                         .transform(new MultiTransformation(new CenterCrop(),
                                 new GranularRoundedCorners(500f, 0f, 0f, 500f)))
-                        .load(response.getActionData().getContentMinimizedImage())
+                        .load(mExtendedProps.getMiniImage())
                         .into(bindingRm.smallCircleImageRm);
                 bindingRm.smallCircleTextRm.setVisibility(View.GONE);
             } else {
-                bindingRm.smallCircleTextRm.setText(response.getActionData().getContentMinimizedText());
+                bindingRm.smallCircleTextRm.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
                     bindingRm.smallCircleTextRm.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
                 } else {
@@ -669,15 +987,15 @@ public class InAppNotificationFragment extends Fragment {
                             .asBitmap()
                             .transform(new MultiTransformation(new CenterCrop(),
                                     new GranularRoundedCorners(40f, 0f, 0f, 40f)))
-                            .load(response.getActionData().getContentMinimizedImage())
+                            .load(mExtendedProps.getMiniImage())
                             .into(bindingRm.smallSquareImageRm);
                 } else {
-                    Picasso.get().load(response.getActionData().getContentMinimizedImage())
+                    Picasso.get().load(mExtendedProps.getMiniImage())
                             .into(bindingRm.smallSquareImageRm);
                 }
                 bindingRm.smallSquareTextRm.setVisibility(View.GONE);
             } else {
-                bindingRm.smallSquareTextRm.setText(response.getActionData().getContentMinimizedText());
+                bindingRm.smallSquareTextRm.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
                     bindingRm.smallSquareTextRm.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
                 } else {
@@ -719,8 +1037,8 @@ public class InAppNotificationFragment extends Fragment {
             bindingRm.bigBackgroundImageRm.setVisibility(View.GONE);
         }
 
-        if(response.getActionData().getContentMaximizedImage() != null && !response.getActionData().getContentMaximizedImage().equals("")) {
-            Picasso.get().load(response.getActionData().getContentMaximizedImage())
+        if(mExtendedProps.getMaxiImage() != null && !mExtendedProps.getMaxiImage().equals("")) {
+            Picasso.get().load(mExtendedProps.getMaxiImage())
                     .into(bindingRm.bigImageRm);
         }
 
@@ -856,11 +1174,11 @@ public class InAppNotificationFragment extends Fragment {
                         .asBitmap()
                         .transform(new MultiTransformation(new CenterCrop(),
                                 new GranularRoundedCorners(500f, 0f, 0f, 500f)))
-                        .load(response.getActionData().getContentMinimizedImage())
+                        .load(mExtendedProps.getMiniImage())
                         .into(bindingRb.smallCircleImageRb);
                 bindingRb.smallCircleTextRb.setVisibility(View.GONE);
             } else {
-                bindingRb.smallCircleTextRb.setText(response.getActionData().getContentMinimizedText());
+                bindingRb.smallCircleTextRb.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
                     bindingRb.smallCircleTextRb.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
                 } else {
@@ -910,15 +1228,15 @@ public class InAppNotificationFragment extends Fragment {
                             .asBitmap()
                             .transform(new MultiTransformation(new CenterCrop(),
                                     new GranularRoundedCorners(40f, 0f, 0f, 40f)))
-                            .load(response.getActionData().getContentMinimizedImage())
+                            .load(mExtendedProps.getMiniImage())
                             .into(bindingRb.smallSquareImageRb);
                 } else {
-                    Picasso.get().load(response.getActionData().getContentMinimizedImage())
+                    Picasso.get().load(mExtendedProps.getMiniImage())
                             .into(bindingRb.smallSquareImageRb);
                 }
                 bindingRb.smallSquareTextRb.setVisibility(View.GONE);
             } else {
-                bindingRb.smallSquareTextRb.setText(response.getActionData().getContentMinimizedText());
+                bindingRb.smallSquareTextRb.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
                     bindingRb.smallSquareTextRb.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
                 } else {
@@ -960,8 +1278,8 @@ public class InAppNotificationFragment extends Fragment {
             bindingRb.bigBackgroundImageRb.setVisibility(View.GONE);
         }
 
-        if(response.getActionData().getContentMaximizedImage() != null && !response.getActionData().getContentMaximizedImage().equals("")) {
-            Picasso.get().load(response.getActionData().getContentMaximizedImage())
+        if(mExtendedProps.getMaxiImage() != null && !mExtendedProps.getMaxiImage().equals("")) {
+            Picasso.get().load(mExtendedProps.getMaxiImage())
                     .into(bindingRb.bigImageRb);
         }
 
@@ -1097,11 +1415,11 @@ public class InAppNotificationFragment extends Fragment {
                         .asBitmap()
                         .transform(new MultiTransformation(new CenterCrop(),
                                 new GranularRoundedCorners(0f, 500f, 500f, 0f)))
-                        .load(response.getActionData().getContentMinimizedImage())
+                        .load(mExtendedProps.getMiniImage())
                         .into(bindingLt.smallCircleImageLt);
                 bindingLt.smallCircleTextLt.setVisibility(View.GONE);
             } else {
-                bindingLt.smallCircleTextLt.setText(response.getActionData().getContentMinimizedText());
+                bindingLt.smallCircleTextLt.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
                     bindingLt.smallCircleTextLt.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
                 } else {
@@ -1151,15 +1469,15 @@ public class InAppNotificationFragment extends Fragment {
                             .asBitmap()
                             .transform(new MultiTransformation(new CenterCrop(),
                                     new GranularRoundedCorners(0f, 40f, 40f, 0f)))
-                            .load(response.getActionData().getContentMinimizedImage())
+                            .load(mExtendedProps.getMiniImage())
                             .into(bindingLt.smallSquareImageLt);
                 } else {
-                    Picasso.get().load(response.getActionData().getContentMinimizedImage())
+                    Picasso.get().load(mExtendedProps.getMiniImage())
                             .into(bindingLt.smallSquareImageLt);
                 }
                 bindingLt.smallSquareTextLt.setVisibility(View.GONE);
             } else {
-                bindingLt.smallSquareTextLt.setText(response.getActionData().getContentMinimizedText());
+                bindingLt.smallSquareTextLt.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
                     bindingLt.smallSquareTextLt.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
                 } else {
@@ -1201,8 +1519,8 @@ public class InAppNotificationFragment extends Fragment {
             bindingLt.bigBackgroundImageLt.setVisibility(View.GONE);
         }
 
-        if(response.getActionData().getContentMaximizedImage() != null && !response.getActionData().getContentMaximizedImage().equals("")) {
-            Picasso.get().load(response.getActionData().getContentMaximizedImage())
+        if(mExtendedProps.getMaxiImage() != null && !mExtendedProps.getMaxiImage().equals("")) {
+            Picasso.get().load(mExtendedProps.getMaxiImage())
                     .into(bindingLt.bigImageLt);
         }
 
@@ -1338,11 +1656,11 @@ public class InAppNotificationFragment extends Fragment {
                         .asBitmap()
                         .transform(new MultiTransformation(new CenterCrop(),
                                 new GranularRoundedCorners(0f, 500f, 500f, 0f)))
-                        .load(response.getActionData().getContentMinimizedImage())
+                        .load(mExtendedProps.getMiniImage())
                         .into(bindingLm.smallCircleImageLm);
                 bindingLm.smallCircleTextLm.setVisibility(View.GONE);
             } else {
-                bindingLm.smallCircleTextLm.setText(response.getActionData().getContentMinimizedText());
+                bindingLm.smallCircleTextLm.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
                     bindingLm.smallCircleTextLm.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
                 } else {
@@ -1392,15 +1710,15 @@ public class InAppNotificationFragment extends Fragment {
                             .asBitmap()
                             .transform(new MultiTransformation(new CenterCrop(),
                                     new GranularRoundedCorners(0f, 40f, 40f, 0f)))
-                            .load(response.getActionData().getContentMinimizedImage())
+                            .load(mExtendedProps.getMiniImage())
                             .into(bindingLm.smallSquareImageLm);
                 } else {
-                    Picasso.get().load(response.getActionData().getContentMinimizedImage())
+                    Picasso.get().load(mExtendedProps.getMiniImage())
                             .into(bindingLm.smallSquareImageLm);
                 }
                 bindingLm.smallSquareTextLm.setVisibility(View.GONE);
             } else {
-                bindingLm.smallSquareTextLm.setText(response.getActionData().getContentMinimizedText());
+                bindingLm.smallSquareTextLm.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
                     bindingLm.smallSquareTextLm.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
                 } else {
@@ -1442,8 +1760,8 @@ public class InAppNotificationFragment extends Fragment {
             bindingLm.bigBackgroundImageLm.setVisibility(View.GONE);
         }
 
-        if(response.getActionData().getContentMaximizedImage() != null && !response.getActionData().getContentMaximizedImage().equals("")) {
-            Picasso.get().load(response.getActionData().getContentMaximizedImage())
+        if(mExtendedProps.getMaxiImage() != null && !mExtendedProps.getMaxiImage().equals("")) {
+            Picasso.get().load(mExtendedProps.getMaxiImage())
                     .into(bindingLm.bigImageLm);
         }
 
@@ -1579,11 +1897,11 @@ public class InAppNotificationFragment extends Fragment {
                         .asBitmap()
                         .transform(new MultiTransformation(new CenterCrop(),
                                 new GranularRoundedCorners(0f, 500f, 500f, 0f)))
-                        .load(response.getActionData().getContentMinimizedImage())
+                        .load(mExtendedProps.getMiniImage())
                         .into(bindingLb.smallCircleImageLb);
                 bindingLb.smallCircleTextLb.setVisibility(View.GONE);
             } else {
-                bindingLb.smallCircleTextLb.setText(response.getActionData().getContentMinimizedText());
+                bindingLb.smallCircleTextLb.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
                     bindingLb.smallCircleTextLb.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
                 } else {
@@ -1633,15 +1951,15 @@ public class InAppNotificationFragment extends Fragment {
                             .asBitmap()
                             .transform(new MultiTransformation(new CenterCrop(),
                                     new GranularRoundedCorners(0f, 40f, 40f, 0f)))
-                            .load(response.getActionData().getContentMinimizedImage())
+                            .load(mExtendedProps.getMiniImage())
                             .into(bindingLb.smallSquareImageLb);
                 } else {
-                    Picasso.get().load(response.getActionData().getContentMinimizedImage())
+                    Picasso.get().load(mExtendedProps.getMiniImage())
                             .into(bindingLb.smallSquareImageLb);
                 }
                 bindingLb.smallSquareTextLb.setVisibility(View.GONE);
             } else {
-                bindingLb.smallSquareTextLb.setText(response.getActionData().getContentMinimizedText());
+                bindingLb.smallSquareTextLb.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
                     bindingLb.smallSquareTextLb.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
                 } else {
@@ -1683,8 +2001,8 @@ public class InAppNotificationFragment extends Fragment {
             bindingLb.bigBackgroundImageLb.setVisibility(View.GONE);
         }
 
-        if(response.getActionData().getContentMaximizedImage() != null && !response.getActionData().getContentMaximizedImage().equals("")) {
-            Picasso.get().load(response.getActionData().getContentMaximizedImage())
+        if(mExtendedProps.getMaxiImage() != null && !mExtendedProps.getMaxiImage().equals("")) {
+            Picasso.get().load(mExtendedProps.getMaxiImage())
                     .into(bindingLb.bigImageLb);
         }
 
@@ -1778,6 +2096,14 @@ public class InAppNotificationFragment extends Fragment {
         if (getActivity() != null && !getActivity().isChangingConfigurations()) {
             endFragment();
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        stopAutoScroll();
+        minimizedDots = null;
+        maximizedDots = null;
+        super.onDestroyView();
     }
 
     @Override
