@@ -50,7 +50,7 @@ public class MainApplication extends MultiDexApplication {
         ApplicationInfo appInfo = null;
         Bundle bundle = null;
 
-        isTest = false;
+        isTest = true;
 
         organizationId = "676D325830564761676D453D";
         profileId = "356467332F6533766975593D";

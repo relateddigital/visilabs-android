@@ -49,6 +49,7 @@ import com.visilabs.inApp.ProductStatNotifierModel;
 import com.visilabs.inApp.SocialProofFragment;
 import com.visilabs.inApp.VisilabsActionFragmentActivity;
 import com.visilabs.inApp.customactions.model.CustomActions;
+import com.visilabs.inappnotification.DrawerClickCallback;
 import com.visilabs.inappnotification.DrawerModel;
 import com.visilabs.inApp.VisilabsActionRequest;
 import com.visilabs.inApp.customactions.CustomActionFragment;
@@ -170,6 +171,7 @@ public class Visilabs {
     private VisilabsApiMethods mVisilabsRealTimeApiInterface;
     private VisilabsApiMethods mVisilabsSApiInterface;
     private InAppButtonInterface mInAppButtonInterface = null;
+    private DrawerClickCallback mDrawerClickCallback = null;
     private NotificationBellClickCallback mNotificationBellClickCallback;
     private CountdownTimerBannerClickCallback mCountdownTimerBannerClickCallback;
 
@@ -2763,6 +2765,18 @@ public class Visilabs {
 
     public InAppButtonInterface getInAppButtonInterface() {
         return mInAppButtonInterface;
+    }
+
+    /**
+     * Set this to handle drawer links in the app, for example to route deep links.
+     * While it is set the SDK does not open drawer links itself.
+     */
+    public void setDrawerClickCallback(DrawerClickCallback drawerClickCallback) {
+        mDrawerClickCallback = drawerClickCallback;
+    }
+
+    public DrawerClickCallback getDrawerClickCallback() {
+        return mDrawerClickCallback;
     }
 
     private void createRemoteConfigJob() {

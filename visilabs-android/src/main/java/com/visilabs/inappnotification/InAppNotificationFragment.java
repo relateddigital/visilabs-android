@@ -38,11 +38,11 @@ import com.visilabs.android.databinding.FragmentInAppNotificationLtBinding;
 import com.visilabs.android.databinding.FragmentInAppNotificationRbBinding;
 import com.visilabs.android.databinding.FragmentInAppNotificationRmBinding;
 import com.visilabs.android.databinding.FragmentInAppNotificationRtBinding;
-import com.visilabs.inApp.InAppButtonInterface;
 import com.visilabs.mailSub.Report;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -184,9 +184,6 @@ public class InAppNotificationFragment extends Fragment {
             shape = Shape.SHARP_EDGE;
         }
 
-        buttonFunction = getButtonFunctionFromString(response.getActionData().getButtonFunction());
-        staticCode = response.getActionData().getStaticCode();
-
         if(isRight) {
             switch (positionOnScreen) {
                 case TOP:
@@ -299,6 +296,9 @@ public class InAppNotificationFragment extends Fragment {
                 !mExtendedProps.getMiniBackgroundImage().equals("");
         isMaxiBackgroundImage = mExtendedProps.getMaxiBackgroundImage() != null &&
                 !mExtendedProps.getMaxiBackgroundImage().equals("");
+        // The redirect target, promo code and button behaviour are per item.
+        buttonFunction = getButtonFunctionFromString(mExtendedProps.getButtonFunction());
+        staticCode = mExtendedProps.getStaticCode() != null ? mExtendedProps.getStaticCode() : "";
     }
 
     private boolean hasMultipleItems() {
@@ -2012,14 +2012,15 @@ public class InAppNotificationFragment extends Fragment {
     }
 
     private ButtonFunction getButtonFunctionFromString(@Nullable String functionName) {
-        // Kotlin'in ?.uppercase() operatörü, functionName null ise null döner.
+        // Kotlin'in ?.lowercase() operatörü, functionName null ise null döner.
         // Java'da bunu açık bir null kontrolü ile yapmalıyız.
         if (functionName == null) {
             // Eğer gelen string null ise varsayılan değeri döndür.
             return ButtonFunction.COPY_REDIRECT;
         }
 
-        switch (functionName.toUpperCase()) {
+        // Locale.ROOT olmadan Türkçe yerelde "I" harfi noktasız "ı" olur ve eşleşme bozulur.
+        switch (functionName.toLowerCase(Locale.ROOT)) {
             case "copy":
                 return ButtonFunction.COPY;
             case "redirect":
@@ -2031,6 +2032,10 @@ public class InAppNotificationFragment extends Fragment {
     }
 
     private void copyStaticCodeToClipboard(@Nullable String staticCode) {
+
+        if (staticCode == null || staticCode.isEmpty()) {
+            return;
+        }
 
         if (getContext() == null) {
             return;
@@ -2069,21 +2074,25 @@ public class InAppNotificationFragment extends Fragment {
     }
 
     private void performRedirect() {
-        final String uriString = response.getActionData().getAndroidLnk();
-        InAppButtonInterface buttonInterface = Visilabs.CallAPI().getInAppButtonInterface();
-        if(buttonInterface != null) {
-            Visilabs.CallAPI().setInAppButtonInterface(null);
-            buttonInterface.onPress(uriString);
-        } else {
-            if (uriString != null && uriString.length() > 0) {
-                Uri uri;
-                try {
-                    uri = Uri.parse(uriString);
-                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                    getActivity().startActivity(viewIntent);
-                } catch (Exception e) {
-                    Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                }
+        // The link belongs to the item that is currently shown.
+        final String uriString = mExtendedProps.getAndroidLnk();
+
+        // A registered callback takes over the navigation, so that the app can route deep
+        // links itself. Opening the link here as well would navigate twice.
+        DrawerClickCallback drawerCallback = Visilabs.CallAPI().getDrawerClickCallback();
+        if (drawerCallback != null) {
+            drawerCallback.onDrawerClick(uriString, currentItemIndex, staticCode);
+            return;
+        }
+
+        if (uriString != null && uriString.length() > 0) {
+            Uri uri;
+            try {
+                uri = Uri.parse(uriString);
+                Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
+                getActivity().startActivity(viewIntent);
+            } catch (Exception e) {
+                Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
             }
         }
     }

@@ -394,6 +394,10 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         Visilabs.CallAPI().setInAppButtonInterface(buttonCallback);
+        Visilabs.CallAPI().setDrawerClickCallback((link, itemIndex, staticCode) -> {
+            assert link != null;
+            Log.i("DrawerLink: ", link);
+        });
     }
 
 

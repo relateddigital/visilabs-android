@@ -52,8 +52,30 @@ public class ExtendedProps implements Serializable {
 
     private String content_maximized_image;
 
+    /**
+     * The redirect target, promo code and button behaviour of this item. Older payloads only
+     * carry them once on the action data, so they are filled in from there when missing.
+     */
+    private String android_lnk;
+
+    private String staticcode;
+
+    private String copybutton_function;
+
     List<ExtendedProps> getItems() {
         return content_minimized_items;
+    }
+
+    String getAndroidLnk() {
+        return android_lnk;
+    }
+
+    String getStaticCode() {
+        return staticcode;
+    }
+
+    String getButtonFunction() {
+        return copybutton_function;
     }
 
     String getMiniImage() {
@@ -84,6 +106,15 @@ public class ExtendedProps implements Serializable {
         }
         if (content_maximized_image == null || content_maximized_image.isEmpty()) {
             content_maximized_image = actionData.getContentMaximizedImage();
+        }
+        if (android_lnk == null || android_lnk.isEmpty()) {
+            android_lnk = actionData.getAndroidLnk();
+        }
+        if (staticcode == null || staticcode.isEmpty()) {
+            staticcode = actionData.getStaticCode();
+        }
+        if (copybutton_function == null || copybutton_function.isEmpty()) {
+            copybutton_function = actionData.getButtonFunction();
         }
     }
 
