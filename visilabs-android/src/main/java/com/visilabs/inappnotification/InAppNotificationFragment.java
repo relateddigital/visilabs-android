@@ -70,8 +70,14 @@ public class InAppNotificationFragment extends Fragment {
     private static final String LOG_TAG = "InAppNotification";
     private static final String ARG_PARAM1 = "dataKey";
     private static final long AUTO_SCROLL_INTERVAL_MS = 5000L;
-    /** Vertical space the dot row occupies at the bottom of the minimized strip. */
-    private static final int MINIMIZED_DOTS_RESERVED_DP = 18;
+    /** Vertical space the dot row occupies at the bottom of a container. */
+    private static final int DOTS_RESERVED_DP = 18;
+    private static final int DOTS_BOTTOM_MARGIN_DP = 6;
+    /**
+     * The half circle tapers off towards its bottom edge, where it is too narrow to hold the
+     * dots, so on that shape they sit a bit higher.
+     */
+    private static final int CIRCLE_DOTS_BOTTOM_MARGIN_DP = 14;
 
     private FragmentInAppNotificationLtBinding bindingLt;
     private FragmentInAppNotificationLmBinding bindingLm;
@@ -394,9 +400,22 @@ public class InAppNotificationFragment extends Fragment {
         if (!hasMultipleItems()) {
             return;
         }
-        reserveSpaceForMinimizedDots(minimizedContainer());
-        minimizedDots = addDots(minimizedContainer(), LinearLayout.HORIZONTAL);
-        maximizedDots = addDots(maximizedContainer(), LinearLayout.HORIZONTAL);
+        boolean isCircle = shape == Shape.CIRCLE;
+        // The half circle silhouette comes from a background that the text and image views
+        // repeat at container size. Shrinking those views makes Android scale their copy of
+        // the shape down, so its corners no longer line up and stick out of the circle near
+        // the top. The strip therefore keeps its full height on that shape; its label is
+        // centred and ends above the dots anyway.
+        if (!isCircle) {
+            reserveSpaceForDots(minimizedContainer());
+        }
+        reserveSpaceForDots(maximizedContainer());
+        minimizedDots = addDots(minimizedContainer(),
+                isCircle ? CIRCLE_DOTS_BOTTOM_MARGIN_DP : DOTS_BOTTOM_MARGIN_DP);
+        maximizedDots = addDots(maximizedContainer(), DOTS_BOTTOM_MARGIN_DP);
+        if (isCircle) {
+            moveDotsInsideHalfCircle(minimizedDots);
+        }
         updateDots();
         addSwipeDetection(minimizedContainer(), true);
         addSwipeDetection(maximizedContainer());
@@ -429,11 +448,12 @@ public class InAppNotificationFragment extends Fragment {
     }
 
     /**
-     * Shrinks the minimized content so that it ends above the dots instead of sitting behind them.
-     * The background image is the first child and is left alone so that it keeps filling the strip.
+     * Shrinks the content so that it ends above the dots instead of sitting behind them.
+     * The background image is the first child and is left alone so that it keeps filling the
+     * container, which gives the dots a backdrop to sit on.
      */
-    private void reserveSpaceForMinimizedDots(FrameLayout container) {
-        int reservedHeight = dpToPx(MINIMIZED_DOTS_RESERVED_DP);
+    private void reserveSpaceForDots(FrameLayout container) {
+        int reservedHeight = dpToPx(DOTS_RESERVED_DP);
         for (int index = 1; index < container.getChildCount(); index++) {
             View child = container.getChildAt(index);
             if (!(child.getLayoutParams() instanceof FrameLayout.LayoutParams)) {
@@ -445,16 +465,16 @@ public class InAppNotificationFragment extends Fragment {
         }
     }
 
-    private LinearLayout addDots(FrameLayout container, int orientation) {
+    private LinearLayout addDots(FrameLayout container, int bottomMarginDp) {
         LinearLayout dots = new LinearLayout(requireContext());
-        dots.setOrientation(orientation);
+        dots.setOrientation(LinearLayout.HORIZONTAL);
         dots.setGravity(Gravity.CENTER);
 
         FrameLayout.LayoutParams containerParams = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT);
         containerParams.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
-        containerParams.bottomMargin = dpToPx(6);
+        containerParams.bottomMargin = dpToPx(bottomMarginDp);
         dots.setLayoutParams(containerParams);
 
         int dotSize = dpToPx(7);
@@ -463,13 +483,8 @@ public class InAppNotificationFragment extends Fragment {
             final int itemIndex = index;
             View dot = new View(requireContext());
             LinearLayout.LayoutParams dotParams = new LinearLayout.LayoutParams(dotSize, dotSize);
-            if (orientation == LinearLayout.HORIZONTAL) {
-                dotParams.setMarginStart(halfSpacing);
-                dotParams.setMarginEnd(halfSpacing);
-            } else {
-                dotParams.topMargin = halfSpacing;
-                dotParams.bottomMargin = halfSpacing;
-            }
+            dotParams.setMarginStart(halfSpacing);
+            dotParams.setMarginEnd(halfSpacing);
             dot.setLayoutParams(dotParams);
             dot.setOnClickListener(v -> selectItem(itemIndex));
             dots.addView(dot);
@@ -479,6 +494,27 @@ public class InAppNotificationFragment extends Fragment {
         dots.setOnClickListener(v -> { });
         container.addView(dots);
         return dots;
+    }
+
+    /**
+     * The half circle fills only part of its container: the flat edge runs along the screen edge
+     * and the curve bulges out from there, so the shape gets narrower towards the top and bottom.
+     * Dots centred on the container therefore fall outside the filled area. This shifts them
+     * towards the flat edge, to the middle of the width the circle still has at their height.
+     */
+    private void moveDotsInsideHalfCircle(LinearLayout dots) {
+        float radius = getResources().getDimension(R.dimen.in_app_notification_small_radius);
+        float containerHeight =
+                getResources().getDimension(R.dimen.in_app_notification_small_circle_height);
+
+        // Distance from the centre of the circle down to the lowest point of the dots.
+        float distanceFromCentre = Math.min(
+                containerHeight / 2f - dpToPx(CIRCLE_DOTS_BOTTOM_MARGIN_DP), radius);
+        float widthAtDots = (float) Math.sqrt(
+                Math.max(radius * radius - distanceFromCentre * distanceFromCentre, 0f));
+        float offset = Math.max((radius - widthAtDots) / 2f, 0f);
+
+        dots.setTranslationX(isRight ? offset : -offset);
     }
 
     private void updateDots() {
