@@ -816,12 +816,19 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                     if (mInAppMessage.getActionData().getSecondPopupVideoUrl2() != null &&
                             !mInAppMessage.getActionData().getSecondPopupVideoUrl2().isEmpty()) {
                         bindingSecondPopUp.secondVideoView2.setVisibility(View.VISIBLE);
-                        player2 = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
-                        bindingSecondPopUp.secondVideoView2.setPlayer(player2);
-                        MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getSecondPopupVideoUrl2());
-                        player2.setMediaItem(mediaItem);
-                        player2.prepare();
-                        player2.setPlayWhenReady(true);
+                        try {
+                            player2 = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
+                            bindingSecondPopUp.secondVideoView2.setPlayer(player2);
+                            MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getSecondPopupVideoUrl2());
+                            player2.setMediaItem(mediaItem);
+                            player2.prepare();
+                            player2.setPlayWhenReady(true);
+                        } catch (Throwable throwable) {
+                            player2 = null;
+                            bindingSecondPopUp.secondVideoView2.playWithPlatformPlayer(
+                                    mInAppMessage.getActionData().getSecondPopupVideoUrl2());
+                            Log.w(LOG_TAG, "Could not initialize the media3 player, playing the video with the platform player.", throwable);
+                        }
                     } else {
                         bindingSecondPopUp.secondVideoView2.setVisibility(View.GONE);
                         releasePlayer();
@@ -874,11 +881,18 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             if (mInAppMessage.getActionData().getSecondPopupVideoUrl1() != null &&
                     !mInAppMessage.getActionData().getSecondPopupVideoUrl1().isEmpty()) {
                 bindingSecondPopUp.secondVideoView.setVisibility(View.VISIBLE);
-                player = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
-                bindingSecondPopUp.secondVideoView.setPlayer(player);
-                MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getSecondPopupVideoUrl1());
-                player.setMediaItem(mediaItem);
-                player.prepare();
+                try {
+                    player = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
+                    bindingSecondPopUp.secondVideoView.setPlayer(player);
+                    MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getSecondPopupVideoUrl1());
+                    player.setMediaItem(mediaItem);
+                    player.prepare();
+                } catch (Throwable throwable) {
+                    player = null;
+                    bindingSecondPopUp.secondVideoView.playWithPlatformPlayer(
+                            mInAppMessage.getActionData().getSecondPopupVideoUrl1());
+                    Log.w(LOG_TAG, "Could not initialize the media3 player, playing the video with the platform player.", throwable);
+                }
                 startPlayer();
             } else {
                 bindingSecondPopUp.secondVideoView.setVisibility(View.GONE);
@@ -1268,16 +1282,24 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void initializePlayer() {
         if (!mIsCarousel) {
-            player = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
-            binding.videoView.setPlayer(player);
-            MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getVideoUrl());
-            player.setMediaItem(mediaItem);
-            player.prepare();
+            try {
+                player = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
+                binding.videoView.setPlayer(player);
+                MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getVideoUrl());
+                player.setMediaItem(mediaItem);
+                player.prepare();
+            } catch (Throwable throwable) {
+                player = null;
+                binding.videoView.playWithPlatformPlayer(mInAppMessage.getActionData().getVideoUrl());
+                Log.w(LOG_TAG, "Could not initialize the media3 player, playing the video with the platform player.", throwable);
+            }
         }
     }
 
     private void startPlayer() {
-        player.setPlayWhenReady(true);
+        if (player != null) {
+            player.setPlayWhenReady(true);
+        }
     }
 
     private void releasePlayer() {
@@ -1324,11 +1346,17 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             bindingCarousel.carouselImage.setVisibility(View.GONE);
             if (mCarouselItems.get(position).getVideoUrl() != null && !mCarouselItems.get(position).getVideoUrl().isEmpty()) {
                 bindingCarousel.carouselVideo.setVisibility(View.VISIBLE);
-                player = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
-                bindingCarousel.carouselVideo.setPlayer(player);
-                MediaItem mediaItem = MediaItem.fromUri(mCarouselItems.get(position).getVideoUrl());
-                player.setMediaItem(mediaItem);
-                player.prepare();
+                try {
+                    player = new androidx.media3.exoplayer.ExoPlayer.Builder(this).build();
+                    bindingCarousel.carouselVideo.setPlayer(player);
+                    MediaItem mediaItem = MediaItem.fromUri(mCarouselItems.get(position).getVideoUrl());
+                    player.setMediaItem(mediaItem);
+                    player.prepare();
+                } catch (Throwable throwable) {
+                    player = null;
+                    bindingCarousel.carouselVideo.playWithPlatformPlayer(mCarouselItems.get(position).getVideoUrl());
+                    Log.w(LOG_TAG, "Could not initialize the media3 player, playing the video with the platform player.", throwable);
+                }
                 startPlayer();
             } else {
                 bindingCarousel.carouselVideo.setVisibility(View.GONE);

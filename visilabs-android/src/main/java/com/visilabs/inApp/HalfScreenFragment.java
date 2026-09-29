@@ -380,19 +380,32 @@ public class HalfScreenFragment extends Fragment {
     }
 
     private void initializePlayer() {
-        player = new androidx.media3.exoplayer.ExoPlayer.Builder(getActivity()).build();
-        if (mIsTop) {
-            binding.topVideoView.setPlayer(player);
-        } else {
-            binding.botVideoView.setPlayer(player);
+        try {
+            player = new androidx.media3.exoplayer.ExoPlayer.Builder(getActivity()).build();
+            if (mIsTop) {
+                binding.topVideoView.setPlayer(player);
+            } else {
+                binding.botVideoView.setPlayer(player);
+            }
+            MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getVideoUrl());
+            player.setMediaItem(mediaItem);
+            player.prepare();
+        } catch (Throwable throwable) {
+            player = null;
+            String videoUrl = mInAppMessage.getActionData().getVideoUrl();
+            if (mIsTop) {
+                binding.topVideoView.playWithPlatformPlayer(videoUrl);
+            } else {
+                binding.botVideoView.playWithPlatformPlayer(videoUrl);
+            }
+            Log.w(LOG_TAG, "Could not initialize the media3 player, playing the video with the platform player.", throwable);
         }
-        MediaItem mediaItem = MediaItem.fromUri(mInAppMessage.getActionData().getVideoUrl());
-        player.setMediaItem(mediaItem);
-        player.prepare();
     }
 
     private void startPlayer() {
-        player.setPlayWhenReady(true);
+        if (player != null) {
+            player.setPlayWhenReady(true);
+        }
     }
 
     private void releasePlayer() {

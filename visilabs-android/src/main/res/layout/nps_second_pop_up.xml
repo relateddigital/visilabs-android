@@ -24,12 +24,10 @@
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true" />
 
-            <androidx.media3.ui.PlayerView
+            <com.visilabs.view.InAppVideoView
                 android:id="@+id/second_video_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:use_controller="false"
-                app:resize_mode="fixed_width"/>
+                android:layout_height="wrap_content"/>
 
             <ImageButton
                 android:id="@+id/closeButton"
@@ -119,12 +117,10 @@
             android:layout_gravity="center_horizontal"
             android:adjustViewBounds="true" />
 
-        <androidx.media3.ui.PlayerView
+        <com.visilabs.view.InAppVideoView
             android:id="@+id/second_video_view2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:use_controller="false"
-            app:resize_mode="fixed_width"/>
+            android:layout_height="wrap_content"/>
 
 
     </LinearLayout>

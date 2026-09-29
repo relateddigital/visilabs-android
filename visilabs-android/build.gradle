@@ -13,9 +13,10 @@ android {
         minSdkVersion 23
         targetSdkVersion 35
         versionCode 51
-        versionName "6.7.4"
-        buildConfigField 'String', 'VERSION_NAME', "\"6.7.4\""
+        versionName "6.7.5"
+        buildConfigField 'String', 'VERSION_NAME', "\"6.7.5\""
         buildConfigField 'String', 'SDK_TYPE', "\"native\""
+        consumerProguardFiles 'consumer-rules.pro'
     }
 
     publishing {
@@ -69,8 +70,8 @@ dependencies {
     api 'com.squareup.retrofit2:converter-gson:2.9.0'
     api 'com.squareup.okhttp3:logging-interceptor:4.9.0'
 
-    implementation 'androidx.media3:media3-exoplayer:1.1.0'
-    implementation 'androidx.media3:media3-ui:1.1.0'
+    api 'androidx.media3:media3-exoplayer:1.1.0'
+    api 'androidx.media3:media3-ui:1.1.0'
 
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'

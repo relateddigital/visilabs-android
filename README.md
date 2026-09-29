@@ -40,7 +40,7 @@ Add maven jitpack repository to your project/build.gradle file
 Add Visilabs to the ```dependencies``` in app/build.gradle.
 
 ```java
-implementation 'com.github.relateddigital:visilabs-android:6.7.4'
+implementation 'com.github.relateddigital:visilabs-android:6.7.5'
 ```
 This version uses AndroidX
 

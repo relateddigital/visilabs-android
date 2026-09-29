@@ -35,12 +35,10 @@
                 android:id="@+id/top_image_view"
                 android:adjustViewBounds="true"/>
 
-            <androidx.media3.ui.PlayerView
+            <com.visilabs.view.InAppVideoView
                 android:id="@+id/top_video_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:use_controller="false"
-                app:resize_mode="fixed_width"/>
+                android:layout_height="wrap_content"/>
 
             <LinearLayout
                 android:id="@+id/top_promotion_container"
@@ -112,12 +110,10 @@
                 android:id="@+id/bot_image_view"
                 android:adjustViewBounds="true"/>
 
-            <androidx.media3.ui.PlayerView
+            <com.visilabs.view.InAppVideoView
                 android:id="@+id/bot_video_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:use_controller="false"
-                app:resize_mode="fixed_width"/>
+                android:layout_height="wrap_content"/>
 
             <LinearLayout
                 android:id="@+id/bot_promotion_container"

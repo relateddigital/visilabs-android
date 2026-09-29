@@ -25,6 +25,8 @@ import com.visilabs.json.JSONException;
 import com.visilabs.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+import com.visilabs.model.ProductVariant2;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -103,7 +105,23 @@ public class SearchActivity extends AppCompatActivity {
         String code = productObject.getString("Code");
         String currency = productObject.getString("Currency");
         String discountCurrency = productObject.getString("DiscountCurrency");
-        return new Product(name, url, imageUrl, brandName, price, discountPrice, code, currency, discountCurrency);
+        List<ProductVariant2> variants2 = null;
+        if (productObject.has("variants2")) {
+            com.visilabs.json.JSONArray vArray = productObject.optJSONArray("variants2");
+            if (vArray != null) {
+                variants2 = new ArrayList<>();
+                for (int i = 0; i < vArray.length(); i++) {
+                    com.visilabs.json.JSONObject vObj = vArray.optJSONObject(i);
+                    if (vObj != null) {
+                        ProductVariant2 v = ProductVariant2.fromJsonObject(vObj);
+                        if (v != null) {
+                            variants2.add(v);
+                        }
+                    }
+                }
+            }
+        }
+        return new Product(name, url, imageUrl, brandName, price, discountPrice, code, currency, discountCurrency, variants2);
     }
 
     private VisilabsCallback getVisilabsCallback() {
