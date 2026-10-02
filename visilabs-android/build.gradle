@@ -13,8 +13,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 35
         versionCode 51
-        versionName "6.7.5"
-        buildConfigField 'String', 'VERSION_NAME', "\"6.7.5\""
+        versionName "6.7.6"
+        buildConfigField 'String', 'VERSION_NAME', "\"6.7.6\""
         buildConfigField 'String', 'SDK_TYPE', "\"native\""
         consumerProguardFiles 'consumer-rules.pro'
     }
@@ -74,6 +74,8 @@ dependencies {
     api 'androidx.media3:media3-ui:1.1.0'
 
     implementation 'androidx.appcompat:appcompat:1.4.2'
+    // capture: uygulamanın ön plan / arka plan geçişleri (appcompat ile zaten geliyordu, sürüm aynı)
+    implementation 'androidx.lifecycle:lifecycle-process:2.4.0'
     implementation 'com.google.android.material:material:1.6.1'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.13.2'

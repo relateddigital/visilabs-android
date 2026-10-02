@@ -6,6 +6,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.util.TypedValue;
+import android.widget.ImageButton;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -192,7 +195,7 @@ public class HalfScreenFragment extends Fragment {
 
     private void adjustTop() {
         binding.halfScreenContainerBot.setVisibility(View.GONE);
-        binding.halfScreenContainerTop.setOnClickListener(new View.OnClickListener() {
+        binding.topContentArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String uriString = mInAppMessage.getActionData().getAndroidLnk();
@@ -218,7 +221,14 @@ public class HalfScreenFragment extends Fragment {
         });
 
         if(mInAppMessage.getActionData().getMsgTitle() != null && !mInAppMessage.getActionData().getMsgTitle().isEmpty()) {
-            binding.halfScreenContainerTop.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+            String topBg = mInAppMessage.getActionData().getBackground();
+        if (topBg != null && !topBg.isEmpty()) {
+            try {
+                binding.topContentArea.setBackgroundColor(Color.parseColor(topBg));
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse background color", e);
+            }
+        }
             binding.topTitleView.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
             binding.topTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
             binding.topTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 8);
@@ -257,7 +267,7 @@ public class HalfScreenFragment extends Fragment {
     private void adjustBottom() {
         binding.halfScreenContainerTop.setVisibility(View.GONE);
 
-        binding.halfScreenContainerBot.setOnClickListener(new View.OnClickListener() {
+        binding.botContentArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String uriString = mInAppMessage.getActionData().getAndroidLnk();
@@ -283,7 +293,14 @@ public class HalfScreenFragment extends Fragment {
         });
 
         if(mInAppMessage.getActionData().getMsgTitle() != null && !mInAppMessage.getActionData().getMsgTitle().isEmpty()) {
-            binding.halfScreenContainerBot.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+            String botBg = mInAppMessage.getActionData().getBackground();
+        if (botBg != null && !botBg.isEmpty()) {
+            try {
+                binding.botContentArea.setBackgroundColor(Color.parseColor(botBg));
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Could not parse background color", e);
+            }
+        }
             binding.botTitleView.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
             binding.botTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
             binding.botTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 8);
@@ -320,23 +337,67 @@ public class HalfScreenFragment extends Fragment {
     }
 
     private void setupCloseButton() {
-        if(mIsTop){
-            binding.topCloseButton.setBackgroundResource(getCloseIcon());
-            binding.topCloseButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    endFragment();
-                }
-            });
+        ImageButton closeButton = mIsTop ? binding.topCloseButton : binding.botCloseButton;
+        String colorStr = mInAppMessage.getActionData().getCloseButtonColor();
+        boolean isWhite = isWhiteColor(colorStr);
+
+        GradientDrawable bg = new GradientDrawable();
+        bg.setShape(GradientDrawable.OVAL);
+        if (isWhite) {
+            bg.setColor(Color.BLACK);
+            bg.setStroke(dpToPx(0.5f), Color.parseColor("#33FFFFFF"));
+            closeButton.setBackground(bg);
+            closeButton.setImageResource(R.drawable.ic_close_white_24dp);
+            closeButton.clearColorFilter();
         } else {
-            binding.botCloseButton.setBackgroundResource(getCloseIcon());
-            binding.botCloseButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    endFragment();
+            bg.setColor(Color.WHITE);
+            bg.setStroke(dpToPx(0.5f), Color.parseColor("#26000000"));
+            closeButton.setBackground(bg);
+            closeButton.setImageResource(R.drawable.ic_close_black_24dp);
+            if (colorStr != null && !colorStr.trim().isEmpty() && !colorStr.equalsIgnoreCase("black")) {
+                try {
+                    closeButton.setColorFilter(Color.parseColor(colorStr));
+                } catch (Exception ignored) {
+                    closeButton.clearColorFilter();
                 }
-            });
+            } else {
+                closeButton.clearColorFilter();
+            }
         }
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                endFragment();
+            }
+        });
+    }
+
+    private boolean isWhiteColor(String colorStr) {
+        if (colorStr == null || colorStr.trim().isEmpty()) {
+            return false;
+        }
+        String c = colorStr.trim().toLowerCase();
+        if (c.equals("white") || c.equals("#ffffff") || c.equals("#fff")) {
+            return true;
+        }
+        try {
+            int color = Color.parseColor(colorStr);
+            int r = Color.red(color);
+            int g = Color.green(color);
+            int b = Color.blue(color);
+            return r >= 240 && g >= 240 && b >= 240;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private int dpToPx(float dp) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp,
+                getResources().getDisplayMetrics()
+        );
     }
 
     private int getCloseIcon() {

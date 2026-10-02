@@ -71,6 +71,7 @@ import com.visilabs.spinToWin.SpinToWinActivity;
 import com.visilabs.spinToWin.model.SpinToWinModel;
 import com.visilabs.survey.SurveyActivity;
 import com.visilabs.survey.model.SurveyModel;
+import com.visilabs.capture.VisilabsCapture;
 import com.visilabs.util.ActivityUtils;
 import com.visilabs.util.VisilabsActionGuard;
 import com.visilabs.util.AppUtils;
@@ -92,6 +93,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Locale;
 import java.util.Set;
 import java.util.Timer;
@@ -176,7 +178,8 @@ public class Visilabs {
     private CountdownTimerBannerClickCallback mCountdownTimerBannerClickCallback;
 
     private Visilabs(String organizationID, String siteID, String segmentURL, String dataSource, String realTimeURL, String channel, Context context
-            , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource, String targetURL, String actionURL, String geofenceURL, boolean geofenceEnabled, String sdkType) {
+            , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource, String targetURL, String actionURL, String geofenceURL, boolean geofenceEnabled, String sdkType,
+                     String captureApiKey) {
         if (context == null) {
             return;
         }
@@ -205,7 +208,8 @@ public class Visilabs {
                 actionURL,
                 geofenceURL,
                 geofenceEnabled,
-                sdkType
+                sdkType,
+                captureApiKey
         );
 
         String parametersStr = new Gson().toJson(parameters);
@@ -227,6 +231,7 @@ public class Visilabs {
         geofenceURL = parameters2.getGeofenceUrl();
         geofenceEnabled = parameters2.getGeofenceEnabled();
         sdkType = parameters2.getSdkType();
+        captureApiKey = parameters2.getCaptureApiKey();
 
         mGeofenceURL = geofenceURL;
         mGeofenceEnabled = geofenceEnabled;
@@ -289,9 +294,16 @@ public class Visilabs {
         mVisitorData = Prefs.getFromPrefs(mContext, VisilabsConstant.VISITOR_DATA_PREF,
                 VisilabsConstant.VISITOR_DATA_PREF_KEY, null);
 
+        // cookieID önceki bir açılıştan kaldıysa SDK bu cihazda daha önce çalışmış demektir.
+        boolean isExistingInstall = mCookieID != null;
         if (mCookieID == null) {
             setCookieID(null);
         }
+
+        // login(String) exVisitorID'yi URL-encode ederek saklıyor; capture'a ham değer gitmeli.
+        getCapture().configure(captureApiKey,
+                mExVisitorID != null ? VisilabsEncoder.decode(mExVisitorID) : null,
+                isExistingInstall);
 
         mCookie = new Cookie();
 
@@ -312,7 +324,7 @@ public class Visilabs {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource,
                     realTimeURL, channel, context, 30
                     , null, null, null, null,
-                    null, false, sdkType);
+                    null, false, sdkType, null);
         }
         return visilabs;
     }
@@ -324,7 +336,7 @@ public class Visilabs {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL,
                     channel, context, requestTimeoutSeconds
                     , null, null, null, null,
-                    null, false, sdkType);
+                    null, false, sdkType, null);
         }
         return visilabs;
     }
@@ -336,7 +348,7 @@ public class Visilabs {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL,
                     channel, context, requestTimeoutSeconds
                     , null, null, targetURL, null, null,
-                    false, sdkType);
+                    false, sdkType, null);
         }
         return visilabs;
     }
@@ -347,7 +359,7 @@ public class Visilabs {
         if (visilabs == null) {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
-                    , null, null, targetURL, actionURL, null, false, sdkType);
+                    , null, null, targetURL, actionURL, null, false, sdkType, null);
         }
         return visilabs;
     }
@@ -359,7 +371,7 @@ public class Visilabs {
         if (visilabs == null) {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
-                    , null, null, targetURL, actionURL, geofenceURL, geofenceEnabled, sdkType);
+                    , null, null, targetURL, actionURL, geofenceURL, geofenceEnabled, sdkType, null);
             if (geofenceEnabled && !StringUtils.isNullOrWhiteSpace(geofenceURL)) {
                 Visilabs.CallAPI().startGpsManager();
             }
@@ -373,7 +385,30 @@ public class Visilabs {
         if (visilabs == null) {
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
-                    , RESTURL, encryptedDataSource, null, null, null, false, sdkType);
+                    , RESTURL, encryptedDataSource, null, null, null, false, sdkType, null);
+        }
+        return visilabs;
+    }
+
+    /**
+     * Tam parametreli CreateAPI + capture.
+     *
+     * @param captureApiKey {@code capture} event'lerinde gönderilen müşteriye özel {@code api_key}.
+     *                      null ise capture kapalıdır. Manifest ile kurulumda
+     *                      {@code VisilabsCaptureApiKey} meta-data'sı kullanılır.
+     */
+    public static synchronized Visilabs CreateAPI(String organizationID, String siteID, String segmentURL,
+                                                  String dataSource, String realTimeURL, String channel,
+                                                  Context context, String targetURL, String actionURL,
+                                                  int requestTimeoutSeconds, String geofenceURL, boolean geofenceEnabled,
+                                                  String sdkType, String captureApiKey) {
+        if (visilabs == null) {
+            visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
+                    context, requestTimeoutSeconds
+                    , null, null, targetURL, actionURL, geofenceURL, geofenceEnabled, sdkType, captureApiKey);
+            if (geofenceEnabled && !StringUtils.isNullOrWhiteSpace(geofenceURL)) {
+                Visilabs.CallAPI().startGpsManager();
+            }
         }
         return visilabs;
     }
@@ -394,6 +429,7 @@ public class Visilabs {
             String geofenceURL = null;
             boolean geofenceEnabled = false;
             String sdkType = null;
+            String captureApiKey = null;
 
             try {
                 ApplicationInfo ai = context.getPackageManager().getApplicationInfo(context.getPackageName(),
@@ -414,6 +450,7 @@ public class Visilabs {
                 geofenceEnabled = ai.metaData.getBoolean(VisilabsConstant.VISILABS_GEOFENCE_ENABLED,
                         false);
                 sdkType = ai.metaData.getString(VisilabsConstant.VISILABS_SDK_TYPE);
+                captureApiKey = ai.metaData.getString(VisilabsConstant.VISILABS_CAPTURE_API_KEY);
 
             } catch (Exception e) {
                 Log.d("CreateApi", e.toString());
@@ -441,12 +478,13 @@ public class Visilabs {
                     geofenceURL = parameters.getGeofenceUrl();
                     geofenceEnabled = parameters.getGeofenceEnabled();
                     sdkType = parameters.getSdkType();
+                    captureApiKey = parameters.getCaptureApiKey();
                 }
 
             }
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
-                    , RESTURL, encryptedDataSource, targetURL, actionURL, geofenceURL, geofenceEnabled, sdkType);
+                    , RESTURL, encryptedDataSource, targetURL, actionURL, geofenceURL, geofenceEnabled, sdkType, captureApiKey);
             if (geofenceEnabled && !StringUtils.isNullOrWhiteSpace(geofenceURL)) {
                 Visilabs.CallAPI().startGpsManager();
             }
@@ -1486,6 +1524,7 @@ public class Visilabs {
             Log.w(LOG_TAG, "Attempted to use null or empty exVisitorID. Ignoring.");
             return;
         }
+        getCapture().identify(exVisitorID);
         exVisitorID = VisilabsEncoder.encode(exVisitorID);
         long timeOfEvent = System.currentTimeMillis() / 1000;
 
@@ -1556,6 +1595,7 @@ public class Visilabs {
             VisilabsLog.w(LOG_TAG, "Attempted to use nil or empty exVisitorID. Ignoring.");
             return;
         }
+        getCapture().identify(exVisitorID);
         try {
             exVisitorID = URLEncoder.encode(exVisitorID, "UTF-8").replace("+", "%20");
         } catch (Exception e) {
@@ -1635,7 +1675,77 @@ public class Visilabs {
         setUtmSource(null);
         setUtmTerm(null);
         setUtmContent(null);
+        getCapture().reset();
     }
+
+    // region Capture
+
+    /**
+     * PostHog uyumlu event gönderir. Cihaz, uygulama, session ve kimlik bilgileri otomatik eklenir.
+     * CreateAPI'ye captureApiKey verilmediyse hiçbir şey göndermez.
+     * <p>
+     * Kullanıcı eşleştirme otomatiktir: login / signUp çağrıldığında exVisitorID ile $identify
+     * gönderilir ve önceki anonim event'ler bu kullanıcıya bağlanır; logout yeni anonim kimlik başlatır.
+     *
+     * @param event      Event adı, ör. "rmc_view_item".
+     * @param properties String, sayı, Boolean, Date, Map ve List değerleri desteklenir.
+     */
+    public void capture(String event, Map<String, Object> properties) {
+        getCapture().capture(event, properties);
+    }
+
+    public void capture(String event) {
+        getCapture().capture(event, null);
+    }
+
+    /**
+     * Mevcut kullanıcının kişi profiline property yazar ($set event'i).
+     *
+     * @param properties Her çağrıda üzerine yazılır.
+     * @param setOnce    Sadece daha önce yazılmamışsa yazılır.
+     */
+    public void setPersonProperties(Map<String, Object> properties, Map<String, Object> setOnce) {
+        getCapture().setPersonProperties(properties, setOnce);
+    }
+
+    public void setPersonProperties(Map<String, Object> properties) {
+        getCapture().setPersonProperties(properties, null);
+    }
+
+    /** Kuyrukta bekleyen capture event'lerini hemen gönderir. */
+    public void flushCapture() {
+        getCapture().flush();
+    }
+
+    /** Capture event'lerinin distinct_id'si: login öncesi anonim id, sonrası exVisitorID. */
+    public String getDistinctId() {
+        return getCapture().getDistinctId();
+    }
+
+    /** Bu kurulum için üretilen anonim id. logout ile yenilenir. */
+    public String getAnonymousId() {
+        return getCapture().getAnonymousId();
+    }
+
+    private VisilabsCapture getCapture() {
+        return VisilabsCapture.shared(mContext, mSdkVersion);
+    }
+
+    /**
+     * login / signUp / OM.exVisitorID ile gelen kullanıcıyı capture tarafında da tanıtır.
+     * Sonrasında çağrılan capture'lardan önce sıraya girmesi için senkron çağrılıyor.
+     */
+    private void identifyCaptureUser(Map<String, String> properties) {
+        if (properties == null) {
+            return;
+        }
+        String exVisitorID = properties.get(VisilabsConstant.EXVISITORID_KEY);
+        if (!StringUtils.isNullOrWhiteSpace(exVisitorID)) {
+            getCapture().identify(exVisitorID);
+        }
+    }
+
+    // endregion
 
     public void sendCampaignParameters(HashMap<String, String> properties, Activity parent) {
         if(isBlocked()) {
@@ -1830,6 +1940,8 @@ public class Visilabs {
             return;
         }
 
+        identifyCaptureUser(properties);
+
         updateSessionParameters(pageName);
 
         if (properties == null) {
@@ -1850,6 +1962,8 @@ public class Visilabs {
             Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
         }
+
+        identifyCaptureUser(properties);
 
         updateSessionParameters(pageName);
 

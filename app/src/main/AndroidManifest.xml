@@ -69,6 +69,10 @@
         <meta-data
             android:name="VisilabsSdkType"
             android:value="native" />
+        <!-- capture (PostHog uyumlu event'ler): test projesinin api_key'i, boş bırakılırsa capture kapalı -->
+        <meta-data
+            android:name="VisilabsCaptureApiKey"
+            android:value="phc_hMbCDB4GWbGncpc7pJ2LXzO4t5o3BCO2fFzsyBkx9LM" />
 
         <activity
             android:name=".MainActivity"

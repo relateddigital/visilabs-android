@@ -95,7 +95,8 @@ public class MainApplication extends MultiDexApplication {
                     bundle.getInt("VisilabsRequestTimeoutInSeconds", 30),
                     bundle.getString("VisilabsGeofenceURL", ""),
                     bundle.getBoolean("VisilabsGeofenceEnabled", false),
-                    bundle.getString("VisilabsSdkType", "native")
+                    bundle.getString("VisilabsSdkType", "native"),
+                    bundle.getString("VisilabsCaptureApiKey", null)
             );
         }
 

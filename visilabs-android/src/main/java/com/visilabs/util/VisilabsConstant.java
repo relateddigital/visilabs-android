@@ -26,6 +26,7 @@ public class VisilabsConstant {
     public static final String VISILABS_CHANNEL = "VisilabsChannel";
 
     public static final String VISILABS_SDK_TYPE = "VisilabsSdkType";
+    public static final String VISILABS_CAPTURE_API_KEY = "VisilabsCaptureApiKey";
 
     public static final String VISILABS_REQUEST_TIMEOUT_IN_SECONDS = "VisilabsRequestTimeoutInSeconds";
     public static final String VISILABS_REST_URL = "VisilabsRESTURL";

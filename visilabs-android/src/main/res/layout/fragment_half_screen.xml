@@ -5,29 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/half_screen_container_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:layout_alignParentTop="true"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <LinearLayout
+            android:id="@+id/top_content_area"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/top_title_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="4dp"
-                android:paddingEnd="32dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:ellipsize="end"
                 android:gravity="center"
-                android:paddingLeft="4dp"
-                android:paddingRight="32dp" />
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -72,37 +75,59 @@
 
         <ImageButton
             android:id="@+id/top_close_button"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="top|end"
-            android:layout_margin="5dp"
-            android:textColor="#fff" />
-    </FrameLayout>
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@id/top_content_area"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginEnd="16dp"
+            android:padding="6dp"
+            android:elevation="4dp"
+            android:scaleType="fitCenter"
+            android:contentDescription="@null" />
+    </RelativeLayout>
 
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/half_screen_container_bot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal" >
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <ImageButton
+            android:id="@+id/bot_close_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginEnd="16dp"
+            android:padding="6dp"
+            android:elevation="4dp"
+            android:scaleType="fitCenter"
+            android:contentDescription="@null" />
 
         <LinearLayout
+            android:id="@+id/bot_content_area"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_below="@id/bot_close_button"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/bot_title_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="4dp"
-                android:paddingEnd="32dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:ellipsize="end"
                 android:gravity="center"
-                android:paddingLeft="4dp"
-                android:paddingRight="32dp" />
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -144,13 +169,5 @@
                     android:scaleType="fitCenter" />
             </LinearLayout>
         </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/bot_close_button"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="top|end"
-            android:layout_margin="5dp"
-            android:textColor="#fff" />
-    </FrameLayout>
+    </RelativeLayout>
 </RelativeLayout>
