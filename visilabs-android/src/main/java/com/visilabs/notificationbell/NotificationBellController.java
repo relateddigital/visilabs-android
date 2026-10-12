@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.graphics.ColorUtils;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
@@ -232,6 +233,7 @@ public class NotificationBellController {
             binding.tvTitle.setText(notificationBell.getActiondata().getTitle());
         }
 
+        binding.ivClose.setImageResource(getCloseIcon());
         binding.ivClose.setOnClickListener(v -> dismiss());
         binding.dialogContainer.setOnClickListener(null); // Arka plan tıklamalarını engelle
 
@@ -321,5 +323,26 @@ public class NotificationBellController {
     private void hideDialog() {
         loadStaticBellIcon();
         binding.dialogContainer.setVisibility(View.GONE);
+    }
+
+    private int getCloseIcon() {
+        if (extendedProps != null && extendedProps.getClose_button_color() != null) {
+            String color = extendedProps.getClose_button_color().toLowerCase(Locale.ROOT);
+            if ("white".equals(color)) {
+                return R.drawable.vl_close_button_white;
+            } else if ("black".equals(color)) {
+                return R.drawable.vl_close_button_black;
+            }
+        }
+        if (extendedProps != null && extendedProps.getBackground_color() != null) {
+            try {
+                int bgColor = Color.parseColor(extendedProps.getBackground_color());
+                if (ColorUtils.calculateLuminance(bgColor) < 0.5) {
+                    return R.drawable.vl_close_button_white;
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        return R.drawable.vl_close_button_black;
     }
 }

@@ -23,6 +23,9 @@ public class NotificationBellExtendedProps implements Serializable {
     @SerializedName("text_text_size")
     private String text_text_size;
 
+    @SerializedName("close_button_color")
+    private String close_button_color;
+
     public String getBackground_color() {
         return background_color;
     }
@@ -45,5 +48,13 @@ public class NotificationBellExtendedProps implements Serializable {
 
     public String getText_text_size() {
         return text_text_size;
+    }
+
+    public String getClose_button_color() {
+        return close_button_color;
+    }
+
+    public void setClose_button_color(String close_button_color) {
+        this.close_button_color = close_button_color;
     }
 }

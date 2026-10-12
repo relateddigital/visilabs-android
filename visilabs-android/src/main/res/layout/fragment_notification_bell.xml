@@ -64,7 +64,7 @@
                         android:layout_height="48dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:padding="12dp"
-                        android:src="@drawable/ic_close_modern_24dp"
+                        android:src="@drawable/vl_close_button_black"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
