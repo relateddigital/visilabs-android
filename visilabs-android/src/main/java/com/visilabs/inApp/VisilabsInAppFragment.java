@@ -54,99 +54,71 @@ public class VisilabsInAppFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        if(mInAppMessage.getActionData().getPos() !=null){
-        if (mInAppMessage.getActionData().getPos().equals("top")) {
-            bindingTop = FragmentInAppMiniTopBinding.inflate(inflater, container, false);
-            View viewTop = bindingTop.getRoot();
-            if (mInAppNotificationState != null) {
-                bindingTop.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
+        if (mInAppNotificationState == null || mInAppMessage == null || mInAppMessage.getActionData() == null) {
+            Log.e(LOG_TAG, "InAppMessage is null! Closing the mini in app.");
+            cleanUp();
+            return null;
+        }
+        try {
+            if (isTop()) {
+                bindingTop = FragmentInAppMiniTopBinding.inflate(inflater, container, false);
+                View viewTop = bindingTop.getRoot();
+                bindingTop.tvInAppTitleMini.setText(InAppSafeUtils.replaceNewLines(mInAppMessage.getActionData().getMsgTitle()));
                 bindingTop.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
                 if(mInAppMessage.getActionData().getMsgTitleColor() != null) {
-                    bindingTop.tvInAppTitleMini.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+                    bindingTop.tvInAppTitleMini.setTextColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getMsgTitleColor(), bindingTop.tvInAppTitleMini.getCurrentTextColor()));
                 }
                 setCloseButton();
-                if (!mInAppMessage.getActionData().getImg().equals("")) {
+                String img = mInAppMessage.getActionData().getImg();
+                if (!InAppSafeUtils.isBlank(img)) {
                     bindingTop.ivInAppImageMini.setVisibility(View.VISIBLE);
-                    Picasso.get().load(mInAppMessage.getActionData().getImg()).into(bindingTop.ivInAppImageMini);
+                    Picasso.get().load(img).into(bindingTop.ivInAppImageMini);
                 } else {
                     bindingTop.ivInAppImageMini.setVisibility(View.GONE);
                 }
                 delay();
                 mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
-              } else {
-                cleanUp();
-                viewTop = null;
-            }
-            return viewTop;
-         }
-        else {
-            binding = FragmentInAppMiniBinding.inflate(inflater, container, false);
-            View view = binding.getRoot();
-            if (mInAppNotificationState != null) {
-                if (mInAppMessage == null) {
-                    remove();
-                } else {
-                    binding.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
-                    binding.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
-                    if(mInAppMessage.getActionData().getMsgTitleColor() != null) {
-                        binding.tvInAppTitleMini.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
-                    }
-                    setCloseButton();
-                    if (!mInAppMessage.getActionData().getImg().equals("")) {
-                        binding.ivInAppImageMini.setVisibility(View.VISIBLE);
-                        Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivInAppImageMini);
-                    } else {
-                        binding.ivInAppImageMini.setVisibility(View.GONE);
-                    }
-                    if (mInAppMessage.getActionData().getDuration() != null) {
-                        delay();
-                    }
-                    mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
-                }
+                return viewTop;
             } else {
-                cleanUp();
-                view = null;
-            }
-            return view;
-        }  } else {
-            binding = FragmentInAppMiniBinding.inflate(inflater, container, false);
-            View view = binding.getRoot();
-            if (mInAppNotificationState != null) {
-                if (mInAppMessage == null) {
-                    remove();
-                } else {
-                    binding.tvInAppTitleMini.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
-                    binding.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
-                    if(mInAppMessage.getActionData().getMsgTitleColor() != null) {
-                        binding.tvInAppTitleMini.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
-                    }
-                    setCloseButton();
-                    if (!mInAppMessage.getActionData().getImg().equals("")) {
-                        binding.ivInAppImageMini.setVisibility(View.VISIBLE);
-                        Picasso.get().load(mInAppMessage.getActionData().getImg()).into(binding.ivInAppImageMini);
-                    } else {
-                        binding.ivInAppImageMini.setVisibility(View.GONE);
-                    }
-                    if (mInAppMessage.getActionData().getDuration() != null) {
-                        delay();
-                    }
-                    mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
+                binding = FragmentInAppMiniBinding.inflate(inflater, container, false);
+                View view = binding.getRoot();
+                binding.tvInAppTitleMini.setText(InAppSafeUtils.replaceNewLines(mInAppMessage.getActionData().getMsgTitle()));
+                binding.tvInAppTitleMini.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
+                if(mInAppMessage.getActionData().getMsgTitleColor() != null) {
+                    binding.tvInAppTitleMini.setTextColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getMsgTitleColor(), binding.tvInAppTitleMini.getCurrentTextColor()));
                 }
-            } else {
-                cleanUp();
-                view = null;
+                setCloseButton();
+                String img = mInAppMessage.getActionData().getImg();
+                if (!InAppSafeUtils.isBlank(img)) {
+                    binding.ivInAppImageMini.setVisibility(View.VISIBLE);
+                    Picasso.get().load(img).into(binding.ivInAppImageMini);
+                } else {
+                    binding.ivInAppImageMini.setVisibility(View.GONE);
+                }
+                if (mInAppMessage.getActionData().getDuration() != null) {
+                    delay();
+                }
+                mHandler.postDelayed(mRemover, MINI_REMOVE_TIME);
+                return view;
             }
-            return view;
-
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Could not render the mini in app, closing.", e);
+            cleanUp();
+            return null;
         }
     }
 
+    private boolean isTop() {
+        return mInAppMessage != null && mInAppMessage.getActionData() != null &&
+                "top".equals(mInAppMessage.getActionData().getPos());
+    }
 
     public void setCloseButton() {
-        if (!mInAppMessage.getActionData().getCloseButtonColor().isEmpty()) {
-            if (mInAppMessage.getActionData().getPos().equals("top")) {
+        String closeButtonColor = mInAppMessage.getActionData().getCloseButtonColor();
+        if (!InAppSafeUtils.isBlank(closeButtonColor)) {
+            if (isTop()) {
                 bindingTop.ibClose.setVisibility(View.VISIBLE);
-                bindingTop.ibClose.setColorFilter(Color.parseColor(mInAppMessage.getActionData().getCloseButtonColor()));
+                bindingTop.ibClose.setColorFilter(InAppSafeUtils.parseColor(closeButtonColor, Color.WHITE));
                 bindingTop.ibClose.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -155,7 +127,7 @@ public class VisilabsInAppFragment extends Fragment {
                 });
             } else {
                 binding.ibClose.setVisibility(View.VISIBLE);
-                binding.ibClose.setColorFilter(Color.parseColor(mInAppMessage.getActionData().getCloseButtonColor()));
+                binding.ibClose.setColorFilter(InAppSafeUtils.parseColor(closeButtonColor, Color.WHITE));
                 binding.ibClose.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -180,15 +152,15 @@ public class VisilabsInAppFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        if (mCleanedUp) {
-            mParent.getFragmentManager().beginTransaction().remove(this).commit();
+        if (mCleanedUp && mParent != null && isAdded()) {
+            mParent.getFragmentManager().beginTransaction().remove(this).commitAllowingStateLoss();
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(mInAppMessage != null) {
+        if(mInAppMessage != null && mDisplayMini != null) {
             mHandler.postDelayed(mDisplayMini, 500);
         }
     }
@@ -223,33 +195,32 @@ public class VisilabsInAppFragment extends Fragment {
         mDisplayMini = new Runnable() {
             @Override
             public void run() {
-                getView().setVisibility(View.VISIBLE);
-                getView().setBackgroundColor(mInAppNotificationState.getHighlightColor());
-                if(mInAppMessage.getActionData().getBackground() != null) {
-                    getView().setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+                View view = getView();
+                if (view == null || mCleanedUp) {
+                    return;
                 }
-            else {
-                    getView().setBackgroundColor(mInAppNotificationState.getHighlightColor());
-                }
-                getView().setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View view, MotionEvent event) {
-                        return VisilabsInAppFragment.this.mDetector.onTouchEvent(event);
+                try {
+                    view.setVisibility(View.VISIBLE);
+                    view.setBackgroundColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getBackground(),
+                            mInAppNotificationState.getHighlightColor()));
+                    view.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent event) {
+                            return mDetector != null && VisilabsInAppFragment.this.mDetector.onTouchEvent(event);
+                        }
+                    });
+                    if (isTop() && bindingTop != null) {
+                        view.startAnimation(AnimationManager.getMiniTranslateTopAnimation(getActivity()));
+                        bindingTop.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
+                    } else if (binding != null) {
+                        view.startAnimation(AnimationManager.getMiniTranslateAnimation(getActivity()));
+                        binding.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
                     }
-                });
-                if(mInAppMessage.getActionData().getPos() != null) {
-                if (mInAppMessage.getActionData().getPos().equals("top")) {
-                    getView().startAnimation(AnimationManager.getMiniTranslateTopAnimation(getActivity()));
-                    bindingTop.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
-                } else {
-                    getView().startAnimation(AnimationManager.getMiniTranslateAnimation(getActivity()));
-                    binding.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Could not display the mini in app.", e);
+                    remove();
                 }
-                }else {
-                    getView().startAnimation(AnimationManager.getMiniTranslateAnimation(getActivity()));
-                    binding.ivInAppImageMini.startAnimation(AnimationManager.getMiniScaleAnimation(getActivity()));
-                }
-                }
+            }
         };
     }
 
@@ -321,8 +292,12 @@ public class VisilabsInAppFragment extends Fragment {
 
     private void cleanUp() {
         if (!mCleanedUp) {
-            mHandler.removeCallbacks(mRemover);
-            mHandler.removeCallbacks(mDisplayMini);
+            if (mHandler != null) {
+                mHandler.removeCallbacks(mRemover);
+                if (mDisplayMini != null) {
+                    mHandler.removeCallbacks(mDisplayMini);
+                }
+            }
             VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
 
             try {
@@ -343,12 +318,14 @@ public class VisilabsInAppFragment extends Fragment {
     private void remove() {
         if (mParent != null && !mCleanedUp) {
             mHandler.removeCallbacks(mRemover);
-            mHandler.removeCallbacks(mDisplayMini);
+            if (mDisplayMini != null) {
+                mHandler.removeCallbacks(mDisplayMini);
+            }
 
             final FragmentManager fragmentManager = mParent.getFragmentManager();
 
             try {
-                if (mInAppMessage.getActionData().getPos().equals("top")) {
+                if (isTop()) {
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
                     transaction.setCustomAnimations(0, R.anim.slide_up).remove(this).commitAllowingStateLoss();
                     VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);

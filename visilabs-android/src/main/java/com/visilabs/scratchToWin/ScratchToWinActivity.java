@@ -1,7 +1,6 @@
 package com.visilabs.scratchToWin;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -27,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.ActivityScratchToWinBinding;
+import com.visilabs.inApp.InAppSafeUtils;
 import com.visilabs.mailSub.Report;
 import com.visilabs.scratchToWin.model.ExtendedProps;
 import com.visilabs.scratchToWin.model.ScratchToWinModel;
@@ -58,8 +58,21 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         this.setFinishOnTouchOutside(true);
 
         getScratchToWinMessage();
+        if (mScratchToWinMessage == null || mScratchToWinMessage.getActiondata() == null) {
+            finish();
+            return;
+        }
         parseExtendedProps();
-        setupInitialView();
+        if (mExtendedProps == null) {
+            finish();
+            return;
+        }
+        try {
+            setupInitialView();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Scratch to win could not be rendered properly!", e);
+            finish();
+        }
     }
 
     @Override
@@ -86,7 +99,8 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
     private void setupInitialView() {
         setupCloseButton();
         setupScratchToWin();
-        isMailSubsForm = mScratchToWinMessage.getActiondata().getMailSubscription();
+        isMailSubsForm = Boolean.TRUE.equals(mScratchToWinMessage.getActiondata().getMailSubscription()) &&
+                mScratchToWinMessage.getActiondata().getMailSubscriptionForm() != null;
         if (isMailSubsForm) {
             binding.viewToBeScratched.setInvalidEmailMessage(mScratchToWinMessage.getActiondata()
                     .getMailSubscriptionForm().getInvalidEmailMessage());
@@ -110,37 +124,34 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
     }
 
     private void setupScratchToWin() {
-        if (mExtendedProps.getBackgroundColor() != null &&
-                !mExtendedProps.getBackgroundColor().isEmpty()) {
-            binding.scratchToWinContainer.setBackgroundColor(Color.parseColor(mExtendedProps.getBackgroundColor()));
-        }
+        InAppSafeUtils.setBackgroundColor(binding.scratchToWinContainer, mExtendedProps.getBackgroundColor());
 
-        if(!mScratchToWinMessage.getActiondata().getImg().isEmpty()) {
+        if(!InAppSafeUtils.isBlank(mScratchToWinMessage.getActiondata().getImg())) {
             Picasso.get().load(mScratchToWinMessage.getActiondata().getImg()).into(binding.mainImage);
         }
 
-        binding.titleText.setText(mScratchToWinMessage.getActiondata().getContentTitle().replace("\\n", "\n"));
-        binding.titleText.setTextColor(Color.parseColor(mExtendedProps.getContentTitleTextColor()));
-        binding.titleText.setTextSize(Float.parseFloat(mExtendedProps.getContentTitleTextSize()) + 12);
+        binding.titleText.setText(InAppSafeUtils.replaceNewLines(mScratchToWinMessage.getActiondata().getContentTitle()));
+        InAppSafeUtils.setTextColor(binding.titleText, mExtendedProps.getContentTitleTextColor());
+        binding.titleText.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getContentTitleTextSize(), 0f) + 12);
         binding.titleText.setTypeface(mExtendedProps.getContentTitleFontFamily(this), Typeface.BOLD);
 
-        binding.bodyText.setText(mScratchToWinMessage.getActiondata().getContentBody().replace("\\n", "\n"));
-        binding.bodyText.setTextColor(Color.parseColor(mExtendedProps.getContentBodyTextColor()));
-        binding.bodyText.setTextSize(Float.parseFloat(mExtendedProps.getContentBodyTextSize()) + 8);
+        binding.bodyText.setText(InAppSafeUtils.replaceNewLines(mScratchToWinMessage.getActiondata().getContentBody()));
+        InAppSafeUtils.setTextColor(binding.bodyText, mExtendedProps.getContentBodyTextColor());
+        binding.bodyText.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getContentBodyTextSize(), 0f) + 8);
         binding.bodyText.setTypeface(mExtendedProps.getContentBodyFontFamily(this));
 
         binding.promotionCodeText.setText(mScratchToWinMessage.getActiondata().getPromotionCode());
-        binding.promotionCodeText.setTextColor(Color.parseColor(mExtendedProps.getPromoCodeTextColor()));
-        binding.promotionCodeText.setTextSize(Float.parseFloat(mExtendedProps.getPromoCodeTextSize()) + 12);
+        InAppSafeUtils.setTextColor(binding.promotionCodeText, mExtendedProps.getPromoCodeTextColor());
+        binding.promotionCodeText.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getPromoCodeTextSize(), 0f) + 12);
         binding.promotionCodeText.setTypeface(mExtendedProps.getPromoCodeFontFamily(this));
 
         binding.copyToClipboard.setText(mScratchToWinMessage.getActiondata().getCopybuttonLabel());
-        binding.copyToClipboard.setTextColor(Color.parseColor(mExtendedProps.getCopyButtonTextColor()));
-        binding.copyToClipboard.setTextSize(Float.parseFloat(mExtendedProps.getCopyButtonTextSize()) + 10);
+        InAppSafeUtils.setTextColor(binding.copyToClipboard, mExtendedProps.getCopyButtonTextColor());
+        binding.copyToClipboard.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getCopyButtonTextSize(), 0f) + 10);
         binding.copyToClipboard.setTypeface(mExtendedProps.getCopyButtonFontFamily(this));
-        binding.copyToClipboard.setBackgroundColor(Color.parseColor(mExtendedProps.getCopyButtonColor()));
+        InAppSafeUtils.setBackgroundColor(binding.copyToClipboard, mExtendedProps.getCopyButtonColor());
 
-        binding.viewToBeScratched.setColor(Color.parseColor(mScratchToWinMessage.getActiondata().getScratchColor()));
+        binding.viewToBeScratched.setColor(InAppSafeUtils.parseColor(mScratchToWinMessage.getActiondata().getScratchColor(), Color.BLACK));
 
         binding.copyToClipboard.setVisibility(View.GONE);
         binding.viewToBeScratched.setContainer(binding.scratchToWinContainer);
@@ -163,8 +174,8 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         if(mScratchToWinMessage.getActiondata().getDownContentBody() != null &&
                 !mScratchToWinMessage.getActiondata().getDownContentBody().isEmpty()) {
             binding.contentBottomText.setText(mScratchToWinMessage.getActiondata().getDownContentBody().replace("\\n", "\n"));
-            binding.contentBottomText.setTextColor(Color.parseColor(mExtendedProps.getDownContentBodyTextColor()));
-            binding.contentBottomText.setTextSize(Float.parseFloat(mExtendedProps.getDownContentBodyTextSize()) + 12);
+            InAppSafeUtils.setTextColor(binding.contentBottomText, mExtendedProps.getDownContentBodyTextColor());
+            binding.contentBottomText.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getDownContentBodyTextSize(), 0f) + 12);
             binding.contentBottomText.setTypeface(mExtendedProps.getDownContentBodyFontFamily(this));
             binding.contentBottomText.setVisibility(View.VISIBLE);
         } else {
@@ -178,7 +189,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
 
         binding.emailPermitText.setText(createHtml(mScratchToWinMessage.getActiondata().getMailSubscriptionForm().getEmailpermitText(),
                 mExtendedProps.getEmailPermitTextUrl()));
-        binding.emailPermitText.setTextSize(Float.parseFloat(mExtendedProps.getEmailPermitTextSize()) + 10);
+        binding.emailPermitText.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getEmailPermitTextSize(), 0f) + 10);
         binding.emailPermitText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,7 +199,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mExtendedProps.getEmailPermitTextUrl()));
                         startActivity(viewIntent);
 
-                    } catch (final ActivityNotFoundException e) {
+                    } catch (final Exception e) {
                         Log.i(LOG_TAG, "Could not direct to the url entered!");
                     }
                 }
@@ -196,7 +207,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
         });
         binding.consentText.setText(createHtml(mScratchToWinMessage.getActiondata().getMailSubscriptionForm().getConsentText(),
                 mExtendedProps.getConsentTextUrl()));
-        binding.consentText.setTextSize(Float.parseFloat(mExtendedProps.getConsentTextSize()) + 10);
+        binding.consentText.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getConsentTextSize(), 0f) + 10);
         binding.consentText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,7 +217,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mExtendedProps.getConsentTextUrl()));
                         startActivity(viewIntent);
 
-                    } catch (final ActivityNotFoundException e) {
+                    } catch (final Exception e) {
                         Log.i(LOG_TAG, "Could not direct to the url entered!");
                     }
                 }
@@ -237,10 +248,10 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
 
         binding.emailEdit.setHint(mScratchToWinMessage.getActiondata().getMailSubscriptionForm().getPlaceholder());
         binding.saveMail.setText(mScratchToWinMessage.getActiondata().getMailSubscriptionForm().getButtonLabel());
-        binding.saveMail.setTextColor(Color.parseColor(mExtendedProps.getButtonTextColor()));
-        binding.saveMail.setTextSize(Float.parseFloat(mExtendedProps.getButtonTextSize()) + 10);
+        InAppSafeUtils.setTextColor(binding.saveMail, mExtendedProps.getButtonTextColor());
+        binding.saveMail.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getButtonTextSize(), 0f) + 10);
         binding.saveMail.setTypeface(mExtendedProps.getButtonFontFamily(this));
-        binding.saveMail.setBackgroundColor(Color.parseColor(mExtendedProps.getButtonColor()));
+        InAppSafeUtils.setBackgroundColor(binding.saveMail, mExtendedProps.getButtonColor());
 
         binding.emailEdit.addTextChangedListener(new TextWatcher() {
             @Override
@@ -287,7 +298,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
                     binding.saveMail.setVisibility(View.GONE);
 
                     Visilabs.CallAPI().createSubsJsonRequest(mScratchToWinMessage.getActiondata().getType(),
-                            mScratchToWinMessage.getActid().toString(),
+                            String.valueOf(mScratchToWinMessage.getActid()),
                             mScratchToWinMessage.getActiondata().getAuth(), email);
 
                     binding.viewToBeScratched.enableScratching();
@@ -305,12 +316,8 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
     }
 
     private int getCloseIcon() {
-        switch (mExtendedProps.getCloseButtonColor()) {
-            case "white":
-                return R.drawable.ic_close_white_24dp;
-
-            case "black":
-                return R.drawable.ic_close_black_24dp;
+        if ("white".equals(mExtendedProps.getCloseButtonColor())) {
+            return R.drawable.ic_close_white_24dp;
         }
         return R.drawable.ic_close_black_24dp;
     }
@@ -321,14 +328,17 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
                     getExtendedProps()).getPath(), ExtendedProps.class);
         } catch (Exception e) {
             Log.e(LOG_TAG, "Extended properties could not be parsed properly!");
-            finish();
+            mExtendedProps = null;
         }
     }
 
     //Email Permit TextEmail Permit <LINK>TextEmail</LINK> Permit Text
     private Spanned createHtml(String text, String url) {
+        if (text == null) {
+            text = "";
+        }
         if(url == null || url.isEmpty() || !Patterns.WEB_URL.matcher(url).matches()){
-            return Html.fromHtml(url.replace("<LINK>", "").replace("</LINK>", ""));
+            return Html.fromHtml(text.replace("<LINK>", "").replace("</LINK>", ""));
         }
         Pattern pattern = Pattern.compile("<LINK>(.+?)</LINK>");
         Matcher matcher = pattern.matcher(text);
@@ -352,7 +362,7 @@ public class ScratchToWinActivity extends Activity implements ScratchToWinInterf
     }
 
     private Boolean checkEmail(String email) {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        return email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private Boolean checkTheBoxes() {

@@ -1,8 +1,6 @@
 package com.visilabs.inApp;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,14 +40,16 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
         super.onCreateView(inflater, container, savedInstanceState);
         binding = FragmentInAppBottomSheetBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        if (mInAppMessage == null) {
+        if (mInAppMessage == null || mInAppMessage.getActionData() == null) {
             cleanUp();
             return view;
         }
-        binding.tvTitle.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n","\n"));
-        binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n","\n"));
-        binding.tvButton.setText(mInAppMessage.getActionData().getBtnText().toUpperCase());
-        binding.tvClose.setText(mInAppMessage.getActionData().getCloseButtonText().toUpperCase());
+        binding.tvTitle.setText(InAppSafeUtils.replaceNewLines(mInAppMessage.getActionData().getMsgTitle()));
+        binding.tvBody.setText(InAppSafeUtils.replaceNewLines(mInAppMessage.getActionData().getMsgBody()));
+        String btnText = mInAppMessage.getActionData().getBtnText();
+        binding.tvButton.setText(btnText != null ? btnText.toUpperCase() : "");
+        String closeButtonText = mInAppMessage.getActionData().getCloseButtonText();
+        binding.tvClose.setText(closeButtonText != null ? closeButtonText.toUpperCase() : "");
         setListeners();
         return view;
     }
@@ -108,16 +108,12 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
                     Visilabs.CallAPI().setInAppButtonInterface(null);
                     buttonInterface.onPress(uriString);
                 } else {
-                    Uri uri = null;
                     if (uriString != null && uriString.length() > 0) {
                         try {
-                            uri = Uri.parse(uriString);
-                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                            mParent.startActivity(viewIntent);
-                        } catch (IllegalArgumentException e) {
+                            Uri uri = Uri.parse(uriString);
+                            InAppSafeUtils.openLink(mParent, uri);
+                        } catch (Exception e) {
                             Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                        } catch (ActivityNotFoundException e) {
-                            Log.i(LOG_TAG, "User doesn't have an activity for notification URI " + uri);
                         }
                     }
                 }
@@ -135,7 +131,11 @@ public class VisilabsBottomSheetDialogFragment extends BottomSheetDialogFragment
 
     private void cleanUp() {
         VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
-        dismiss();
+        try {
+            dismissAllowingStateLoss();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Could not dismiss the bottom sheet", e);
+        }
     }
 
 }

@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import androidx.core.app.JobIntentService;
+import androidx.core.app.VisilabsSafeJobIntentService;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
@@ -21,7 +21,7 @@ import com.visilabs.gps.util.GeoFencesUtils;
 
 import java.util.List;
 
-public class GeofenceTransitionsIntentService extends JobIntentService {
+public class GeofenceTransitionsIntentService extends VisilabsSafeJobIntentService {
 
     private static final String TAG = "GeofenceTIService";
 
@@ -39,7 +39,9 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
         if (Visilabs.CallAPI() == null) {
             Visilabs.CreateAPI(getApplicationContext());
         }
-        Visilabs.CallAPI().startGpsManager();
+        if (Visilabs.CallAPI() != null) {
+            Visilabs.CallAPI().startGpsManager();
+        }
     }
 
     @Override
@@ -47,6 +49,10 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
         Log.v(TAG, "onHandleWork");
         if (Visilabs.CallAPI() == null) {
             Visilabs.CreateAPI(getApplicationContext());
+        }
+        if (Visilabs.CallAPI() == null) {
+            Log.w(TAG, "Visilabs API has not been initialized, skipping the geofence event!");
+            return;
         }
         Visilabs.CallAPI().startGpsManager();
 
@@ -57,6 +63,11 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
 
         mGeoFenceEvent = GeofencingEvent.fromIntent(intent);
 
+        if (mGeoFenceEvent == null) {
+            Log.w(TAG, "The intent does not contain a geofencing event!");
+            return;
+        }
+
         if (mGeoFenceEvent.hasError()) {
             int errorCode = mGeoFenceEvent.getErrorCode();
             Log.e(TAG, "Location Services error: " + errorCode);
@@ -66,9 +77,8 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
                 return;
 
             mTriggerList = mGeoFenceEvent.getTriggeringGeofences();
-
-            if (Looper.myLooper() == null)
-                Looper.prepare();
+            if (mTriggerList == null)
+                return;
 
             Handler mainHandler = new Handler(Looper.getMainLooper());
             Runnable myRunnable = new Runnable() {
@@ -89,14 +99,15 @@ public class GeofenceTransitionsIntentService extends JobIntentService {
                 }
             };
             mainHandler.post(myRunnable);
-            if (Looper.myLooper() == null)
-                Looper.loop();
         }
     }
 
     private void geoFenceTriggered(String geofence_guid, double lati, double longi) throws Exception {
 
         Log.i(TAG, geofence_guid);
+        if (Visilabs.CallAPI() == null) {
+            return;
+        }
         VisilabsGeofenceRequest request = new VisilabsGeofenceRequest(Visilabs.CallAPI().getContext());
         request.setAction("process");
         request.setApiVer("Android");

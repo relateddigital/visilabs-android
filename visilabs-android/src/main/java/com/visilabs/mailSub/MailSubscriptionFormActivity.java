@@ -20,6 +20,7 @@ import com.visilabs.android.R;
 import com.visilabs.android.databinding.ActivityMailSubscriptionFormBinding;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.inApp.FontFamily;
+import com.visilabs.inApp.InAppSafeUtils;
 import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,9 +47,13 @@ public class MailSubscriptionFormActivity extends Activity {
                     getActiondata().getExtendedProps()).getPath(), ExtendedProps.class);
         } catch (URISyntaxException e) {
             e.printStackTrace();
+            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+            finish();
             return;
         } catch (Exception e) {
             e.printStackTrace();
+            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+            finish();
             return;
         }
 
@@ -72,8 +77,15 @@ public class MailSubscriptionFormActivity extends Activity {
         binding.tvEmailPermit.setMovementMethod(LinkMovementMethod.getInstance());
         binding.tvConsent.setMovementMethod(LinkMovementMethod.getInstance());
 
-        if (isShowingInApp() && mMailSubscriptionForm != null) {
-            setUpView();
+        if (isShowingInApp() && mMailSubscriptionForm != null && mMailSubscriptionForm.getActiondata() != null
+                && mExtendedProps != null) {
+            try {
+                setUpView();
+            } catch (Exception e) {
+                Log.e("Visilabs", "Mail subscription form could not be rendered properly!", e);
+                VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                finish();
+            }
         } else {
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             finish();
@@ -81,7 +93,7 @@ public class MailSubscriptionFormActivity extends Activity {
     }
 
     private void setUpView() {
-        binding.llTextContainer.setBackgroundColor(Color.parseColor(mExtendedProps.getBackground_color()));
+        InAppSafeUtils.setBackgroundColor(binding.llTextContainer, mExtendedProps.getBackground_color());
         setCloseButton();
         setTitle();
         setBody();
@@ -105,16 +117,16 @@ public class MailSubscriptionFormActivity extends Activity {
 
     private void setTitle() {
         binding.tvTitle.setTypeface(mExtendedProps.getTitle_font_family(this), Typeface.BOLD);
-        binding.tvTitle.setText(mMailSubscriptionForm.getActiondata().getTitle().replace("\\n","\n"));
-        binding.tvTitle.setTextColor(Color.parseColor(mExtendedProps.getTitle_text_color()));
-        binding.tvTitle.setTextSize(Float.parseFloat(mExtendedProps.getTitle_text_size()) + 12);
+        binding.tvTitle.setText(InAppSafeUtils.replaceNewLines(mMailSubscriptionForm.getActiondata().getTitle()));
+        InAppSafeUtils.setTextColor(binding.tvTitle, mExtendedProps.getTitle_text_color());
+        binding.tvTitle.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getTitle_text_size(), 0f) + 12);
     }
 
     private void setBody() {
-        binding.tvBody.setText(mMailSubscriptionForm.getActiondata().getMessage().replace("\\n","\n"));
+        binding.tvBody.setText(InAppSafeUtils.replaceNewLines(mMailSubscriptionForm.getActiondata().getMessage()));
         binding.tvBody.setTypeface(mExtendedProps.getText_font_family(this));
-        binding.tvBody.setTextColor(Color.parseColor(mExtendedProps.getText_color()));
-        binding.tvBody.setTextSize(Float.parseFloat(mExtendedProps.getText_size()) + 8);
+        InAppSafeUtils.setTextColor(binding.tvBody, mExtendedProps.getText_color());
+        binding.tvBody.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getText_size(), 0f) + 8);
     }
 
     private void setEmail() {
@@ -123,7 +135,7 @@ public class MailSubscriptionFormActivity extends Activity {
 
     private void setInvalidEmailMessage(){
         binding.tvInvalidEmailMessage.setText(mMailSubscriptionForm.getActiondata().getInvalid_email_message());
-        binding.tvInvalidEmailMessage.setTextSize(Float.parseFloat(mExtendedProps.getText_size()) + 8);
+        binding.tvInvalidEmailMessage.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getText_size(), 0f) + 8);
         binding.tvInvalidEmailMessage.setTextColor(Color.RED);
     }
 
@@ -134,7 +146,7 @@ public class MailSubscriptionFormActivity extends Activity {
         } else {
             binding.tvEmailPermit.setText(createHtml(mMailSubscriptionForm.getActiondata()
                     .getEmailpermit_text(), mExtendedProps.getEmailpermit_text_url() ));
-            binding.tvEmailPermit.setTextSize(Float.parseFloat(mExtendedProps.getEmailpermit_text_size()) + 8);
+            binding.tvEmailPermit.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getEmailpermit_text_size(), 0f) + 8);
         }
         if (mMailSubscriptionForm.getActiondata().getConsent_text() == null || mMailSubscriptionForm
                 .getActiondata().getConsent_text().isEmpty()) {
@@ -142,22 +154,22 @@ public class MailSubscriptionFormActivity extends Activity {
         } else {
             binding.tvConsent.setText(createHtml(mMailSubscriptionForm.getActiondata().getConsent_text(),
                     mExtendedProps.getConsent_text_url() ));
-            binding.tvConsent.setTextSize(Float.parseFloat(mExtendedProps.getConsent_text_size()) + 8);
+            binding.tvConsent.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getConsent_text_size(), 0f) + 8);
         }
     }
 
     private void setCheckConsentMessage(){
         binding.tvCheckConsentMessage.setText(mMailSubscriptionForm.getActiondata().getCheck_consent_message());
-        binding.tvCheckConsentMessage.setTextSize(Float.parseFloat(mExtendedProps.getText_size()) + 8);
+        binding.tvCheckConsentMessage.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getText_size(), 0f) + 8);
         binding.tvCheckConsentMessage.setTextColor(Color.RED);
     }
 
     private void setButton() {
         binding.btn.setText(mMailSubscriptionForm.getActiondata().getButton_label());
         binding.btn.setTypeface(mExtendedProps.getButton_font_family(this));
-        binding.btn.setTextColor(Color.parseColor(mExtendedProps.getButton_text_color()));
-        binding.btn.setBackgroundColor(Color.parseColor(mExtendedProps.getButton_color()));
-        binding.btn.setTextSize(Float.parseFloat(mExtendedProps.getButton_text_size()) + 8);
+        InAppSafeUtils.setTextColor(binding.btn, mExtendedProps.getButton_text_color());
+        InAppSafeUtils.setBackgroundColor(binding.btn, mExtendedProps.getButton_color());
+        binding.btn.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getButton_text_size(), 0f) + 8);
         binding.btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,13 +239,16 @@ public class MailSubscriptionFormActivity extends Activity {
     }
 
     private Boolean checkEmail(String email){
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        return email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     //Email Permit TextEmail Permit <LINK>TextEmail</LINK> Permit Text
     private Spanned createHtml(String text, String url) {
+        if (text == null) {
+            text = "";
+        }
         if(url == null || url.isEmpty() || !Patterns.WEB_URL.matcher(url).matches()){
-            return Html.fromHtml(url.replace("<LINK>", "").replace("</LINK>", ""));
+            return Html.fromHtml(text.replace("<LINK>", "").replace("</LINK>", ""));
         }
         Pattern pattern = Pattern.compile("<LINK>(.+?)</LINK>");
         Matcher matcher = pattern.matcher(text);
@@ -252,12 +267,8 @@ public class MailSubscriptionFormActivity extends Activity {
     }
 
     private int getCloseIcon() {
-        switch (mExtendedProps.getClose_button_color()) {
-            case "white":
-                return R.drawable.ic_close_white_24dp;
-
-            case "black":
-                return R.drawable.ic_close_black_24dp;
+        if ("white".equals(mExtendedProps.getClose_button_color())) {
+            return R.drawable.ic_close_white_24dp;
         }
         return R.drawable.ic_close_black_24dp;
     }

@@ -5,12 +5,14 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -32,6 +34,7 @@ import com.visilabs.api.VisilabsAction;
 import com.visilabs.api.VisilabsActionsCallback;
 import com.visilabs.api.VisilabsApiMethods;
 import com.visilabs.api.VisilabsInAppMessageCallback;
+import com.visilabs.api.VisilabsRemote;
 import com.visilabs.api.VisilabsSearchRequest;
 import com.visilabs.api.VisilabsTargetFilter;
 import com.visilabs.api.VisilabsTargetRequest;
@@ -81,7 +84,9 @@ import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.Prefs;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
+import com.visilabs.util.VisilabsInstallTracker;
 import com.visilabs.util.VisilabsEncoder;
+import com.visilabs.util.VisilabsInAppActionManager;
 import com.visilabs.util.VisilabsLog;
 import com.visilabs.util.VisilabsParameter;
 import com.visilabs.util.VisilabsTimerTask;
@@ -213,8 +218,11 @@ public class Visilabs {
         );
 
         String parametersStr = new Gson().toJson(parameters);
-        Prefs.saveToPrefs(context, VisilabsConstant.VISILABS_PARAMETERS_PREF,
-                VisilabsConstant.VISILABS_PARAMETERS_PREF_KEY, parametersStr);
+        if (!StringUtils.isNullOrWhiteSpace(organizationID) && !StringUtils.isNullOrWhiteSpace(siteID)
+                && !StringUtils.isNullOrWhiteSpace(dataSource)) {
+            Prefs.saveToPrefs(context, VisilabsConstant.VISILABS_PARAMETERS_PREF,
+                    VisilabsConstant.VISILABS_PARAMETERS_PREF_KEY, parametersStr);
+        }
 
         VisilabsParameters parameters2 = new Gson().fromJson(parametersStr, VisilabsParameters.class);
         organizationID = parameters2.getOrganizationId();
@@ -314,6 +322,13 @@ public class Visilabs {
             mIsCreated = true;
         }
 
+        Context appContext = context.getApplicationContext();
+        if (appContext instanceof Application) {
+            VisilabsInAppActionManager.init((Application) appContext);
+        } else if (context instanceof Application) {
+            VisilabsInAppActionManager.init((Application) context);
+        }
+
         createRemoteConfigJob();
     }
 
@@ -321,6 +336,10 @@ public class Visilabs {
                                                   String segmentURL, String dataSource,
                                                   String realTimeURL, String channel, String sdkType,Context context) {
         if (visilabs == null) {
+            if (context == null) {
+                Log.e(LOG_TAG, "Context is null, could not create Visilabs instance!!!");
+                return null;
+            }
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource,
                     realTimeURL, channel, context, 30
                     , null, null, null, null,
@@ -333,6 +352,10 @@ public class Visilabs {
                                                   String dataSource, String realTimeURL, String channel, Context context
             , int requestTimeoutSeconds, String sdkType) {
         if (visilabs == null) {
+            if (context == null) {
+                Log.e(LOG_TAG, "Context is null, could not create Visilabs instance!!!");
+                return null;
+            }
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL,
                     channel, context, requestTimeoutSeconds
                     , null, null, null, null,
@@ -345,6 +368,10 @@ public class Visilabs {
                                                   String dataSource, String realTimeURL, String channel, Context context
             , int requestTimeoutSeconds, String targetURL, String sdkType) {
         if (visilabs == null) {
+            if (context == null) {
+                Log.e(LOG_TAG, "Context is null, could not create Visilabs instance!!!");
+                return null;
+            }
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL,
                     channel, context, requestTimeoutSeconds
                     , null, null, targetURL, null, null,
@@ -357,6 +384,10 @@ public class Visilabs {
                                                   String dataSource, String realTimeURL, String channel, Context context
             , String targetURL, String actionURL, int requestTimeoutSeconds, String sdkType) {
         if (visilabs == null) {
+            if (context == null) {
+                Log.e(LOG_TAG, "Context is null, could not create Visilabs instance!!!");
+                return null;
+            }
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
                     , null, null, targetURL, actionURL, null, false, sdkType, null);
@@ -369,6 +400,10 @@ public class Visilabs {
                                                   Context context, String targetURL, String actionURL,
                                                   int requestTimeoutSeconds, String geofenceURL, boolean geofenceEnabled, String sdkType) {
         if (visilabs == null) {
+            if (context == null) {
+                Log.e(LOG_TAG, "Context is null, could not create Visilabs instance!!!");
+                return null;
+            }
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
                     , null, null, targetURL, actionURL, geofenceURL, geofenceEnabled, sdkType, null);
@@ -383,6 +418,10 @@ public class Visilabs {
                                                   String dataSource, String realTimeURL, String channel, Context context
             , int requestTimeoutSeconds, String RESTURL, String encryptedDataSource, String sdkType) {
         if (visilabs == null) {
+            if (context == null) {
+                Log.e(LOG_TAG, "Context is null, could not create Visilabs instance!!!");
+                return null;
+            }
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
                     , RESTURL, encryptedDataSource, null, null, null, false, sdkType, null);
@@ -403,6 +442,10 @@ public class Visilabs {
                                                   int requestTimeoutSeconds, String geofenceURL, boolean geofenceEnabled,
                                                   String sdkType, String captureApiKey) {
         if (visilabs == null) {
+            if (context == null) {
+                Log.e(LOG_TAG, "Context is null, could not create Visilabs instance!!!");
+                return null;
+            }
             visilabs = new Visilabs(organizationID, siteID, segmentURL, dataSource, realTimeURL, channel,
                     context, requestTimeoutSeconds
                     , null, null, targetURL, actionURL, geofenceURL, geofenceEnabled, sdkType, captureApiKey);
@@ -431,39 +474,67 @@ public class Visilabs {
             String sdkType = null;
             String captureApiKey = null;
 
+            if (context == null) {
+                Log.e(LOG_TAG, "Context is null, could not create Visilabs instance!!!");
+                return null;
+            }
+
+            Bundle metaData = null;
             try {
                 ApplicationInfo ai = context.getPackageManager().getApplicationInfo(context.getPackageName(),
                         PackageManager.GET_META_DATA);
-                organizationID = ai.metaData.getString(VisilabsConstant.VISILABS_ORGANIZATION_ID);
-                siteID = ai.metaData.getString(VisilabsConstant.VISILABS_SITE_ID);
-                segmentURL = ai.metaData.getString(VisilabsConstant.VISILABS_SEGMENT_URL);
-                dataSource = ai.metaData.getString(VisilabsConstant.VISILABS_DATA_SOURCE);
-                realTimeURL = ai.metaData.getString(VisilabsConstant.VISILABS_REAL_TIME_URL);
-                channel = ai.metaData.getString(VisilabsConstant.VISILABS_CHANNEL);
-                requestTimeoutSeconds = ai.metaData.getInt(VisilabsConstant.VISILABS_REQUEST_TIMEOUT_IN_SECONDS,
-                        30);
-                RESTURL = ai.metaData.getString(VisilabsConstant.VISILABS_REST_URL);
-                encryptedDataSource = ai.metaData.getString(VisilabsConstant.VISILABS_ENCRYPTED_DATA_SOURCE);
-                targetURL = ai.metaData.getString(VisilabsConstant.VISILABS_TARGET_URL);
-                actionURL = ai.metaData.getString(VisilabsConstant.VISILABS_ACTION_URL);
-                geofenceURL = ai.metaData.getString(VisilabsConstant.VISILABS_GEOFENCE_URL);
-                geofenceEnabled = ai.metaData.getBoolean(VisilabsConstant.VISILABS_GEOFENCE_ENABLED,
-                        false);
-                sdkType = ai.metaData.getString(VisilabsConstant.VISILABS_SDK_TYPE);
-                captureApiKey = ai.metaData.getString(VisilabsConstant.VISILABS_CAPTURE_API_KEY);
-
+                metaData = ai.metaData;
             } catch (Exception e) {
                 Log.d("CreateApi", e.toString());
+            }
+
+            if (metaData != null) {
+                organizationID = metaData.getString(VisilabsConstant.VISILABS_ORGANIZATION_ID);
+                siteID = metaData.getString(VisilabsConstant.VISILABS_SITE_ID);
+                segmentURL = metaData.getString(VisilabsConstant.VISILABS_SEGMENT_URL);
+                dataSource = metaData.getString(VisilabsConstant.VISILABS_DATA_SOURCE);
+                realTimeURL = metaData.getString(VisilabsConstant.VISILABS_REAL_TIME_URL);
+                channel = metaData.getString(VisilabsConstant.VISILABS_CHANNEL);
+                requestTimeoutSeconds = metaData.getInt(VisilabsConstant.VISILABS_REQUEST_TIMEOUT_IN_SECONDS,
+                        30);
+                RESTURL = metaData.getString(VisilabsConstant.VISILABS_REST_URL);
+                encryptedDataSource = metaData.getString(VisilabsConstant.VISILABS_ENCRYPTED_DATA_SOURCE);
+                targetURL = metaData.getString(VisilabsConstant.VISILABS_TARGET_URL);
+                actionURL = metaData.getString(VisilabsConstant.VISILABS_ACTION_URL);
+                geofenceURL = metaData.getString(VisilabsConstant.VISILABS_GEOFENCE_URL);
+                geofenceEnabled = metaData.getBoolean(VisilabsConstant.VISILABS_GEOFENCE_ENABLED,
+                        false);
+                sdkType = metaData.getString(VisilabsConstant.VISILABS_SDK_TYPE);
+                captureApiKey = metaData.getString(VisilabsConstant.VISILABS_CAPTURE_API_KEY);
+            }
+
+            if (metaData == null || StringUtils.isNullOrWhiteSpace(organizationID)
+                    || StringUtils.isNullOrWhiteSpace(siteID) || StringUtils.isNullOrWhiteSpace(dataSource)) {
                 Log.i("VisilabsParameters", "Failed to read the parameters from AndroidManifest.xml." +
                         "Starting to read them from Shared Preferences...");
                 String parametersStr = Prefs.getFromPrefs(context, VisilabsConstant.VISILABS_PARAMETERS_PREF,
                         VisilabsConstant.VISILABS_PARAMETERS_PREF_KEY, "");
 
-                if(parametersStr.isEmpty()) {
-                    Log.e(LOG_TAG, "Could not create Visilabs instance!!!");
-                    return null;
+                VisilabsParameters parameters = null;
+                if (parametersStr != null && !parametersStr.isEmpty()) {
+                    try {
+                        parameters = new Gson().fromJson(parametersStr, VisilabsParameters.class);
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG, "Could not parse the parameters from Shared Preferences!");
+                    }
+                }
+                if (parameters != null && metaData != null && (StringUtils.isNullOrWhiteSpace(parameters.getOrganizationId())
+                        || StringUtils.isNullOrWhiteSpace(parameters.getSiteId())
+                        || StringUtils.isNullOrWhiteSpace(parameters.getDataSource()))) {
+                    parameters = null;
+                }
+
+                if (parameters == null) {
+                    if (metaData == null) {
+                        Log.e(LOG_TAG, "Could not create Visilabs instance!!!");
+                        return null;
+                    }
                 } else {
-                    VisilabsParameters parameters = new Gson().fromJson(parametersStr, VisilabsParameters.class);
                     organizationID = parameters.getOrganizationId();
                     siteID = parameters.getSiteId();
                     segmentURL = parameters.getSegmentUrl();
@@ -578,6 +649,10 @@ public class Visilabs {
     }
 
     public void trackInAppMessageClick(InAppMessage inAppMessage, String rating) {
+        trackInAppMessageClick(inAppMessage, rating, ActivityUtils.getParentActivity());
+    }
+
+    public void trackInAppMessageClick(InAppMessage inAppMessage, String rating, Activity parent) {
 
         if (inAppMessage == null || inAppMessage.getActionData().getQs() == null || inAppMessage.getActionData().getQs().equals("")) {
             Log.w(LOG_TAG, "Notification or query string is null or empty.");
@@ -587,6 +662,7 @@ public class Visilabs {
         long timeOfEvent = System.currentTimeMillis() / 1000;
 
         HashMap<String, String> queryMap = new HashMap<>();
+        HashMap<String, String> clickProperties = new HashMap<>();
         queryMap.put(VisilabsConstant.ORGANIZATIONID_KEY, mOrganizationID);
         queryMap.put(VisilabsConstant.SITEID_KEY, mSiteID);
         queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
@@ -604,6 +680,12 @@ public class Visilabs {
         queryMap.put(VisilabsConstant.TVC_REQUEST_KEY, String.valueOf(mTvc));
         queryMap.put(VisilabsConstant.LVT_REQUEST_KEY, String.valueOf(mLvt));
 
+        VisilabsInstallTracker installTracker = VisilabsInstallTracker.getInstance(mContext);
+        if (installTracker != null) {
+            queryMap.put(VisilabsConstant.IS_FIRST_INSTALL_KEY, installTracker.isFirstInstallValue(mTvc));
+            queryMap.put(VisilabsConstant.IS_REINSTALL_KEY, installTracker.isReinstallValue(mTvc));
+        }
+
         if (mExVisitorID != null && mExVisitorID.length() > 0) {
             queryMap.put(VisilabsConstant.EXVISITORID_KEY, mExVisitorID);
         }
@@ -614,6 +696,7 @@ public class Visilabs {
                 String[] tempQueryString = s.split("=", 2);
                 if (tempQueryString.length == 2) {
                     queryMap.put(tempQueryString[0], tempQueryString[1]);
+                    clickProperties.put(tempQueryString[0], tempQueryString[1]);
                 }
             }
         }
@@ -624,6 +707,7 @@ public class Visilabs {
                 String[] tempQueryString = s.split("=", 2);
                 if(tempQueryString.length == 2) {
                     queryMap.put(tempQueryString[0], tempQueryString[1]);
+                    clickProperties.put(tempQueryString[0], tempQueryString[1]);
                 }
             }
         }
@@ -646,6 +730,12 @@ public class Visilabs {
 
         if (VisilabsConstant.DEBUG) {
             Log.v(LOG_TAG, "Notification button tapped");
+        }
+
+        if (mCheckForNotificationsOnLoggerRequest && mActionURL != null) {
+            Activity targetParent = parent != null ? parent : ActivityUtils.getParentActivity();
+            showNotification(VisilabsConstant.PAGE_NAME_REQUEST_VAL, targetParent, clickProperties);
+            showActions(VisilabsConstant.PAGE_NAME_REQUEST_VAL, targetParent, clickProperties);
         }
 
         send();
@@ -922,6 +1012,17 @@ public class Visilabs {
     private VisilabsActionsCallback getVisilabsActionsCallback(final Activity parent) {
 
         return new VisilabsActionsCallback() {
+            private Activity getEffectiveParent() {
+                Activity p = parent != null ? parent : ActivityUtils.getParentActivity();
+                if (p != null && (p.isFinishing() || p.isDestroyed())) {
+                    Activity fallback = ActivityUtils.getParentActivity();
+                    if (fallback != null && !fallback.isFinishing() && !fallback.isDestroyed()) {
+                        return fallback;
+                    }
+                }
+                return p;
+            }
+
             @Override
             public void success(VisilabsActionsResponse response, String url) {
                 Log.i(LOG_TAG, "Success Request : " + url);
@@ -934,38 +1035,51 @@ public class Visilabs {
                                     + " Currently, " + Build.VERSION.SDK_INT + ".");
                         } else {
                             long waitTime = 0L;
-                            ActivityUtils.setParentActivity(parent);
-                            Intent intent = new Intent(parent, SpinToWinActivity.class);
-                            SpinToWinModel spinToWinModel = (SpinToWinModel) response.getSpinToWinList().get(0);
-                            waitTime = spinToWinModel.getActiondata().getWaitingTime();
-                            intent.putExtra("spin-to-win-data", spinToWinModel);
+                            final SpinToWinModel spinToWinModel = (SpinToWinModel) response.getSpinToWinList().get(0);
+                            if (spinToWinModel.getActiondata() != null) {
+                                waitTime = spinToWinModel.getActiondata().getWaitingTime();
+                            }
 
-                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            VisilabsInAppActionManager.scheduleOrShow(spinToWinModel.getActid(), waitTime * 1000L, new Runnable() {
                                 @Override
                                 public void run() {
-                                    startGuardedActivity(parent, intent, VisilabsActionGuard.TYPE_SPIN_TO_WIN);
+                                    Activity activeParent = getEffectiveParent();
+                                    if (activeParent != null) {
+                                        ActivityUtils.setParentActivity(activeParent);
+                                        Intent intent = new Intent(activeParent, SpinToWinActivity.class);
+                                        intent.putExtra("spin-to-win-data", spinToWinModel);
+                                        startGuardedActivity(activeParent, intent, VisilabsActionGuard.TYPE_SPIN_TO_WIN);
+                                    }
                                 }
-                            }, waitTime * 1000L);
+                            });
 
                         }
                     } else if (!response.getScratchToWinList().isEmpty()) {
                         long waitTime = 0L;
-                        ActivityUtils.setParentActivity(parent);
-                        Intent intent = new Intent(parent, ScratchToWinActivity.class);
-                        ScratchToWinModel scratchToWinModel = (ScratchToWinModel) response.getScratchToWinList().get(0);
-                        waitTime = scratchToWinModel.getActiondata().getWaitingTime();
-                        intent.putExtra("scratch-to-win-data", scratchToWinModel);
-                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        final ScratchToWinModel scratchToWinModel = (ScratchToWinModel) response.getScratchToWinList().get(0);
+                        if (scratchToWinModel.getActiondata() != null) {
+                            waitTime = scratchToWinModel.getActiondata().getWaitingTime();
+                        }
+                        VisilabsInAppActionManager.scheduleOrShow(scratchToWinModel.getActid(), waitTime * 1000L, new Runnable() {
                             @Override
                             public void run() {
-                                startGuardedActivity(parent, intent, VisilabsActionGuard.TYPE_SCRATCH_TO_WIN);
+                                Activity activeParent = getEffectiveParent();
+                                if (activeParent != null) {
+                                    ActivityUtils.setParentActivity(activeParent);
+                                    Intent intent = new Intent(activeParent, ScratchToWinActivity.class);
+                                    intent.putExtra("scratch-to-win-data", scratchToWinModel);
+                                    startGuardedActivity(activeParent, intent, VisilabsActionGuard.TYPE_SCRATCH_TO_WIN);
+                                }
                             }
-                            }, waitTime * 1000L);
+                        });
                     }
                     else if (!response.getCustomActionList().isEmpty()) {
                         CustomActions customActionModel = response.getCustomActionList().get(0);
-                        showActionFragment(parent, CustomActionFragment.newInstance(customActionModel),
-                                VisilabsActionFragmentActivity.TYPE_CUSTOM_ACTION, customActionModel);
+                        Activity activeParent = getEffectiveParent();
+                        if (activeParent != null) {
+                            showActionFragment(activeParent, CustomActionFragment.newInstance(customActionModel),
+                                    VisilabsActionFragmentActivity.TYPE_CUSTOM_ACTION, customActionModel);
+                        }
                     }
                     /*else if (!response.getAppRatingList().isEmpty()) {
                         ReviewManager reviewManager = ReviewManagerFactory.create(parent);
@@ -1001,34 +1115,57 @@ public class Visilabs {
                         });
                     }*/
                     else if (!response.getMailSubscriptionForm().isEmpty()) {
-                        MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm) response.getMailSubscriptionForm().get(0);
-                        new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, parent);
+                        final MailSubscriptionForm mailSubscriptionForm = (MailSubscriptionForm) response.getMailSubscriptionForm().get(0);
+                        long waitTime = 0L;
+                        if (mailSubscriptionForm.getActiondata() != null) {
+                            waitTime = mailSubscriptionForm.getActiondata().getWaiting_time();
+                        }
+                        VisilabsInAppActionManager.scheduleOrShow(mailSubscriptionForm.getActid(), waitTime * 1000L, new Runnable() {
+                            @Override
+                            public void run() {
+                                Activity activeParent = getEffectiveParent();
+                                if (activeParent != null) {
+                                    new InAppMessageManager(mCookieID, mDataSource).showMailSubscriptionForm(mailSubscriptionForm, activeParent);
+                                }
+                            }
+                        });
                     } else if (!response.getProductStatNotifierList().isEmpty()) {
                         ProductStatNotifierModel productStatNotifierModel = response.getProductStatNotifierList().get(0);
-                        showActionFragment(parent, SocialProofFragment.newInstance(productStatNotifierModel),
-                                VisilabsActionFragmentActivity.TYPE_SOCIAL_PROOF, productStatNotifierModel);
+                        Activity activeParent = getEffectiveParent();
+                        if (activeParent != null) {
+                            showActionFragment(activeParent, SocialProofFragment.newInstance(productStatNotifierModel),
+                                    VisilabsActionFragmentActivity.TYPE_SOCIAL_PROOF, productStatNotifierModel);
+                        }
                     } else if (!response.getDrawer().isEmpty()) {
                         DrawerModel drawerModel = response.getDrawer().get(0);
-                        showActionFragment(parent, InAppNotificationFragment.newInstance(drawerModel),
-                                VisilabsActionFragmentActivity.TYPE_DRAWER, drawerModel);
+                        Activity activeParent = getEffectiveParent();
+                        if (activeParent != null) {
+                            showActionFragment(activeParent, InAppNotificationFragment.newInstance(drawerModel),
+                                    VisilabsActionFragmentActivity.TYPE_DRAWER, drawerModel);
+                        }
                     } else if (!response.getSurveyList().isEmpty()) {
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                             Log.e(LOG_TAG, "Survey feature is not supported for API levels smaller than 19!"
                                     + " Currently, " + Build.VERSION.SDK_INT + ".");
                         } else {
                             long waitTime = 0L;
-                            ActivityUtils.setParentActivity(parent);
-                            Intent intent = new Intent(parent, SurveyActivity.class);
-                            SurveyModel surveyModel = (SurveyModel) response.getSurveyList().get(0);
+                            final SurveyModel surveyModel = (SurveyModel) response.getSurveyList().get(0);
+                            if (surveyModel.getActiondata() != null && surveyModel.getActiondata().getWaiting_time() != null) {
+                                waitTime = surveyModel.getActiondata().getWaiting_time();
+                            }
 
-                            intent.putExtra("survey-data", surveyModel);
-
-                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            VisilabsInAppActionManager.scheduleOrShow(surveyModel.getActid(), waitTime * 1000L, new Runnable() {
                                 @Override
                                 public void run() {
-                                    startGuardedActivity(parent, intent, VisilabsActionGuard.TYPE_SURVEY);
+                                    Activity activeParent = getEffectiveParent();
+                                    if (activeParent != null) {
+                                        ActivityUtils.setParentActivity(activeParent);
+                                        Intent intent = new Intent(activeParent, SurveyActivity.class);
+                                        intent.putExtra("survey-data", surveyModel);
+                                        startGuardedActivity(activeParent, intent, VisilabsActionGuard.TYPE_SURVEY);
+                                    }
                                 }
-                            }, waitTime);
+                            });
 
                         }
                     } else if (!response.getNotificationBellList().isEmpty()) {
@@ -1037,17 +1174,18 @@ public class Visilabs {
                         // host'larda (ör. Flutter'ın FlutterActivity'si) ayrı bir şeffaf
                         // Activity açmak altındaki uygulamayı dokunuşlara kapatır; bu yüzden
                         // doğrudan host'un android.R.id.content view'ına eklenir.
-                        if (parent instanceof FragmentActivity) {
-                            showActionFragment(parent, NotificationBellFragment.newInstance(notificationBellModel),
-                                    VisilabsActionFragmentActivity.TYPE_NOTIFICATION_BELL, notificationBellModel);
-                        } else {
-                            NotificationBellOverlay.show(parent, notificationBellModel);
+                        Activity activeParent = getEffectiveParent();
+                        if (activeParent != null) {
+                            if (activeParent instanceof FragmentActivity) {
+                                showActionFragment(activeParent, NotificationBellFragment.newInstance(notificationBellModel),
+                                        VisilabsActionFragmentActivity.TYPE_NOTIFICATION_BELL, notificationBellModel);
+                            } else {
+                                NotificationBellOverlay.show(activeParent, notificationBellModel);
+                            }
                         }
                     } else if (!response.getCountdownTimerBannerList().isEmpty()) {
-                        long waitTime = 0L;
-
                         // 1. Modeli al ve null kontrolü yap
-                        CountdownTimerBanner bannerModel = response.getCountdownTimerBannerList().get(0);
+                        final CountdownTimerBanner bannerModel = response.getCountdownTimerBannerList().get(0);
                         if (bannerModel == null || bannerModel.getActiondata() == null) {
                             Log.e(LOG_TAG, "CountdownTimerBanner data or actionData is null. Cannot display banner.");
                             return; // Veri bozuksa işlemi durdur
@@ -1060,24 +1198,27 @@ public class Visilabs {
                             // Zaten bir banner gösteriliyorsa çoklama yapılmaz.
                             Log.i(LOG_TAG, "CountdownTimerBanner already showing, skipping duplicate.");
                         } else {
-                            waitTime = bannerModel.getActiondata().getWaiting_time();
-                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            long waitTime = bannerModel.getActiondata().getWaiting_time();
+                            VisilabsInAppActionManager.scheduleOrShow(bannerModel.getActid(), waitTime * 1000L, new Runnable() {
                                 @Override
                                 public void run() {
                                     if (CountdownTimerBannerFragment.isExpired(bannerModel)
                                             || CountdownTimerBannerFragment.isShowing) {
                                         return;
                                     }
-                                    CountdownTimerBannerFragment.isShowing = true;
-                                    // Pozisyonlama mantığı Fragment'ın kendi içinde.
-                                    if (!showActionFragment(parent, CountdownTimerBannerFragment.newInstance(bannerModel),
-                                            VisilabsActionFragmentActivity.TYPE_COUNTDOWN_TIMER_BANNER, bannerModel)) {
-                                        // Gösterilemediyse bayrak takılı kalmasın; aksi halde
-                                        // banner bir daha hiç gösterilemez.
-                                        CountdownTimerBannerFragment.isShowing = false;
+                                    Activity activeParent = getEffectiveParent();
+                                    if (activeParent != null) {
+                                        CountdownTimerBannerFragment.isShowing = true;
+                                        // Pozisyonlama mantığı Fragment'ın kendi içinde.
+                                        if (!showActionFragment(activeParent, CountdownTimerBannerFragment.newInstance(bannerModel),
+                                                VisilabsActionFragmentActivity.TYPE_COUNTDOWN_TIMER_BANNER, bannerModel)) {
+                                            // Gösterilemediyse bayrak takılı kalmasın; aksi halde
+                                            // banner bir daha hiç gösterilemez.
+                                            CountdownTimerBannerFragment.isShowing = false;
+                                        }
                                     }
                                 }
-                            }, waitTime * 1000L);
+                            });
                         }
 
 
@@ -1100,6 +1241,10 @@ public class Visilabs {
     }
 
     public void trackActionClick(Report report) {
+        trackActionClick(report, ActivityUtils.getParentActivity());
+    }
+
+    public void trackActionClick(Report report, Activity parent) {
 
         if (report == null || report.getClick() == null || report.getClick().equals("")) {
             Log.w(LOG_TAG, "report click is null or empty.");
@@ -1109,6 +1254,7 @@ public class Visilabs {
         long timeOfEvent = System.currentTimeMillis() / 1000;
 
         HashMap<String, String> queryMap = new HashMap<>();
+        HashMap<String, String> clickProperties = new HashMap<>();
         queryMap.put(VisilabsConstant.ORGANIZATIONID_KEY, mOrganizationID);
         queryMap.put(VisilabsConstant.SITEID_KEY, mSiteID);
         queryMap.put(VisilabsConstant.DATE_KEY, String.valueOf(timeOfEvent));
@@ -1136,6 +1282,7 @@ public class Visilabs {
                 String[] tempQueryString = s.split("=", 2);
                 if(tempQueryString.length == 2) {
                     queryMap.put(tempQueryString[0], tempQueryString[1]);
+                    clickProperties.put(tempQueryString[0], tempQueryString[1]);
                 }
             }
         }
@@ -1159,6 +1306,12 @@ public class Visilabs {
 
         if (VisilabsConstant.DEBUG) {
             Log.v(LOG_TAG, "Notification button tapped");
+        }
+
+        if (mCheckForNotificationsOnLoggerRequest && mActionURL != null) {
+            Activity targetParent = parent != null ? parent : ActivityUtils.getParentActivity();
+            showNotification(VisilabsConstant.PAGE_NAME_REQUEST_VAL, targetParent, clickProperties);
+            showActions(VisilabsConstant.PAGE_NAME_REQUEST_VAL, targetParent, clickProperties);
         }
 
         send();
@@ -1310,9 +1463,26 @@ public class Visilabs {
             @Override
             public void success(final List<InAppMessage> messages, String url) {
                 Log.i(LOG_TAG, "Success InApp Request : " + url);
-                final Timer timer = new Timer("InApp Delay Timer", false);
-                VisilabsTimerTask timerTask = new VisilabsTimerTask(type, actId, messages, parent);
-                timer.schedule(timerTask, Integer.parseInt(timerTask.getMessage() == null ? "0" : timerTask.getMessage().getActionData().getWaitingTime()) * 1000);
+                Activity targetParent = parent != null ? parent : ActivityUtils.getParentActivity();
+                final VisilabsTimerTask timerTask = new VisilabsTimerTask(type, actId, messages, targetParent);
+                InAppMessage message = timerTask.getMessage();
+                if (message == null) {
+                    return;
+                }
+                long delaySeconds = 0L;
+                try {
+                    String wt = message.getActionData().getWaitingTime();
+                    if (wt != null && !wt.isEmpty()) {
+                        delaySeconds = Long.parseLong(wt);
+                    }
+                } catch (Exception ignored) {}
+
+                VisilabsInAppActionManager.scheduleOrShow(message.getActId(), delaySeconds * 1000L, new Runnable() {
+                    @Override
+                    public void run() {
+                        timerTask.run();
+                    }
+                });
             }
 
             @Override
@@ -1777,7 +1947,7 @@ public class Visilabs {
 
                 mExVisitorID = properties.get(VisilabsConstant.EXVISITORID_KEY);
                 setExVisitorID(mExVisitorID);
-                if (!mExVisitorID.equals("")) {
+                if (mExVisitorID != null && !mExVisitorID.equals("")) {
                     properties.remove(VisilabsConstant.EXVISITORID_KEY);
                 }
             }
@@ -1930,26 +2100,7 @@ public class Visilabs {
     }
 
     public void customEvent(String pageName, HashMap<String, String> properties) {
-        if (pageName == null || pageName.length() == 0) {
-            Log.w(LOG_TAG, "Name cannot be null");
-            return;
-        }
-
-        if(isBlocked()) {
-            Log.w(LOG_TAG, "Too much server load, ignoring the request!");
-            return;
-        }
-
-        identifyCaptureUser(properties);
-
-        updateSessionParameters(pageName);
-
-        if (properties == null) {
-            properties = new HashMap<>();
-        }
-
-        properties.put(VisilabsConstant.URI_KEY, pageName);
-        sendEvent(properties);
+        customEvent(pageName, properties, ActivityUtils.getParentActivity());
     }
 
     public void customEvent(String pageName, HashMap<String, String> properties, Activity parent) {
@@ -2131,8 +2282,9 @@ public class Visilabs {
         }
 
         if (mCheckForNotificationsOnLoggerRequest && mActionURL != null) {
-            showNotification(pageName, parent, properties);
-            showActions(pageName, parent, properties);
+            Activity targetParent = parent != null ? parent : ActivityUtils.getParentActivity();
+            showNotification(pageName, targetParent, properties);
+            showActions(pageName, targetParent, properties);
         }
 
         send();
@@ -2193,6 +2345,12 @@ public class Visilabs {
                         }
                     }
 
+                    if (StringUtils.isNullOrWhiteSpace(mDataSource)) {
+                        Log.e(LOG_TAG, "dataSource is empty, dropping the logger request!");
+                        send();
+                        break;
+                    }
+
                     Call<Void> call = mVisilabsLoggerApiInterface.sendToLogger(mDataSource, headers, nextQueryParameters);
                     call.enqueue(new Callback<Void>() {
                         @Override
@@ -2204,7 +2362,7 @@ public class Visilabs {
 
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
-                            Log.i(LOG_TAG, "Fail Request : " + call.request().url().toString());
+                            Log.i(LOG_TAG, "Fail Request : " + VisilabsRemote.getRequestUrl(call) + " " + t.getMessage());
                             send();
                         }
                     });
@@ -2236,6 +2394,12 @@ public class Visilabs {
                         }
                     }
 
+                    if (StringUtils.isNullOrWhiteSpace(mDataSource)) {
+                        Log.e(LOG_TAG, "dataSource is empty, dropping the realTime request!");
+                        send();
+                        break;
+                    }
+
                     Call<Void> call = mVisilabsRealTimeApiInterface.sendToRealTime(mDataSource, headers, nextQueryParameters);
                     call.enqueue(new Callback<Void>() {
                         @Override
@@ -2247,7 +2411,7 @@ public class Visilabs {
 
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
-                            Log.i(LOG_TAG, "Fail Request : " + call.request().url().toString());
+                            Log.i(LOG_TAG, "Fail Request : " + VisilabsRemote.getRequestUrl(call) + " " + t.getMessage());
                             send();
                         }
                     });
@@ -2268,7 +2432,7 @@ public class Visilabs {
 
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
-                            Log.i(LOG_TAG, "Fail Request : " + call.request().url().toString());
+                            Log.i(LOG_TAG, "Fail Request : " + VisilabsRemote.getRequestUrl(call) + " " + t.getMessage());
                             send();
                         }
                     });
@@ -2380,6 +2544,7 @@ public class Visilabs {
     }
 
     private void addQueryParametersToQueue(HashMap<String, String> queryParameters) {
+        VisilabsRemote.removeNullEntries(queryParameters);
         if (queryParameters != null && queryParameters.size() > 0) {
             mSendQueue.add(queryParameters);
         }
@@ -2517,6 +2682,16 @@ public class Visilabs {
         return mLvt;
     }
 
+    public boolean isFirstInstall() {
+        VisilabsInstallTracker tracker = VisilabsInstallTracker.getInstance(mContext);
+        return tracker != null && tracker.isFirstInstall();
+    }
+
+    public boolean isReinstall() {
+        VisilabsInstallTracker tracker = VisilabsInstallTracker.getInstance(mContext);
+        return tracker != null && tracker.isReinstall();
+    }
+
     public String getCookieID() {
         return mCookieID;
     }
@@ -2546,7 +2721,8 @@ public class Visilabs {
     }
 
     public static boolean isOnline() {
-        return NetworkManager.getInstance().isOnline();
+        NetworkManager networkManager = NetworkManager.getInstance();
+        return networkManager != null && networkManager.isOnline();
     }
 
     private static void checkNetworkStatus(Context context) {
@@ -2629,51 +2805,57 @@ public class Visilabs {
     }
 
     private void parseAndSetResponseHeaders(Headers responseHeaders, String type){
-        Set<String> names = responseHeaders.names();
-        if (names.size() > 0) {
+        try {
             List<String> cookies = new ArrayList<>();
-            for (int i = 0; i < names.size(); i++) {
+            for (int i = 0; i < responseHeaders.size(); i++) {
                 String str = responseHeaders.name(i);
                 if (str.equals("set-cookie") || str.equals("cookie")){
                     cookies.add(responseHeaders.value(i));
                 }
             }
 
-            if (cookies.size() > 0) {
+            if (cookies.size() > 0 && mCookie != null) {
                 for (String cookie : cookies) {
-                    String[] fields = cookie.split(";");
-                    if (fields[0].toLowerCase().contains(VisilabsConstant.LOAD_BALANCE_PREFIX.toLowerCase())) {
-                        String[] cookieKeyValue = fields[0].split("=");
-                        if (cookieKeyValue.length > 1) {
-                            String cookieKey = cookieKeyValue[0];
-                            String cookieValue = cookieKeyValue[1];
+                    String[] cookieKeyValue = parseCookieKeyValue(cookie);
+                    if (cookieKeyValue == null) {
+                        continue;
+                    }
+                    String cookieKey = cookieKeyValue[0];
+                    String cookieValue = cookieKeyValue[1];
 
-                            if (type.equals("logger") && Visilabs.CallAPI().getCookie() != null) {
-                                mCookie.setLoggerCookieKey(cookieKey);
-                                mCookie.setLoggerCookieValue(cookieValue);
-
-                            } else if (type.equals("realTime") && Visilabs.CallAPI().getCookie() != null) {
-                                mCookie.setRealTimeCookieKey(cookieKey);
-                                mCookie.setRealTimeCookieValue(cookieValue);
-                            }
+                    if (cookieKey.toLowerCase().contains(VisilabsConstant.LOAD_BALANCE_PREFIX.toLowerCase())) {
+                        if (type.equals("logger")) {
+                            mCookie.setLoggerCookieKey(cookieKey);
+                            mCookie.setLoggerCookieValue(cookieValue);
+                        } else if (type.equals("realTime")) {
+                            mCookie.setRealTimeCookieKey(cookieKey);
+                            mCookie.setRealTimeCookieValue(cookieValue);
                         }
                     }
 
-                    if (fields[0].toLowerCase().contains(VisilabsConstant.OM_3_KEY.toLowerCase())) {
-                        String[] cookieKeyValue = fields[0].split("=");
-                        if (cookieKeyValue.length > 1 || Visilabs.CallAPI().getCookie() != null) {
-                            String cookieValue = cookieKeyValue[1];
-
-                            if (type.equals("logger") && Visilabs.CallAPI().getCookie() != null) {
-                                mCookie.setLoggerOM3rdCookieValue(cookieValue);
-                            } else if (type.equals("realTime") && Visilabs.CallAPI().getCookie() != null) {
-                                mCookie.setRealOM3rdTimeCookieValue(cookieValue);
-                            }
+                    if (cookieKey.toLowerCase().contains(VisilabsConstant.OM_3_KEY.toLowerCase())) {
+                        if (type.equals("logger")) {
+                            mCookie.setLoggerOM3rdCookieValue(cookieValue);
+                        } else if (type.equals("realTime")) {
+                            mCookie.setRealOM3rdTimeCookieValue(cookieValue);
                         }
                     }
                 }
             }
+        } catch (Exception e) {
+            Log.w(LOG_TAG, "Could not parse the response cookies!", e);
         }
+    }
+
+    static String[] parseCookieKeyValue(String cookie) {
+        if (cookie == null) {
+            return null;
+        }
+        String[] cookieKeyValue = cookie.split(";", 2)[0].split("=", 2);
+        if (cookieKeyValue.length < 2 || cookieKeyValue[0].isEmpty() || cookieKeyValue[1].isEmpty()) {
+            return null;
+        }
+        return cookieKeyValue;
     }
 
     /**
@@ -2894,7 +3076,7 @@ public class Visilabs {
     }
 
     private void createRemoteConfigJob() {
-        mHandler = new Handler();
+        mHandler = new Handler(Looper.getMainLooper());
         mRunnable = new Runnable() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override

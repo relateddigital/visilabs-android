@@ -1,5 +1,6 @@
 package com.visilabs.inApp.bannercarousel;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Build;
@@ -36,7 +37,6 @@ import com.visilabs.mailSub.Report;
 import com.visilabs.util.VisilabsConstant;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -94,43 +94,15 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
             }
         }
 
-            Glide.with(mContext)
-                    .asBitmap()
-                    .transform(new MultiTransformation<>(new CenterCrop(), new GranularRoundedCorners(0f, 0f, 0f, 0f)))
-                    .load(mAppBanner.getActionData().getAppBanners().get(position).getImage())
-                    .into(bannerHolder.swipeImageView);
+            if (canLoadImage()) {
+                Glide.with(mContext)
+                        .asBitmap()
+                        .transform(new MultiTransformation<>(new CenterCrop(), new GranularRoundedCorners(0f, 0f, 0f, 0f)))
+                        .load(mAppBanner.getActionData().getAppBanners().get(position).getImage())
+                        .into(bannerHolder.swipeImageView);
+            }
             bannerHolder.dotIndicator.removeAllViews();
 
-            try {
-                if(mAppBanner.getActionData().getExtendedProps() != null) {
-                    mExtendedProps = new Gson().fromJson(
-                            new URI(mAppBanner.getActionData().getExtendedProps()).getPath(),
-                            AppBannerExtendedProps.class
-                    );
-
-                    /*if ( mExtendedProps != null) {
-                        ViewGroup.LayoutParams layoutParams = bannerHolder.swipeImageView.getLayoutParams();
-                        if(mExtendedProps.getHeight() != null  && mExtendedProps.getHeight() != 0 ) {
-                            int height = mExtendedProps.getHeight();
-                            layoutParams.height = height;
-                        }
-                        else {
-                            layoutParams.height = 500;
-                        }
-                        if (mExtendedProps.getWidth() != null && mExtendedProps.getWidth() != 0 ) {
-                            int width = mExtendedProps.getWidth();
-                            layoutParams.width = width;
-                        }
-
-                        bannerHolder.swipeImageView.setLayoutParams(layoutParams);
-                    } */
-
-
-                }
-
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
 
             for (int i = 0; i < getItemCount(); i++) {
                 View view = new View(mContext);
@@ -151,18 +123,7 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
                 }
             }
 
-            bannerHolder.swipeImageView.setOnClickListener(v -> {
-                clickedUrl =mAppBanner.getActionData().getAppBanners().get(position).getAndroidLink();
-                mBannerItemClickListener.bannerItemClicked(clickedUrl);
-
-                    Report report = new Report();
-                HashMap<String, String> parameters = new HashMap<String, String>();
-                parameters.put(VisilabsConstant.APP_BANNER_PARAMETER_KEY,clickedUrl);
-
-                Visilabs.CallAPI().customEvent("BannerClick", parameters);
-            report.impression = mAppBanner.getActionData().getReport().getImpression();
-            report.click = mAppBanner.getActionData().getReport().getClick();
-            Visilabs.CallAPI().trackActionClick(report); });
+            bannerHolder.swipeImageView.setOnClickListener(v -> onBannerClicked(position));
         } else {
 
             if (getItemCount() == 1) {
@@ -180,73 +141,67 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
                     bannerHolder.numberIndicator.setVisibility(View.VISIBLE);
                 }
             }
-            Glide.with(mContext)
-                    .asBitmap()
-                    .transform(new MultiTransformation<>(new CenterCrop(), new FitCenter(), new GranularRoundedCorners(0f, 0f, 0f, 0f)))
-                    .load(mAppBanner.getActionData().getAppBanners().get(position).getImage())
-                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                    .into(bannerHolder.slideImageView);
-
-            try {
-                if(mAppBanner.getActionData().getExtendedProps() != null) {
-                mExtendedProps = new Gson().fromJson(
-                        new URI(mAppBanner.getActionData().getExtendedProps()).getPath(),
-                        AppBannerExtendedProps.class
-                );
-
-                   if  (mExtendedProps != null ) {
-                       //ViewGroup.LayoutParams layoutParams = bannerHolder.slideImageView.getLayoutParams();
-                       //ViewGroup.LayoutParams layoutParams2 = bannerHolder.slideFrame.getLayoutParams();
-
-                       if(mExtendedProps.getHeight() != null && mExtendedProps.getHeight() != 0) {
-                           int height = mExtendedProps.getHeight();
-                          // layoutParams.height = height;
-                       }
-                       else {
-                           //layoutParams2.height = 500;
-                       }
-
-                       if (mExtendedProps.getWidth() != null && mExtendedProps.getWidth() != 0 ) {
-                           int width = mExtendedProps.getWidth();
-                           //layoutParams.width = width;
-                       }
-                       else {
-                           //layoutParams2.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                       }
-
-
-                       //bannerHolder.slideImageView.setLayoutParams(layoutParams);
-                   }
-                   else {
-                       //ViewGroup.LayoutParams layoutParams = bannerHolder.slideFrame.getLayoutParams();
-                       //layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                       //layoutParams.height = 1000;
-                       //bannerHolder.slideImageView.setLayoutParams(layoutParams);
-
-                   }
-
-                }
-
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
+            if (canLoadImage()) {
+                Glide.with(mContext)
+                        .asBitmap()
+                        .transform(new MultiTransformation<>(new CenterCrop(), new FitCenter(), new GranularRoundedCorners(0f, 0f, 0f, 0f)))
+                        .load(mAppBanner.getActionData().getAppBanners().get(position).getImage())
+                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                        .into(bannerHolder.slideImageView);
             }
+
 
             String numStr = (position + 1) + "/" + getItemCount();
             bannerHolder.numberIndicator.setText(numStr);
 
-            bannerHolder.slideImageView.setOnClickListener(v -> {
-                clickedUrl =mAppBanner.getActionData().getAppBanners().get(position).getAndroidLink();
-                mBannerItemClickListener.bannerItemClicked(clickedUrl);
-                Report report = new Report();
-                report.impression = mAppBanner.getActionData().getReport().getImpression();
-                report.click = mAppBanner.getActionData().getReport().getClick();
-                HashMap<String, String> parameters = new HashMap<String, String>();
-                parameters.put(VisilabsConstant.APP_BANNER_PARAMETER_KEY,clickedUrl);
+            bannerHolder.slideImageView.setOnClickListener(v -> onBannerClicked(position));
+        }
+    }
 
+    private void onBannerClicked(int position) {
+        if (position < 0 || position >= getItemCount()) {
+            return;
+        }
+        clickedUrl = mAppBanner.getActionData().getAppBanners().get(position).getAndroidLink();
+        if (mBannerItemClickListener != null) {
+            mBannerItemClickListener.bannerItemClicked(clickedUrl);
+        }
+        if (Visilabs.CallAPI() == null) {
+            return;
+        }
+        HashMap<String, String> parameters = new HashMap<String, String>();
+        parameters.put(VisilabsConstant.APP_BANNER_PARAMETER_KEY, clickedUrl);
+        Visilabs.CallAPI().customEvent("BannerClick", parameters);
+        if (mAppBanner.getActionData().getReport() != null) {
+            Report report = new Report();
+            report.impression = mAppBanner.getActionData().getReport().getImpression();
+            report.click = mAppBanner.getActionData().getReport().getClick();
+            Visilabs.CallAPI().trackActionClick(report);
+        }
+    }
 
-                Visilabs.CallAPI().customEvent("BannerClick", parameters);
-                Visilabs.CallAPI().trackActionClick(report);
-            });
+    private boolean canLoadImage() {
+        if (mContext instanceof Activity) {
+            Activity activity = (Activity) mContext;
+            return !activity.isFinishing() && !activity.isDestroyed();
+        }
+        return mContext != null;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        if (!isSwipe && mHandler != null && mRunnable != null) {
+            mHandler.removeCallbacks(mRunnable);
+            mHandler.postDelayed(mRunnable, 3000);
+        }
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        if (mHandler != null && mRunnable != null) {
+            mHandler.removeCallbacks(mRunnable);
         }
     }
 
@@ -261,10 +216,23 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
 
     public void setBannerList(RecyclerView recyclerView, AppBanner appBanner) {
         mAppBanner = appBanner;
-        isSwipe = mAppBanner.getActionData().getTransitionAction().equals("swipe");
         if (mAppBanner != null && mAppBanner.getActionData() != null) {
             String transitionAction = mAppBanner.getActionData().getTransitionAction();
             isSwipe = "swipe".equals(transitionAction);
+            mExtendedProps = null;
+            try {
+                if (mAppBanner.getActionData().getExtendedProps() != null) {
+                    mExtendedProps = new Gson().fromJson(
+                            new URI(mAppBanner.getActionData().getExtendedProps()).getPath(),
+                            AppBannerExtendedProps.class
+                    );
+                }
+            } catch (Exception e) {
+                Log.e("BannerCarouselAdapter", "Extended props could not be parsed", e);
+            }
+        }
+        if (mHandler != null && mRunnable != null) {
+            mHandler.removeCallbacks(mRunnable);
         }
         int slidePeriod = 3;
 
@@ -294,8 +262,11 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void run() {
+                    if (mRecyclerView == null || getItemCount() == 0) {
+                        return;
+                    }
                     isScrolling = true;
-                    if (mPosition == getItemCount() - 1) {
+                    if (mPosition >= getItemCount() - 1) {
                         mPosition = 0;
                     } else {
                         mPosition++;

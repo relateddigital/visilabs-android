@@ -385,9 +385,16 @@ public class CountdownTimerFragment extends Fragment {
     private void reAdjustTimerViews(){
         calculateTimeFields();
 
+        if (getActivity() == null) {
+            return;
+        }
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (!isAdded() || isDetached() || binding == null) {
+                    return;
+                }
                 try {
                     if (mIsTop) {
                         if (binding.weekNumTop.getVisibility() != View.GONE) {
@@ -477,10 +484,16 @@ public class CountdownTimerFragment extends Fragment {
         if(mTimer!=null){
             mTimer.cancel();
         }
+        if (getActivity() == null) {
+            return;
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getActivity(), getString(R.string.time_is_over), Toast.LENGTH_LONG).show();
+                if (!isAdded() || isDetached() || getContext() == null) {
+                    return;
+                }
+                Toast.makeText(getContext(), getString(R.string.time_is_over), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -489,12 +502,15 @@ public class CountdownTimerFragment extends Fragment {
         if(mTimer!=null){
             mTimer.cancel();
         }
-        if(getActivity() != null) {
-            getActivity().getFragmentManager().beginTransaction().remove(CountdownTimerFragment.this).commit();
+        if (getActivity() != null && getFragmentManager() != null) {
+            getFragmentManager().beginTransaction().remove(CountdownTimerFragment.this).commitAllowingStateLoss();
         }
     }
 
     private void hideStatusBar() {
+        if (getActivity() == null || getActivity().getWindow() == null) {
+            return;
+        }
         View decorView = getActivity().getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
@@ -505,7 +521,7 @@ public class CountdownTimerFragment extends Fragment {
     }
 
     private void showStatusBar() {
-        if(getActivity() != null) {
+        if(getActivity() != null && getActivity().getWindow() != null) {
             WindowInsetsControllerCompat windowInsetsController =
                     ViewCompat.getWindowInsetsController(getActivity().getWindow().getDecorView());
             if (windowInsetsController != null) {
@@ -516,8 +532,10 @@ public class CountdownTimerFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
         super.onDestroyView();
         showStatusBar();
     }
-
 }

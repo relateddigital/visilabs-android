@@ -39,7 +39,8 @@ public class CustomActionFragment extends Fragment {
     private CustomActions response = null;
     private CustomActionsExtendedProps mExtendedProps = null;
     private String position;
-    private Integer width, height;
+    private Integer width = 100, height = 100;
+    private boolean mInvalid = false;
     private String combined, customActionJsStr, jsonStr;
     private String combinedHtml = "";
     private String jsCode, htmlContent;
@@ -58,12 +59,12 @@ public class CustomActionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        response = savedInstanceState != null ?
-                (CustomActions) savedInstanceState.getSerializable("customactions") :
-                (CustomActions) getArguments().getSerializable(ARG_PARAM1);
+        response = getArguments() != null ?
+                (CustomActions) getArguments().getSerializable(ARG_PARAM1) : null;
 
-        if (response == null) {
+        if (response == null || response.getActiondata() == null) {
             Log.e(LOG_TAG, "The data could not get properly!");
+            mInvalid = true;
             endFragment();
         } else {
             try {
@@ -73,9 +74,11 @@ public class CustomActionFragment extends Fragment {
                 );
             } catch (URISyntaxException e) {
                 e.printStackTrace();
+                mInvalid = true;
                 endFragment();
             } catch (Exception e) {
                 e.printStackTrace();
+                mInvalid = true;
                 endFragment();
             }
         }
@@ -89,6 +92,10 @@ public class CustomActionFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (mInvalid || response == null || response.getActiondata() == null) {
+            endFragment();
+            return;
+        }
 
         WebView webView = view.findViewById(R.id.webView);
         WebSettings webSettings = webView.getSettings();
@@ -103,8 +110,10 @@ public class CustomActionFragment extends Fragment {
         webSettings.setAllowFileAccessFromFileURLs(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
 
-        if (!response.getActiondata().getJavascript().isEmpty()) {
-            if (!response.getActiondata().getContent().isEmpty()) {
+        String javascript = response.getActiondata().getJavascript();
+        String content = response.getActiondata().getContent();
+        if (javascript != null && !javascript.isEmpty()) {
+            if (content != null && !content.isEmpty()) {
                 jsCode = response.getActiondata().getJavascript();
                 htmlContent = response.getActiondata().getContent();
                 combineHtmlCode(jsCode, htmlContent);
@@ -206,7 +215,7 @@ public class CustomActionFragment extends Fragment {
         webView.setLayoutParams(params);
         closeButton.setLayoutParams(closeParams);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && jsCode != null) {
             webView.evaluateJavascript(jsCode, result -> {
 
             });
@@ -217,10 +226,14 @@ public class CustomActionFragment extends Fragment {
     }
 
     private void endFragment() {
-        if (isAdded() && getParentFragmentManager() != null) {
-            getParentFragmentManager().beginTransaction().remove(this).commit();
-        } else if (getActivity() != null && getActivity() instanceof FragmentActivity) {
-            ((FragmentActivity) getActivity()).getSupportFragmentManager().beginTransaction().remove(this).commit();
+        try {
+            if (isAdded()) {
+                getParentFragmentManager().beginTransaction().remove(this).commitAllowingStateLoss();
+            } else if (getActivity() != null && getActivity() instanceof FragmentActivity) {
+                ((FragmentActivity) getActivity()).getSupportFragmentManager().beginTransaction().remove(this).commitAllowingStateLoss();
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Could not remove the custom action fragment", e);
         }
     }
 

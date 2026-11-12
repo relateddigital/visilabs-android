@@ -48,7 +48,12 @@ public class InAppMessage implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(mActId);
+        if (mActId == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(mActId);
+        }
         dest.writeParcelable(mActionData, flags);
         dest.writeString(mActionType);
         dest.writeString(mTitle);

@@ -39,6 +39,7 @@ public final class VisilabsActionGuard {
     public static void release(String type) {
         if (type != null) {
             SHOWING.remove(type);
+            VisilabsInAppActionManager.onActionDismissed();
         }
     }
 

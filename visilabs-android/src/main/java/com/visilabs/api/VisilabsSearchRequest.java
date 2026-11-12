@@ -13,7 +13,9 @@ import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.StringUtils;
 import com.visilabs.util.VisilabsConstant;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.ResponseBody;
@@ -24,6 +26,11 @@ import retrofit2.Response;
 public class VisilabsSearchRequest extends VisilabsRemote {
 
     protected static final String LOG_TAG = "VisilabsSearchRequest";
+
+    static final List<String> RESERVED_KEYS = Arrays.asList(VisilabsConstant.ORGANIZATIONID_KEY,
+            VisilabsConstant.SITEID_KEY, VisilabsConstant.EXVISITORID_KEY, VisilabsConstant.COOKIEID_KEY,
+            VisilabsConstant.BODY_KEY, VisilabsConstant.TOKENID_KEY, VisilabsConstant.APPID_KEY,
+            VisilabsConstant.APIVER_KEY, VisilabsConstant.FILTER_KEY);
 
     private String mApiVer = "Android";
     private String mDataSource = "";
@@ -43,8 +50,9 @@ public class VisilabsSearchRequest extends VisilabsRemote {
 
     public VisilabsSearchRequest(Context context) {
         super(context);
-        if (SearchRecommendationApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds()) != null) {
-            mVisilabsSearchRecommendationApiInterface = SearchRecommendationApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds())
+        int requestTimeoutSeconds = Visilabs.CallAPI() != null ? Visilabs.CallAPI().getRequestTimeoutSeconds() : 30;
+        if (SearchRecommendationApiClient.getClient(requestTimeoutSeconds) != null) {
+            mVisilabsSearchRecommendationApiInterface = SearchRecommendationApiClient.getClient(requestTimeoutSeconds)
                     .create(VisilabsApiMethods.class);
         }
     }
@@ -87,6 +95,11 @@ public class VisilabsSearchRequest extends VisilabsRemote {
             return;
         }
 
+        if (Visilabs.CallAPI() == null || mVisilabsSearchRecommendationApiInterface == null) {
+            Log.e(LOG_TAG, "Visilabs API has not been initialized, ignoring the request!");
+            return;
+        }
+
         if (Visilabs.CallAPI().isBlocked()) {
             Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
@@ -95,10 +108,13 @@ public class VisilabsSearchRequest extends VisilabsRemote {
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
-        fillHeaderMap(headers);
-        fillTargetQueryMap(queryParameters);
-
         try {
+            fillHeaderMap(headers);
+            fillTargetQueryMap(queryParameters);
+
+            removeNullEntries(headers);
+            removeNullEntries(queryParameters);
+
             Call<ResponseBody> call = mVisilabsSearchRecommendationApiInterface.getSearch(mDataSource, headers, queryParameters);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -186,21 +202,7 @@ public class VisilabsSearchRequest extends VisilabsRemote {
     }
 
     private void cleanParameters() {
-        if (this.mProperties != null && this.mProperties.size() > 0) {
-            for (String key : this.mProperties.keySet()) {
-                if (!StringUtils.isNullOrWhiteSpace(key)) {
-                    if (!(!key.equals(VisilabsConstant.ORGANIZATIONID_KEY) && !key.equals(VisilabsConstant.SITEID_KEY)
-                            && !key.equals(VisilabsConstant.EXVISITORID_KEY) && !key.equals(VisilabsConstant.COOKIEID_KEY)
-                            && !key.equals(VisilabsConstant.BODY_KEY)
-                            && !key.equals(VisilabsConstant.TOKENID_KEY) && !key.equals(VisilabsConstant.APPID_KEY)
-                            && !key.equals(VisilabsConstant.APIVER_KEY) && !key.equals(VisilabsConstant.FILTER_KEY))) {
-                        this.mProperties.remove(key);
-                    }
-                } else {
-                    this.mProperties.remove(key);
-                }
-            }
-        }
+        removeReservedKeys(this.mProperties, RESERVED_KEYS);
     }
 
     private void fillHeaderMap(HashMap<String, String> headerMap) {

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.android.R;
+import com.visilabs.inApp.InAppSafeUtils;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.skinbased.Actiondata;
 import com.visilabs.story.model.skinbased.Stories;
@@ -24,7 +25,6 @@ import com.visilabs.story.model.skinbased.ExtendedProps;
 import com.visilabs.util.AppUtils;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.VisilabsConstant;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,11 +35,13 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
     // visilabs_story_item.xml icindeki iv_story/civ_story boyutu
     private static final int STORY_IMAGE_SIZE_IN_DP = 72;
+    private static final int DEFAULT_BORDER_COLOR = 0xFF161616;
 
     Context mContext;
     RecyclerView mRecyclerView;
     VisilabsSkinBasedResponse mVisilabsSkinBasedResponse;
     String mExtendsProps;
+    private ExtendedProps mParsedExtendedProps;
     private boolean isFirstRun = true;
     private boolean moveShownToEnd = false;
 
@@ -50,7 +52,11 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
     @Override
     public StoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if(isFirstRun) {
-            cacheImagesBeforeDisplaying();
+            try {
+                cacheImagesBeforeDisplaying();
+            } catch (Exception e) {
+                Log.w("Story Activity", "Story images could not be cached!", e);
+            }
         }
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -72,24 +78,15 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         final boolean shown = story.getShown();
         storyHolder.tvStoryName.setText(storyTitle);
 
-        if(!storyImage.equals("")) {
+        if(!InAppSafeUtils.isBlank(storyImage)) {
             Picasso.get().load(storyImage).fit().into(storyHolder.ivStory);
             Picasso.get().load(storyImage).fit().into(storyHolder.civStory);
         }
 
-        String extendedPropsEncoded = mExtendsProps;
-
-        ExtendedProps extendedProps = null;
-
-        try {
-            extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
-
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        ExtendedProps extendedProps = mParsedExtendedProps;
 
         if(extendedProps != null && extendedProps.getStoryz_label_color() != null && !extendedProps.getStoryz_label_color().isEmpty()) {
-            storyHolder.tvStoryName.setTextColor(Color.parseColor(extendedProps.getStoryz_label_color()));
+            InAppSafeUtils.setTextColor(storyHolder.tvStoryName, extendedProps.getStoryz_label_color());
         }
 
         storyHolder.tvStoryName.setTypeface(AppUtils.getFontFamily(mContext,
@@ -130,7 +127,11 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
     private void clickEvent(int position) {
 
-        if (mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position).getItems().size() != 0) {
+        if (position < 0 || position >= getItemCount()) {
+            return;
+        }
+        Stories clickedStory = mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().get(position);
+        if (clickedStory != null && clickedStory.getItems() != null && clickedStory.getItems().size() != 0) {
 
             StoryActivity story = new StoryActivity();
             StoryActivity.setRecyclerView(mRecyclerView);
@@ -148,7 +149,25 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
     @Override
     public int getItemCount() {
+        if (mVisilabsSkinBasedResponse == null || mVisilabsSkinBasedResponse.getStory() == null ||
+                mVisilabsSkinBasedResponse.getStory().isEmpty() ||
+                mVisilabsSkinBasedResponse.getStory().get(0).getActiondata() == null ||
+                mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories() == null) {
+            return 0;
+        }
         return mVisilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories().size();
+    }
+
+    private static ExtendedProps parseExtendedProps(String extendedPropsEncoded) {
+        if (extendedPropsEncoded == null) {
+            return null;
+        }
+        try {
+            return new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
+        } catch (Exception e) {
+            Log.w("Story Activity", "Story extended props could not be parsed!", e);
+            return null;
+        }
     }
 
     public void setStoryList(VisilabsSkinBasedResponse visilabsSkinBasedResponse, String extendsProps) {
@@ -159,7 +178,10 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (moveShownToEnd) {
+        if (moveShownToEnd && visilabsSkinBasedResponse != null && visilabsSkinBasedResponse.getStory() != null &&
+                !visilabsSkinBasedResponse.getStory().isEmpty() &&
+                visilabsSkinBasedResponse.getStory().get(0).getActiondata() != null &&
+                visilabsSkinBasedResponse.getStory().get(0).getActiondata().getStories() != null) {
             Map<String, List<String>> shownStoriesMap = PersistentTargetManager.with(mContext).getShownStories();
 
             if (shownStoriesMap.containsKey(visilabsSkinBasedResponse.getStory().get(0).getActid())){
@@ -183,6 +205,7 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
         }
 
         mExtendsProps = extendsProps;
+        mParsedExtendedProps = parseExtendedProps(extendsProps);
         mVisilabsSkinBasedResponse = visilabsSkinBasedResponse;
     }
 
@@ -208,21 +231,14 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
             llStoryContainer = itemView.findViewById(R.id.ll_story);
             frameLayout = itemView.findViewById(R.id.fl_circle);
 
-            String extendedPropsEncoded = mExtendsProps;
-
-            try {
-                extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded)
-                        .getPath(), ExtendedProps.class);
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
+            extendedProps = mParsedExtendedProps;
         }
 
         private void setRectangleViewProperties(float[] borderRadius, boolean shown) {
             ivStory.setVisibility(View.VISIBLE);
             civStory.setVisibility(View.GONE); // holder yeniden kullanildiginda daire acik kalmasin
 
-            int borderColor = shown ? Color.rgb(127, 127, 127) : Color.parseColor(getBorderColorString());
+            int borderColor = shown ? Color.rgb(127, 127, 127) : InAppSafeUtils.parseColor(getBorderColorString(), DEFAULT_BORDER_COLOR);
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setCornerRadii(borderRadius);
@@ -234,7 +250,7 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
             civStory.setVisibility(View.VISIBLE);
             ivStory.setVisibility(View.GONE); // holder yeniden kullanildiginda dikdortgen acik kalmasin
 
-            int borderColor = shown ? Color.rgb(127, 127, 127) : Color.parseColor(getBorderColorString());
+            int borderColor = shown ? Color.rgb(127, 127, 127) : InAppSafeUtils.parseColor(getBorderColorString(), DEFAULT_BORDER_COLOR);
             civStory.setBorderColor(borderColor);
             civStory.setBorderWidth(3);
         }
@@ -250,11 +266,17 @@ public class VisilabsSkinBasedAdapter extends RecyclerView.Adapter<VisilabsSkinB
 
     private void cacheImagesBeforeDisplaying() {
         isFirstRun = false;
+        if (getItemCount() == 0) {
+            return;
+        }
         Actiondata actiondata = mVisilabsSkinBasedResponse.getStory().get(0).getActiondata();
         for (int i = 0; i < actiondata.getStories().size(); i++) {
+            if (actiondata.getStories().get(i) == null || actiondata.getStories().get(i).getItems() == null) {
+                continue;
+            }
             for (int j = 0; j < actiondata.getStories().get(i).getItems().size(); j++) {
-                if (actiondata.getStories().get(i).getItems().get(j).getFileType().equals(VisilabsConstant.STORY_PHOTO_KEY)) {
-                    if (!actiondata.getStories().get(i).getItems().get(j).getFileSrc().equals("")) {
+                if (VisilabsConstant.STORY_PHOTO_KEY.equals(actiondata.getStories().get(i).getItems().get(j).getFileType())) {
+                    if (!InAppSafeUtils.isBlank(actiondata.getStories().get(i).getItems().get(j).getFileSrc())) {
                         try {
                             Picasso.get().load(actiondata.getStories().get(i).getItems().get(j).getFileSrc()).fetch();
                         } catch (Exception e) {

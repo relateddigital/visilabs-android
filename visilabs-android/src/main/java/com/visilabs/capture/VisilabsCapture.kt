@@ -1,5 +1,8 @@
 package com.visilabs.capture
 
+import com.visilabs.util.VisilabsConstant
+import com.visilabs.util.VisilabsInstallTracker
+
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Handler
@@ -103,7 +106,21 @@ class VisilabsCapture internal constructor(
             Log.e(CAPTURE_LOG_TAG, "Event adı boş olamaz.")
             return
         }
-        val sanitized = VisilabsCaptureUtils.sanitize(properties)
+        val tracker = VisilabsInstallTracker.getInstance()
+        val mutableProps = (properties?.toMutableMap() ?: mutableMapOf())
+        if (!mutableProps.containsKey("is_first_install") && tracker != null) {
+            mutableProps["is_first_install"] = tracker.isFirstInstall
+        }
+        if (!mutableProps.containsKey("is_reinstall") && tracker != null) {
+            mutableProps["is_reinstall"] = tracker.isReinstall
+        }
+        if (!mutableProps.containsKey(VisilabsConstant.IS_FIRST_INSTALL_KEY) && tracker != null) {
+            mutableProps[VisilabsConstant.IS_FIRST_INSTALL_KEY] = if (tracker.isFirstInstall) "1" else "0"
+        }
+        if (!mutableProps.containsKey(VisilabsConstant.IS_REINSTALL_KEY) && tracker != null) {
+            mutableProps[VisilabsConstant.IS_REINSTALL_KEY] = if (tracker.isReinstall) "1" else "0"
+        }
+        val sanitized = VisilabsCaptureUtils.sanitize(mutableProps)
         execute {
             if (!isEnabled) {
                 Log.w(CAPTURE_LOG_TAG, "captureApiKey verilmediği için '$name' gönderilmedi.")
@@ -251,7 +268,15 @@ class VisilabsCapture internal constructor(
 
         val properties = mutableMapOf<String, Any?>("version" to version, "build" to build)
         if (previousVersion == null && previousBuild == null) {
-            return if (isExistingInstall) null else Pair("Application Installed", properties)
+            if (isExistingInstall) return null
+            val tracker = VisilabsInstallTracker.getInstance()
+            if (tracker != null) {
+                properties["is_first_install"] = tracker.isFirstInstall
+                properties["is_reinstall"] = tracker.isReinstall
+                properties[VisilabsConstant.IS_FIRST_INSTALL_KEY] = if (tracker.isFirstInstall) "1" else "0"
+                properties[VisilabsConstant.IS_REINSTALL_KEY] = if (tracker.isReinstall) "1" else "0"
+            }
+            return Pair("Application Installed", properties)
         }
         if (previousVersion == version && previousBuild == build) return null
         properties["previous_version"] = previousVersion

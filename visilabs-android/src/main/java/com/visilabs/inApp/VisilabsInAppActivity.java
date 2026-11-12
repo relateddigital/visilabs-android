@@ -2,7 +2,6 @@ package com.visilabs.inApp;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -95,10 +94,16 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
 
         if(inAppNotificationState != null) {
             mInApp = inAppNotificationState.getInAppMessage();
-            if(mInApp != null) {
-                setInAppData();
-                setPromotionCode();
-                clickEvents();
+            if(mInApp != null && mInApp.getActionData() != null) {
+                try {
+                    setInAppData();
+                    setPromotionCode();
+                    clickEvents();
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Could not render the in app properly! Closing the in app.", e);
+                    VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                    finish();
+                }
             } else {
                 Log.e(LOG_TAG, "InAppMessage is null! Could not get display state!");
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
@@ -114,8 +119,8 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
     private void setInAppData() {
 
 
-        binding.tvInAppTitle.setText(mInApp.getActionData().getMsgTitle().replace("\\n","\n"));
-        binding.tvInAppSubtitle.setText(mInApp.getActionData().getMsgBody().replace("\\n","\n"));
+        binding.tvInAppTitle.setText(InAppSafeUtils.replaceNewLines(mInApp.getActionData().getMsgTitle()));
+        binding.tvInAppSubtitle.setText(InAppSafeUtils.replaceNewLines(mInApp.getActionData().getMsgBody()));
 
         if (mInApp.getActionData().getBtnText() != null && mInApp.getActionData().getBtnText().length() > 0) {
             binding.btnInApp.setText(mInApp.getActionData().getBtnText());
@@ -159,9 +164,9 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
                 && !StringUtils.isNullOrWhiteSpace(mInApp.getActionData().getPromoCodeBackgroundColor())
                 && !StringUtils.isNullOrWhiteSpace(mInApp.getActionData().getPromoCodeTextColor())){
             binding.llCouponContainer.setVisibility(View.VISIBLE);
-            binding.llCouponContainer.setBackgroundColor(Color.parseColor(mInApp.getActionData().getPromoCodeBackgroundColor()));
+            InAppSafeUtils.setBackgroundColor(binding.llCouponContainer, mInApp.getActionData().getPromoCodeBackgroundColor());
             binding.tvCouponCode.setText(mInApp.getActionData().getPromotionCode());
-            binding.tvCouponCode.setTextColor(Color.parseColor(mInApp.getActionData().getPromoCodeTextColor()));
+            InAppSafeUtils.setTextColor(binding.tvCouponCode, mInApp.getActionData().getPromoCodeTextColor());
             binding.llCouponContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -201,7 +206,7 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
                             Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInApp.getActionData().getAndroidLnk()));
                             VisilabsInAppActivity.this.startActivity(viewIntent);
 
-                        } catch (final ActivityNotFoundException e) {
+                        } catch (final Exception e) {
                             Log.i("Visilabs", "User doesn't have an activity for notification URI");
                         }
                     }
@@ -259,7 +264,7 @@ public class VisilabsInAppActivity extends Activity implements IVisilabs {
         WebSettings webViewSettings = binding.fullWebViewInapp.getSettings();
         String backgroundColor = mInApp.getActionData().getBackground();
         if (backgroundColor!= null && !backgroundColor.isEmpty()) {
-            binding.fullWebViewInapp.setBackgroundColor(Color.parseColor(mInApp.getActionData().getBackground()));
+            binding.fullWebViewInapp.setBackgroundColor(InAppSafeUtils.parseColor(mInApp.getActionData().getBackground(), getResources().getColor(R.color.black)));
         }
         else binding.fullWebViewInapp.setBackgroundColor(getResources().getColor(R.color.black));
         webViewSettings.setJavaScriptEnabled(true);

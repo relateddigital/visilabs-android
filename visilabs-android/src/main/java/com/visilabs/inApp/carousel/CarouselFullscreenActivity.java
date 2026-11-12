@@ -1,5 +1,7 @@
 package com.visilabs.inApp.carousel;
 
+import com.visilabs.inApp.InAppSafeUtils;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -220,7 +222,7 @@ public class CarouselFullscreenActivity extends Activity {
         primaryButton.setVisibility(View.VISIBLE);
         primaryButton.setText(item.getButtonText().replace("\\n", "\n"));
 
-        int fillColor = Color.parseColor("#00897B");
+        int fillColor = InAppSafeUtils.parseColor("#00897B", android.graphics.Color.BLACK);
         if (item.getButtonColor() != null && !item.getButtonColor().isEmpty()) {
             try { fillColor = parseColor(item.getButtonColor()); } catch (Exception ignored) {}
         }
@@ -253,7 +255,7 @@ public class CarouselFullscreenActivity extends Activity {
 
         secondaryButton.setText(item.getSecondButtonText().replace("\\n", "\n"));
 
-        int fillColor = Color.parseColor("#00897B");
+        int fillColor = InAppSafeUtils.parseColor("#00897B", android.graphics.Color.BLACK);
         if (item.getSecondButtonColor() != null && !item.getSecondButtonColor().isEmpty()) {
             try { fillColor = parseColor(item.getSecondButtonColor()); } catch (Exception ignored) {}
         } else if (item.getButtonColor() != null && !item.getButtonColor().isEmpty()) {
@@ -333,7 +335,7 @@ public class CarouselFullscreenActivity extends Activity {
         if (!colorStr.startsWith("#")) {
             colorStr = "#" + colorStr;
         }
-        return Color.parseColor(colorStr);
+        return InAppSafeUtils.parseColor(colorStr, android.graphics.Color.BLACK);
     }
 
     // -- Adapter --
@@ -384,7 +386,7 @@ public class CarouselFullscreenActivity extends Activity {
             GradientDrawable cardBg = new GradientDrawable();
             cardBg.setColor(Color.WHITE);
             cardBg.setCornerRadius(dpToPx(22));
-            cardBg.setStroke(dpToPx(1), Color.parseColor("#DDDDDD"));
+            cardBg.setStroke(dpToPx(1), InAppSafeUtils.parseColor("#DDDDDD", android.graphics.Color.BLACK));
             cardView.setBackground(cardBg);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 cardView.setClipToOutline(true);

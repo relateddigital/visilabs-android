@@ -1,5 +1,7 @@
 package com.visilabs.countdownTimerBanner;
 
+import com.visilabs.inApp.InAppSafeUtils;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
@@ -199,7 +201,8 @@ public class CountdownTimerBannerFragment extends Fragment {
             startCountdown();
 
             // TODO: Impression Raporu
-            if (actionData.getWaiting_time() > 0) {
+            Integer waitingTime = actionData.getWaiting_time();
+            if (waitingTime != null && waitingTime > 0 && actionData.getReport() != null) {
                 Report report = new Report();
                 report.impression = actionData.getReport().getImpression();
 
@@ -243,7 +246,7 @@ public class CountdownTimerBannerFragment extends Fragment {
             // 1. Ana CardView arkaplan rengi
             try {
                 if (extendedProps.getBackground_color() != null && !extendedProps.getBackground_color().isEmpty()) {
-                    binding.bannerCardView.setCardBackgroundColor(Color.parseColor(extendedProps.getBackground_color()));
+                    binding.bannerCardView.setCardBackgroundColor(InAppSafeUtils.parseColor(extendedProps.getBackground_color(), android.graphics.Color.BLACK));
                 }
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Invalid background_color. JSON'da '#RRGGBB' formatı kullanın. Gelen: " + extendedProps.getBackground_color(), e);
@@ -252,7 +255,7 @@ public class CountdownTimerBannerFragment extends Fragment {
             // 2. Kampanya metni rengi
             try {
                 if (extendedProps.getContent_body_text_color() != null && !extendedProps.getContent_body_text_color().isEmpty()) {
-                    binding.tvBannerText.setTextColor(Color.parseColor(extendedProps.getContent_body_text_color()));
+                    binding.tvBannerText.setTextColor(InAppSafeUtils.parseColor(extendedProps.getContent_body_text_color(), android.graphics.Color.BLACK));
                 }
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Invalid content_body_text_color: " + extendedProps.getContent_body_text_color(), e);
@@ -262,7 +265,7 @@ public class CountdownTimerBannerFragment extends Fragment {
             try {
                 String closeColor = extendedProps.getClose_button_color();
                 if (closeColor != null && !closeColor.isEmpty()) {
-                    int closeButtonColor = Color.parseColor(closeColor);
+                    int closeButtonColor = InAppSafeUtils.parseColor(closeColor, android.graphics.Color.BLACK);
                     DrawableCompat.setTint(binding.ibClose.getDrawable(), closeButtonColor);
                 }
             } catch (Exception e) {
@@ -273,7 +276,7 @@ public class CountdownTimerBannerFragment extends Fragment {
             try {
                 if (actionData.getScratch_color() != null && !actionData.getScratch_color().isEmpty()) {
                     GradientDrawable timerBackground = (GradientDrawable) binding.layoutTimer.getBackground().mutate();
-                    timerBackground.setColor(Color.parseColor(actionData.getScratch_color()));
+                    timerBackground.setColor(InAppSafeUtils.parseColor(actionData.getScratch_color(), android.graphics.Color.BLACK));
                 }
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Failed to set timer background color (scratch_color). Gelen: " + actionData.getScratch_color(), e);
@@ -282,7 +285,7 @@ public class CountdownTimerBannerFragment extends Fragment {
             // 5. Zamanlayıcı METİN Rengi
             try {
                 if (extendedProps.getCounter_color() != null && !extendedProps.getCounter_color().isEmpty()) {
-                    int timerTextColor = Color.parseColor(extendedProps.getCounter_color());
+                    int timerTextColor = InAppSafeUtils.parseColor(extendedProps.getCounter_color(), android.graphics.Color.BLACK);
 
                     binding.tvTimerDays.setTextColor(timerTextColor);
                     binding.tvTimerHours.setTextColor(timerTextColor);
@@ -305,7 +308,7 @@ public class CountdownTimerBannerFragment extends Fragment {
         binding.bannerCardView.setOnClickListener(v -> {
             var link = actionData.getAndroid_lnk();
 
-            if (!link.isEmpty()) {
+            if (link != null && !link.isEmpty()) {
                 CountdownTimerBannerClickCallback callback = Visilabs.CallAPI().setCountdownTimerBannerClickCallback();
                 if (callback != null) {
                     try {
@@ -475,5 +478,6 @@ public class CountdownTimerBannerFragment extends Fragment {
         super.onDestroy();
         // Banner kapandığında yeniden gösterilebilmesi için bayrağı sıfırla.
         isShowing = false;
+        com.visilabs.util.VisilabsInAppActionManager.onActionDismissed();
     }
 }

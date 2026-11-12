@@ -1,12 +1,12 @@
 package com.visilabs.inApp.inlineNpsWithNumber;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +26,7 @@ import com.visilabs.android.R;
 import com.visilabs.api.VisilabsCallback;
 import com.visilabs.api.VisilabsUpdateDisplayState;
 import com.visilabs.inApp.InAppActionType;
+import com.visilabs.inApp.InAppSafeUtils;
 import com.visilabs.inApp.InAppButtonInterface;
 import com.visilabs.inApp.InAppMessage;
 import com.visilabs.inApp.VisilabsActionRequest;
@@ -142,10 +143,14 @@ public class InlineNpsWithNumbersView extends LinearLayout {
 
         NpsWithNumbersView npsWithNumbersView = findViewById(R.id.npsWithNumbersView);
         npsWithNumbersView.setVisibility(View.VISIBLE);
-        int[] colors = new int[colorNumber.length];
-
-        for (int i = 0; i < colorNumber.length; i++) {
-            colors[i] = Color.parseColor(colorNumber[i]);
+        int[] colors;
+        if (colorNumber == null || colorNumber.length == 0) {
+            colors = new int[]{Color.LTGRAY, Color.DKGRAY};
+        } else {
+            colors = new int[colorNumber.length];
+            for (int i = 0; i < colorNumber.length; i++) {
+                colors[i] = InAppSafeUtils.parseColor(colorNumber[i], Color.GRAY);
+            }
         }
         npsWithNumbersView.setColors(colors);
     }
@@ -156,7 +161,7 @@ public class InlineNpsWithNumbersView extends LinearLayout {
         if (backgroundColor != null && !backgroundColor.equals("")) {
             try {
                 llBack.setVisibility(View.VISIBLE);
-                llBack.setBackgroundColor(Color.parseColor(backgroundColor));
+                llBack.setBackgroundColor(InAppSafeUtils.parseColor(backgroundColor, android.graphics.Color.BLACK));
             } catch (Exception e) {
                 Log.w(LOG_TAG, "Could not parse the data given for background color\nSetting the default value.");
                 e.printStackTrace();
@@ -166,13 +171,12 @@ public class InlineNpsWithNumbersView extends LinearLayout {
 
     public void setTitle(String title, String backgroundColor, Typeface fontFamily, String titleColor, String textSize) {
         TextView tvTitle = findViewById(R.id.tv_title);
-        if (title.equals("") ||
-                title == null) {
+        if (TextUtils.isEmpty(title)) {
             tvTitle.setVisibility(View.GONE);
         } else {
             if (backgroundColor != null &&
                     !backgroundColor.equals("")) {
-                tvTitle.setBackgroundColor(Color.parseColor(backgroundColor));
+                InAppSafeUtils.setBackgroundColor(tvTitle, backgroundColor);
             }
             tvTitle.setText(title.replace("\\n", "\n"));
             tvTitle.setTypeface(fontFamily);
@@ -180,7 +184,7 @@ public class InlineNpsWithNumbersView extends LinearLayout {
 
             if (titleColor != null && !titleColor.equals("")) {
                 try {
-                    tvTitle.setTextColor(Color.parseColor(titleColor));
+                    tvTitle.setTextColor(InAppSafeUtils.parseColor(titleColor, android.graphics.Color.BLACK));
                 } catch (Exception e) {
                     Log.w(LOG_TAG, "Could not parse the data given for message body color\nSetting the default value.");
                     e.printStackTrace();
@@ -205,13 +209,12 @@ public class InlineNpsWithNumbersView extends LinearLayout {
 
     public void setBody(String body, String backgroundColor, Typeface fontFamily, String bodyColor, String textSize) {
         TextView tvBody = findViewById(R.id.tv_body);
-        if (body.equals("") ||
-                body == null) {
+        if (TextUtils.isEmpty(body)) {
             tvBody.setVisibility(View.GONE);
         } else {
             if (backgroundColor != null &&
                     !backgroundColor.equals("")) {
-                tvBody.setBackgroundColor(Color.parseColor(backgroundColor));
+                InAppSafeUtils.setBackgroundColor(tvBody, backgroundColor);
             }
             tvBody.setText(body.replace("\\n", "\n"));
             tvBody.setTypeface(fontFamily);
@@ -219,7 +222,7 @@ public class InlineNpsWithNumbersView extends LinearLayout {
 
             if (bodyColor != null && !bodyColor.equals("")) {
                 try {
-                    tvBody.setTextColor(Color.parseColor(bodyColor));
+                    tvBody.setTextColor(InAppSafeUtils.parseColor(bodyColor, android.graphics.Color.BLACK));
                 } catch (Exception e) {
                     Log.w(LOG_TAG, "Could not parse the data given for message body color\nSetting the default value.");
                     e.printStackTrace();
@@ -239,8 +242,7 @@ public class InlineNpsWithNumbersView extends LinearLayout {
     public void setButton(String btnText, String buttonColor, Typeface fontFamily, String buttonTextColor, InAppActionType msgType, Integer actId, InAppMessage mInAppMessage) {
         Button btnTemplate = findViewById(R.id.btn_template);
         btnTemplate.setVisibility(View.VISIBLE);
-        if (btnText.equals("") ||
-                btnText == null) {
+        if (TextUtils.isEmpty(btnText)) {
             btnTemplate.setVisibility(View.GONE);
         } else {
             btnTemplate.setText(btnText);
@@ -248,7 +250,7 @@ public class InlineNpsWithNumbersView extends LinearLayout {
             btnTemplate.setVisibility(View.VISIBLE);
             if (buttonTextColor != null && !buttonTextColor.equals("")) {
                 try {
-                    btnTemplate.setTextColor(Color.parseColor(buttonTextColor));
+                    btnTemplate.setTextColor(InAppSafeUtils.parseColor(buttonTextColor, android.graphics.Color.BLACK));
                 } catch (Exception e) {
                     Log.w(LOG_TAG, "Could not parse the data given for message body color\nSetting the default value.");
                     e.printStackTrace();
@@ -258,7 +260,7 @@ public class InlineNpsWithNumbersView extends LinearLayout {
             }
             if (buttonColor != null && !buttonColor.equals("")) {
                 try {
-                    btnTemplate.setBackgroundColor(Color.parseColor(buttonColor));
+                    btnTemplate.setBackgroundColor(InAppSafeUtils.parseColor(buttonColor, android.graphics.Color.BLACK));
                 } catch (Exception e) {
                     Log.w(LOG_TAG, "Could not parse the data given for button color\nSetting the default value.");
                     e.printStackTrace();
@@ -279,10 +281,9 @@ public class InlineNpsWithNumbersView extends LinearLayout {
                                     if(mNpsItemClickListener != null && mInAppMessage.getActionData().getAndroidLnk() != null) {
                                         mNpsItemClickListener.npsItemClicked(mInAppMessage.getActionData().getAndroidLnk());
                                     }
-                                    Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
-                                    getContext().startActivity(viewIntent);
+                                    InAppSafeUtils.openLink(getContext(), StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
 
-                                } catch (final ActivityNotFoundException e) {
+                                } catch (final Exception e) {
                                     Log.i("Visilabs", "User doesn't have an activity for notification URI");
                                 }
                             }
@@ -320,8 +321,7 @@ public class InlineNpsWithNumbersView extends LinearLayout {
     public void setImage(String imageResId) {
 
         ImageView ivTemplate = findViewById(R.id.iv_template);
-        if (imageResId.equals("") ||
-                imageResId == null) {
+        if (TextUtils.isEmpty(imageResId)) {
             ivTemplate.setVisibility(View.GONE);
         } else {
             if (AppUtils.isAnImage(imageResId)) {

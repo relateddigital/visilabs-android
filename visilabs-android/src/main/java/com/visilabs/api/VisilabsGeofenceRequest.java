@@ -44,8 +44,9 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
 
     public VisilabsGeofenceRequest(Context context) {
         super(context);
-        if(SApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds()) != null) {
-            mVisilabsSApiInterface = SApiClient.getClient(Visilabs.CallAPI().getRequestTimeoutSeconds())
+        int requestTimeoutSeconds = Visilabs.CallAPI() != null ? Visilabs.CallAPI().getRequestTimeoutSeconds() : 30;
+        if(SApiClient.getClient(requestTimeoutSeconds) != null) {
+            mVisilabsSApiInterface = SApiClient.getClient(requestTimeoutSeconds)
                     .create(VisilabsApiMethods.class);
         }
     }
@@ -115,6 +116,11 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
             return;
         }
 
+        if(Visilabs.CallAPI() == null || mVisilabsSApiInterface == null) {
+            Log.e(LOG_TAG, "Visilabs API has not been initialized, ignoring the request!");
+            return;
+        }
+
         if(Visilabs.CallAPI().isBlocked()) {
             Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
@@ -123,13 +129,16 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
-        //Put headers
-        fillHeaderMap(headers);
-
-        //Put query parameters
-        fillQueryMap(queryParameters);
-
         try {
+            //Put headers
+            fillHeaderMap(headers);
+
+            //Put query parameters
+            fillQueryMap(queryParameters);
+
+            removeNullEntries(headers);
+            removeNullEntries(queryParameters);
+
             Call<ResponseBody> call = mVisilabsSApiInterface.getGeneralGeofenceRequestJsonResponse(headers, queryParameters);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -179,6 +188,11 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
             return;
         }
 
+        if(Visilabs.CallAPI() == null || mVisilabsSApiInterface == null) {
+            Log.e(LOG_TAG, "Visilabs API has not been initialized, ignoring the request!");
+            return;
+        }
+
         if(Visilabs.CallAPI().isBlocked()) {
             Log.w(LOG_TAG, "Too much server load, ignoring the request!");
             return;
@@ -187,13 +201,16 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
         HashMap<String, String> headers = new HashMap<>();
         HashMap<String, String> queryParameters = new HashMap<>();
 
-        //Put headers
-        fillHeaderMap(headers);
-
-        //Put query parameters
-        fillQueryMap(queryParameters);
-
         try {
+            //Put headers
+            fillHeaderMap(headers);
+
+            //Put query parameters
+            fillQueryMap(queryParameters);
+
+            removeNullEntries(headers);
+            removeNullEntries(queryParameters);
+
             Call<List<VisilabsGeofenceGetListResponse>> call = mVisilabsSApiInterface.getGeofenceListRequestResponse(headers, queryParameters);
             call.enqueue(new Callback<List<VisilabsGeofenceGetListResponse>>() {
                 @Override
@@ -205,17 +222,17 @@ public class VisilabsGeofenceRequest extends VisilabsRemote {
                         e.printStackTrace();
                         Log.e(LOG_TAG, "Could not parse the response for the request : " + response.raw().request().url().toString());
                         try {
-                            pCallback.fail(new Throwable(response.body().toString()), call.request().url().toString());
+                            pCallback.fail(new Throwable(response.body().toString()), getRequestUrl(call));
                         } catch (Exception c){
                             c.printStackTrace();
-                            pCallback.fail(new Throwable("The response is not in the correct format"), call.request().url().toString());
+                            pCallback.fail(new Throwable("The response is not in the correct format"), getRequestUrl(call));
                         }
                     }
                 }
 
                 @Override
                 public void onFailure(Call<List<VisilabsGeofenceGetListResponse>> call, Throwable t) {
-                    pCallback.fail(t, call.request().url().toString());
+                    pCallback.fail(t, getRequestUrl(call));
                 }
             });
         } catch (Exception e) {

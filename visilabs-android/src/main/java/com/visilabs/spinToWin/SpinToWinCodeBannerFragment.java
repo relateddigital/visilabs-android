@@ -25,6 +25,7 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.visilabs.android.R;
 import com.visilabs.android.databinding.FragmentSpintowinCodeBannerBinding;
 import com.visilabs.inApp.FontFamily;
+import com.visilabs.inApp.InAppSafeUtils;
 import com.visilabs.spinToWin.model.ExtendedProps;
 import com.visilabs.util.AppUtils;
 
@@ -69,8 +70,10 @@ public class SpinToWinCodeBannerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mExtendedProps = (ExtendedProps) getArguments().getSerializable(ARG_PARAM1);
-        bannerCode = getArguments().getString(ARG_PARAM2);
+        if (getArguments() != null) {
+            mExtendedProps = (ExtendedProps) getArguments().getSerializable(ARG_PARAM1);
+            bannerCode = getArguments().getString(ARG_PARAM2);
+        }
         if(bannerCode == null || bannerCode.isEmpty()) {
             endFragment();
         }
@@ -85,7 +88,12 @@ public class SpinToWinCodeBannerFragment extends Fragment {
         hideStatusBar();
 
         if (mExtendedProps != null) {
-            setupUi();
+            try {
+                setupUi();
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Could not render the code banner, closing in app", e);
+                endFragment();
+            }
 
         } else {
             endFragment();
@@ -97,30 +105,30 @@ public class SpinToWinCodeBannerFragment extends Fragment {
     private void setupUi() {
         if(mExtendedProps.getPromocodeBannerBackgroundColor() != null &&
                 !mExtendedProps.getPromocodeBannerBackgroundColor().isEmpty()) {
-            binding.container.setBackgroundColor(Color.parseColor(mExtendedProps.getPromocodeBannerBackgroundColor()));
+            binding.container.setBackgroundColor(InAppSafeUtils.parseColor(mExtendedProps.getPromocodeBannerBackgroundColor(), getResources().getColor(R.color.black)));
         } else {
             binding.container.setBackgroundColor(getResources().getColor(R.color.black));
         }
 
-        binding.bannerText.setText(mExtendedProps.getPromocodeBannerText().replace("\\n", "\n"));
+        binding.bannerText.setText(InAppSafeUtils.replaceNewLines(mExtendedProps.getPromocodeBannerText()));
         //binding.bannerLabel.setText(mExtendedProps.getPromocodeBannerButtonLabel());
         binding.bannerCode.setText(bannerCode);
 
         if(mExtendedProps.getPromocodeBannerTextColor() != null &&
                 !mExtendedProps.getPromocodeBannerTextColor().isEmpty()) {
-            binding.bannerText.setTextColor(Color.parseColor(mExtendedProps.getPromocodeBannerTextColor()));
-            //binding.bannerLabel.setTextColor(Color.parseColor(mExtendedProps.getPromocodeBannerTextColor()));
+            binding.bannerText.setTextColor(InAppSafeUtils.parseColor(mExtendedProps.getPromocodeBannerTextColor(), getResources().getColor(R.color.white)));
+            //binding.bannerLabel.setTextColor(InAppSafeUtils.parseColor(mExtendedProps.getPromocodeBannerTextColor(), getResources().getColor(R.color.white)));
             GradientDrawable drawable = (GradientDrawable) ContextCompat.getDrawable(getContext(), R.drawable.dotted_border);
             if (drawable != null) {
                 drawable.setStroke(
                         3, // Çizgi kalınlığı (px)
-                        Color.parseColor(mExtendedProps.getPromocodeBannerTextColor()), // Renk
+                        InAppSafeUtils.parseColor(mExtendedProps.getPromocodeBannerTextColor(), getResources().getColor(R.color.white)), // Renk
                         6f, // Noktaların uzunluğu (dp)
                         6f  // Noktalar arası boşluk (dp)
                 );
                 binding.bannerCodeBorder.setBackground(drawable);
             }
-            binding.bannerCode.setTextColor(Color.parseColor(mExtendedProps.getPromocodeBannerTextColor()));
+            binding.bannerCode.setTextColor(InAppSafeUtils.parseColor(mExtendedProps.getPromocodeBannerTextColor(), getResources().getColor(R.color.white)));
         } else {
             binding.bannerText.setTextColor(getResources().getColor(R.color.white));
             //binding.bannerLabel.setTextColor(getResources().getColor(R.color.white));
@@ -129,9 +137,9 @@ public class SpinToWinCodeBannerFragment extends Fragment {
 
         if(mExtendedProps.getTextSize() != null &&
                 !mExtendedProps.getTextSize().isEmpty()) {
-            binding.bannerText.setTextSize(Float.parseFloat(mExtendedProps.getTextSize()) + 10);
+            binding.bannerText.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getTextSize(), 4f) + 10);
             //binding.bannerLabel.setTextSize(Float.parseFloat(mExtendedProps.getTextSize()) + 12);
-            binding.bannerCode.setTextSize(Float.parseFloat(mExtendedProps.getTextSize()) + 10);
+            binding.bannerCode.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getTextSize(), 4f) + 10);
         } else {
             binding.bannerText.setTextSize(14);
             //binding.bannerLabel.setTextSize(16);
@@ -181,24 +189,22 @@ public class SpinToWinCodeBannerFragment extends Fragment {
     }
 
     private int getCloseIcon() {
-        switch (mExtendedProps.getCloseButtonColor()) {
-
-            case "white":
-                return R.drawable.ic_close_white_24dp;
-
-            case "black":
-                return R.drawable.ic_close_black_24dp;
+        if ("white".equals(mExtendedProps.getCloseButtonColor())) {
+            return R.drawable.ic_close_white_24dp;
         }
         return R.drawable.ic_close_black_24dp;
     }
 
     private void endFragment() {
-        if(getActivity() != null) {
-            getActivity().getFragmentManager().beginTransaction().remove(SpinToWinCodeBannerFragment.this).commit();
+        if(getActivity() != null && isAdded()) {
+            getActivity().getFragmentManager().beginTransaction().remove(SpinToWinCodeBannerFragment.this).commitAllowingStateLoss();
         }
     }
 
     private void hideStatusBar() {
+        if (getActivity() == null) {
+            return;
+        }
         View decorView = getActivity().getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);

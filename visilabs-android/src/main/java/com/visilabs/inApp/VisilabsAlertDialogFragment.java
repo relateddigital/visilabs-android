@@ -2,10 +2,8 @@ package com.visilabs.inApp;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,12 +29,12 @@ public class VisilabsAlertDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mParent, R.style.AlertDialogStyle);
-        if(mInAppMessage == null) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mParent != null ? mParent : requireContext(), R.style.AlertDialogStyle);
+        if(mInAppMessage == null || mInAppMessage.getActionData() == null) {
             cleanUp();
         } else {
-            alertDialogBuilder.setTitle(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"))
-                    .setMessage(mInAppMessage.getActionData().getMsgBody().replace("\\n", "\n"))
+            alertDialogBuilder.setTitle(InAppSafeUtils.replaceNewLines(mInAppMessage.getActionData().getMsgTitle()))
+                    .setMessage(InAppSafeUtils.replaceNewLines(mInAppMessage.getActionData().getMsgBody()))
                     .setCancelable(false)
                     .setPositiveButton(mInAppMessage.getActionData().getBtnText(), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -46,16 +44,12 @@ public class VisilabsAlertDialogFragment extends DialogFragment {
                                 Visilabs.CallAPI().setInAppButtonInterface(null);
                                 buttonInterface.onPress(uriString);
                             } else {
-                                Uri uri = null;
                                 if (uriString != null && uriString.length() > 0) {
                                     try {
-                                        uri = Uri.parse(uriString);
-                                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, uri);
-                                        mParent.startActivity(viewIntent);
-                                    } catch (IllegalArgumentException e) {
+                                        Uri uri = Uri.parse(uriString);
+                                        InAppSafeUtils.openLink(mParent != null ? mParent : getActivity(), uri);
+                                    } catch (Exception e) {
                                         Log.i(LOG_TAG, "Can't parse notification URI, will not take any action", e);
-                                    } catch (ActivityNotFoundException e) {
-                                        Log.i(LOG_TAG, "User doesn't have an activity for notification URI " + uri);
                                     }
                                 }
                             }
@@ -104,7 +98,11 @@ public class VisilabsAlertDialogFragment extends DialogFragment {
 
     private void cleanUp() {
         VisilabsUpdateDisplayState.releaseDisplayState(mInAppStateId);
-        dismiss();
+        try {
+            dismissAllowingStateLoss();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Could not dismiss the alert dialog", e);
+        }
     }
 
 }

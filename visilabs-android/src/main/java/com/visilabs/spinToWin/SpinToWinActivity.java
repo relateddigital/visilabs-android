@@ -89,7 +89,9 @@ public class SpinToWinActivity extends FragmentActivity implements SpinToWinComp
                                 }
                             }
 
-                            if (jsonStr != null && !jsonStr.equals("")) {
+                            if (getSupportFragmentManager().findFragmentByTag(WebViewDialogFragment.TAG) != null) {
+                                Log.i(LOG_TAG, "Spin-to-win dialog is already restored.");
+                            } else if (jsonStr != null && !jsonStr.equals("")) {
                                 ArrayList<String> res = AppUtils.createSpinToWinCustomFontFiles(activity, jsonStr, spinToWinJsStr);
                                 if(res == null) {
                                     Log.e(LOG_TAG, "Could not get the spin-to-win data properly!");

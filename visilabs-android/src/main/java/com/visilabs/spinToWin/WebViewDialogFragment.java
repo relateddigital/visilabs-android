@@ -1,6 +1,7 @@
 package com.visilabs.spinToWin;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,7 +26,7 @@ public class WebViewDialogFragment extends DialogFragment {
     private static final String ARG_PARAM3 = "htmlString";
 
     WebView webView;
-    private static WebViewJavaScriptInterface mJavaScriptInterface;
+    private WebViewJavaScriptInterface mJavaScriptInterface;
     private String mResponse;
     private String baseUrl = "";
     private String htmlString = "";
@@ -42,7 +43,6 @@ public class WebViewDialogFragment extends DialogFragment {
         args.putString(ARG_PARAM1, response);
         args.putString(ARG_PARAM2, baseUrl);
         args.putString(ARG_PARAM3, htmlString);
-        mJavaScriptInterface = new WebViewJavaScriptInterface(fragment, response);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,6 +77,20 @@ public class WebViewDialogFragment extends DialogFragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (mListener == null && context instanceof SpinToWinCompleteInterface) {
+            mListener = (SpinToWinCompleteInterface) context;
+        }
+        if (mCopyToClipboardInterface == null && context instanceof SpinToWinCopyToClipboardInterface) {
+            mCopyToClipboardInterface = (SpinToWinCopyToClipboardInterface) context;
+        }
+        if (mSpinToWinShowCodeInterface == null && context instanceof SpinToWinShowCodeInterface) {
+            mSpinToWinShowCodeInterface = (SpinToWinShowCodeInterface) context;
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mIsRotation = true;
@@ -106,7 +120,9 @@ public class WebViewDialogFragment extends DialogFragment {
             webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
         }
 
-        webView.addJavascriptInterface(mJavaScriptInterface, "Android");
+        if (mJavaScriptInterface != null) {
+            webView.addJavascriptInterface(mJavaScriptInterface, "Android");
+        }
 
         webView.loadDataWithBaseURL(baseUrl , htmlString, "text/html", "utf-8", "about:blank");
 
@@ -140,6 +156,9 @@ public class WebViewDialogFragment extends DialogFragment {
         mListener = listener;
         mCopyToClipboardInterface = copyToClipboardInterface;
         mSpinToWinShowCodeInterface = spinToWinShowCodeInterface;
+        if (mJavaScriptInterface != null) {
+            mJavaScriptInterface.setSpinToWinListeners(listener, copyToClipboardInterface, spinToWinShowCodeInterface);
+        }
     }
 
 }

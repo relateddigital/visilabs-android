@@ -81,8 +81,15 @@ public class HalfScreenFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mStateId = getArguments().getInt(ARG_PARAM1);
-        mInAppState = getArguments().getParcelable(ARG_PARAM2);
+        if (getArguments() != null) {
+            mStateId = getArguments().getInt(ARG_PARAM1);
+            try {
+                mInAppState = getArguments().getParcelable(ARG_PARAM2);
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Could not restore the in app state", e);
+                mInAppState = null;
+            }
+        }
         if(mInAppState != null) {
             mInAppMessage = mInAppState.getInAppMessage();
         }
@@ -97,11 +104,16 @@ public class HalfScreenFragment extends Fragment {
         hideStatusBar();
 
         if (mInAppState != null) {
-            if(mInAppMessage == null) {
+            if(mInAppMessage == null || mInAppMessage.getActionData() == null) {
                 endFragment();
                 Log.e(LOG_TAG, "Could not get the data, closing in app");
             } else {
-                setupInitialView();
+                try {
+                    setupInitialView();
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Could not render the in app, closing", e);
+                    endFragment();
+                }
             }
 
         } else {
@@ -112,7 +124,7 @@ public class HalfScreenFragment extends Fragment {
     }
 
     private void setupInitialView() {
-        mIsTop = mInAppMessage.getActionData().getPos().equals("top");
+        mIsTop = "top".equals(mInAppMessage.getActionData().getPos());
         if(mIsTop){
             adjustTop();
         } else {
@@ -132,16 +144,16 @@ public class HalfScreenFragment extends Fragment {
                 binding.topPromotionContainer.setVisibility(View.VISIBLE);
                 try {
                     if (bgColor != null && !bgColor.isEmpty()) {
-                        binding.topPromotionContainer.setBackgroundColor(Color.parseColor(bgColor));
+                        binding.topPromotionContainer.setBackgroundColor(InAppSafeUtils.parseColor(bgColor, android.graphics.Color.BLACK));
                     }
                 } catch (Exception e) {}
                 binding.topPromotionCodeText.setText(promoCode);
                 try {
                     if (textColor != null && !textColor.isEmpty()) {
-                        binding.topPromotionCodeText.setTextColor(Color.parseColor(textColor));
+                        binding.topPromotionCodeText.setTextColor(InAppSafeUtils.parseColor(textColor, android.graphics.Color.BLACK));
                     }
                 } catch (Exception e) {}
-                binding.topPromotionCodeText.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 8);
+                binding.topPromotionCodeText.setTextSize(InAppSafeUtils.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize(), 2f) * 2 + 8);
                 binding.topPromotionCodeText.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
                 binding.topPromotionCopyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -153,16 +165,16 @@ public class HalfScreenFragment extends Fragment {
                 binding.botPromotionContainer.setVisibility(View.VISIBLE);
                 try {
                     if (bgColor != null && !bgColor.isEmpty()) {
-                        binding.botPromotionContainer.setBackgroundColor(Color.parseColor(bgColor));
+                        binding.botPromotionContainer.setBackgroundColor(InAppSafeUtils.parseColor(bgColor, android.graphics.Color.BLACK));
                     }
                 } catch (Exception e) {}
                 binding.botPromotionCodeText.setText(promoCode);
                 try {
                     if (textColor != null && !textColor.isEmpty()) {
-                        binding.botPromotionCodeText.setTextColor(Color.parseColor(textColor));
+                        binding.botPromotionCodeText.setTextColor(InAppSafeUtils.parseColor(textColor, android.graphics.Color.BLACK));
                     }
                 } catch (Exception e) {}
-                binding.botPromotionCodeText.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 8);
+                binding.botPromotionCodeText.setTextSize(InAppSafeUtils.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize(), 2f) * 2 + 8);
                 binding.botPromotionCodeText.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
                 binding.botPromotionCopyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -224,14 +236,14 @@ public class HalfScreenFragment extends Fragment {
             String topBg = mInAppMessage.getActionData().getBackground();
         if (topBg != null && !topBg.isEmpty()) {
             try {
-                binding.topContentArea.setBackgroundColor(Color.parseColor(topBg));
+                binding.topContentArea.setBackgroundColor(InAppSafeUtils.parseColor(topBg, android.graphics.Color.BLACK));
             } catch (Exception e) {
                 Log.w(LOG_TAG, "Could not parse background color", e);
             }
         }
             binding.topTitleView.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
-            binding.topTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
-            binding.topTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 8);
+            binding.topTitleView.setTextColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getMsgTitleColor(), binding.topTitleView.getCurrentTextColor()));
+            binding.topTitleView.setTextSize(InAppSafeUtils.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize(), 2f) * 2 + 8);
             binding.topTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
         } else {
             binding.topTitleView.setVisibility(View.GONE);
@@ -296,14 +308,14 @@ public class HalfScreenFragment extends Fragment {
             String botBg = mInAppMessage.getActionData().getBackground();
         if (botBg != null && !botBg.isEmpty()) {
             try {
-                binding.botContentArea.setBackgroundColor(Color.parseColor(botBg));
+                binding.botContentArea.setBackgroundColor(InAppSafeUtils.parseColor(botBg, android.graphics.Color.BLACK));
             } catch (Exception e) {
                 Log.w(LOG_TAG, "Could not parse background color", e);
             }
         }
             binding.botTitleView.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
-            binding.botTitleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
-            binding.botTitleView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize()) * 2 + 8);
+            binding.botTitleView.setTextColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getMsgTitleColor(), binding.botTitleView.getCurrentTextColor()));
+            binding.botTitleView.setTextSize(InAppSafeUtils.parseFloat(mInAppMessage.getActionData().getMsgTitleTextSize(), 2f) * 2 + 8);
             binding.botTitleView.setTypeface(mInAppMessage.getActionData().getFontFamily(getActivity()));
         } else {
             binding.botTitleView.setVisibility(View.GONE);
@@ -345,18 +357,18 @@ public class HalfScreenFragment extends Fragment {
         bg.setShape(GradientDrawable.OVAL);
         if (isWhite) {
             bg.setColor(Color.BLACK);
-            bg.setStroke(dpToPx(0.5f), Color.parseColor("#33FFFFFF"));
+            bg.setStroke(dpToPx(0.5f), InAppSafeUtils.parseColor("#33FFFFFF", android.graphics.Color.BLACK));
             closeButton.setBackground(bg);
             closeButton.setImageResource(R.drawable.ic_close_white_24dp);
             closeButton.clearColorFilter();
         } else {
             bg.setColor(Color.WHITE);
-            bg.setStroke(dpToPx(0.5f), Color.parseColor("#26000000"));
+            bg.setStroke(dpToPx(0.5f), InAppSafeUtils.parseColor("#26000000", android.graphics.Color.BLACK));
             closeButton.setBackground(bg);
             closeButton.setImageResource(R.drawable.ic_close_black_24dp);
             if (colorStr != null && !colorStr.trim().isEmpty() && !colorStr.equalsIgnoreCase("black")) {
                 try {
-                    closeButton.setColorFilter(Color.parseColor(colorStr));
+                    closeButton.setColorFilter(InAppSafeUtils.parseColor(colorStr, android.graphics.Color.BLACK));
                 } catch (Exception ignored) {
                     closeButton.clearColorFilter();
                 }
@@ -382,7 +394,7 @@ public class HalfScreenFragment extends Fragment {
             return true;
         }
         try {
-            int color = Color.parseColor(colorStr);
+            int color = InAppSafeUtils.parseColor(colorStr, android.graphics.Color.BLACK);
             int r = Color.red(color);
             int g = Color.green(color);
             int b = Color.blue(color);
@@ -401,13 +413,8 @@ public class HalfScreenFragment extends Fragment {
     }
 
     private int getCloseIcon() {
-        switch (mInAppMessage.getActionData().getCloseButtonColor()) {
-
-            case "white":
-                return R.drawable.ic_close_white_24dp;
-
-            case "black":
-                return R.drawable.ic_close_black_24dp;
+        if ("white".equals(mInAppMessage.getActionData().getCloseButtonColor())) {
+            return R.drawable.ic_close_white_24dp;
         }
         return R.drawable.ic_close_black_24dp;
     }
@@ -416,11 +423,16 @@ public class HalfScreenFragment extends Fragment {
         if(getActivity() != null) {
             VisilabsUpdateDisplayState.releaseDisplayState(mStateId);
             releasePlayer();
-            getActivity().getFragmentManager().beginTransaction().remove(HalfScreenFragment.this).commit();
+            if (isAdded()) {
+                getActivity().getFragmentManager().beginTransaction().remove(HalfScreenFragment.this).commitAllowingStateLoss();
+            }
         }
     }
 
     private void hideStatusBar() {
+        if (getActivity() == null) {
+            return;
+        }
         View decorView = getActivity().getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);

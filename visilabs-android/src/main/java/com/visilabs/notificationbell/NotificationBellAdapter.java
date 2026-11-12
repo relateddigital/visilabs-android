@@ -1,5 +1,7 @@
 package com.visilabs.notificationbell;
 
+import com.visilabs.inApp.InAppSafeUtils;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -75,7 +77,7 @@ public class NotificationBellAdapter extends RecyclerView.Adapter<NotificationBe
             // Stilleri uygula (null kontrolü ile)
             if (extendedProps != null) {
                 try {
-                    binding.tvNotificationText.setTextColor(Color.parseColor(extendedProps.getText_text_color()));
+                    binding.tvNotificationText.setTextColor(InAppSafeUtils.parseColor(extendedProps.getText_text_color(), android.graphics.Color.BLACK));;
 
                     float textSize;
                     try {

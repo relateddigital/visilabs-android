@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
+import com.visilabs.inApp.InAppSafeUtils;
 import com.visilabs.android.databinding.FragmentInAppNotificationLbBinding;
 import com.visilabs.android.databinding.FragmentInAppNotificationLmBinding;
 import com.visilabs.android.databinding.FragmentInAppNotificationLtBinding;
@@ -107,6 +108,7 @@ public class InAppNotificationFragment extends Fragment {
     private Runnable autoScrollRunnable = null;
     private LinearLayout minimizedDots = null;
     private LinearLayout maximizedDots = null;
+    private boolean mInvalid = false;
 
 
     public InAppNotificationFragment() {
@@ -139,8 +141,9 @@ public class InAppNotificationFragment extends Fragment {
             response = (DrawerModel) getArguments().getSerializable(ARG_PARAM1);
         }
 
-        if(response == null) {
+        if(response == null || response.getActionData() == null) {
             Log.e(LOG_TAG, "The data could not get properly!");
+            mInvalid = true;
             endFragment();
         } else {
             try {
@@ -149,14 +152,18 @@ public class InAppNotificationFragment extends Fragment {
                 buildItems();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
+                mInvalid = true;
                 endFragment();
             } catch (Exception e) {
                 e.printStackTrace();
+                mInvalid = true;
                 endFragment();
             }
         }
 
-        DrawerActive.setDrawerActive(true);
+        if (!mInvalid) {
+            DrawerActive.setDrawerActive(true);
+        }
         }
     }
 
@@ -164,17 +171,22 @@ public class InAppNotificationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if(DrawerViewActive.isDrawerViewActive() == false) {
+        if (mInvalid || response == null || response.getActionData() == null || mExtendedProps == null) {
+            return null;
+        }
         View view;
+        String pos = response.getActionData().getPos() != null ? response.getActionData().getPos() : "";
+        String shapeStr = response.getActionData().getShape();
 
-        isRight = !response.getActionData().getPos().equals("topLeft") &&
-                !response.getActionData().getPos().equals("left") &&
-                !response.getActionData().getPos().equals("bottomLeft");
+        isRight = !pos.equals("topLeft") &&
+                !pos.equals("left") &&
+                !pos.equals("bottomLeft");
 
-        if(response.getActionData().getPos().equals("topRight") ||
-                response.getActionData().getPos().equals("topLeft")) {
+        if(pos.equals("topRight") ||
+                pos.equals("topLeft")) {
             positionOnScreen = PositionOnScreen.TOP;
-        } else if(response.getActionData().getPos().equals("right") ||
-                response.getActionData().getPos().equals("left")){
+        } else if(pos.equals("right") ||
+                pos.equals("left")){
             positionOnScreen = PositionOnScreen.MIDDLE;
         } else {
             positionOnScreen = PositionOnScreen.BOTTOM;
@@ -182,9 +194,9 @@ public class InAppNotificationFragment extends Fragment {
 
         refreshItemFlags();
 
-        if(response.getActionData().getShape().equals("circle")) {
+        if("circle".equals(shapeStr)) {
             shape = Shape.CIRCLE;
-        } else if (response.getActionData().getShape().equals("roundedCorners")) {
+        } else if ("roundedCorners".equals(shapeStr)) {
             shape = Shape.SOFT_EDGE;
         } else {
             shape = Shape.SHARP_EDGE;
@@ -222,9 +234,15 @@ public class InAppNotificationFragment extends Fragment {
             }
         }
 
-        setupInitialView();
-        setupItemNavigation();
-        startAutoScroll();
+        try {
+            setupInitialView();
+            setupItemNavigation();
+            startAutoScroll();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "The drawer could not be rendered properly!", e);
+            endFragment();
+            return null;
+        }
             DrawerViewActive.setDrawerViewActive(true);
             return view;
     }
@@ -234,9 +252,11 @@ public class InAppNotificationFragment extends Fragment {
 
     private void setupInitialView() {
         applyCurrentItem();
-        Report report = new Report();
-        report.impression = response.getActionData().getReport().getImpression();
-        Visilabs.CallAPI().trackActionImpression(report);
+        if (response.getActionData().getReport() != null) {
+            Report report = new Report();
+            report.impression = response.getActionData().getReport().getImpression();
+            Visilabs.CallAPI().trackActionImpression(report);
+        }
     }
 
     /** Renders the item that is currently selected. Does not report an impression. */
@@ -625,7 +645,7 @@ public class InAppNotificationFragment extends Fragment {
                     }
                 } else {
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        bindingRt.smallSquareContainerRt.setBackgroundColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        bindingRt.smallSquareContainerRt.setBackgroundColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         bindingRt.smallSquareContainerRt.setBackgroundColor(getResources().getColor(R.color.white));
                     }
@@ -649,19 +669,19 @@ public class InAppNotificationFragment extends Fragment {
                     bindingRt.smallSquareImageRt.setBackgroundResource(R.drawable.rounded_corners_left);
                     GradientDrawable gd = (GradientDrawable) bindingRt.smallSquareContainerRt.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gd.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gd.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gd.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdText = (GradientDrawable) bindingRt.smallSquareTextRt.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdText.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdText.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdText.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdImage = (GradientDrawable) bindingRt.smallSquareImageRt.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdImage.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdImage.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdImage.setColor(getResources().getColor(R.color.white));
                     }
@@ -685,19 +705,19 @@ public class InAppNotificationFragment extends Fragment {
                     bindingRt.smallCircleImageRt.setBackgroundResource(R.drawable.left_half_circle);
                     GradientDrawable gdCircle = (GradientDrawable) bindingRt.smallCircleContainerRt.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircle.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircle.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircle.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdCircleText = (GradientDrawable) bindingRt.smallCircleTextRt.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircleText.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircleText.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircleText.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdCircleImage = (GradientDrawable) bindingRt.smallCircleImageRt.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircleImage.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircleImage.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircleImage.setColor(getResources().getColor(R.color.white));
                     }
@@ -718,7 +738,7 @@ public class InAppNotificationFragment extends Fragment {
             }
 
             if(mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("")) {
-                bindingRt.arrowCircleRt.setTextColor(Color.parseColor(mExtendedProps.getArrowColor()));
+                bindingRt.arrowCircleRt.setTextColor(parseColorOrWhite(mExtendedProps.getArrowColor()));
             } else {
                 bindingRt.arrowCircleRt.setTextColor(getResources().getColor(R.color.white));
             }
@@ -734,7 +754,7 @@ public class InAppNotificationFragment extends Fragment {
             } else {
                 bindingRt.smallCircleTextRt.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
-                    bindingRt.smallCircleTextRt.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
+                    bindingRt.smallCircleTextRt.setTextColor(parseColorOrWhite(mExtendedProps.getMiniTextColor()));
                 } else {
                     bindingRt.smallCircleTextRt.setTextColor(getResources().getColor(R.color.white));
                 }
@@ -771,7 +791,7 @@ public class InAppNotificationFragment extends Fragment {
             }
 
             if(mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("")) {
-                bindingRt.arrowSquareRt.setTextColor(Color.parseColor(mExtendedProps.getArrowColor()));
+                bindingRt.arrowSquareRt.setTextColor(parseColorOrWhite(mExtendedProps.getArrowColor()));
             } else {
                 bindingRt.arrowSquareRt.setTextColor(getResources().getColor(R.color.white));
             }
@@ -792,7 +812,7 @@ public class InAppNotificationFragment extends Fragment {
             } else {
                 bindingRt.smallSquareTextRt.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
-                    bindingRt.smallSquareTextRt.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
+                    bindingRt.smallSquareTextRt.setTextColor(parseColorOrWhite(mExtendedProps.getMiniTextColor()));
                 } else {
                     bindingRt.smallSquareTextRt.setTextColor(getResources().getColor(R.color.white));
                 }
@@ -825,7 +845,7 @@ public class InAppNotificationFragment extends Fragment {
                     .into(bindingRt.bigBackgroundImageRt);
         } else {
             if(mExtendedProps.getMaxiBackgroundColor() != null && !mExtendedProps.getMaxiBackgroundColor().equals("")) {
-                bindingRt.bigContainerRt.setBackgroundColor(Color.parseColor(mExtendedProps.getMaxiBackgroundColor()));
+                bindingRt.bigContainerRt.setBackgroundColor(parseColorOrWhite(mExtendedProps.getMaxiBackgroundColor()));
             } else {
                 bindingRt.bigContainerRt.setBackgroundColor(getResources().getColor(R.color.white));
             }
@@ -866,7 +886,7 @@ public class InAppNotificationFragment extends Fragment {
                     }
                 } else {
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        bindingRm.smallSquareContainerRm.setBackgroundColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        bindingRm.smallSquareContainerRm.setBackgroundColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         bindingRm.smallSquareContainerRm.setBackgroundColor(getResources().getColor(R.color.white));
                     }
@@ -890,19 +910,19 @@ public class InAppNotificationFragment extends Fragment {
                     bindingRm.smallSquareImageRm.setBackgroundResource(R.drawable.rounded_corners_left);
                     GradientDrawable gd = (GradientDrawable) bindingRm.smallSquareContainerRm.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gd.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gd.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gd.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdText = (GradientDrawable) bindingRm.smallSquareTextRm.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdText.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdText.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdText.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdImage = (GradientDrawable) bindingRm.smallSquareImageRm.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdImage.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdImage.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdImage.setColor(getResources().getColor(R.color.white));
                     }
@@ -926,19 +946,19 @@ public class InAppNotificationFragment extends Fragment {
                     bindingRm.smallCircleImageRm.setBackgroundResource(R.drawable.left_half_circle);
                     GradientDrawable gdCircle = (GradientDrawable) bindingRm.smallCircleContainerRm.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircle.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircle.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircle.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdCircleText = (GradientDrawable) bindingRm.smallCircleTextRm.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircleText.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircleText.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircleText.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdCircleImage = (GradientDrawable) bindingRm.smallCircleImageRm.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircleImage.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircleImage.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircleImage.setColor(getResources().getColor(R.color.white));
                     }
@@ -959,7 +979,7 @@ public class InAppNotificationFragment extends Fragment {
             }
 
             if(mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("")) {
-                bindingRm.arrowCircleRm.setTextColor(Color.parseColor(mExtendedProps.getArrowColor()));
+                bindingRm.arrowCircleRm.setTextColor(parseColorOrWhite(mExtendedProps.getArrowColor()));
             } else {
                 bindingRm.arrowCircleRm.setTextColor(getResources().getColor(R.color.white));
             }
@@ -975,7 +995,7 @@ public class InAppNotificationFragment extends Fragment {
             } else {
                 bindingRm.smallCircleTextRm.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
-                    bindingRm.smallCircleTextRm.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
+                    bindingRm.smallCircleTextRm.setTextColor(parseColorOrWhite(mExtendedProps.getMiniTextColor()));
                 } else {
                     bindingRm.smallCircleTextRm.setTextColor(getResources().getColor(R.color.white));
                 }
@@ -1012,7 +1032,7 @@ public class InAppNotificationFragment extends Fragment {
             }
 
             if(mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("")) {
-                bindingRm.arrowSquareRm.setTextColor(Color.parseColor(mExtendedProps.getArrowColor()));
+                bindingRm.arrowSquareRm.setTextColor(parseColorOrWhite(mExtendedProps.getArrowColor()));
             } else {
                 bindingRm.arrowSquareRm.setTextColor(getResources().getColor(R.color.white));
             }
@@ -1033,7 +1053,7 @@ public class InAppNotificationFragment extends Fragment {
             } else {
                 bindingRm.smallSquareTextRm.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
-                    bindingRm.smallSquareTextRm.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
+                    bindingRm.smallSquareTextRm.setTextColor(parseColorOrWhite(mExtendedProps.getMiniTextColor()));
                 } else {
                     bindingRm.smallSquareTextRm.setTextColor(getResources().getColor(R.color.white));
                 }
@@ -1066,7 +1086,7 @@ public class InAppNotificationFragment extends Fragment {
                     .into(bindingRm.bigBackgroundImageRm);
         } else {
             if(mExtendedProps.getMaxiBackgroundColor() != null && !mExtendedProps.getMaxiBackgroundColor().equals("")) {
-                bindingRm.bigContainerRm.setBackgroundColor(Color.parseColor(mExtendedProps.getMaxiBackgroundColor()));
+                bindingRm.bigContainerRm.setBackgroundColor(parseColorOrWhite(mExtendedProps.getMaxiBackgroundColor()));
             } else {
                 bindingRm.bigContainerRm.setBackgroundColor(getResources().getColor(R.color.white));
             }
@@ -1107,7 +1127,7 @@ public class InAppNotificationFragment extends Fragment {
                     }
                 } else {
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        bindingRb.smallSquareContainerRb.setBackgroundColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        bindingRb.smallSquareContainerRb.setBackgroundColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         bindingRb.smallSquareContainerRb.setBackgroundColor(getResources().getColor(R.color.white));
                     }
@@ -1131,19 +1151,19 @@ public class InAppNotificationFragment extends Fragment {
                     bindingRb.smallSquareImageRb.setBackgroundResource(R.drawable.rounded_corners_left);
                     GradientDrawable gd = (GradientDrawable) bindingRb.smallSquareContainerRb.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gd.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gd.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gd.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdText = (GradientDrawable) bindingRb.smallSquareTextRb.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdText.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdText.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdText.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdImage = (GradientDrawable) bindingRb.smallSquareImageRb.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdImage.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdImage.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdImage.setColor(getResources().getColor(R.color.white));
                     }
@@ -1167,19 +1187,19 @@ public class InAppNotificationFragment extends Fragment {
                     bindingRb.smallCircleImageRb.setBackgroundResource(R.drawable.left_half_circle);
                     GradientDrawable gdCircle = (GradientDrawable) bindingRb.smallCircleContainerRb.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircle.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircle.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircle.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdCircleText = (GradientDrawable) bindingRb.smallCircleTextRb.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircleText.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircleText.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircleText.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdCircleImage = (GradientDrawable) bindingRb.smallCircleImageRb.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircleImage.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircleImage.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircleImage.setColor(getResources().getColor(R.color.white));
                     }
@@ -1200,7 +1220,7 @@ public class InAppNotificationFragment extends Fragment {
             }
 
             if(mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("")) {
-                bindingRb.arrowCircleRb.setTextColor(Color.parseColor(mExtendedProps.getArrowColor()));
+                bindingRb.arrowCircleRb.setTextColor(parseColorOrWhite(mExtendedProps.getArrowColor()));
             } else {
                 bindingRb.arrowCircleRb.setTextColor(getResources().getColor(R.color.white));
             }
@@ -1216,7 +1236,7 @@ public class InAppNotificationFragment extends Fragment {
             } else {
                 bindingRb.smallCircleTextRb.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
-                    bindingRb.smallCircleTextRb.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
+                    bindingRb.smallCircleTextRb.setTextColor(parseColorOrWhite(mExtendedProps.getMiniTextColor()));
                 } else {
                     bindingRb.smallCircleTextRb.setTextColor(getResources().getColor(R.color.white));
                 }
@@ -1253,7 +1273,7 @@ public class InAppNotificationFragment extends Fragment {
             }
 
             if(mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("")) {
-                bindingRb.arrowSquareRb.setTextColor(Color.parseColor(mExtendedProps.getArrowColor()));
+                bindingRb.arrowSquareRb.setTextColor(parseColorOrWhite(mExtendedProps.getArrowColor()));
             } else {
                 bindingRb.arrowSquareRb.setTextColor(getResources().getColor(R.color.white));
             }
@@ -1274,7 +1294,7 @@ public class InAppNotificationFragment extends Fragment {
             } else {
                 bindingRb.smallSquareTextRb.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
-                    bindingRb.smallSquareTextRb.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
+                    bindingRb.smallSquareTextRb.setTextColor(parseColorOrWhite(mExtendedProps.getMiniTextColor()));
                 } else {
                     bindingRb.smallSquareTextRb.setTextColor(getResources().getColor(R.color.white));
                 }
@@ -1307,7 +1327,7 @@ public class InAppNotificationFragment extends Fragment {
                     .into(bindingRb.bigBackgroundImageRb);
         } else {
             if(mExtendedProps.getMaxiBackgroundColor() != null && !mExtendedProps.getMaxiBackgroundColor().equals("")) {
-                bindingRb.bigContainerRb.setBackgroundColor(Color.parseColor(mExtendedProps.getMaxiBackgroundColor()));
+                bindingRb.bigContainerRb.setBackgroundColor(parseColorOrWhite(mExtendedProps.getMaxiBackgroundColor()));
             } else {
                 bindingRb.bigContainerRb.setBackgroundColor(getResources().getColor(R.color.white));
             }
@@ -1348,7 +1368,7 @@ public class InAppNotificationFragment extends Fragment {
                     }
                 } else {
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        bindingLt.smallSquareContainerLt.setBackgroundColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        bindingLt.smallSquareContainerLt.setBackgroundColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         bindingLt.smallSquareContainerLt.setBackgroundColor(getResources().getColor(R.color.white));
                     }
@@ -1372,19 +1392,19 @@ public class InAppNotificationFragment extends Fragment {
                     bindingLt.smallSquareImageLt.setBackgroundResource(R.drawable.rounded_corners_right);
                     GradientDrawable gd = (GradientDrawable) bindingLt.smallSquareContainerLt.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gd.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gd.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gd.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdText = (GradientDrawable) bindingLt.smallSquareTextLt.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdText.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdText.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdText.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdImage = (GradientDrawable) bindingLt.smallSquareImageLt.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdImage.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdImage.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdImage.setColor(getResources().getColor(R.color.white));
                     }
@@ -1408,19 +1428,19 @@ public class InAppNotificationFragment extends Fragment {
                     bindingLt.smallCircleImageLt.setBackgroundResource(R.drawable.right_half_circle);
                     GradientDrawable gdCircle = (GradientDrawable) bindingLt.smallCircleContainerLt.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircle.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircle.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircle.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdCircleText = (GradientDrawable) bindingLt.smallCircleTextLt.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircleText.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircleText.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircleText.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdCircleImage = (GradientDrawable) bindingLt.smallCircleImageLt.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircleImage.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircleImage.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircleImage.setColor(getResources().getColor(R.color.white));
                     }
@@ -1441,7 +1461,7 @@ public class InAppNotificationFragment extends Fragment {
             }
 
             if(mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("")) {
-                bindingLt.arrowCircleLt.setTextColor(Color.parseColor(mExtendedProps.getArrowColor()));
+                bindingLt.arrowCircleLt.setTextColor(parseColorOrWhite(mExtendedProps.getArrowColor()));
             } else {
                 bindingLt.arrowCircleLt.setTextColor(getResources().getColor(R.color.white));
             }
@@ -1457,7 +1477,7 @@ public class InAppNotificationFragment extends Fragment {
             } else {
                 bindingLt.smallCircleTextLt.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
-                    bindingLt.smallCircleTextLt.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
+                    bindingLt.smallCircleTextLt.setTextColor(parseColorOrWhite(mExtendedProps.getMiniTextColor()));
                 } else {
                     bindingLt.smallCircleTextLt.setTextColor(getResources().getColor(R.color.white));
                 }
@@ -1494,7 +1514,7 @@ public class InAppNotificationFragment extends Fragment {
             }
 
             if(mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("")) {
-                bindingLt.arrowSquareLt.setTextColor(Color.parseColor(mExtendedProps.getArrowColor()));
+                bindingLt.arrowSquareLt.setTextColor(parseColorOrWhite(mExtendedProps.getArrowColor()));
             } else {
                 bindingLt.arrowSquareLt.setTextColor(getResources().getColor(R.color.white));
             }
@@ -1515,7 +1535,7 @@ public class InAppNotificationFragment extends Fragment {
             } else {
                 bindingLt.smallSquareTextLt.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
-                    bindingLt.smallSquareTextLt.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
+                    bindingLt.smallSquareTextLt.setTextColor(parseColorOrWhite(mExtendedProps.getMiniTextColor()));
                 } else {
                     bindingLt.smallSquareTextLt.setTextColor(getResources().getColor(R.color.white));
                 }
@@ -1548,7 +1568,7 @@ public class InAppNotificationFragment extends Fragment {
                     .into(bindingLt.bigBackgroundImageLt);
         } else {
             if(mExtendedProps.getMaxiBackgroundColor() != null && !mExtendedProps.getMaxiBackgroundColor().equals("")) {
-                bindingLt.bigContainerLt.setBackgroundColor(Color.parseColor(mExtendedProps.getMaxiBackgroundColor()));
+                bindingLt.bigContainerLt.setBackgroundColor(parseColorOrWhite(mExtendedProps.getMaxiBackgroundColor()));
             } else {
                 bindingLt.bigContainerLt.setBackgroundColor(getResources().getColor(R.color.white));
             }
@@ -1589,7 +1609,7 @@ public class InAppNotificationFragment extends Fragment {
                     }
                 } else {
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        bindingLm.smallSquareContainerLm.setBackgroundColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        bindingLm.smallSquareContainerLm.setBackgroundColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         bindingLm.smallSquareContainerLm.setBackgroundColor(getResources().getColor(R.color.white));
                     }
@@ -1613,19 +1633,19 @@ public class InAppNotificationFragment extends Fragment {
                     bindingLm.smallSquareImageLm.setBackgroundResource(R.drawable.rounded_corners_right);
                     GradientDrawable gd = (GradientDrawable) bindingLm.smallSquareContainerLm.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gd.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gd.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gd.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdText = (GradientDrawable) bindingLm.smallSquareTextLm.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdText.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdText.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdText.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdImage = (GradientDrawable) bindingLm.smallSquareImageLm.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdImage.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdImage.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdImage.setColor(getResources().getColor(R.color.white));
                     }
@@ -1649,19 +1669,19 @@ public class InAppNotificationFragment extends Fragment {
                     bindingLm.smallCircleImageLm.setBackgroundResource(R.drawable.right_half_circle);
                     GradientDrawable gdCircle = (GradientDrawable) bindingLm.smallCircleContainerLm.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircle.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircle.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircle.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdCircleText = (GradientDrawable) bindingLm.smallCircleTextLm.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircleText.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircleText.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircleText.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdCircleImage = (GradientDrawable) bindingLm.smallCircleImageLm.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircleImage.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircleImage.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircleImage.setColor(getResources().getColor(R.color.white));
                     }
@@ -1682,7 +1702,7 @@ public class InAppNotificationFragment extends Fragment {
             }
 
             if(mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("")) {
-                bindingLm.arrowCircleLm.setTextColor(Color.parseColor(mExtendedProps.getArrowColor()));
+                bindingLm.arrowCircleLm.setTextColor(parseColorOrWhite(mExtendedProps.getArrowColor()));
             } else {
                 bindingLm.arrowCircleLm.setTextColor(getResources().getColor(R.color.white));
             }
@@ -1698,7 +1718,7 @@ public class InAppNotificationFragment extends Fragment {
             } else {
                 bindingLm.smallCircleTextLm.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
-                    bindingLm.smallCircleTextLm.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
+                    bindingLm.smallCircleTextLm.setTextColor(parseColorOrWhite(mExtendedProps.getMiniTextColor()));
                 } else {
                     bindingLm.smallCircleTextLm.setTextColor(getResources().getColor(R.color.white));
                 }
@@ -1735,7 +1755,7 @@ public class InAppNotificationFragment extends Fragment {
             }
 
             if(mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("")) {
-                bindingLm.arrowSquareLm.setTextColor(Color.parseColor(mExtendedProps.getArrowColor()));
+                bindingLm.arrowSquareLm.setTextColor(parseColorOrWhite(mExtendedProps.getArrowColor()));
             } else {
                 bindingLm.arrowSquareLm.setTextColor(getResources().getColor(R.color.white));
             }
@@ -1756,7 +1776,7 @@ public class InAppNotificationFragment extends Fragment {
             } else {
                 bindingLm.smallSquareTextLm.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
-                    bindingLm.smallSquareTextLm.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
+                    bindingLm.smallSquareTextLm.setTextColor(parseColorOrWhite(mExtendedProps.getMiniTextColor()));
                 } else {
                     bindingLm.smallSquareTextLm.setTextColor(getResources().getColor(R.color.white));
                 }
@@ -1789,7 +1809,7 @@ public class InAppNotificationFragment extends Fragment {
                     .into(bindingLm.bigBackgroundImageLm);
         } else {
             if(mExtendedProps.getMaxiBackgroundColor() != null && !mExtendedProps.getMaxiBackgroundColor().equals("")) {
-                bindingLm.bigContainerLm.setBackgroundColor(Color.parseColor(mExtendedProps.getMaxiBackgroundColor()));
+                bindingLm.bigContainerLm.setBackgroundColor(parseColorOrWhite(mExtendedProps.getMaxiBackgroundColor()));
             } else {
                 bindingLm.bigContainerLm.setBackgroundColor(getResources().getColor(R.color.white));
             }
@@ -1830,7 +1850,7 @@ public class InAppNotificationFragment extends Fragment {
                     }
                 } else {
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        bindingLb.smallSquareContainerLb.setBackgroundColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        bindingLb.smallSquareContainerLb.setBackgroundColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         bindingLb.smallSquareContainerLb.setBackgroundColor(getResources().getColor(R.color.white));
                     }
@@ -1854,19 +1874,19 @@ public class InAppNotificationFragment extends Fragment {
                     bindingLb.smallSquareImageLb.setBackgroundResource(R.drawable.rounded_corners_right);
                     GradientDrawable gd = (GradientDrawable) bindingLb.smallSquareContainerLb.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gd.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gd.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gd.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdText = (GradientDrawable) bindingLb.smallSquareTextLb.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdText.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdText.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdText.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdImage = (GradientDrawable) bindingLb.smallSquareImageLb.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdImage.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdImage.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdImage.setColor(getResources().getColor(R.color.white));
                     }
@@ -1890,19 +1910,19 @@ public class InAppNotificationFragment extends Fragment {
                     bindingLb.smallCircleImageLb.setBackgroundResource(R.drawable.right_half_circle);
                     GradientDrawable gdCircle = (GradientDrawable) bindingLb.smallCircleContainerLb.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircle.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircle.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircle.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdCircleText = (GradientDrawable) bindingLb.smallCircleTextLb.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircleText.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircleText.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircleText.setColor(getResources().getColor(R.color.white));
                     }
                     GradientDrawable gdCircleImage = (GradientDrawable) bindingLb.smallCircleImageLb.getBackground();
                     if(mExtendedProps.getMiniBackgroundColor() != null && !mExtendedProps.getMiniBackgroundColor().equals("")) {
-                        gdCircleImage.setColor(Color.parseColor(mExtendedProps.getMiniBackgroundColor()));
+                        gdCircleImage.setColor(parseColorOrWhite(mExtendedProps.getMiniBackgroundColor()));
                     } else {
                         gdCircleImage.setColor(getResources().getColor(R.color.white));
                     }
@@ -1923,7 +1943,7 @@ public class InAppNotificationFragment extends Fragment {
             }
 
             if(mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("")) {
-                bindingLb.arrowCircleLb.setTextColor(Color.parseColor(mExtendedProps.getArrowColor()));
+                bindingLb.arrowCircleLb.setTextColor(parseColorOrWhite(mExtendedProps.getArrowColor()));
             } else {
                 bindingLb.arrowCircleLb.setTextColor(getResources().getColor(R.color.white));
             }
@@ -1939,7 +1959,7 @@ public class InAppNotificationFragment extends Fragment {
             } else {
                 bindingLb.smallCircleTextLb.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
-                    bindingLb.smallCircleTextLb.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
+                    bindingLb.smallCircleTextLb.setTextColor(parseColorOrWhite(mExtendedProps.getMiniTextColor()));
                 } else {
                     bindingLb.smallCircleTextLb.setTextColor(getResources().getColor(R.color.white));
                 }
@@ -1976,7 +1996,7 @@ public class InAppNotificationFragment extends Fragment {
             }
 
             if(mExtendedProps.getArrowColor() != null && !mExtendedProps.getArrowColor().equals("")) {
-                bindingLb.arrowSquareLb.setTextColor(Color.parseColor(mExtendedProps.getArrowColor()));
+                bindingLb.arrowSquareLb.setTextColor(parseColorOrWhite(mExtendedProps.getArrowColor()));
             } else {
                 bindingLb.arrowSquareLb.setTextColor(getResources().getColor(R.color.white));
             }
@@ -1997,7 +2017,7 @@ public class InAppNotificationFragment extends Fragment {
             } else {
                 bindingLb.smallSquareTextLb.setText(mExtendedProps.getMiniText());
                 if(mExtendedProps.getMiniTextColor() != null && !mExtendedProps.getMiniTextColor().equals("")) {
-                    bindingLb.smallSquareTextLb.setTextColor(Color.parseColor(mExtendedProps.getMiniTextColor()));
+                    bindingLb.smallSquareTextLb.setTextColor(parseColorOrWhite(mExtendedProps.getMiniTextColor()));
                 } else {
                     bindingLb.smallSquareTextLb.setTextColor(getResources().getColor(R.color.white));
                 }
@@ -2030,7 +2050,7 @@ public class InAppNotificationFragment extends Fragment {
                     .into(bindingLb.bigBackgroundImageLb);
         } else {
             if(mExtendedProps.getMaxiBackgroundColor() != null && !mExtendedProps.getMaxiBackgroundColor().equals("")) {
-                bindingLb.bigContainerLb.setBackgroundColor(Color.parseColor(mExtendedProps.getMaxiBackgroundColor()));
+                bindingLb.bigContainerLb.setBackgroundColor(parseColorOrWhite(mExtendedProps.getMaxiBackgroundColor()));
             } else {
                 bindingLb.bigContainerLb.setBackgroundColor(getResources().getColor(R.color.white));
             }
@@ -2091,9 +2111,11 @@ public class InAppNotificationFragment extends Fragment {
     }
 
     private void handleBigContainerClick() {
-        Report report = new Report();
-        report.click = response.getActionData().getReport().getClick();
-        Visilabs.CallAPI().trackActionClick(report);
+        if (response.getActionData().getReport() != null) {
+            Report report = new Report();
+            report.click = response.getActionData().getReport().getClick();
+            Visilabs.CallAPI().trackActionClick(report);
+        }
 
         switch (buttonFunction) {
             case COPY:
@@ -2155,6 +2177,10 @@ public class InAppNotificationFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("drawer", response);
+    }
+
+    private int parseColorOrWhite(String color) {
+        return InAppSafeUtils.parseColor(color, getResources().getColor(R.color.white));
     }
 
     private void endFragment() {

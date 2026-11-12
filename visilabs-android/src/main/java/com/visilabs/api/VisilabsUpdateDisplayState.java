@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.visilabs.DisplayState;
 import com.visilabs.util.VisilabsConstant;
+import com.visilabs.util.VisilabsInAppActionManager;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -85,6 +86,7 @@ public class VisilabsUpdateDisplayState implements Parcelable {
             if (intentId == mShowingIntentId) {
                 mShowingIntentId = -1;
                 mUpdateDisplayState = null;
+                VisilabsInAppActionManager.onActionDismissed();
             }
         } finally {
             mUpdateDisplayLock.unlock();

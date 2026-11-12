@@ -55,13 +55,18 @@ public class VisilabsTimerTask extends TimerTask {
 
     @Override
     public void run() {
-        if(mParent == null) {
+        Activity targetParent = mParent != null ? mParent : ActivityUtils.getParentActivity();
+        if(targetParent == null) {
             Log.e(LOG_TAG, "Could not display the in-app template since the user has changed the original page!");
             cancel();
             return;
         }
+        if(Visilabs.CallAPI() == null) {
+            cancel();
+            return;
+        }
         if(mMessage != null) {
-            new InAppMessageManager(Visilabs.CallAPI().getCookieID(), Visilabs.CallAPI().getDataSource()).showInAppMessage(mMessage, mParent);
+            new InAppMessageManager(Visilabs.CallAPI().getCookieID(), Visilabs.CallAPI().getDataSource()).showInAppMessage(mMessage, targetParent);
             if (mMessage.getActionData().getVisitData() != null && !mMessage.getActionData().getVisitData().equals("")) {
                 Log.v("mVisitData", mMessage.getActionData().getVisitData());
                 Visilabs.CallAPI().setVisitData(mMessage.getActionData().getVisitData());

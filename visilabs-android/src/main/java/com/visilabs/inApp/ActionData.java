@@ -195,7 +195,7 @@ public class ActionData implements Parcelable {
         mPromotionCode = in.readString();
         mPromotionBackgroundColor = in.readString();
         mPromotionTextColor = in.readString();
-        in.readStringArray(mNumberColors);
+        mNumberColors = in.createStringArray();
         mQs = in.readString();
         mVisitData = in.readString();
         mVisitorData = in.readString();
@@ -213,7 +213,7 @@ public class ActionData implements Parcelable {
         mCloseEventTrigger = in.readString();
         mCustomFontFamilyIos = in.readString();
         mCustomFontFamilyAndroid = in.readString();
-        carouselItems = in.readParcelable(CarouselItem.class.getClassLoader());
+        carouselItems = in.createTypedArrayList(CarouselItem.CREATOR);
         mMsgTitleBackgroundColor = in.readString();
         mMsgBodyBackgroundColor = in.readString();
         mButtonFunction = in.readString();
@@ -247,6 +247,7 @@ public class ActionData implements Parcelable {
         mSecondButtonFontFamily = in.readString();
         mSecondButtonCustomFontFamilyIos = in.readString();
         mSecondButtonCustomFontFamilyAndroid = in.readString();
+        mDuration = (Integer) in.readValue(Integer.class.getClassLoader());
     }
 
     public static final Creator<ActionData> CREATOR = new Creator<ActionData>() {
@@ -310,7 +311,7 @@ public class ActionData implements Parcelable {
         dest.writeString(mCloseEventTrigger);
         dest.writeString(mCustomFontFamilyIos);
         dest.writeString(mCustomFontFamilyAndroid);
-        dest.writeParcelable((Parcelable) carouselItems, 0);
+        dest.writeTypedList(carouselItems);
         dest.writeString(mMsgTitleBackgroundColor);
         dest.writeString(mMsgBodyBackgroundColor);
         dest.writeString(mButtonFunction);
@@ -333,6 +334,7 @@ public class ActionData implements Parcelable {
         dest.writeString(mMultiplePopupImage3);
         dest.writeString(mMultiplePopupMsgBodyTextSize2);
         dest.writeString(mMultiplePopupFeedbackFormMinPoint);
+        dest.writeString(mDisplayType);
         dest.writeString(mButtonBorderRadius);
         dest.writeString(mSecondButtonFunction);
         dest.writeString(mSecondButtonText);
@@ -343,6 +345,7 @@ public class ActionData implements Parcelable {
         dest.writeString(mSecondButtonFontFamily);
         dest.writeString(mSecondButtonCustomFontFamilyIos);
         dest.writeString(mSecondButtonCustomFontFamilyAndroid);
+        dest.writeValue(mDuration);
     }
 
     public String getAlertType() {
@@ -457,7 +460,7 @@ public class ActionData implements Parcelable {
     }
 
     public String getImg() {
-        if (getMsgType() == InAppActionType.MINI) {
+        if (mImg != null && getMsgType() == InAppActionType.MINI) {
             return SizeUtil.sizeSuffixUrl(mImg, "@1x");
         }
         return mImg;

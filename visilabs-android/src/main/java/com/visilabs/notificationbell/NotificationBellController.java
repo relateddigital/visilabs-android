@@ -1,5 +1,7 @@
 package com.visilabs.notificationbell;
 
+import com.visilabs.inApp.InAppSafeUtils;
+
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
@@ -212,9 +214,9 @@ public class NotificationBellController {
         // Renkler, yazılar ve fontlar (null kontrolü ile)
         if (extendedProps != null) {
             try {
-                binding.dialogCard.setCardBackgroundColor(Color.parseColor(extendedProps.getBackground_color()));
-                binding.ivPointer.setColorFilter(Color.parseColor(extendedProps.getBackground_color()));
-                binding.tvTitle.setTextColor(Color.parseColor(extendedProps.getTitle_text_color()));
+                binding.dialogCard.setCardBackgroundColor(InAppSafeUtils.parseColor(extendedProps.getBackground_color(), android.graphics.Color.BLACK));;
+                binding.ivPointer.setColorFilter(InAppSafeUtils.parseColor(extendedProps.getBackground_color(), android.graphics.Color.BLACK));;
+                binding.tvTitle.setTextColor(InAppSafeUtils.parseColor(extendedProps.getTitle_text_color(), android.graphics.Color.BLACK));;
 
                 float titleTextSize;
                 try {
@@ -336,7 +338,7 @@ public class NotificationBellController {
         }
         if (extendedProps != null && extendedProps.getBackground_color() != null) {
             try {
-                int bgColor = Color.parseColor(extendedProps.getBackground_color());
+                int bgColor = InAppSafeUtils.parseColor(extendedProps.getBackground_color(), android.graphics.Color.BLACK);
                 if (ColorUtils.calculateLuminance(bgColor) < 0.5) {
                     return R.drawable.vl_close_button_white;
                 }

@@ -35,7 +35,7 @@ internal class HttpCaptureTransport(private val userAgent: String) : VisilabsCap
             val stream = if (code in 200..299) connection.inputStream else connection.errorStream
             val response = stream?.bufferedReader()?.use { it.readText() } ?: ""
             Pair(code, response)
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             Pair(null, e.message ?: e.javaClass.simpleName)
         } finally {
             connection?.disconnect()
@@ -157,7 +157,11 @@ internal class VisilabsCaptureQueue(
         isFlushing = true
         val payload = body.toString()
         network.execute {
-            val (statusCode, responseBody) = transport.post(HOST + BATCH_PATH, payload)
+            val (statusCode, responseBody) = try {
+                transport.post(HOST + BATCH_PATH, payload)
+            } catch (e: Exception) {
+                Pair<Int?, String>(null, e.message ?: e.javaClass.simpleName)
+            }
             worker.execute { handleResponse(statusCode, responseBody, sentFileNames) }
         }
     }

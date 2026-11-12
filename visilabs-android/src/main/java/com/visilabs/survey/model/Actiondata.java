@@ -38,4 +38,15 @@ public class Actiondata implements Serializable {
     public void setReport(Report report) {
         this.report = report;
     }
+
+    @SerializedName("waiting_time")
+    private Integer waiting_time;
+
+    public Integer getWaiting_time() {
+        return waiting_time;
+    }
+
+    public void setWaiting_time(Integer waiting_time) {
+        this.waiting_time = waiting_time;
+    }
 }

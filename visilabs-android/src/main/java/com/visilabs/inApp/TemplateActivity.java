@@ -2,7 +2,6 @@ package com.visilabs.inApp;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -14,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -99,8 +99,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         mInAppMessage = getInAppMessage();
 
-        if (mInAppMessage == null) {
+        if (mInAppMessage == null || mInAppMessage.getActionData() == null) {
             Log.e(LOG_TAG, "InAppMessage is null! Could not get display state!");
+            mInAppMessage = null;
             VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             finish();
         } else {
@@ -113,10 +114,19 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             if (mInAppMessage.getActionData().getMsgType() == InAppActionType.CAROUSEL) {
                 mIsCarousel = true;
                 mCarouselItems = mInAppMessage.getActionData().getCarouselItems();
+                if (mCarouselItems == null || mCarouselItems.isEmpty()) {
+                    Log.e(LOG_TAG, "Carousel items are empty! Closing the in app.");
+                    VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+                    finish();
+                    return;
+                }
                 bindingCarousel = ActivityTemplateCarouselBinding.inflate(getLayoutInflater());
                 view = bindingCarousel.getRoot();
                 if (savedInstanceState != null) {
                     mCarouselPosition = savedInstanceState.getInt(CAROUSEL_LAST_INDEX_KEY, -1);
+                }
+                if (mCarouselPosition < 0 || mCarouselPosition >= mCarouselItems.size()) {
+                    mCarouselPosition = 0;
                 }
             } else {
                 mIsCarousel = false;
@@ -124,43 +134,55 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 view = binding.getRoot();
             }
 
-            cacheResources();
+            try {
+                cacheResources();
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Could not cache the resources of the in app.", e);
+            }
 
             setContentView(view);
-            if (isShowingNpsInApp()) {
-                if (isShowingInApp()) {
-                    if (mIsCarousel) {
-                        if (mCarouselPosition == -1) {
-                            mCarouselPosition = 0;
-                        }
-                        bindingCarousel.carouselContainer.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
-                            public void onSwipeRight() {
-                                if (!isFirstCarousel()) {
-                                    releasePlayer();
-                                    mCarouselPosition--;
-                                    setupViewCarousel();
-                                }
-                            }
-
-                            public void onSwipeLeft() {
-                                if (!isLastCarousel()) {
-                                    releasePlayer();
-                                    mCarouselPosition++;
-                                    setupViewCarousel();
-                                }
-                            }
-                        });
-                        setupInitialViewCarousel();
-                    } else {
-                        setUpView();
-                    }
-                }
-            } else {
+            try {
+                showInApp();
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Could not render the in app properly! Closing the in app.", e);
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
                 finish();
             }
+        }
+    }
 
+    private void showInApp() {
+        if (isShowingNpsInApp()) {
+            if (isShowingInApp()) {
+                if (mIsCarousel) {
+                    if (mCarouselPosition == -1) {
+                        mCarouselPosition = 0;
+                    }
+                    bindingCarousel.carouselContainer.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+                        public void onSwipeRight() {
+                            if (!isFirstCarousel()) {
+                                releasePlayer();
+                                mCarouselPosition--;
+                                setupViewCarousel();
+                            }
+                        }
 
+                        public void onSwipeLeft() {
+                            if (!isLastCarousel()) {
+                                releasePlayer();
+                                mCarouselPosition++;
+                                setupViewCarousel();
+                            }
+                        }
+                    });
+                    setupInitialViewCarousel();
+                } else {
+                    setUpView();
+                }
+            }
+        } else {
+            VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
+            finish();
         }
     }
 
@@ -243,7 +265,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         if (mInAppMessage.getActionData().getBackground() != null && !mInAppMessage.getActionData().getBackground().equals("")) {
             try {
-                binding.llBack.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+                binding.llBack.setBackgroundColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getBackground(), android.graphics.Color.BLACK));
             } catch (Exception e) {
                 Log.w(LOG_TAG, "Could not parse the data given for background color\nSetting the default value.");
                 e.printStackTrace();
@@ -287,7 +309,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                                     Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
                                     startActivity(viewIntent);
 
-                                } catch (final ActivityNotFoundException e) {
+                                } catch (final Exception e) {
                                     Log.i("Visilabs", "User doesn't have an activity for notification URI");
                                 }
                             }
@@ -357,7 +379,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setNpsSecondPopUpCloseButton() {
-        switch (mInAppMessage.getActionData().getSecondPopupType()) {
+        String secondPopupType = mInAppMessage.getActionData().getSecondPopupType();
+        switch (secondPopupType != null ? secondPopupType : "") {
             case "image_text_button": {
                 secondPopUpType = NpsSecondPopUpType.IMAGE_TEXT_BUTTON;
                 break;
@@ -377,20 +400,19 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void setTitle() {
 
-        if (mInAppMessage.getActionData().getMsgTitle().equals("") ||
-                mInAppMessage.getActionData().getMsgTitle() == null) {
+        if (TextUtils.isEmpty(mInAppMessage.getActionData().getMsgTitle())) {
             binding.tvTitle.setVisibility(View.GONE);
         } else {
             if (mInAppMessage.getActionData().getMsgTitleBackgroundColor() != null &&
                     !mInAppMessage.getActionData().getMsgTitleBackgroundColor().equals("")) {
-                binding.tvTitle.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleBackgroundColor()));
+                InAppSafeUtils.setBackgroundColor(binding.tvTitle, mInAppMessage.getActionData().getMsgTitleBackgroundColor());
             }
             binding.tvTitle.setVisibility(View.VISIBLE);
             binding.tvTitle.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
             binding.tvTitle.setText(mInAppMessage.getActionData().getMsgTitle().replace("\\n", "\n"));
             if (mInAppMessage.getActionData().getMsgTitleColor() != null && !mInAppMessage.getActionData().getMsgTitleColor().equals("")) {
                 try {
-                    binding.tvTitle.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+                    binding.tvTitle.setTextColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getMsgTitleColor(), android.graphics.Color.BLACK));
                 } catch (Exception e) {
                     Log.w(LOG_TAG, "Could not parse the data given for message title color\nSetting the default value.");
                     e.printStackTrace();
@@ -411,20 +433,19 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void setBody() {
 
-        if (mInAppMessage.getActionData().getMsgBody().equals("") ||
-                mInAppMessage.getActionData().getMsgBody() == null) {
+        if (TextUtils.isEmpty(mInAppMessage.getActionData().getMsgBody())) {
             binding.tvBody.setVisibility(View.GONE);
         } else {
             if (mInAppMessage.getActionData().getMsgBodyBackgroundColor() != null &&
                     !mInAppMessage.getActionData().getMsgBodyBackgroundColor().equals("")) {
-                binding.tvBody.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyBackgroundColor()));
+                InAppSafeUtils.setBackgroundColor(binding.tvBody, mInAppMessage.getActionData().getMsgBodyBackgroundColor());
             }
             binding.tvBody.setText(mInAppMessage.getActionData().getMsgBody().replace("\\n", "\n"));
             binding.tvBody.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
             binding.tvBody.setVisibility(View.VISIBLE);
             if (mInAppMessage.getActionData().getMsgBodyColor() != null && !mInAppMessage.getActionData().getMsgBodyColor().equals("")) {
                 try {
-                    binding.tvBody.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyColor()));
+                    binding.tvBody.setTextColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getMsgBodyColor(), android.graphics.Color.BLACK));
                 } catch (Exception e) {
                     Log.w(LOG_TAG, "Could not parse the data given for message body color\nSetting the default value.");
                     e.printStackTrace();
@@ -442,8 +463,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private void setButton() {
 
-        if (mInAppMessage.getActionData().getBtnText().equals("") ||
-                mInAppMessage.getActionData().getBtnText() == null) {
+        if (TextUtils.isEmpty(mInAppMessage.getActionData().getBtnText())) {
             binding.btnTemplate.setVisibility(View.GONE);
         } else {
             binding.btnTemplate.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
@@ -451,7 +471,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             binding.btnTemplate.setText(mInAppMessage.getActionData().getBtnText());
             if (mInAppMessage.getActionData().getButtonTextColor() != null && !mInAppMessage.getActionData().getButtonTextColor().equals("")) {
                 try {
-                    binding.btnTemplate.setTextColor(Color.parseColor(mInAppMessage.getActionData().getButtonTextColor()));
+                    binding.btnTemplate.setTextColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getButtonTextColor(), android.graphics.Color.BLACK));
                 } catch (Exception e) {
                     Log.w(LOG_TAG, "Could not parse the data given for button text color\nSetting the default value.");
                     e.printStackTrace();
@@ -462,7 +482,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
             if (mInAppMessage.getActionData().getButtonColor() != null && !mInAppMessage.getActionData().getButtonColor().equals("")) {
                 try {
-                    binding.btnTemplate.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getButtonColor()));
+                    binding.btnTemplate.setBackgroundColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getButtonColor(), android.graphics.Color.BLACK));
                 } catch (Exception e) {
                     Log.w(LOG_TAG, "Could not parse the data given for button color\nSetting the default value.");
                     e.printStackTrace();
@@ -479,13 +499,13 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                             buttonCallback.onPress(mInAppMessage.getActionData().getAndroidLnk());
                         } else {
                             if (mInAppMessage.getActionData().getMsgType() == InAppActionType.IMAGE_TEXT_BUTTON) {
-                                if (mInAppMessage.getActionData().getButtonFunction().equals(VisilabsConstant.BUTTON_LINK)) {
+                                if (VisilabsConstant.BUTTON_LINK.equals(mInAppMessage.getActionData().getButtonFunction())) {
                                     if (mInAppMessage.getActionData().getAndroidLnk() != null && mInAppMessage.getActionData().getAndroidLnk().length() > 0) {
                                         try {
                                             Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
                                             startActivity(viewIntent);
 
-                                        } catch (final ActivityNotFoundException e) {
+                                        } catch (final Exception e) {
                                             Log.i("Visilabs", "User doesn't have an activity for notification URI");
                                         }
                                     }
@@ -498,7 +518,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
                                         startActivity(viewIntent);
 
-                                    } catch (final ActivityNotFoundException e) {
+                                    } catch (final Exception e) {
                                         Log.i("Visilabs", "User doesn't have an activity for notification URI");
                                     }
                                 }
@@ -518,7 +538,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                                         Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getAndroidLnk()));
                                         startActivity(viewIntent);
 
-                                    } catch (final ActivityNotFoundException e) {
+                                    } catch (final Exception e) {
                                         Log.i("Visilabs", "User doesn't have an activity for notification URI");
                                     }
                                 }
@@ -538,7 +558,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.btnTemplateSecond.setText(mInAppMessage.getActionData().getSecondButtonText());
         if (mInAppMessage.getActionData().getSecondButtonTextColor() != null && !mInAppMessage.getActionData().getSecondButtonTextColor().isEmpty()) {
             try {
-                binding.btnTemplateSecond.setTextColor(Color.parseColor(mInAppMessage.getActionData().getSecondButtonTextColor()));
+                binding.btnTemplateSecond.setTextColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getSecondButtonTextColor(), android.graphics.Color.BLACK));
             } catch (Exception e) {
                 Log.w(LOG_TAG, "Could not parse the data given for second button text color");
                 e.printStackTrace();
@@ -549,7 +569,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         }
         if (mInAppMessage.getActionData().getSecondButtonColor() != null && !mInAppMessage.getActionData().getSecondButtonColor().isEmpty()) {
             try {
-                binding.btnTemplateSecond.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getSecondButtonColor()));
+                binding.btnTemplateSecond.setBackgroundColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getSecondButtonColor(), android.graphics.Color.BLACK));
             } catch (Exception e) {
                 Log.w(LOG_TAG, "Could not parse the data given for second button color");
                 e.printStackTrace();
@@ -570,7 +590,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                             try {
                                 Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getSecondButtonAndroidLink()));
                                 startActivity(viewIntent);
-                            } catch (final ActivityNotFoundException e) {
+                            } catch (final Exception e) {
                                 Log.i(LOG_TAG, "User doesn't have an activity for notification URI");
                             }
                         }
@@ -581,7 +601,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                             try {
                                 Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(mInAppMessage.getActionData().getSecondButtonAndroidLink()));
                                 startActivity(viewIntent);
-                            } catch (final ActivityNotFoundException e) {
+                            } catch (final Exception e) {
                                 Log.i(LOG_TAG, "User doesn't have an activity for notification URI");
                             }
                         } else {
@@ -599,7 +619,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         WebSettings webViewSettings = binding.webViewInapp.getSettings();
         String backgroundColor = mInAppMessage.getActionData().getBackground();
         if (backgroundColor!= null && !backgroundColor.isEmpty()) {
-            binding.webViewInapp.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+            binding.webViewInapp.setBackgroundColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getBackground(), getResources().getColor(R.color.black)));
         }
         else binding.webViewInapp.setBackgroundColor(getResources().getColor(R.color.black));
         webViewSettings.setJavaScriptEnabled(true);
@@ -699,7 +719,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         binding.btnTemplate.setText(mInAppMessage.getActionData().getBtnText());
         if (mInAppMessage.getActionData().getButtonTextColor() != null && !mInAppMessage.getActionData().getButtonTextColor().equals("")) {
             try {
-                binding.btnTemplate.setTextColor(Color.parseColor(mInAppMessage.getActionData().getButtonTextColor()));
+                binding.btnTemplate.setTextColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getButtonTextColor(), android.graphics.Color.BLACK));
             } catch (Exception e) {
                 Log.w(LOG_TAG, "Could not parse the data given for button text color\nSetting the default value.");
                 e.printStackTrace();
@@ -710,7 +730,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         }
         if (mInAppMessage.getActionData().getButtonColor() != null && !mInAppMessage.getActionData().getButtonColor().equals("")) {
             try {
-                binding.btnTemplate.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getButtonColor()));
+                binding.btnTemplate.setBackgroundColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getButtonColor(), android.graphics.Color.BLACK));
             } catch (Exception e) {
                 Log.w(LOG_TAG, "Could not parse the data given for button color\nSetting the default value.");
                 e.printStackTrace();
@@ -740,8 +760,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     private boolean isRatingAboveThreshold() {
         float rating = binding.ratingBar.getRating();
-        if(!mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint().isEmpty() && !mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint().equals("")&& !mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint().equals("undefined")  ) {
-            return rating >= (Float.parseFloat(mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint()));
+        float minPoint = InAppSafeUtils.parseFloat(mInAppMessage.getActionData().getSecondPopupFeecbackFormMinPoint(), Float.NaN);
+        if (!Float.isNaN(minPoint)) {
+            return rating >= minPoint;
         }
         else {
             return true;
@@ -754,7 +775,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         setContentView(bindingSecondPopUp.getRoot());
         if (mInAppMessage.getActionData().getBackground() != null && !mInAppMessage.getActionData().getBackground().equals("")) {
             try {
-                bindingSecondPopUp.container.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getBackground()));
+                bindingSecondPopUp.container.setBackgroundColor(InAppSafeUtils.parseColor(mInAppMessage.getActionData().getBackground(), android.graphics.Color.BLACK));
             } catch (Exception e) {
                 Log.w(LOG_TAG, "Could not parse the data given for background color\nSetting the default value.");
                 e.printStackTrace();
@@ -767,13 +788,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 bindingSecondPopUp.secondVideoView2.setVisibility(View.GONE);
                 if (mInAppMessage.getActionData().getPromotionCode() != null &&
                         !mInAppMessage.getActionData().getPromotionCode().isEmpty()) {
-                    bindingSecondPopUp.couponContainer.setBackgroundColor(Color.parseColor(
-                            mInAppMessage.getActionData().getPromoCodeBackgroundColor()
-                    ));
+                    InAppSafeUtils.setBackgroundColor(bindingSecondPopUp.couponContainer,
+                            mInAppMessage.getActionData().getPromoCodeBackgroundColor());
                     bindingSecondPopUp.couponCode.setText(mInAppMessage.getActionData().getPromotionCode());
-                    bindingSecondPopUp.couponCode.setTextColor(Color.parseColor(
-                            mInAppMessage.getActionData().getPromoCodeTextColor()
-                    ));
+                    InAppSafeUtils.setTextColor(bindingSecondPopUp.couponCode,
+                            mInAppMessage.getActionData().getPromoCodeTextColor());
                     bindingSecondPopUp.couponContainer.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -850,11 +869,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             }
         }
         binding.ibClose.setVisibility(View.GONE);
-        if (mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
+        if ("backgroundclick".equals(mInAppMessage.getActionData().getCloseEventTrigger())) {
             bindingSecondPopUp.closeButton.setVisibility(View.GONE);
             this.setFinishOnTouchOutside(true);
         } else {
-            this.setFinishOnTouchOutside(!mInAppMessage.getActionData().getCloseEventTrigger().equals("closebutton"));
+            this.setFinishOnTouchOutside(!"closebutton".equals(mInAppMessage.getActionData().getCloseEventTrigger()));
             bindingSecondPopUp.closeButton.setBackgroundResource(getCloseIcon());
             bindingSecondPopUp.closeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -901,16 +920,16 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         }
         bindingSecondPopUp.titleView.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
-        bindingSecondPopUp.titleView.setText(mInAppMessage.getActionData().getSecondPopupMsgTitle().replace("\\n", "\n"));
-        bindingSecondPopUp.titleView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgTitleColor()));
+        bindingSecondPopUp.titleView.setText(InAppSafeUtils.replaceNewLines(mInAppMessage.getActionData().getSecondPopupMsgTitle()));
+        InAppSafeUtils.setTextColor(bindingSecondPopUp.titleView, mInAppMessage.getActionData().getMsgTitleColor());
         bindingSecondPopUp.bodyTextView.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
-        bindingSecondPopUp.bodyTextView.setText(mInAppMessage.getActionData().getSecondPopupMsgBody().replace("\\n", "\n"));
-        bindingSecondPopUp.bodyTextView.setTextColor(Color.parseColor(mInAppMessage.getActionData().getMsgBodyColor()));
-        bindingSecondPopUp.bodyTextView.setTextSize(Float.parseFloat(mInAppMessage.getActionData().getSecondPopupMsgBodyTextSize()) + 8);
+        bindingSecondPopUp.bodyTextView.setText(InAppSafeUtils.replaceNewLines(mInAppMessage.getActionData().getSecondPopupMsgBody()));
+        InAppSafeUtils.setTextColor(bindingSecondPopUp.bodyTextView, mInAppMessage.getActionData().getMsgBodyColor());
+        bindingSecondPopUp.bodyTextView.setTextSize(InAppSafeUtils.parseFloat(mInAppMessage.getActionData().getSecondPopupMsgBodyTextSize(), 4f) + 8);
         bindingSecondPopUp.button.setTypeface(mInAppMessage.getActionData().getFontFamily(this));
         bindingSecondPopUp.button.setText(mInAppMessage.getActionData().getSecondPopupBtnText());
-        bindingSecondPopUp.button.setTextColor(Color.parseColor(mInAppMessage.getActionData().getButtonTextColor()));
-        bindingSecondPopUp.button.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getButtonColor()));
+        InAppSafeUtils.setTextColor(bindingSecondPopUp.button, mInAppMessage.getActionData().getButtonTextColor());
+        InAppSafeUtils.setBackgroundColor(bindingSecondPopUp.button, mInAppMessage.getActionData().getButtonColor());
         bindingSecondPopUp.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -945,9 +964,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                 && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromoCodeBackgroundColor())
                 && !StringUtils.isNullOrWhiteSpace(mInAppMessage.getActionData().getPromoCodeTextColor())) {
             binding.llCouponContainer.setVisibility(View.VISIBLE);
-            binding.llCouponContainer.setBackgroundColor(Color.parseColor(mInAppMessage.getActionData().getPromoCodeBackgroundColor()));
+            InAppSafeUtils.setBackgroundColor(binding.llCouponContainer, mInAppMessage.getActionData().getPromoCodeBackgroundColor());
             binding.tvCouponCode.setText(mInAppMessage.getActionData().getPromotionCode());
-            binding.tvCouponCode.setTextColor(Color.parseColor(mInAppMessage.getActionData().getPromoCodeTextColor()));
+            InAppSafeUtils.setTextColor(binding.tvCouponCode, mInAppMessage.getActionData().getPromoCodeTextColor());
             binding.llCouponContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -967,10 +986,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
                         }, 2000);
                     }
 
-                    if(!mInAppMessage.getActionData().getmPromoCodeCopyButtonFunction().isEmpty()) {
-                        if (mInAppMessage.getActionData().getmPromoCodeCopyButtonFunction().equals("copy_close")) {
-                            finish();
-                        }
+                    if ("copy_close".equals(mInAppMessage.getActionData().getmPromoCodeCopyButtonFunction())) {
+                        finish();
                     }
                 }
             });
@@ -1069,23 +1086,23 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
     void showNpsWithNumbers() {
         binding.npsWithNumbersView.setVisibility(View.VISIBLE);
-        int[] colors = new int[mInAppMessage.getActionData().getNumberColors().length];
-
-        for (int i = 0; i < mInAppMessage.getActionData().getNumberColors().length; i++) {
-            colors[i] = Color.parseColor(mInAppMessage.getActionData().getNumberColors()[i]);
+        String[] numberColors = mInAppMessage.getActionData().getNumberColors();
+        int[] colors;
+        if (numberColors == null || numberColors.length == 0) {
+            colors = new int[]{Color.LTGRAY, Color.DKGRAY};
+        } else {
+            colors = new int[numberColors.length];
+            for (int i = 0; i < numberColors.length; i++) {
+                colors[i] = InAppSafeUtils.parseColor(numberColors[i], Color.GRAY);
+            }
         }
         binding.npsWithNumbersView.setColors(colors);
     }
 
     private int getCloseIcon() {
 
-        switch (mInAppMessage.getActionData().getCloseButtonColor()) {
-
-            case "white":
-                return R.drawable.ic_close_white_24dp;
-
-            case "black":
-                return R.drawable.ic_close_black_24dp;
+        if ("white".equals(mInAppMessage.getActionData().getCloseButtonColor())) {
+            return R.drawable.ic_close_white_24dp;
         }
         return R.drawable.ic_close_black_24dp;
     }
@@ -1104,16 +1121,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private boolean isShowingNpsInApp() {
-        boolean isshow = true;
-        Log.e("DENEME ",mInAppMessage.getActionData().getMsgType().toString());
-        if(mInAppMessage.getActionData().getMsgType().toString().equals("nps_with_numbers")) {
-            if (mInAppMessage.getActionData().getDisplayType().equals("inline")) {
-                isshow = false;
-            } else if (mInAppMessage.getActionData().getDisplayType().equals("popup") && mInAppMessage.getActionData().getDisplayType() == null && mInAppMessage.getActionData().getDisplayType().isEmpty()) {
-                isshow = true;
-            }
-        }
-            return isshow;
+        ActionData actionData = mInAppMessage.getActionData();
+        return !(actionData.getMsgType() == InAppActionType.NPS_WITH_NUMBERS && "inline".equals(actionData.getDisplayType()));
     }
 
     @Override
@@ -1162,8 +1171,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             } else {
                 VisilabsUpdateDisplayState.releaseDisplayState(mIntentId);
             }
-            if (mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS_AND_SECOND_POP_UP) {
-                if (!isNpsSecondPopupButtonClicked && isNpsSecondPopupActivated) {
+            if (mInAppMessage.getActionData() != null && mInAppMessage.getActionData().getMsgType() == InAppActionType.NPS_AND_SECOND_POP_UP) {
+                if (!isNpsSecondPopupButtonClicked && isNpsSecondPopupActivated && Visilabs.CallAPI() != null) {
                     Visilabs.CallAPI().trackInAppMessageClick(mInAppMessage, getRateReport());
                 }
             }
@@ -1171,11 +1180,11 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
     }
 
     private void setupInitialViewCarousel() {
-        if (mInAppMessage.getActionData().getCloseEventTrigger().equals("backgroundclick")) {
+        if ("backgroundclick".equals(mInAppMessage.getActionData().getCloseEventTrigger())) {
             bindingCarousel.carouselCloseButton.setVisibility(View.GONE);
             this.setFinishOnTouchOutside(true);
         } else {
-            this.setFinishOnTouchOutside(!mInAppMessage.getActionData().getCloseEventTrigger().equals("closebutton"));
+            this.setFinishOnTouchOutside(!"closebutton".equals(mInAppMessage.getActionData().getCloseEventTrigger()));
             bindingCarousel.carouselCloseButton.setBackgroundResource(getCloseIcon());
             bindingCarousel.carouselCloseButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1326,8 +1335,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
             if (backgroundColor != null &&
                     !backgroundColor.isEmpty()) {
                 bindingCarousel.background.setVisibility(View.GONE);
-                bindingCarousel.carouselContainer.setBackgroundColor(Color.parseColor(
-                        mCarouselItems.get(position).getBackgroundColor()));
+                InAppSafeUtils.setBackgroundColor(bindingCarousel.carouselContainer,
+                        mCarouselItems.get(position).getBackgroundColor());
             }
         }
         if (mCarouselItems.get(position).getImage() != null && !mCarouselItems.get(position).getImage().isEmpty()) {
@@ -1368,12 +1377,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         if (mCarouselItems.get(position).getTitle() != null &&
                 !mCarouselItems.get(position).getTitle().isEmpty()) {
             bindingCarousel.carouselTitle.setText(mCarouselItems.get(position).getTitle().replace("\\n", "\n"));
-            if (titleColor != null &&
-                    !titleColor.isEmpty()) {
-            bindingCarousel.carouselTitle.setTextColor(Color.parseColor(mCarouselItems.get(position).getTitleColor()));
-            }
+            InAppSafeUtils.setTextColor(bindingCarousel.carouselTitle, titleColor);
             bindingCarousel.carouselTitle.setTextSize(
-                    Float.parseFloat(mCarouselItems.get(position).getTitleTextsize()) + 12);
+                    InAppSafeUtils.parseFloat(mCarouselItems.get(position).getTitleTextsize(), 4f) + 12);
             bindingCarousel.carouselTitle.setTypeface(mCarouselItems.get(position).getTitleFontFamily(this));
         } else {
             bindingCarousel.carouselTitle.setVisibility(View.GONE);
@@ -1382,12 +1388,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         if (mCarouselItems.get(position).getBody() != null &&
                 !mCarouselItems.get(position).getBody().isEmpty()) {
             bindingCarousel.carouselBodyText.setText(mCarouselItems.get(position).getBody().replace("\\n", "\n"));
-            if (bodyColor != null &&
-                    !bodyColor.isEmpty()) {
-            bindingCarousel.carouselBodyText.setTextColor(Color.parseColor(mCarouselItems.get(position).getBodyColor()));
-            }
+            InAppSafeUtils.setTextColor(bindingCarousel.carouselBodyText, bodyColor);
             bindingCarousel.carouselBodyText.setTextSize(
-                    Float.parseFloat(mCarouselItems.get(position).getBodyTextsize()) + 8);
+                    InAppSafeUtils.parseFloat(mCarouselItems.get(position).getBodyTextsize(), 4f) + 8);
             bindingCarousel.carouselBodyText.setTypeface(mCarouselItems.get(position).getBodyFontFamily(this));
         } else {
             bindingCarousel.carouselBodyText.setVisibility(View.GONE);
@@ -1395,10 +1398,10 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         if (mCarouselItems.get(position).getPromotionCode() != null &&
                 !mCarouselItems.get(position).getPromotionCode().isEmpty()) {
-            bindingCarousel.couponContainer.setBackgroundColor(Color.parseColor(
-                    mCarouselItems.get(position).getPromocodeBackgroundColor()));
+            InAppSafeUtils.setBackgroundColor(bindingCarousel.couponContainer,
+                    mCarouselItems.get(position).getPromocodeBackgroundColor());
             bindingCarousel.couponCode.setText(mCarouselItems.get(position).getPromotionCode());
-            bindingCarousel.couponCode.setTextColor(Color.parseColor(mCarouselItems.get(position).getPromocodeTextColor()));
+            InAppSafeUtils.setTextColor(bindingCarousel.couponCode, mCarouselItems.get(position).getPromocodeTextColor());
             bindingCarousel.couponContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -1427,16 +1430,12 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         String buttonTextColor = mCarouselItems.get(position).getButtonTextColor();
         if (mCarouselItems.get(position).getButtonText() != null &&
                 !mCarouselItems.get(position).getButtonText().isEmpty()) {
-            if(buttonColor !=null && !buttonColor.isEmpty()){
-                bindingCarousel.carouselButton.setBackgroundColor(Color.parseColor(mCarouselItems.get(position).getButtonColor()));
-            }
+            InAppSafeUtils.setBackgroundColor(bindingCarousel.carouselButton, buttonColor);
             bindingCarousel.carouselButton.setText(mCarouselItems.get(position).getButtonText());
 
-            if(buttonTextColor !=null && !buttonTextColor.isEmpty()){
-            bindingCarousel.carouselButton.setTextColor(Color.parseColor(mCarouselItems.get(position).getButtonTextColor()));
-            }
+            InAppSafeUtils.setTextColor(bindingCarousel.carouselButton, buttonTextColor);
             bindingCarousel.carouselButton.setTextSize(
-                    Float.parseFloat(mCarouselItems.get(position).getButtonTextsize()) + 12);
+                    InAppSafeUtils.parseFloat(mCarouselItems.get(position).getButtonTextsize(), 4f) + 12);
             bindingCarousel.carouselButton.setTypeface(mCarouselItems.get(position).getButtonFontFamily(this));
             bindingCarousel.carouselButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1498,7 +1497,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         // Background Color
         if (actionData.getBackground() != null && !actionData.getBackground().isEmpty()) {
             try {
-                llBack.setCardBackgroundColor(Color.parseColor(actionData.getBackground()));
+                llBack.setCardBackgroundColor(InAppSafeUtils.parseColor(actionData.getBackground(), android.graphics.Color.BLACK));
             } catch (Exception e) {}
         }
         
@@ -1521,9 +1520,9 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         // ==== PAGE 1 ====
         tvTitle.setTypeface(fontFamily);
-        tvTitle.setText(actionData.getMsgTitle().replace("\\n", "\n"));
+        tvTitle.setText(InAppSafeUtils.replaceNewLines(actionData.getMsgTitle()));
         try {
-            tvTitle.setTextColor(Color.parseColor(actionData.getMsgTitleColor()));
+            tvTitle.setTextColor(InAppSafeUtils.parseColor(actionData.getMsgTitleColor(), android.graphics.Color.BLACK));
             tvTitle.setTextSize(Float.parseFloat(actionData.getMsgBodyTextSize()) + 12);
         } catch (Exception e) {}
 
@@ -1536,7 +1535,7 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         
         try {
             if (actionData.getMsgBodyColor() != null && !actionData.getMsgBodyColor().isEmpty()) {
-                tvScaleLabel.setTextColor(Color.parseColor(actionData.getMsgBodyColor()));
+                tvScaleLabel.setTextColor(InAppSafeUtils.parseColor(actionData.getMsgBodyColor(), android.graphics.Color.BLACK));
             }
             if (actionData.getMsgBodyTextSize() != null) {
                 tvScaleLabel.setTextSize(Float.parseFloat(actionData.getMsgBodyTextSize()) + 8);
@@ -1551,12 +1550,12 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         btnSubmit1.setText(actionData.getBtnText() != null ? actionData.getBtnText().replace("\\n", "\n") : "Gönder");
         if (actionData.getButtonTextColor() != null && !actionData.getButtonTextColor().isEmpty()) {
             try {
-                btnSubmit1.setTextColor(Color.parseColor(actionData.getButtonTextColor()));
+                btnSubmit1.setTextColor(InAppSafeUtils.parseColor(actionData.getButtonTextColor(), android.graphics.Color.BLACK));
             } catch (Exception e) {}
         }
         if (actionData.getButtonColor() != null && !actionData.getButtonColor().isEmpty()) {
             try {
-                btnSubmit1.setBackgroundColor(Color.parseColor(actionData.getButtonColor()));
+                btnSubmit1.setBackgroundColor(InAppSafeUtils.parseColor(actionData.getButtonColor(), android.graphics.Color.BLACK));
             } catch (Exception e) {}
         }
 
@@ -1582,24 +1581,24 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         // ==== PAGE 2 ====
         tvTitle2.setTypeface(fontFamily);
-        tvTitle2.setText(actionData.getMultiplePopupMsgTitle().replace("\\n", "\n"));
+        tvTitle2.setText(InAppSafeUtils.replaceNewLines(actionData.getMultiplePopupMsgTitle()));
         try {
-            tvTitle2.setTextColor(Color.parseColor(actionData.getMsgTitleColor()));
+            tvTitle2.setTextColor(InAppSafeUtils.parseColor(actionData.getMsgTitleColor(), android.graphics.Color.BLACK));
             tvTitle2.setTextSize(Float.parseFloat(actionData.getMultiplePopupMsgBodyTextSize2()) + 12);
         } catch (Exception e) {}
 
         tvBody2.setTypeface(fontFamily);
-        tvBody2.setText(actionData.getMultiplePopupMsgBody().replace("\\n", "\n"));
+        tvBody2.setText(InAppSafeUtils.replaceNewLines(actionData.getMultiplePopupMsgBody()));
         try {
-            tvBody2.setTextColor(Color.parseColor(actionData.getMsgBodyColor()));
+            tvBody2.setTextColor(InAppSafeUtils.parseColor(actionData.getMsgBodyColor(), android.graphics.Color.BLACK));
             tvBody2.setTextSize(Float.parseFloat(actionData.getMultiplePopupMsgBodyTextSize2()) + 8);
         } catch (Exception e) {}
 
         btnBack2.setTypeface(fontFamily);
         btnBack2.setText(actionData.getMultiplePopupButtonText3());
         try {
-            btnBack2.setTextColor(Color.parseColor(actionData.getMultiplePopupButtonTextColor3()));
-            btnBack2.setBackgroundColor(Color.parseColor(actionData.getMultiplePopupButtonColor3()));
+            btnBack2.setTextColor(InAppSafeUtils.parseColor(actionData.getMultiplePopupButtonTextColor3(), android.graphics.Color.BLACK));
+            btnBack2.setBackgroundColor(InAppSafeUtils.parseColor(actionData.getMultiplePopupButtonColor3(), android.graphics.Color.BLACK));
         } catch (Exception e) {}
         btnBack2.setOnClickListener(v -> {
             npsPage2.setVisibility(View.GONE);
@@ -1609,8 +1608,8 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
         btnSave2.setTypeface(fontFamily);
         btnSave2.setText(actionData.getMultiplePopupButtonText2());
         try {
-            btnSave2.setTextColor(Color.parseColor(actionData.getMultiplePopupButtonTextColor2()));
-            btnSave2.setBackgroundColor(Color.parseColor(actionData.getMultiplePopupButtonColor2()));
+            btnSave2.setTextColor(InAppSafeUtils.parseColor(actionData.getMultiplePopupButtonTextColor2(), android.graphics.Color.BLACK));
+            btnSave2.setBackgroundColor(InAppSafeUtils.parseColor(actionData.getMultiplePopupButtonColor2(), android.graphics.Color.BLACK));
         } catch (Exception e) {}
         btnSave2.setOnClickListener(v -> {
             String feedback;
@@ -1639,17 +1638,17 @@ public class TemplateActivity extends Activity implements SmileRating.OnSmileySe
 
         // ==== PAGE 3 ====
         tvTitle3.setTypeface(fontFamily);
-        tvTitle3.setText(actionData.getMultiplePopupMsgTitle3().replace("\\n", "\n"));
+        tvTitle3.setText(InAppSafeUtils.replaceNewLines(actionData.getMultiplePopupMsgTitle3()));
         try {
-            tvTitle3.setTextColor(Color.parseColor(actionData.getMsgTitleColor()));
+            tvTitle3.setTextColor(InAppSafeUtils.parseColor(actionData.getMsgTitleColor(), android.graphics.Color.BLACK));
             tvTitle3.setTextSize(Float.parseFloat(actionData.getMsgBodyTextSize()) + 12);
         } catch (Exception e) {}
 
         btnClose3.setTypeface(fontFamily);
         btnClose3.setText(actionData.getMultiplePopupButtonText4());
         try {
-            btnClose3.setTextColor(Color.parseColor(actionData.getMultiplePopupButtonTextColor4()));
-            btnClose3.setBackgroundColor(Color.parseColor(actionData.getMultiplePopupButtonColor4()));
+            btnClose3.setTextColor(InAppSafeUtils.parseColor(actionData.getMultiplePopupButtonTextColor4(), android.graphics.Color.BLACK));
+            btnClose3.setBackgroundColor(InAppSafeUtils.parseColor(actionData.getMultiplePopupButtonColor4(), android.graphics.Color.BLACK));
         } catch (Exception e) {}
         btnClose3.setOnClickListener(v -> closeMultiplePopup());
     }

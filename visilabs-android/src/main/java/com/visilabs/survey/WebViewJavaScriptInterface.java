@@ -1,11 +1,15 @@
 package com.visilabs.survey;
 
+import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
 
 import com.google.gson.Gson;
 import com.visilabs.Visilabs;
+import com.visilabs.util.ActivityUtils;
 import com.visilabs.mailSub.Report;
 import com.visilabs.survey.model.SurveyModel;
 import com.visilabs.survey.model.SurveyResult;
@@ -23,7 +27,11 @@ public class WebViewJavaScriptInterface {
     WebViewJavaScriptInterface(WebViewDialogFragment webViewDialogFragment, String response) {
         this.mWebViewDialogFragment = webViewDialogFragment;
         mResponse = response;
-        surveyModel = new Gson().fromJson(mResponse, SurveyModel.class);
+        try {
+            surveyModel = new Gson().fromJson(mResponse, SurveyModel.class);
+        } catch (Exception e) {
+            Log.e(TAG, "Survey model could not be parsed", e);
+        }
     }
 
     /**
@@ -31,8 +39,23 @@ public class WebViewJavaScriptInterface {
      */
     @JavascriptInterface
     public void close() {
-        this.mWebViewDialogFragment.dismiss();
-        mListener.onCompleted();
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (mWebViewDialogFragment.isAdded()) {
+                        mWebViewDialogFragment.dismissAllowingStateLoss();
+                    }
+                    if (mListener != null) {
+                        mListener.onCompleted();
+                    } else if (mWebViewDialogFragment.getActivity() != null) {
+                        mWebViewDialogFragment.getActivity().finish();
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Survey could not be closed properly", e);
+                }
+            }
+        });
     }
 
     /**
@@ -42,6 +65,8 @@ public class WebViewJavaScriptInterface {
     public void sendReport(String surveyResultJson) {
         Log.d(TAG, "Anket Sonuçları Alındı: " + surveyResultJson);
 
+        Activity targetParent = mWebViewDialogFragment.getActivity() != null ? mWebViewDialogFragment.getActivity() : ActivityUtils.getParentActivity();
+
         // Önce Visilabs tıklama raporunu gönderelim.
         try {
             Report report = new Report();
@@ -49,7 +74,7 @@ public class WebViewJavaScriptInterface {
             // Eğer yoksa, onu da JavaScriptInterface'in constructor'ında almanız gerekir.
             report.setImpression(surveyModel.getActiondata().getReport().getImpression());
             report.setClick(surveyModel.getActiondata().getReport().getClick());
-            Visilabs.CallAPI().trackActionClick(report);
+            Visilabs.CallAPI().trackActionClick(report, targetParent);
         } catch (Exception e) {
             Log.e("Survey", "Rapor gönderilirken bir hata oluştu: " + e.getMessage());
         }
@@ -76,7 +101,7 @@ public class WebViewJavaScriptInterface {
 
                     // 5. Her soru için customEvent'i ayrı ayrı gönderiyoruz.
                     // Event adı olarak "survey-report" gibi daha açıklayıcı bir isim kullanmak daha iyidir.
-                    Visilabs.CallAPI().customEvent("survey-report", parameters);
+                    Visilabs.CallAPI().customEvent("survey-report", parameters, targetParent);
 
                     Log.d(TAG, "Custom Event Gönderildi: Soru='" + qa.getQuestion() + "', Cevap='" + qa.getAnswer() + "'");
                 }

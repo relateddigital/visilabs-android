@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,6 +29,7 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
+import com.visilabs.inApp.InAppSafeUtils;
 import com.visilabs.story.action.StoriesProgressView;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.skinbased.Actiondata;
@@ -40,10 +40,7 @@ import com.visilabs.util.AppUtils;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.VisilabsConstant;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
+import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -51,6 +48,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     private static final String LOG_TAG = "Story Activity";
 
     private static int VIDEO_DURATION_OFFSET = 1000;
+    private static final long DEFAULT_STORY_DURATION = 5000L;
     private StoriesProgressView mStoriesProgressView;
     private ImageView mIvStory;
     private VideoView mVideoView;
@@ -70,10 +68,9 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     int mStoryPosition;
     View.OnTouchListener mOnTouchListener;
     static StoryItemClickListener mStoryItemClickListener;
-    static RecyclerView mRecyclerView;
-    static VisilabsSkinBasedAdapter mVisilabsSkinBasedAdapter;
+    private static WeakReference<RecyclerView> mRecyclerView = new WeakReference<>(null);
+    private static WeakReference<VisilabsSkinBasedAdapter> mVisilabsSkinBasedAdapter = new WeakReference<>(null);
     private int mVideoLastPosition;
-    private MediaMetadataRetriever mRetriever;
     private Activity mActivity;
     private boolean isCountDownTimer = false;
     private LinearLayout mCountDownContainer;
@@ -95,10 +92,10 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     }
 
     public static void setRecyclerView(RecyclerView recyclerView) {
-        mRecyclerView = recyclerView;
+        mRecyclerView = new WeakReference<>(recyclerView);
     }
     public static void setVisilabsSkinBasedAdapter(VisilabsSkinBasedAdapter visilabsSkinBasedAdapter) {
-        mVisilabsSkinBasedAdapter = visilabsSkinBasedAdapter;
+        mVisilabsSkinBasedAdapter = new WeakReference<>(visilabsSkinBasedAdapter);
     }
 
     @Override
@@ -121,18 +118,31 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 Log.e(LOG_TAG, "Could not get the story data properly, finishing...");
                 e.printStackTrace();
                 finish();
+                return;
             }
         } else {
             Log.e(LOG_TAG, "Could not get the story data properly, finishing...");
             finish();
+            return;
         }
 
-        mRetriever = new MediaMetadataRetriever();
-        calculateDisplayTimeVideo();
+        if (mStories == null || mStories.getItems() == null || mStories.getItems().isEmpty()) {
+            Log.e(LOG_TAG, "There is no story item to show, finishing...");
+            finish();
+            return;
+        }
+        if (mStoryItemPosition < 0 || mStoryItemPosition >= mStories.getItems().size()) {
+            mStoryItemPosition = 0;
+        }
 
         setTouchEvents();
 
-        setInitialView();
+        try {
+            setInitialView();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Could not show the story properly, finishing...", e);
+            finish();
+        }
     }
 
     private void setTouchEvents() {
@@ -208,29 +218,29 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
 
         Log.i("StoryActivityShows ", mActionId + " : " + mStories.getTitle());
         PersistentTargetManager.with(getApplicationContext()).saveShownStory(mActionId, mStories.getTitle());
-        mVisilabsSkinBasedAdapter.setStoryList(mVisilabsSkinBasedAdapter.mVisilabsSkinBasedResponse, mVisilabsSkinBasedAdapter.mExtendsProps);
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+        VisilabsSkinBasedAdapter skinBasedAdapter = mVisilabsSkinBasedAdapter.get();
+        if (skinBasedAdapter != null) {
+            skinBasedAdapter.setStoryList(skinBasedAdapter.mVisilabsSkinBasedResponse, skinBasedAdapter.mExtendsProps);
+        }
+        RecyclerView recyclerView = mRecyclerView.get();
+        if (recyclerView != null && recyclerView.getAdapter() != null) {
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }
 
         mStoriesProgressView.setStoriesCount(mStories.getItems().size());
         mStoriesProgressView.setStoriesListener(this);
-        if(mStories.getItems().get(0).getFileType().equals(VisilabsConstant.STORY_PHOTO_KEY)){
-            mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()
-                    .get(mStoryItemPosition).getDisplayTime()) * 1000);
-        } else {
-            mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()
-                    .get(mStoryItemPosition).getDisplayTime()));
-        }
+        mStoriesProgressView.setStoryDuration(getDisplayDuration(mStories.getItems().get(0).getFileType(),
+                mStories.getItems().get(mStoryItemPosition).getDisplayTime()));
 
-        String impressionReport = mActionData.getReport().getImpression();
-        Visilabs.CallAPI().impressionStory(impressionReport);
+        impressionStory();
 
-        if(!mStories.getThumbnail().equals("")) {
+        if(!InAppSafeUtils.isBlank(mStories.getThumbnail())) {
             Picasso.get().load(mStories.getThumbnail()).into(mIvCover);
         }
         mTvCover.setText(mStories.getTitle());
 
         if(mExtendedProps != null && mExtendedProps.getStoryz_label_color() != null && !mExtendedProps.getStoryz_label_color().isEmpty()) {
-            mTvCover.setTextColor(Color.parseColor(mExtendedProps.getStoryz_label_color()));
+            mTvCover.setTextColor(InAppSafeUtils.parseColor(mExtendedProps.getStoryz_label_color(), mTvCover.getCurrentTextColor()));
         }
 
             mIvClose.setBackgroundResource(getCloseIcon());
@@ -275,35 +285,59 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         mReverse.setOnTouchListener(mOnTouchListener);
     }
 
+    private void impressionStory() {
+        if (mActionData.getReport() != null && Visilabs.CallAPI() != null) {
+            Visilabs.CallAPI().impressionStory(mActionData.getReport().getImpression());
+        }
+    }
+
+    private long getDisplayDuration(String fileType, String displayTime) {
+        double duration = InAppSafeUtils.parseFloat(displayTime, -1f);
+        if (VisilabsConstant.STORY_PHOTO_KEY.equals(fileType)) {
+            return duration > 0 ? (long) (duration * 1000) : DEFAULT_STORY_DURATION;
+        }
+        return duration > 0 ? (long) duration : DEFAULT_STORY_DURATION;
+    }
+
+    private void showStoryItemSafely(int position) {
+        try {
+            setStoryItem(mStories.getItems().get(position));
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Could not show the story item properly, finishing...", e);
+            finish();
+        }
+    }
+
     @Override
     public void onNext() {
         mCountdownEndGifView.setVisibility(View.GONE);
-        Visilabs.CallAPI().impressionStory(mActionData.getReport().getImpression());
+        impressionStory();
 
         if(mStories.getItems().size() > mStoryItemPosition + 1) {
-            setStoryItem(mStories.getItems().get(++mStoryItemPosition));
+            showStoryItemSafely(++mStoryItemPosition);
         }
     }
 
     @Override
     public void onPrev() {
         mCountdownEndGifView.setVisibility(View.GONE);
-        Visilabs.CallAPI().impressionStory(mActionData.getReport().getImpression());
+        impressionStory();
 
         if ((mStoryItemPosition - 1) < 0) {
             if (mStoryPosition - 1 < mActionData.getStories().size() && mStoryPosition - 1 > -1) {
 
                 mStoryPosition--;
 
-                int previousStoryGroupLatestPosition = mActionData.getStories().get(mStoryPosition)
-                        .getItems().size() - 1;
+                Stories previousStories = mActionData.getStories().get(mStoryPosition);
+                int previousStoryGroupLatestPosition = previousStories != null && previousStories.getItems() != null ?
+                        previousStories.getItems().size() - 1 : 0;
 
-                startStoryGroup(previousStoryGroupLatestPosition);
+                startStoryGroup(Math.max(previousStoryGroupLatestPosition, 0));
             } else {
                 onBackPressed();
             }
         } else {
-            setStoryItem(mStories.getItems().get(--mStoryItemPosition));
+            showStoryItemSafely(--mStoryItemPosition);
         }
     }
 
@@ -334,11 +368,8 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
 
     @Override
     protected void onDestroy() {
-        mStoriesProgressView.destroy();
-        try {
-            mRetriever.release();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (mStoriesProgressView != null) {
+            mStoriesProgressView.destroy();
         }
         if(mTimerCountDown!=null){
             mTimerCountDown.cancel();
@@ -351,18 +382,12 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
             mTimerCountDown.cancel();
         }
 
-        if(item.getFileType().equals(VisilabsConstant.STORY_PHOTO_KEY)){
-            mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()
-                    .get(mStoryItemPosition).getDisplayTime()) * 1000);
-        } else {
-            mStoriesProgressView.setStoryDuration(Integer.parseInt(mStories.getItems()
-                    .get(mStoryItemPosition).getDisplayTime()));
-        }
+        mStoriesProgressView.setStoryDuration(getDisplayDuration(item.getFileType(), item.getDisplayTime()));
 
-        if(item.getFileType().equals(VisilabsConstant.STORY_PHOTO_KEY)){
+        if(VisilabsConstant.STORY_PHOTO_KEY.equals(item.getFileType())){
             mVideoView.setVisibility(View.INVISIBLE);
             mIvStory.setVisibility(View.VISIBLE);
-            if (!item.getFileSrc().equals("")) {
+            if (!InAppSafeUtils.isBlank(item.getFileSrc())) {
                 Picasso.get().load(item.getFileSrc()).into(mIvStory);
             }
 
@@ -374,27 +399,27 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 GradientDrawable gd = (GradientDrawable) mCountDownTimer.getBackground();
                 gd.setColor(getResources().getColor(R.color.white));
 
-                if(mStories.getItems().get(mStoryItemPosition).getCountdown().getPagePosition().equals("top")) {
+                if("top".equals(mStories.getItems().get(mStoryItemPosition).getCountdown().getPagePosition())) {
                     mCountDownTopText.setVisibility(View.VISIBLE);
                     mCountDownBotText.setVisibility(View.GONE);
 
-                    mCountDownTopText.setText((mStories.getItems().get(mStoryItemPosition).
-                            getCountdown().getMessageText()).replace("\\n", "\n"));
-                    mCountDownTopText.setTextColor(Color.parseColor(mStories.getItems()
-                            .get(mStoryItemPosition).getCountdown().getMessageTextColor()));
-                    mCountDownTopText.setTextSize(Float.parseFloat(mStories.getItems().
-                            get(mStoryItemPosition).getCountdown().getMessageTextSize()) + 16);
+                    mCountDownTopText.setText(InAppSafeUtils.replaceNewLines(mStories.getItems().get(mStoryItemPosition).
+                            getCountdown().getMessageText()));
+                    mCountDownTopText.setTextColor(InAppSafeUtils.parseColor(mStories.getItems()
+                            .get(mStoryItemPosition).getCountdown().getMessageTextColor(), mCountDownTopText.getCurrentTextColor()));
+                    mCountDownTopText.setTextSize(InAppSafeUtils.parseFloat(mStories.getItems().
+                            get(mStoryItemPosition).getCountdown().getMessageTextSize(), 0f) + 16);
                     mCountDownTopText.setTypeface(Typeface.DEFAULT);
                 } else {
                     mCountDownBotText.setVisibility(View.VISIBLE);
                     mCountDownTopText.setVisibility(View.GONE);
 
-                    mCountDownBotText.setText((mStories.getItems().get(mStoryItemPosition).
-                            getCountdown().getMessageText()).replace("\\n", "\n"));
-                    mCountDownBotText.setTextColor(Color.parseColor(mStories.getItems()
-                            .get(mStoryItemPosition).getCountdown().getMessageTextColor()));
-                    mCountDownBotText.setTextSize(Float.parseFloat(mStories.getItems().
-                            get(mStoryItemPosition).getCountdown().getMessageTextSize()) + 16);
+                    mCountDownBotText.setText(InAppSafeUtils.replaceNewLines(mStories.getItems().get(mStoryItemPosition).
+                            getCountdown().getMessageText()));
+                    mCountDownBotText.setTextColor(InAppSafeUtils.parseColor(mStories.getItems()
+                            .get(mStoryItemPosition).getCountdown().getMessageTextColor(), mCountDownBotText.getCurrentTextColor()));
+                    mCountDownBotText.setTextSize(InAppSafeUtils.parseFloat(mStories.getItems().
+                            get(mStoryItemPosition).getCountdown().getMessageTextSize(), 0f) + 16);
                     mCountDownBotText.setTypeface(Typeface.DEFAULT);
                 }
 
@@ -403,7 +428,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 if (mWeekNum.getVisibility() != View.GONE) {
                     mWeekNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
                     GradientDrawable gdWeek = (GradientDrawable) mWeekNum.getBackground();
-                    gdWeek.setColor(Color.parseColor("#E5E4E2"));
+                    gdWeek.setColor(InAppSafeUtils.parseColor("#E5E4E2", android.graphics.Color.BLACK));
                     mWeekNum.setText(String.valueOf(mWeekNumber));
                     mWeekNum.setTextColor(getResources().getColor(R.color.black));
                 }
@@ -411,7 +436,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 if (mDayNum.getVisibility() != View.GONE) {
                     mDayNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
                     GradientDrawable gdDay = (GradientDrawable) mDayNum.getBackground();
-                    gdDay.setColor(Color.parseColor("#E5E4E2"));
+                    gdDay.setColor(InAppSafeUtils.parseColor("#E5E4E2", android.graphics.Color.BLACK));
                     mDayNum.setText(String.valueOf(mDayNumber));
                     mDayNum.setTextColor(getResources().getColor(R.color.black));
                 }
@@ -419,7 +444,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 if (mHourNum.getVisibility() != View.GONE) {
                     mHourNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
                     GradientDrawable gdHour = (GradientDrawable) mHourNum.getBackground();
-                    gdHour.setColor(Color.parseColor("#E5E4E2"));
+                    gdHour.setColor(InAppSafeUtils.parseColor("#E5E4E2", android.graphics.Color.BLACK));
                     mHourNum.setText(String.valueOf(mHourNumber));
                     mHourNum.setTextColor(getResources().getColor(R.color.black));
                 }
@@ -427,7 +452,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 if (mMinuteNum.getVisibility() != View.GONE) {
                     mMinuteNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
                     GradientDrawable gdMinute = (GradientDrawable) mMinuteNum.getBackground();
-                    gdMinute.setColor(Color.parseColor("#E5E4E2"));
+                    gdMinute.setColor(InAppSafeUtils.parseColor("#E5E4E2", android.graphics.Color.BLACK));
                     mMinuteNum.setText(String.valueOf(mMinuteNumber));
                     mMinuteNum.setTextColor(getResources().getColor(R.color.black));
                 }
@@ -435,7 +460,7 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 if (mSecNum.getVisibility() != View.GONE) {
                     mSecNum.setBackgroundResource(R.drawable.rounded_corners_full_small_edge);
                     GradientDrawable gdSec = (GradientDrawable) mSecNum.getBackground();
-                    gdSec.setColor(Color.parseColor("#E5E4E2"));
+                    gdSec.setColor(InAppSafeUtils.parseColor("#E5E4E2", android.graphics.Color.BLACK));
                     mSecNum.setText(String.valueOf(mSecondNumber));
                     mSecNum.setTextColor(getResources().getColor(R.color.black));
                 }
@@ -445,16 +470,25 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
                 mCountDownContainer.setVisibility(View.GONE);
             }
             mStoriesProgressView.startStories(mStoryItemPosition);
-        } else if(item.getFileType().equals(VisilabsConstant.STORY_VIDEO_KEY)) {
+        } else if(VisilabsConstant.STORY_VIDEO_KEY.equals(item.getFileType())) {
             mVideoView.setVisibility(View.VISIBLE);
             mIvStory.setVisibility(View.INVISIBLE);
             mCountDownContainer.setVisibility(View.GONE);
-            if (!item.getFileSrc().equals("")) {
+            if (!InAppSafeUtils.isBlank(item.getFileSrc())) {
                 mVideoView.setVideoURI(Uri.parse(item.getFileSrc()));
             }
             mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
+                    try {
+                        int videoDuration = mp.getDuration();
+                        if (videoDuration > 0) {
+                            item.setDisplayTime(String.valueOf(videoDuration + VIDEO_DURATION_OFFSET));
+                            mStoriesProgressView.setStoryDuration(videoDuration + VIDEO_DURATION_OFFSET);
+                        }
+                    } catch (Exception e) {
+                        Log.w(LOG_TAG, "Could not get the video duration", e);
+                    }
                     mStoriesProgressView.startStories(mStoryItemPosition);
                 }
             });
@@ -462,11 +496,13 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
             mVideoView.start();
         }
 
-        if (!item.getButtonText().equals("")) {
+        if (!InAppSafeUtils.isBlank(item.getButtonText())) {
             mBtnStory.setVisibility(View.VISIBLE);
             mBtnStory.setText(item.getButtonText());
-            mBtnStory.setTextColor(Color.parseColor(item.getButtonTextColor()));
-            mBtnStory.setBackgroundColor(Color.parseColor(item.getButtonColor()));
+            mBtnStory.setTextColor(InAppSafeUtils.parseColor(item.getButtonTextColor(), mBtnStory.getCurrentTextColor()));
+            if (InAppSafeUtils.isValidColor(item.getButtonColor())) {
+                mBtnStory.setBackgroundColor(InAppSafeUtils.parseColor(item.getButtonColor(), Color.TRANSPARENT));
+            }
 
         } else {
             mBtnStory.setVisibility(View.GONE);
@@ -475,25 +511,15 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         mBtnStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Visilabs.CallAPI().trackStoryClick(mActionData.getReport().getClick());
+                if (mActionData.getReport() != null && Visilabs.CallAPI() != null) {
+                    Visilabs.CallAPI().trackStoryClick(mActionData.getReport().getClick());
+                }
                 mActivity.finish();
                 if (mStoryItemClickListener != null) {
                     mStoryItemClickListener.storyItemClicked(item.getTargetUrl());
                 }
             }
         });
-    }
-
-    private void calculateDisplayTimeVideo() {
-        List<Items> items = mStories.getItems();
-        for (int i = 0; i < items.size(); i++) {
-            if(items.get(i).getFileType().equals(VisilabsConstant.STORY_VIDEO_KEY)){
-                mRetriever.setDataSource(items.get(i).getFileSrc(), new HashMap<String, String>());
-                String time = mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-                long timeInMilliSec = Long.parseLong(time);
-                mStories.getItems().get(i).setDisplayTime(String.valueOf(timeInMilliSec + VIDEO_DURATION_OFFSET));
-            }
-        }
     }
 
     private void setTimerValues() {
@@ -518,7 +544,8 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
             }
         }
 
-        switch(mStories.getItems().get(mStoryItemPosition).getCountdown().getDisplayType()) {
+        String displayType = mStories.getItems().get(mStoryItemPosition).getCountdown().getDisplayType();
+        switch(displayType != null ? displayType : "") {
             case "dhms": {
                 mWeekNum.setVisibility(View.GONE);
                 mDayNum.setVisibility(View.VISIBLE);
@@ -636,7 +663,18 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     }
 
     private void reAdjustTimerViews(){
-        calculateTimeFields();
+        if (isFinishing() || isDestroyed()) {
+            if (mTimerCountDown != null) {
+                mTimerCountDown.cancel();
+            }
+            return;
+        }
+        try {
+            calculateTimeFields();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "The fields for countdown timer could not be calculated!", e);
+            return;
+        }
 
         runOnUiThread(new Runnable() {
             @Override
@@ -670,7 +708,8 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
     }
 
     private void calculateTimeFields() {
-        switch (mStories.getItems().get(mStoryItemPosition).getCountdown().getDisplayType()) {
+        String displayType = mStories.getItems().get(mStoryItemPosition).getCountdown().getDisplayType();
+        switch (displayType != null ? displayType : "") {
 
             case "dhms":
 
@@ -752,10 +791,17 @@ public class StoryActivity extends Activity implements StoriesProgressView.Stori
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mCountdownEndGifView.setVisibility(View.VISIBLE);
-                Glide.with(getApplicationContext())
-                        .load(mStories.getItems().get(mStoryItemPosition).getCountdown().getEndAnimationImageUrl())
-                        .into(mCountdownEndGifView);
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+                try {
+                    mCountdownEndGifView.setVisibility(View.VISIBLE);
+                    Glide.with(getApplicationContext())
+                            .load(mStories.getItems().get(mStoryItemPosition).getCountdown().getEndAnimationImageUrl())
+                            .into(mCountdownEndGifView);
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Countdown end animation could not be shown!", e);
+                }
             }
         });
     }

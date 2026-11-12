@@ -1,5 +1,7 @@
 package com.visilabs.scratchToWin;
 
+import com.visilabs.inApp.InAppSafeUtils;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -18,7 +20,7 @@ import com.visilabs.android.R;
 public class EraseView extends View {
     private static final int SCALE = 100;
     private static final double PERCENTAGE_THRESHOLD = 0.6;
-    private final Bitmap mSourceBitmap;
+    private Bitmap mSourceBitmap;
     private final Canvas mSourceCanvas = new Canvas();
     private final Paint mDestPaint = new Paint();
     private final Path mDestPath = new Path();
@@ -42,16 +44,7 @@ public class EraseView extends View {
         mContext = context;
         isEnabled = false;
         isCompleted = false;
-        mColor = Color.parseColor("#000000"); //Default black
-
-        //convert drawable file into bitmap
-        Bitmap rawBitmap = Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_8888);
-
-        //convert bitmap into mutable bitmap
-        mSourceBitmap = Bitmap.createBitmap(rawBitmap.getWidth(), rawBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-
-        mSourceCanvas.setBitmap(mSourceBitmap);
-        mSourceCanvas.drawColor(mColor);
+        mColor = InAppSafeUtils.parseColor("#000000", android.graphics.Color.BLACK); //Default black
 
         mDestPaint.setAlpha(0);
         mDestPaint.setAntiAlias(true);
@@ -64,6 +57,10 @@ public class EraseView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (mSourceBitmap == null) {
+            super.onDraw(canvas);
+            return;
+        }
         //Draw path
         mSourceCanvas.drawPath(mDestPath, mDestPaint);
 
@@ -79,10 +76,14 @@ public class EraseView extends View {
             if (!isCompleted) {
                 if (calculatePercentageErased() >= PERCENTAGE_THRESHOLD) {
                     isCompleted = true;
-                    mListener.onScratchingComplete();
+                    if (mListener != null) {
+                        mListener.onScratchingComplete();
+                    }
                 }
             }
-            mContainer.setScrollingState(false);
+            if (mContainer != null) {
+                mContainer.setScrollingState(false);
+            }
 
             float xPos = event.getX();
             float yPos = event.getY();
@@ -119,11 +120,23 @@ public class EraseView extends View {
         mCodeWidth = w;
         mCodeHeight = h;
         super.onSizeChanged(w, h, oldw, oldh);
+        if (w <= 0 || h <= 0) {
+            return;
+        }
+        Bitmap oldBitmap = mSourceBitmap;
+        mSourceBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mSourceCanvas.setBitmap(mSourceBitmap);
+        mSourceCanvas.drawColor(mColor);
+        if (oldBitmap != null) {
+            oldBitmap.recycle();
+        }
     }
 
     public void setColor(int color) {
         mColor = color;
-        mSourceCanvas.drawColor(mColor);
+        if (mSourceBitmap != null) {
+            mSourceCanvas.drawColor(mColor);
+        }
     }
 
     public void setEmailStatus(boolean value) {
@@ -159,20 +172,26 @@ public class EraseView extends View {
     }
 
     private double calculatePercentageErased() {
-        final int width = mSourceBitmap.getWidth();
-        final int height = mSourceBitmap.getHeight();
+        if (mSourceBitmap == null) {
+            return 0;
+        }
+        final int width = Math.min(mCodeWidth, mSourceBitmap.getWidth());
+        final int height = Math.min(mCodeHeight, mSourceBitmap.getHeight());
+        if (width <= 0 || height <= 0) {
+            return 0;
+        }
 
         // size of sample rectangles
-        final int xStep = width / SCALE;
-        final int yStep = height / SCALE;
+        final int xStep = Math.max(1, width / SCALE);
+        final int yStep = Math.max(1, height / SCALE);
 
         // center of the first rectangle
         final int xInit = xStep / 2;
         final int yInit = yStep / 2;
 
         // center of the last rectangle
-        final int xEnd = mCodeWidth - xStep / 2;
-        final int yEnd = mCodeHeight - yStep / 2;
+        final int xEnd = Math.min(width - xStep / 2, width - 1);
+        final int yEnd = Math.min(height - yStep / 2, height - 1);
 
         int totalTransparent = 0;
 
@@ -183,6 +202,6 @@ public class EraseView extends View {
                 }
             }
         }
-        return ((float) totalTransparent) / ((float) (mCodeWidth * mCodeHeight) / (float) (xStep * yStep));
+        return ((float) totalTransparent) / ((float) (width * height) / (float) (xStep * yStep));
     }
 }

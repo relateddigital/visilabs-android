@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.visilabs.Visilabs;
 import com.visilabs.android.R;
+import com.visilabs.inApp.InAppSafeUtils;
 import com.visilabs.story.model.storylookingbanners.ExtendedProps;
 import com.visilabs.story.model.StoryItemClickListener;
 import com.visilabs.story.model.storylookingbanners.Stories;
@@ -26,7 +27,6 @@ import com.visilabs.util.AppUtils;
 import com.visilabs.util.PersistentTargetManager;
 import com.visilabs.util.VisilabsConstant;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +43,7 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
     StoryItemClickListener mStoryItemClickListener;
     VisilabsStoryLookingBannerResponse mStoryLookingBanner;
     String mExtendsProps;
+    private ExtendedProps mParsedExtendedProps;
     private boolean moveShownToEnd = false;
 
     public VisilabsStoryLookingBannerAdapter(Context context, StoryItemClickListener storyItemClickListener) {
@@ -74,23 +75,26 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         final boolean shown = story.getShown();
         storyHolder.tvStoryName.setText(storyTitle);
 
-        if(!storyImage.equals("")) {
+        if(!InAppSafeUtils.isBlank(storyImage)) {
             Picasso.get().load(storyImage).fit().into(storyHolder.ivStory);
             Picasso.get().load(storyImage).fit().into(storyHolder.civStory);
         }
 
-        String extendedPropsEncoded = mExtendsProps;
-
         storyHolder.llStoryContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (position >= getItemCount()) {
+                    return;
+                }
                 String storyLink = mStoryLookingBanner.getStory().get(0).getActiondata().getStories().get(position).getLink();
-                Visilabs.CallAPI().trackStoryClick(mStoryLookingBanner.getStory().get(0).getActiondata().getReport().getClick());
+                if (mStoryLookingBanner.getStory().get(0).getActiondata().getReport() != null && Visilabs.CallAPI() != null) {
+                    Visilabs.CallAPI().trackStoryClick(mStoryLookingBanner.getStory().get(0).getActiondata().getReport().getClick());
+                }
 
                 Log.i("StoryActivityShows ", actionid + " : " + storyTitle);
                 PersistentTargetManager.with(mContext).saveShownStory(actionid, storyTitle);
                 setStoryList(mStoryLookingBanner, mExtendsProps);
-                mRecyclerView.getAdapter().notifyDataSetChanged();
+                notifyDataSetChanged();
               
                 if (mStoryItemClickListener != null) {
                     mStoryItemClickListener.storyItemClicked(storyLink);
@@ -98,18 +102,12 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
             }
         });
 
-        ExtendedProps extendedProps = null;
-
-        try {
-             extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        ExtendedProps extendedProps = mParsedExtendedProps;
 
         String labelColor = extendedProps != null ? extendedProps.getStorylb_label_color() : null;
         if (labelColor != null && !labelColor.isEmpty()) {
             try {
-                storyHolder.tvStoryName.setTextColor(Color.parseColor(labelColor));
+                storyHolder.tvStoryName.setTextColor(InAppSafeUtils.parseColor(labelColor, android.graphics.Color.BLACK));
             } catch (IllegalArgumentException e) {
                 Log.w("StoryLookingBanner", "Invalid label color : " + labelColor);
             }
@@ -149,7 +147,25 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
 
     @Override
     public int getItemCount() {
+        if (mStoryLookingBanner == null || mStoryLookingBanner.getStory() == null ||
+                mStoryLookingBanner.getStory().isEmpty() ||
+                mStoryLookingBanner.getStory().get(0).getActiondata() == null ||
+                mStoryLookingBanner.getStory().get(0).getActiondata().getStories() == null) {
+            return 0;
+        }
         return mStoryLookingBanner.getStory().get(0).getActiondata().getStories().size();
+    }
+
+    private static ExtendedProps parseExtendedProps(String extendedPropsEncoded) {
+        if (extendedPropsEncoded == null) {
+            return null;
+        }
+        try {
+            return new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(), ExtendedProps.class);
+        } catch (Exception e) {
+            Log.w("StoryLookingBanner", "Story extended props could not be parsed!", e);
+            return null;
+        }
     }
 
     public void setStoryList(VisilabsStoryLookingBannerResponse storyLookingBanner, String extendsProps) {
@@ -160,7 +176,10 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (moveShownToEnd) {
+        if (moveShownToEnd && storyLookingBanner != null && storyLookingBanner.getStory() != null &&
+                !storyLookingBanner.getStory().isEmpty() &&
+                storyLookingBanner.getStory().get(0).getActiondata() != null &&
+                storyLookingBanner.getStory().get(0).getActiondata().getStories() != null) {
             Map<String, List<String>> shownStoriesMap = PersistentTargetManager.with(mContext).getShownStories();
 
             if (shownStoriesMap.containsKey(storyLookingBanner.getStory().get(0).getActid())){
@@ -184,6 +203,7 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         }
 
         mExtendsProps = extendsProps;
+        mParsedExtendedProps = parseExtendedProps(extendsProps);
         mStoryLookingBanner = storyLookingBanner;
     }
 
@@ -205,14 +225,7 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
             flCircleShadow = itemView.findViewById(R.id.fl_circle);
             flRectangleShadow = itemView.findViewById(R.id.fl_rect);
 
-            String extendedPropsEncoded = mExtendsProps;
-
-            try {
-                extendedProps = new Gson().fromJson(new java.net.URI(extendedPropsEncoded).getPath(),
-                        ExtendedProps.class);
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
+            extendedProps = mParsedExtendedProps;
         }
 
         private void setRectangleViewProperties(float[] borderRadius, boolean shown) {
@@ -306,12 +319,12 @@ public class VisilabsStoryLookingBannerAdapter extends RecyclerView.Adapter<Visi
         private int getBorderColor() {
             String borderColorString = extendedProps != null ? extendedProps.getStorylb_img_borderColor() : null;
             if (borderColorString == null || borderColorString.isEmpty()) {
-                return Color.parseColor("#161616");
+                return InAppSafeUtils.parseColor("#161616", android.graphics.Color.BLACK);
             }
             try {
-                return Color.parseColor(borderColorString);
+                return InAppSafeUtils.parseColor(borderColorString, android.graphics.Color.BLACK);
             } catch (IllegalArgumentException e) {
-                return Color.parseColor("#161616");
+                return InAppSafeUtils.parseColor("#161616", android.graphics.Color.BLACK);
             }
         }
 

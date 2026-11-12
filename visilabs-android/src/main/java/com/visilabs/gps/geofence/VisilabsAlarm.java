@@ -1,6 +1,5 @@
 package com.visilabs.gps.geofence;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -10,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.PowerManager;
+import android.util.Log;
 
 
 import com.visilabs.Injector;
@@ -19,6 +19,7 @@ import com.visilabs.util.VisilabsConstant;
 
 
 public class VisilabsAlarm extends BroadcastReceiver {
+    private static final String LOG_TAG = "VisilabsAlarm";
     static VisilabsAlarm mAlarm = new VisilabsAlarm();
 
     public static VisilabsAlarm getSingleton() {
@@ -27,20 +28,32 @@ public class VisilabsAlarm extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
-        wl.acquire(10000);
-
-        GpsManager gpsManager = Injector.INSTANCE.getGpsManager();
-        if(gpsManager == null){
-            if(Visilabs.CallAPI() == null){
-                Visilabs.CreateAPI(context.getApplicationContext());
-            }
-            Visilabs.CallAPI().startGpsManager();
-        }else{
-            gpsManager.startGpsService();
+        PowerManager.WakeLock wl = null;
+        try {
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "visilabs:alarm");
+            wl.acquire(10000);
+        } catch (Exception e) {
+            Log.w(LOG_TAG, "Could not acquire the wake lock!", e);
         }
-        wl.release();
+
+        try {
+            GpsManager gpsManager = Injector.INSTANCE.getGpsManager();
+            if(gpsManager == null){
+                if(Visilabs.CallAPI() == null){
+                    Visilabs.CreateAPI(context.getApplicationContext());
+                }
+                if(Visilabs.CallAPI() != null){
+                    Visilabs.CallAPI().startGpsManager();
+                }
+            }else{
+                gpsManager.startGpsService();
+            }
+        } finally {
+            if (wl != null && wl.isHeld()) {
+                wl.release();
+            }
+        }
 
     }
 

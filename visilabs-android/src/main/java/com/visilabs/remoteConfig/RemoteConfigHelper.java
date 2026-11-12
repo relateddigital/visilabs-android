@@ -6,6 +6,7 @@ import android.util.Log;
 import com.visilabs.Visilabs;
 import com.visilabs.api.RemoteConfigApiClient;
 import com.visilabs.api.VisilabsApiMethods;
+import com.visilabs.api.VisilabsRemote;
 import com.visilabs.util.Prefs;
 import com.visilabs.util.VisilabsConstant;
 
@@ -25,6 +26,7 @@ public class RemoteConfigHelper {
 
             HashMap<String, String> headers = new HashMap<>();
             headers.put(VisilabsConstant.USER_AGENT_KEY, Visilabs.getUserAgent());
+            VisilabsRemote.removeNullEntries(headers);
             Call<List<String>> call = remoteConfigApiInterface.getRemoteConfig(headers);
             call.enqueue(new Callback<List<String>>() {
                 @Override
@@ -62,7 +64,7 @@ public class RemoteConfigHelper {
 
                 @Override
                 public void onFailure(Call<List<String>> call, Throwable t) {
-                    Log.w(LOG_TAG, "Fail Request : " + call.request().url().toString());
+                    Log.w(LOG_TAG, "Fail Request : " + VisilabsRemote.getRequestUrl(call) + " " + t.getMessage());
                     setBlockState(context, false);
                 }
             });

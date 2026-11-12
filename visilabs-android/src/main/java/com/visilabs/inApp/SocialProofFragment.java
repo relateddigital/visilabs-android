@@ -4,6 +4,8 @@ import android.app.ActionBar;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import androidx.fragment.app.Fragment;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
@@ -24,8 +26,6 @@ import com.visilabs.android.databinding.FragmentSocialProofBinding;
 import com.visilabs.util.AppUtils;
 import com.visilabs.util.UtilResultModel;
 import java.net.URISyntaxException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +39,13 @@ public class SocialProofFragment extends Fragment {
 
     private ProductStatNotifierModel mModel;
     private boolean mIsTop;
-    private Timer mTimer;
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Runnable mAutoClose = new Runnable() {
+        @Override
+        public void run() {
+            endFragment();
+        }
+    };
     private FragmentSocialProofBinding binding;
     private ProductStatNotifierExtendedProps mExtendedProps;
     private UtilResultModel utilResultModel;
@@ -67,7 +73,8 @@ public class SocialProofFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mModel = (ProductStatNotifierModel) getArguments().getSerializable(ARG_PARAM1);
+        mModel = getArguments() != null ?
+                (ProductStatNotifierModel) getArguments().getSerializable(ARG_PARAM1) : null;
     }
 
     @Override
@@ -78,8 +85,19 @@ public class SocialProofFragment extends Fragment {
 
         hideStatusBar();
 
-        if(checkNumber()) {
-            setupInitialView();
+        if (mModel == null || mModel.getActiondata() == null) {
+            Log.e(LOG_TAG, "Invalid Inputs!");
+            endFragment();
+            return view;
+        }
+
+        try {
+            if(checkNumber()) {
+                setupInitialView();
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Social proof could not be rendered properly!", e);
+            endFragment();
         }
         return view;
     }
@@ -87,9 +105,7 @@ public class SocialProofFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(mTimer!=null){
-            mTimer.cancel();
-        }
+        mHandler.removeCallbacks(mAutoClose);
     }
 
     private void setupInitialView() {
@@ -103,8 +119,12 @@ public class SocialProofFragment extends Fragment {
             e.printStackTrace();
             endFragment();
         }
+        if (mExtendedProps == null) {
+            endFragment();
+            return;
+        }
         getFontFamily();
-        mIsTop = mModel.getActiondata().getPos().equals("top");
+        mIsTop = "top".equals(mModel.getActiondata().getPos());
         if(mIsTop){
             adjustTop();
         } else {
@@ -116,57 +136,63 @@ public class SocialProofFragment extends Fragment {
     }
 
     private void adjustTop() {
-        binding.socialProofContainerTop.setBackgroundColor(Color.parseColor(mModel.getActiondata().getBgcolor()));
-        String text = utilResultModel.getMessage();
+        InAppSafeUtils.setBackgroundColor(binding.socialProofContainerTop, mModel.getActiondata().getBgcolor());
+        String text = utilResultModel.getMessage() != null ? utilResultModel.getMessage() : "";
         binding.textViewTop.setTypeface(mFontFamily);
-        binding.textViewTop.setTextSize(Float.parseFloat(mExtendedProps.getContent_text_size()) * 2 + 14);
-        binding.textViewTop.setTextColor(Color.parseColor(mExtendedProps.getContent_text_color()));
+        binding.textViewTop.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getContent_text_size(), 0f) * 2 + 14);
+        InAppSafeUtils.setTextColor(binding.textViewTop, mExtendedProps.getContent_text_color());
         binding.socialProofContainerBot.setVisibility(View.GONE);
         if(utilResultModel.getIsTag()) {
-            SpannableString spannableString = new SpannableString(text);
-            for(int i = 0 ; i < utilResultModel.getNumbers().size() ; i++) {
-                spannableString.setSpan(new AbsoluteSizeSpan(Integer.parseInt(mExtendedProps.getContentcount_text_size()) * 2 + 14, true),
-                        utilResultModel.getStartIdxs().get(i), utilResultModel.getEndIdxs().get(i), 0);
-                spannableString.setSpan(new ForegroundColorSpan(Color.parseColor(mExtendedProps.getContentcount_text_color())),
-                        utilResultModel.getStartIdxs().get(i), utilResultModel.getEndIdxs().get(i), 0);
-            }
-            binding.textViewTop.setText(spannableString);
+            binding.textViewTop.setText(createCountSpans(text));
         } else {
             binding.textViewTop.setText(text.replace("\\n", "\n"));
         }
     }
 
     private void adjustBottom() {
-        binding.socialProofContainerBot.setBackgroundColor(Color.parseColor(mModel.getActiondata().getBgcolor()));
-        String text = utilResultModel.getMessage();
+        InAppSafeUtils.setBackgroundColor(binding.socialProofContainerBot, mModel.getActiondata().getBgcolor());
+        String text = utilResultModel.getMessage() != null ? utilResultModel.getMessage() : "";
         binding.textViewBot.setTypeface(mFontFamily);
-        binding.textViewBot.setTextSize(Float.parseFloat(mExtendedProps.getContent_text_size()) * 2 + 14);
-        binding.textViewBot.setTextColor(Color.parseColor(mExtendedProps.getContent_text_color()));
+        binding.textViewBot.setTextSize(InAppSafeUtils.parseFloat(mExtendedProps.getContent_text_size(), 0f) * 2 + 14);
+        InAppSafeUtils.setTextColor(binding.textViewBot, mExtendedProps.getContent_text_color());
         binding.socialProofContainerTop.setVisibility(View.GONE);
         if(utilResultModel.getIsTag()) {
-            SpannableString spannableString = new SpannableString(text);
-            for(int i = 0 ; i < utilResultModel.getNumbers().size() ; i++) {
-                spannableString.setSpan(new AbsoluteSizeSpan(Integer.parseInt(mExtendedProps.getContentcount_text_size()) * 2 + 14, true),
-                        utilResultModel.getStartIdxs().get(i), utilResultModel.getEndIdxs().get(i), 0);
-                spannableString.setSpan(new ForegroundColorSpan(Color.parseColor(mExtendedProps.getContentcount_text_color())),
-                        utilResultModel.getStartIdxs().get(i), utilResultModel.getEndIdxs().get(i), 0);
-            }
-            binding.textViewBot.setText(spannableString);
+            binding.textViewBot.setText(createCountSpans(text));
         } else {
             binding.textViewBot.setText(text.replace("\\n", "\n"));
         }
     }
 
+    private SpannableString createCountSpans(String text) {
+        SpannableString spannableString = new SpannableString(text);
+        if (utilResultModel.getNumbers() == null || utilResultModel.getStartIdxs() == null ||
+                utilResultModel.getEndIdxs() == null) {
+            return spannableString;
+        }
+        int countTextSize = InAppSafeUtils.parseInt(mExtendedProps.getContentcount_text_size(), 0) * 2 + 14;
+        int countTextColor = InAppSafeUtils.parseColor(mExtendedProps.getContentcount_text_color(), Color.BLACK);
+        boolean isCountColorValid = InAppSafeUtils.isValidColor(mExtendedProps.getContentcount_text_color());
+        for(int i = 0 ; i < utilResultModel.getNumbers().size() ; i++) {
+            if (i >= utilResultModel.getStartIdxs().size() || i >= utilResultModel.getEndIdxs().size()) {
+                break;
+            }
+            int start = utilResultModel.getStartIdxs().get(i);
+            int end = utilResultModel.getEndIdxs().get(i);
+            if (start < 0 || end > text.length() || start > end) {
+                continue;
+            }
+            spannableString.setSpan(new AbsoluteSizeSpan(countTextSize, true), start, end, 0);
+            if (isCountColorValid) {
+                spannableString.setSpan(new ForegroundColorSpan(countTextColor), start, end, 0);
+            }
+        }
+        return spannableString;
+    }
+
     private void setTimer() {
-        if (!mModel.getActiondata().getTimeout().equals("0")) {
-            mTimer = new Timer("SocialProofTimer", false);
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    endFragment();
-                }
-            };
-            mTimer.schedule(task, Integer.parseInt(mModel.getActiondata().getTimeout()));
+        int timeout = InAppSafeUtils.parseInt(mModel.getActiondata().getTimeout(), 0);
+        if (timeout > 0) {
+            mHandler.postDelayed(mAutoClose, timeout);
 
         } else {
             if (mIsTop) {
@@ -188,7 +214,7 @@ public class SocialProofFragment extends Fragment {
     }
 
     private void setupCloseButton() {
-        if(mModel.getActiondata().getShowclosebtn()) {
+        if(Boolean.TRUE.equals(mModel.getActiondata().getShowclosebtn())) {
             if (mIsTop) {
                 binding.closeButtonTop.setBackgroundResource(getCloseIcon());
                 binding.closeButtonTop.setOnClickListener(new View.OnClickListener() {
@@ -213,13 +239,8 @@ public class SocialProofFragment extends Fragment {
     }
 
     private int getCloseIcon() {
-        switch (mExtendedProps.getClose_button_color()) {
-
-            case "white":
-                return R.drawable.ic_close_white_24dp;
-
-            case "black":
-                return R.drawable.ic_close_black_24dp;
+        if ("white".equals(mExtendedProps.getClose_button_color())) {
+            return R.drawable.ic_close_white_24dp;
         }
         return R.drawable.ic_close_black_24dp;
     }
@@ -236,6 +257,10 @@ public class SocialProofFragment extends Fragment {
     }
 
     private void getFontFamily() {
+        if (mExtendedProps.getContent_font_family() == null) {
+            mFontFamily = Typeface.DEFAULT;
+            return;
+        }
         if (FontFamily.Monospace.toString().equals(mExtendedProps.getContent_font_family().toLowerCase())) {
             mFontFamily = Typeface.MONOSPACE;
         }
@@ -251,17 +276,18 @@ public class SocialProofFragment extends Fragment {
     }
 
     private void endFragment() {
-        if(mTimer!=null){
-            mTimer.cancel();
-        }
-        if (isAdded() && getParentFragmentManager() != null) {
-            getParentFragmentManager().beginTransaction().remove(this).commit();
+        mHandler.removeCallbacks(mAutoClose);
+        if (isAdded()) {
+            getParentFragmentManager().beginTransaction().remove(this).commitAllowingStateLoss();
         } else if (getActivity() != null && getActivity() instanceof FragmentActivity) {
-            ((FragmentActivity) getActivity()).getSupportFragmentManager().beginTransaction().remove(this).commit();
+            ((FragmentActivity) getActivity()).getSupportFragmentManager().beginTransaction().remove(this).commitAllowingStateLoss();
         }
     }
 
     private void hideStatusBar() {
+        if (getActivity() == null) {
+            return;
+        }
         View decorView = getActivity().getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
@@ -283,6 +309,7 @@ public class SocialProofFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        mHandler.removeCallbacks(mAutoClose);
         super.onDestroyView();
         showStatusBar();
     }

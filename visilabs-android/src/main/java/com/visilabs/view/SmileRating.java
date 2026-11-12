@@ -1,5 +1,7 @@
 package com.visilabs.view;
 
+import com.visilabs.inApp.InAppSafeUtils;
+
 import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.FloatEvaluator;
@@ -33,12 +35,12 @@ public class SmileRating extends BaseRating {
     private static final String TAG = "RatingView";
 
     private int mPlaceHolderSmileColor = Color.WHITE;
-    private int mAngryColor = Color.parseColor("#f29a68");
-    private int mNormalColor = Color.parseColor("#f2dd68");
-    private int mDrawingColor = Color.parseColor("#353431");
+    private int mAngryColor = InAppSafeUtils.parseColor("#f29a68", android.graphics.Color.BLACK);
+    private int mNormalColor = InAppSafeUtils.parseColor("#f2dd68", android.graphics.Color.BLACK);
+    private int mDrawingColor = InAppSafeUtils.parseColor("#353431", android.graphics.Color.BLACK);
     private int mTextSelectedColor = Color.BLACK;
-    private int mTextNonSelectedColor = Color.parseColor("#AEB3B5");
-    private int mPlaceholderBackgroundColor = Color.parseColor("#161616");
+    private int mTextNonSelectedColor = InAppSafeUtils.parseColor("#AEB3B5", android.graphics.Color.BLACK);
+    private int mPlaceholderBackgroundColor = InAppSafeUtils.parseColor("#161616", android.graphics.Color.BLACK);
     private final String[] mNames = getResources().getStringArray(R.array.names);
     private final Face[] mFaces = new Face[SMILES_LIST.length];
     private final Map<Integer, Point> mTouchPoints = new HashMap<>();

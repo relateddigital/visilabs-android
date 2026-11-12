@@ -1,7 +1,6 @@
 package com.visilabs.inApp;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -123,7 +122,7 @@ public class FullscreenPopupActivity extends Activity {
         try {
             if ("black".equalsIgnoreCase(color)) return Color.BLACK;
             if ("white".equalsIgnoreCase(color)) return Color.WHITE;
-            return Color.parseColor(color);
+            return InAppSafeUtils.parseColor(color, android.graphics.Color.BLACK);
         } catch (IllegalArgumentException ignored) {
             return Color.WHITE;
         }
@@ -143,7 +142,7 @@ public class FullscreenPopupActivity extends Activity {
             try {
                 Intent viewIntent = new Intent(Intent.ACTION_VIEW, StringUtils.getURIfromUrlString(link));
                 startActivity(viewIntent);
-            } catch (ActivityNotFoundException e) {
+            } catch (Exception e) {
                 Log.i("Visilabs", "User doesn't have an activity for notification URI");
             }
         }

@@ -191,7 +191,12 @@ public class PermissionActivity extends Activity {
         } else if (requestCode == BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 finish();
-                Visilabs.CallAPI().startGpsManager();
+                if (Visilabs.CallAPI() == null) {
+                    Visilabs.CreateAPI(getApplicationContext());
+                }
+                if (Visilabs.CallAPI() != null) {
+                    Visilabs.CallAPI().startGpsManager();
+                }
             } else {
                 finish();
             }
