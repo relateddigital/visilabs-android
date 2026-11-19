@@ -40,13 +40,27 @@ Add maven jitpack repository to your project/build.gradle file
 Add Visilabs to the ```dependencies``` in app/build.gradle.
 
 ```java
-implementation 'com.github.relateddigital:visilabs-android:6.7.8'
+implementation 'com.github.relateddigital:visilabs-android:6.7.9'
 ```
 This version uses AndroidX
 
 ### Visilabs SDK Set Up
 
 Mobile Tagging for Visilab and more information :  [Please check docs](https://relateddigital.atlassian.net/wiki/spaces/RMCKBT/pages/428802408/Android+-+API+Setup) 
+
+#### Initializing off the main thread
+
+`Visilabs.CreateAPI(...)` and `EuroMobileManager.init(...)` read SharedPreferences and set up network clients, Google Play Services and geofencing. When they run in `Application.onCreate()` on the main thread, the process can hit an ANR, especially when it is started in the background by a push, a geofence alarm or a geofence transition. Call them on a background thread instead:
+
+```java
+@Override
+public void onCreate() {
+    super.onCreate();
+    new Thread(this::initRelatedDigital, "related-digital-init").start();
+}
+```
+
+`Visilabs.CallAPI()` is synchronized with `CreateAPI(...)`, so a call made while initialization is still running waits for it to finish. A call made before initialization starts returns `null`; check for `null` before using it. Since 6.7.9, the geofence alarm receiver and the geofence transition service also do their initialization off the main thread.
 
         
         

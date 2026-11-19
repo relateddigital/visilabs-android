@@ -33,17 +33,7 @@ public class GeofenceTransitionsIntentService extends VisilabsSafeJobIntentServi
         enqueueWork(context, GeofenceTransitionsIntentService.class, 573, intent);
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        if (Visilabs.CallAPI() == null) {
-            Visilabs.CreateAPI(getApplicationContext());
-        }
-        if (Visilabs.CallAPI() != null) {
-            Visilabs.CallAPI().startGpsManager();
-        }
-    }
-
+    // Do not initialize Visilabs in onCreate: it runs on the main thread and can cause ANRs.
     @Override
     protected void onHandleWork(Intent intent) {
         Log.v(TAG, "onHandleWork");

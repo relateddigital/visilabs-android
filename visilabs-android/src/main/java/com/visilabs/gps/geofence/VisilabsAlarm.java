@@ -28,6 +28,22 @@ public class VisilabsAlarm extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        // onReceive runs on the main thread; Visilabs initialization must not block it.
+        final PendingResult pendingResult = goAsync();
+        final Context appContext = context.getApplicationContext();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    handleAlarm(appContext);
+                } finally {
+                    pendingResult.finish();
+                }
+            }
+        }, "VisilabsAlarm").start();
+    }
+
+    private void handleAlarm(Context context) {
         PowerManager.WakeLock wl = null;
         try {
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -41,7 +57,7 @@ public class VisilabsAlarm extends BroadcastReceiver {
             GpsManager gpsManager = Injector.INSTANCE.getGpsManager();
             if(gpsManager == null){
                 if(Visilabs.CallAPI() == null){
-                    Visilabs.CreateAPI(context.getApplicationContext());
+                    Visilabs.CreateAPI(context);
                 }
                 if(Visilabs.CallAPI() != null){
                     Visilabs.CallAPI().startGpsManager();
@@ -49,12 +65,13 @@ public class VisilabsAlarm extends BroadcastReceiver {
             }else{
                 gpsManager.startGpsService();
             }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Could not handle the geofence alarm!", e);
         } finally {
             if (wl != null && wl.isHeld()) {
                 wl.release();
             }
         }
-
     }
 
     public void setAlarmCheckIn(final Context context) {
